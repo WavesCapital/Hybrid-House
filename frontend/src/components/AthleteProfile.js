@@ -267,29 +267,29 @@ const AthleteProfile = () => {
     const showCheckmark = isComplete && progress === 100;
     
     return (
-      <div className="flex items-center space-x-4 p-6 bg-gray-800/30 rounded-xl border border-gray-700">
-        <div className={`p-3 rounded-full transition-all duration-500 ${
+      <div className="flex items-center space-x-3 sm:space-x-4 p-4 sm:p-6 bg-gray-800/30 rounded-xl border border-gray-700">
+        <div className={`p-2 sm:p-3 rounded-full transition-all duration-500 ${
           showCheckmark ? 'bg-green-500/20 scale-110' : 
           isLoading ? 'bg-blue-500/20 animate-pulse' : 'bg-gray-600/20'
         }`}>
           {isLoading && progress < 100 ? (
-            <Loader2 className="h-6 w-6 animate-spin text-blue-400" />
+            <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin text-blue-400" />
           ) : showCheckmark ? (
-            <CheckCircle className="h-6 w-6 text-green-400 animate-pulse" />
+            <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-400 animate-pulse" />
           ) : (
-            <Icon className="h-6 w-6 text-gray-400" />
+            <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
           )}
         </div>
-        <div className="flex-1">
-          <h3 className={`font-semibold transition-colors duration-300 ${
+        <div className="flex-1 min-w-0">
+          <h3 className={`font-semibold transition-colors duration-300 text-sm sm:text-base ${
             showCheckmark ? 'text-green-400' : 
             isLoading ? 'text-blue-400' : 'text-gray-400'
           }`}>
             {title}
           </h3>
-          <div className="w-full bg-gray-700 rounded-full h-3 mt-2 overflow-hidden">
+          <div className="w-full bg-gray-700 rounded-full h-2 sm:h-3 mt-2 overflow-hidden">
             <div 
-              className={`h-3 rounded-full transition-all duration-500 ${
+              className={`h-2 sm:h-3 rounded-full transition-all duration-500 ${
                 showCheckmark ? 'bg-green-400' : 
                 isLoading ? 'bg-blue-400' : 'bg-gray-600'
               }`}
