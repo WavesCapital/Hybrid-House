@@ -358,11 +358,9 @@ const AthleteProfile = () => {
                   href="https://chatgpt.com/g/g-686e85594828819185c3264c65086ae2-hybrid-house-interviewer"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="inline-block px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
                 >
-                  <Star className="h-5 w-5" />
-                  <span>Create Profile</span>
-                  <ExternalLink className="h-4 w-4" />
+                  Create Profile
                 </a>
               </div>
 
