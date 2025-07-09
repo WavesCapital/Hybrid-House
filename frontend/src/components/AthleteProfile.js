@@ -514,7 +514,7 @@ const AthleteProfile = () => {
                   <div className="text-center">
                     <h2 className="text-5xl font-bold text-white mb-4">Your Hybrid Score</h2>
                     <div className="text-8xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-6">
-                      {animatedScores.hybrid ? animatedScores.hybrid.toFixed(1) : scoreData.hybridScore}
+                      {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : Math.round(parseFloat(scoreData.hybridScore))}
                     </div>
                     <p className="text-xl text-gray-300 max-w-2xl mx-auto">
                       Your overall hybrid-fitness score on a 0-100 scale
