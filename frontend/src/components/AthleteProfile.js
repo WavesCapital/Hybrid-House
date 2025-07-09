@@ -805,28 +805,28 @@ const AthleteProfile = () => {
 
               {/* Nutrition Plan Section */}
               {nutritionData && (
-                <section ref={nutritionRef} className="space-y-8">
+                <section ref={nutritionRef} className="space-y-6 sm:space-y-8 px-4">
                   <div className="text-center">
-                    <h2 className="text-4xl font-bold text-white mb-4">Nutrition Plan</h2>
-                    <p className="text-xl text-gray-300">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Nutrition Plan</h2>
+                    <p className="text-lg sm:text-xl text-gray-300">
                       Personalized nutrition strategy to fuel your goals
                     </p>
                   </div>
 
                   {/* Calorie Targets */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                     {[
                       { label: 'Lift Day', value: nutritionData['Nutrition Plan'].calorieTargets.liftDayKcal, color: 'text-blue-400' },
                       { label: 'Run Day', value: nutritionData['Nutrition Plan'].calorieTargets.runDayKcal, color: 'text-green-400' },
                       { label: 'Rest Day', value: nutritionData['Nutrition Plan'].calorieTargets.restDayKcal, color: 'text-purple-400' }
                     ].map((target, index) => (
                       <Card key={index} className="bg-gray-800/30 border-gray-700 text-center">
-                        <CardContent className="p-6">
-                          <h3 className="text-lg font-semibold text-white mb-2">{target.label}</h3>
-                          <div className={`text-4xl font-bold ${target.color} mb-1`}>
+                        <CardContent className="p-4 sm:p-6">
+                          <h3 className="text-base sm:text-lg font-semibold text-white mb-2">{target.label}</h3>
+                          <div className={`text-3xl sm:text-4xl font-bold ${target.color} mb-1`}>
                             {target.value}
                           </div>
-                          <p className="text-gray-400">calories</p>
+                          <p className="text-gray-400 text-sm">calories</p>
                         </CardContent>
                       </Card>
                     ))}
@@ -834,21 +834,21 @@ const AthleteProfile = () => {
 
                   {/* Macro Targets */}
                   <Card className="bg-gray-800/30 border-gray-700">
-                    <CardHeader>
-                      <CardTitle className="text-white">Daily Macro Targets</CardTitle>
+                    <CardHeader className="pb-3 sm:pb-4">
+                      <CardTitle className="text-white text-lg sm:text-xl">Daily Macro Targets</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <CardContent className="px-4 sm:px-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                         {[
                           { label: 'Protein', value: nutritionData['Nutrition Plan'].nutritionTargets.macroTargetsG.protein, unit: 'g', color: 'text-green-400' },
                           { label: 'Carbs', value: nutritionData['Nutrition Plan'].nutritionTargets.macroTargetsG.carb, unit: 'g', color: 'text-blue-400' },
                           { label: 'Fat', value: nutritionData['Nutrition Plan'].nutritionTargets.macroTargetsG.fat, unit: 'g', color: 'text-yellow-400' }
                         ].map((macro, index) => (
                           <div key={index} className="text-center">
-                            <div className={`text-5xl font-bold ${macro.color} mb-2`}>
+                            <div className={`text-4xl sm:text-5xl font-bold ${macro.color} mb-2`}>
                               {macro.value}{macro.unit}
                             </div>
-                            <div className="text-gray-300">{macro.label}</div>
+                            <div className="text-gray-300 text-sm sm:text-base">{macro.label}</div>
                           </div>
                         ))}
                       </div>
