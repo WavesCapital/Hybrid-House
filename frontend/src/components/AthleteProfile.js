@@ -83,32 +83,37 @@ const AthleteProfile = () => {
       const progressTimings = {
         score: 55, // 55 seconds
         nutritionPlan: 75, // 75 seconds
-        trainingPlan: 120 // 2 minutes
+        trainingPlan: 240 // 4 minutes
       };
+      
+      // Clear any existing intervals first
+      Object.values(progressIntervals).forEach(interval => {
+        if (interval) clearInterval(interval);
+      });
       
       const newIntervals = {};
       
       Object.entries(progressTimings).forEach(([deliverable, totalTime]) => {
         if (loadingStatus[deliverable]) {
           let progress = 0;
+          const incrementValue = 100 / totalTime; // Smooth linear increment
+          
           const interval = setInterval(() => {
-            progress += (100 / totalTime); // Progress based on actual timing
-            
-            // Cap training plan at 99% if it takes longer than 2 minutes
-            if (deliverable === 'trainingPlan' && progress >= 99) {
-              progress = 99;
-            } else if (progress >= 100) {
-              progress = 100;
-              clearInterval(interval);
-            }
-            
-            // Stop if no longer loading
             if (!loadingStatus[deliverable]) {
               clearInterval(interval);
               return;
             }
             
-            setLoadingProgress(prev => ({ ...prev, [deliverable]: progress }));
+            progress += incrementValue;
+            
+            // Cap training plan at 99% if it takes longer than expected
+            if (deliverable === 'trainingPlan' && progress >= 99) {
+              progress = 99;
+            } else if (progress >= 100) {
+              progress = 100;
+            }
+            
+            setLoadingProgress(prev => ({ ...prev, [deliverable]: Math.min(progress, 100) }));
           }, 1000);
           
           newIntervals[deliverable] = interval;
@@ -117,16 +122,16 @@ const AthleteProfile = () => {
       
       setProgressIntervals(newIntervals);
     }
-  }, [loading, loadingStatus]);
+  }, [loading]);
 
-  // Clean up intervals when component unmounts or loading stops
+  // Clean up intervals when component unmounts
   useEffect(() => {
     return () => {
       Object.values(progressIntervals).forEach(interval => {
         if (interval) clearInterval(interval);
       });
     };
-  }, [progressIntervals]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
