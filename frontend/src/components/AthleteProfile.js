@@ -10,7 +10,7 @@ import {
   CheckCircle, Clock, MapPin, Utensils, Dumbbell, Timer, 
   TrendingUp, Star, Award, BarChart3, Scale, Brain, ExternalLink,
   Flame, Droplets, Moon, Coffee, AlertCircle, ChevronRight, Shield,
-  CheckCircle2, Bed, Smartphone, Info
+  CheckCircle2, Bed, Smartphone, Info, Pill
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
