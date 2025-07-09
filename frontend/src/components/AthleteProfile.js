@@ -28,6 +28,7 @@ const AthleteProfile = () => {
     trainingPlan: 0,
     nutritionPlan: 0
   });
+  const [progressIntervals, setProgressIntervals] = useState({});
   const [responses, setResponses] = useState({
     score: null,
     trainingPlan: null,
