@@ -461,12 +461,12 @@ const AthleteProfile = () => {
 
           {/* Loading Status */}
           {loading && (
-            <div className={`space-y-8 ${hasResults ? 'pt-20' : ''}`}>
+            <div className={`space-y-6 sm:space-y-8 px-4 ${hasResults ? 'pt-20' : ''}`}>
               <div className="text-center">
-                <h2 className="text-3xl font-bold text-white mb-2">AI Analysis in Progress</h2>
-                <p className="text-gray-400">Creating your personalized athletic profile...</p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">AI Analysis in Progress</h2>
+                <p className="text-gray-400 text-sm sm:text-base">Creating your personalized athletic profile...</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-4 sm:gap-6 max-w-4xl mx-auto">
                 <LoadingCard 
                   title="Performance Scores" 
                   isLoading={loadingStatus.score} 
