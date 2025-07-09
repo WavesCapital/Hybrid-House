@@ -161,16 +161,15 @@ const AthleteProfile = () => {
       const results = await Promise.all(promises);
       
       const newResponses = {};
-      const newLoadingStatus = {};
       
       results.forEach(result => {
-        newLoadingStatus[result.deliverable] = false;
         if (result.success) {
           newResponses[result.deliverable] = result.data;
+        } else {
+          console.error(`Failed to fetch ${result.deliverable}:`, result.error);
         }
       });
 
-      setLoadingStatus(newLoadingStatus);
       setResponses(newResponses);
 
     } catch (error) {
