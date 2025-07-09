@@ -535,7 +535,7 @@ const AthleteProfile = () => {
                             <score.icon className="h-8 w-8 text-white" />
                           </div>
                           <div className="text-3xl font-bold text-white mb-2">
-                            {animatedScores[score.key] ? animatedScores[score.key].toFixed(1) : score.value}
+                            {animatedScores[score.key] ? Math.round(animatedScores[score.key]) : Math.round(parseFloat(score.value))}
                           </div>
                           <div className="text-gray-300">{score.label}</div>
                         </CardContent>
