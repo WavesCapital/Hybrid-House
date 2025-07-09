@@ -257,7 +257,7 @@ const AthleteProfile = () => {
     refs[section]?.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const hasResults = responses.score || responses.trainingPlan || responses.nutritionPlan;
+  const hasResults = responses.score && responses.trainingPlan && responses.nutritionPlan;
   const scoreData = responses.score?.[0] || responses.score;
   const trainingData = responses.trainingPlan?.[0] || responses.trainingPlan;
   const nutritionData = responses.nutritionPlan?.[0] || responses.nutritionPlan;
