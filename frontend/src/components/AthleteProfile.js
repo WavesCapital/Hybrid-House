@@ -510,19 +510,19 @@ const AthleteProfile = () => {
               
               {/* Hybrid Score Section */}
               {scoreData && (
-                <section ref={scoreRef} className="space-y-8">
+                <section ref={scoreRef} className="space-y-6 sm:space-y-8 px-4">
                   <div className="text-center">
-                    <h2 className="text-5xl font-bold text-white mb-4">Your Hybrid Score</h2>
-                    <div className="text-8xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-6">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">Your Hybrid Score</h2>
+                    <div className="text-6xl sm:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4 sm:mb-6 leading-tight">
                       {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : Math.round(parseFloat(scoreData.hybridScore))}
                     </div>
-                    <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                    <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto px-4">
                       Your overall hybrid-fitness score on a 0-100 scale
                     </p>
                   </div>
 
                   {/* Score Breakdown */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                     {[
                       { key: 'strength', label: 'Strength', value: scoreData.strengthScore, icon: Dumbbell, color: 'from-orange-500 to-red-500' },
                       { key: 'endurance', label: 'Endurance', value: scoreData.enduranceScore, icon: Heart, color: 'from-green-500 to-emerald-500' },
@@ -530,14 +530,14 @@ const AthleteProfile = () => {
                       { key: 'recovery', label: 'Recovery', value: scoreData.recoveryScore, icon: Moon, color: 'from-purple-500 to-pink-500' }
                     ].map((score) => (
                       <Card key={score.key} className="bg-gray-800/50 border-gray-700 text-center hover:scale-105 transition-transform">
-                        <CardContent className="p-6">
-                          <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${score.color} flex items-center justify-center`}>
-                            <score.icon className="h-8 w-8 text-white" />
+                        <CardContent className="p-3 sm:p-6">
+                          <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-4 rounded-full bg-gradient-to-r ${score.color} flex items-center justify-center`}>
+                            <score.icon className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                           </div>
-                          <div className="text-3xl font-bold text-white mb-2">
+                          <div className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">
                             {animatedScores[score.key] ? Math.round(animatedScores[score.key]) : Math.round(parseFloat(score.value))}
                           </div>
-                          <div className="text-gray-300">{score.label}</div>
+                          <div className="text-sm sm:text-base text-gray-300">{score.label}</div>
                         </CardContent>
                       </Card>
                     ))}
