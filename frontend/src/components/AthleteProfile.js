@@ -86,6 +86,8 @@ const AthleteProfile = () => {
         trainingPlan: 120 // 2 minutes
       };
       
+      const newIntervals = {};
+      
       Object.entries(progressTimings).forEach(([deliverable, totalTime]) => {
         if (loadingStatus[deliverable]) {
           let progress = 0;
@@ -97,6 +99,7 @@ const AthleteProfile = () => {
               progress = 99;
             } else if (progress >= 100) {
               progress = 100;
+              clearInterval(interval);
             }
             
             // Stop if no longer loading
@@ -107,10 +110,23 @@ const AthleteProfile = () => {
             
             setLoadingProgress(prev => ({ ...prev, [deliverable]: progress }));
           }, 1000);
+          
+          newIntervals[deliverable] = interval;
         }
       });
+      
+      setProgressIntervals(newIntervals);
     }
   }, [loading, loadingStatus]);
+
+  // Clean up intervals when component unmounts or loading stops
+  useEffect(() => {
+    return () => {
+      Object.values(progressIntervals).forEach(interval => {
+        if (interval) clearInterval(interval);
+      });
+    };
+  }, [progressIntervals]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
