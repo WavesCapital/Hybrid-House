@@ -27,7 +27,7 @@ const AthleteProfile = () => {
 
   const callWebhook = async (athleteProfileData, deliverable) => {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 150000); // 150 seconds timeout
+    const timeoutId = setTimeout(() => controller.abort(), 240000); // 4 minutes timeout
 
     try {
       const response = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
@@ -53,7 +53,7 @@ const AthleteProfile = () => {
     } catch (error) {
       clearTimeout(timeoutId);
       if (error.name === 'AbortError') {
-        throw new Error(`Request timeout for ${deliverable}`);
+        throw new Error(`Request timeout for ${deliverable} (4 minutes)`);
       }
       throw error;
     }
