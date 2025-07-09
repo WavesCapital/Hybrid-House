@@ -144,6 +144,11 @@ const AthleteProfile = () => {
       trainingPlan: 0,
       nutritionPlan: 0
     });
+    // Clear any existing intervals
+    Object.values(progressIntervals).forEach(interval => {
+      if (interval) clearInterval(interval);
+    });
+    setProgressIntervals({});
 
     try {
       let athleteProfileData;
