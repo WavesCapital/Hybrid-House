@@ -354,40 +354,40 @@ const AthleteProfile = () => {
       {hasResults && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-800">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between h-16">
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            <div className="flex items-center justify-between h-14 sm:h-16">
+              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
                 Athlete Profile
               </h1>
               <div className="flex space-x-1">
                 <button
                   onClick={() => scrollToSection('score')}
-                  className={`px-4 py-2 rounded-lg transition-all ${
+                  className={`px-2 sm:px-4 py-1 sm:py-2 rounded-lg transition-all text-xs sm:text-sm ${
                     activeTab === 'score' 
                       ? 'bg-blue-600 text-white' 
                       : 'text-gray-300 hover:text-white hover:bg-gray-800'
                   }`}
                 >
-                  Hybrid Score
+                  Score
                 </button>
                 <button
                   onClick={() => scrollToSection('training')}
-                  className={`px-4 py-2 rounded-lg transition-all ${
+                  className={`px-2 sm:px-4 py-1 sm:py-2 rounded-lg transition-all text-xs sm:text-sm ${
                     activeTab === 'training' 
                       ? 'bg-green-600 text-white' 
                       : 'text-gray-300 hover:text-white hover:bg-gray-800'
                   }`}
                 >
-                  Training Plan
+                  Training
                 </button>
                 <button
                   onClick={() => scrollToSection('nutrition')}
-                  className={`px-4 py-2 rounded-lg transition-all ${
+                  className={`px-2 sm:px-4 py-1 sm:py-2 rounded-lg transition-all text-xs sm:text-sm ${
                     activeTab === 'nutrition' 
                       ? 'bg-purple-600 text-white' 
                       : 'text-gray-300 hover:text-white hover:bg-gray-800'
                   }`}
                 >
-                  Nutrition Plan
+                  Nutrition
                 </button>
               </div>
             </div>
