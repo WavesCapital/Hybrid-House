@@ -399,56 +399,56 @@ const AthleteProfile = () => {
         <div className="max-w-6xl mx-auto">
           {/* Header - Only show when no results */}
           {!hasResults && (
-            <div className="text-center mb-12">
-              <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400 bg-clip-text text-transparent">
+            <div className="text-center mb-8 sm:mb-12 px-4">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400 bg-clip-text text-transparent leading-tight">
                 Athlete Profile
               </h1>
-              <p className="text-xl text-gray-300 mb-8">
+              <p className="text-lg sm:text-xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto">
                 Unlock your athletic potential with personalized insights
               </p>
               
               {/* Create Profile Button */}
-              <div className="mb-8">
+              <div className="mb-6 sm:mb-8">
                 <a
                   href="https://chatgpt.com/g/g-686e85594828819185c3264c65086ae2-hybrid-house-interviewer"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="inline-block px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base"
                 >
                   Create Profile
                 </a>
               </div>
 
               {/* Input Form */}
-              <Card className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-gray-700 backdrop-blur-sm shadow-2xl">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-white flex items-center justify-center gap-3">
-                    <Target className="h-6 w-6" />
+              <Card className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-gray-700 backdrop-blur-sm shadow-2xl max-w-4xl mx-auto">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl sm:text-2xl text-white flex items-center justify-center gap-2 sm:gap-3">
+                    <Target className="h-5 w-5 sm:h-6 sm:w-6" />
                     Paste your athlete profile
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                <CardContent className="px-4 sm:px-6">
+                  <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                     <Textarea
                       placeholder="Paste your athlete profile here..."
                       value={athleteProfile}
                       onChange={(e) => setAthleteProfile(e.target.value)}
-                      className="min-h-[140px] bg-gray-800/70 border-gray-600 text-white placeholder-gray-400 resize-none focus:ring-2 focus:ring-blue-500 transition-all"
+                      className="min-h-[120px] sm:min-h-[140px] bg-gray-800/70 border-gray-600 text-white placeholder-gray-400 resize-none focus:ring-2 focus:ring-blue-500 transition-all text-sm sm:text-base"
                       disabled={loading}
                     />
                     <Button 
                       type="submit" 
-                      className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white font-semibold py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                      className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white font-semibold py-3 sm:py-4 text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300"
                       disabled={loading || !athleteProfile.trim()}
                     >
                       {loading ? (
                         <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          <Loader2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                           Analyzing Profile...
                         </>
                       ) : (
                         <>
-                          <Zap className="mr-2 h-5 w-5" />
+                          <Zap className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                           Generate Athletic Analysis
                         </>
                       )}
