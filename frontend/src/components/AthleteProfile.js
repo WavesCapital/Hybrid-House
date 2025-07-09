@@ -76,24 +76,34 @@ const AthleteProfile = () => {
     }
   };
 
-  // Progress bar animation for 90 seconds
+  // Progress bar animation based on actual response times
   useEffect(() => {
     if (loading) {
-      const deliverables = ['score', 'trainingPlan', 'nutritionPlan'];
+      const progressTimings = {
+        score: 55, // 55 seconds
+        nutritionPlan: 75, // 75 seconds
+        trainingPlan: 120 // 2 minutes
+      };
       
-      deliverables.forEach(deliverable => {
+      Object.entries(progressTimings).forEach(([deliverable, totalTime]) => {
         if (loadingStatus[deliverable]) {
           let progress = 0;
           const interval = setInterval(() => {
-            progress += (100 / 90); // 90 seconds total
-            if (progress >= 100) {
+            progress += (100 / totalTime); // Progress based on actual timing
+            
+            // Cap training plan at 99% if it takes longer than 2 minutes
+            if (deliverable === 'trainingPlan' && progress >= 99) {
+              progress = 99;
+            } else if (progress >= 100) {
               progress = 100;
-              clearInterval(interval);
             }
+            
+            // Stop if no longer loading
             if (!loadingStatus[deliverable]) {
               clearInterval(interval);
               return;
             }
+            
             setLoadingProgress(prev => ({ ...prev, [deliverable]: progress }));
           }, 1000);
         }
