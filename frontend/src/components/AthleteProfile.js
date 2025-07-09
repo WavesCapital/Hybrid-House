@@ -621,49 +621,49 @@ const AthleteProfile = () => {
 
               {/* Training Plan Section */}
               {trainingData && (
-                <section ref={trainingRef} className="space-y-8">
+                <section ref={trainingRef} className="space-y-6 sm:space-y-8 px-4">
                   <div className="text-center">
-                    <h2 className="text-4xl font-bold text-white mb-4">Training Plan</h2>
-                    <p className="text-xl text-gray-300">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Training Plan</h2>
+                    <p className="text-lg sm:text-xl text-gray-300">
                       {trainingData['Training Plan'].meta.title}
                     </p>
-                    <p className="text-gray-400 mt-2">
+                    <p className="text-gray-400 mt-2 text-sm sm:text-base">
                       {trainingData['Training Plan'].meta.overview}
                     </p>
                   </div>
 
                   {/* Training Overview Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     <Card className="bg-gray-800/30 border-gray-700">
-                      <CardHeader>
-                        <CardTitle className="text-white flex items-center space-x-2">
-                          <Target className="h-5 w-5" />
+                      <CardHeader className="pb-3 sm:pb-4">
+                        <CardTitle className="text-white flex items-center space-x-2 text-lg sm:text-xl">
+                          <Target className="h-4 w-4 sm:h-5 sm:w-5" />
                           <span>Goals</span>
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="space-y-3">
+                      <CardContent className="space-y-3 px-4 sm:px-6">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-400 mb-1">Primary</h4>
-                          <p className="text-white">{trainingData['Training Plan'].goals.primary}</p>
+                          <h4 className="text-xs sm:text-sm font-medium text-gray-400 mb-1">Primary</h4>
+                          <p className="text-white text-sm sm:text-base">{trainingData['Training Plan'].goals.primary}</p>
                         </div>
                         <div>
-                          <h4 className="text-sm font-medium text-gray-400 mb-1">Secondary</h4>
-                          <p className="text-white">{trainingData['Training Plan'].goals.secondary}</p>
+                          <h4 className="text-xs sm:text-sm font-medium text-gray-400 mb-1">Secondary</h4>
+                          <p className="text-white text-sm sm:text-base">{trainingData['Training Plan'].goals.secondary}</p>
                         </div>
                       </CardContent>
                     </Card>
 
                     <Card className="bg-gray-800/30 border-gray-700">
-                      <CardHeader>
-                        <CardTitle className="text-white flex items-center space-x-2">
-                          <MapPin className="h-5 w-5" />
+                      <CardHeader className="pb-3 sm:pb-4">
+                        <CardTitle className="text-white flex items-center space-x-2 text-lg sm:text-xl">
+                          <MapPin className="h-4 w-4 sm:h-5 sm:w-5" />
                           <span>Equipment</span>
                         </CardTitle>
                       </CardHeader>
-                      <CardContent>
-                        <div className="flex flex-wrap gap-2">
+                      <CardContent className="px-4 sm:px-6">
+                        <div className="flex flex-wrap gap-1 sm:gap-2">
                           {trainingData['Training Plan'].equipment.items.map((item, index) => (
-                            <Badge key={index} variant="outline" className="text-blue-400 border-blue-400">
+                            <Badge key={index} variant="outline" className="text-blue-400 border-blue-400 text-xs">
                               {item}
                             </Badge>
                           ))}
