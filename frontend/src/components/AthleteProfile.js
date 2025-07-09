@@ -164,12 +164,18 @@ const AthleteProfile = () => {
       const promises = deliverables.map(async (deliverable) => {
         try {
           const data = await callWebhook(athleteProfileData, deliverable);
-          // Update loading status immediately when complete
+          // Clear interval and set progress to 100% when complete
+          if (progressIntervals[deliverable]) {
+            clearInterval(progressIntervals[deliverable]);
+          }
           setLoadingStatus(prev => ({ ...prev, [deliverable]: false }));
           setLoadingProgress(prev => ({ ...prev, [deliverable]: 100 }));
           return { deliverable, data, success: true };
         } catch (error) {
           console.error(`Error fetching ${deliverable}:`, error);
+          if (progressIntervals[deliverable]) {
+            clearInterval(progressIntervals[deliverable]);
+          }
           setLoadingStatus(prev => ({ ...prev, [deliverable]: false }));
           return { deliverable, error: error.message, success: false };
         }
