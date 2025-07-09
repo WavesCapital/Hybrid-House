@@ -252,47 +252,57 @@ const AthleteProfile = () => {
   const trainingData = responses.trainingPlan?.[0] || responses.trainingPlan;
   const nutritionData = responses.nutritionPlan?.[0] || responses.nutritionPlan;
 
-  const LoadingCard = ({ title, isLoading, isComplete, icon: Icon, deliverable }) => (
-    <div className="flex items-center space-x-4 p-6 bg-gray-800/30 rounded-xl border border-gray-700">
-      <div className={`p-3 rounded-full transition-all duration-500 ${
-        isLoading ? 'bg-blue-500/20 animate-pulse' : 
-        isComplete ? 'bg-green-500/20' : 'bg-gray-600/20'
-      }`}>
-        {isLoading ? (
-          <Loader2 className="h-6 w-6 animate-spin text-blue-400" />
-        ) : isComplete ? (
-          <CheckCircle className="h-6 w-6 text-green-400" />
-        ) : (
-          <Icon className="h-6 w-6 text-gray-400" />
-        )}
-      </div>
-      <div className="flex-1">
-        <h3 className={`font-semibold transition-colors duration-300 ${
-          isComplete ? 'text-green-400' : 
-          isLoading ? 'text-blue-400' : 'text-gray-400'
+  const LoadingCard = ({ title, isLoading, isComplete, icon: Icon, deliverable }) => {
+    const progress = loadingProgress[deliverable] || 0;
+    const showCheckmark = isComplete && progress === 100;
+    
+    return (
+      <div className="flex items-center space-x-4 p-6 bg-gray-800/30 rounded-xl border border-gray-700">
+        <div className={`p-3 rounded-full transition-all duration-500 ${
+          showCheckmark ? 'bg-green-500/20 scale-110' : 
+          isLoading ? 'bg-blue-500/20 animate-pulse' : 'bg-gray-600/20'
         }`}>
-          {title}
-        </h3>
-        <div className="w-full bg-gray-700 rounded-full h-3 mt-2">
-          <div 
-            className={`h-3 rounded-full transition-all duration-300 ${
-              isComplete ? 'bg-green-400' : 
-              isLoading ? 'bg-blue-400' : 'bg-gray-600'
-            }`}
-            style={{ 
-              width: isComplete ? '100%' : 
-                     isLoading ? `${loadingProgress[deliverable]}%` : '0%' 
-            }}
-          />
+          {isLoading && progress < 100 ? (
+            <Loader2 className="h-6 w-6 animate-spin text-blue-400" />
+          ) : showCheckmark ? (
+            <CheckCircle className="h-6 w-6 text-green-400 animate-pulse" />
+          ) : (
+            <Icon className="h-6 w-6 text-gray-400" />
+          )}
         </div>
-        {isLoading && (
-          <div className="text-xs text-gray-400 mt-1">
-            {Math.round(loadingProgress[deliverable])}% complete
+        <div className="flex-1">
+          <h3 className={`font-semibold transition-colors duration-300 ${
+            showCheckmark ? 'text-green-400' : 
+            isLoading ? 'text-blue-400' : 'text-gray-400'
+          }`}>
+            {title}
+          </h3>
+          <div className="w-full bg-gray-700 rounded-full h-3 mt-2 overflow-hidden">
+            <div 
+              className={`h-3 rounded-full transition-all duration-500 ${
+                showCheckmark ? 'bg-green-400' : 
+                isLoading ? 'bg-blue-400' : 'bg-gray-600'
+              }`}
+              style={{ 
+                width: `${Math.min(progress, 100)}%`,
+                transition: showCheckmark ? 'width 0.5s ease-out, background-color 0.5s ease-out' : 'width 0.3s ease-out'
+              }}
+            />
           </div>
-        )}
+          {isLoading && progress < 100 && (
+            <div className="text-xs text-gray-400 mt-1">
+              {Math.round(progress)}% complete
+            </div>
+          )}
+          {showCheckmark && (
+            <div className="text-xs text-green-400 mt-1 animate-fade-in">
+              ✓ Complete
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const DailyFlowCard = ({ day, actions }) => (
     <Card className="bg-gray-800/50 border-gray-600">
