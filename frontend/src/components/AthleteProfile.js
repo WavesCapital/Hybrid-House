@@ -10,7 +10,7 @@ import {
   Loader2, Trophy, Target, Calendar, Apple, Zap, Heart, Activity, 
   CheckCircle, Clock, MapPin, Utensils, Dumbbell, Timer, 
   TrendingUp, Star, Award, BarChart3, PieChart, LineChart,
-  Flame, Droplets, Scale, Brain, Moon, Sun, Coffee, Pill
+  Flame, Droplets, Scale, Brain, Moon, Sun, Coffee, Pill, AlertCircle
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
