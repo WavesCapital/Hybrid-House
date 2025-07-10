@@ -444,20 +444,60 @@ const AthleteProfile = () => {
                       <CardContent>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                           {[
-                            { label: 'Body Weight', value: data.scoreInputsUsed.bodyWeightKg, unit: 'kg', color: 'text-blue-400' },
-                            { label: 'Body Fat', value: data.scoreInputsUsed.bodyFatPercent, unit: '%', color: 'text-green-400' },
-                            { label: 'HRV', value: data.scoreInputsUsed.hrvMs, unit: 'ms', color: 'text-purple-400' },
-                            { label: 'Resting HR', value: data.scoreInputsUsed.restingHrBpm, unit: 'bpm', color: 'text-red-400' },
-                            { label: 'VO2 Max', value: data.scoreInputsUsed.vo2Max, unit: 'ml/kg/min', color: 'text-orange-400' },
-                            { label: 'Mile Time', value: Math.floor(data.scoreInputsUsed.mileSeconds / 60), unit: 'min', color: 'text-cyan-400' },
-                            { label: 'Bench 1RM', value: data.scoreInputsUsed.bench1RmKg || 'N/A', unit: 'kg', color: 'text-yellow-400' },
-                            { label: 'Squat 1RM', value: data.scoreInputsUsed.squat1RmKg || 'N/A', unit: 'kg', color: 'text-pink-400' }
+                            { 
+                              label: 'Body Weight', 
+                              value: Math.round(data.scoreInputsUsed.bodyWeightKg * 2.20462), 
+                              unit: 'lbs', 
+                              color: 'text-blue-400' 
+                            },
+                            { 
+                              label: 'Body Fat', 
+                              value: data.scoreInputsUsed.bodyFatPercent, 
+                              unit: '%', 
+                              color: 'text-green-400' 
+                            },
+                            { 
+                              label: 'HRV', 
+                              value: data.scoreInputsUsed.hrvMs, 
+                              unit: 'ms', 
+                              color: 'text-purple-400' 
+                            },
+                            { 
+                              label: 'Resting HR', 
+                              value: data.scoreInputsUsed.restingHrBpm, 
+                              unit: 'bpm', 
+                              color: 'text-red-400' 
+                            },
+                            { 
+                              label: 'VO2 Max', 
+                              value: data.scoreInputsUsed.vo2Max, 
+                              unit: 'ml/kg/min', 
+                              color: 'text-orange-400' 
+                            },
+                            { 
+                              label: 'Mile Time', 
+                              value: `${Math.floor(data.scoreInputsUsed.mileSeconds / 60)}:${String(Math.round(data.scoreInputsUsed.mileSeconds % 60)).padStart(2, '0')}`, 
+                              unit: '', 
+                              color: 'text-cyan-400' 
+                            },
+                            { 
+                              label: 'Bench 1RM', 
+                              value: data.scoreInputsUsed.bench1RmKg ? Math.round(data.scoreInputsUsed.bench1RmKg * 2.20462) : 'N/A', 
+                              unit: data.scoreInputsUsed.bench1RmKg ? 'lbs' : '', 
+                              color: 'text-yellow-400' 
+                            },
+                            { 
+                              label: 'Squat 1RM', 
+                              value: data.scoreInputsUsed.squat1RmKg ? Math.round(data.scoreInputsUsed.squat1RmKg * 2.20462) : 'N/A', 
+                              unit: data.scoreInputsUsed.squat1RmKg ? 'lbs' : '', 
+                              color: 'text-pink-400' 
+                            }
                           ].map((metric, index) => (
                             <div key={index} className="bg-gray-800/30 rounded-lg p-3 sm:p-4 text-center">
                               <div className={`text-lg sm:text-xl font-bold ${metric.color} mb-1`}>
                                 {metric.value}
                               </div>
-                              <div className="text-xs text-gray-400">{metric.unit}</div>
+                              {metric.unit && <div className="text-xs text-gray-400">{metric.unit}</div>}
                               <div className="text-xs text-gray-300 mt-1">{metric.label}</div>
                             </div>
                           ))}
