@@ -1,20 +1,23 @@
-<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="800" height="800" fill="#0A0B0C"/>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0A0B0C"/>
   
   <!-- House Icon -->
-  <g transform="translate(400, 200)">
-    <!-- Roof -->
-    <path d="M-120 0 L0 -80 L120 0 L120 20 L100 20 L100 0 L20 0 L20 80 L-20 80 L-20 0 L-100 0 L-100 20 L-120 20 Z" fill="white"/>
-    
+  <g transform="translate(600, 180)">
+    <!-- Main house shape -->
+    <path d="M-80 40 L0 -40 L80 40 L80 120 L-80 120 Z" fill="white"/>
+    <!-- Roof peak -->
+    <path d="M-80 40 L0 -40 L80 40 L60 40 L0 -20 L-60 40 Z" fill="white"/>
     <!-- Door -->
-    <rect x="-30" y="20" width="60" height="60" fill="#0A0B0C"/>
-    <rect x="-25" y="25" width="50" height="50" fill="white"/>
-    <rect x="-20" y="30" width="40" height="40" fill="#0A0B0C"/>
+    <rect x="-20" y="60" width="40" height="60" fill="#0A0B0C"/>
+    <!-- Door frame -->
+    <rect x="-15" y="65" width="30" height="50" fill="white"/>
+    <rect x="-10" y="70" width="20" height="40" fill="#0A0B0C"/>
   </g>
   
-  <!-- Text -->
-  <g transform="translate(400, 400)">
-    <text x="0" y="0" font-family="Inter, Arial, sans-serif" font-size="120" font-weight="800" fill="white" text-anchor="middle">HYBRID</text>
-    <text x="0" y="140" font-family="Inter, Arial, sans-serif" font-size="120" font-weight="800" fill="white" text-anchor="middle">HOUSE</text>
+  <!-- Brand Text -->
+  <g transform="translate(600, 380)">
+    <text x="0" y="0" font-family="Inter, Arial, sans-serif" font-size="90" font-weight="800" fill="white" text-anchor="middle" letter-spacing="-2px">HYBRID</text>
+    <text x="0" y="100" font-family="Inter, Arial, sans-serif" font-size="90" font-weight="800" fill="white" text-anchor="middle" letter-spacing="-2px">HOUSE</text>
   </g>
 </svg>
