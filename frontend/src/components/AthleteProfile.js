@@ -750,8 +750,8 @@ const AthleteProfile = () => {
                       {data.tips.map((tip, index) => (
                         <div key={index} className="flex items-start space-x-3">
                           <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ 
-                            background: 'rgba(133, 226, 110, 0.2)',
-                            border: '1px solid #85E26E' 
+                            background: 'rgba(121, 207, 247, 0.2)',
+                            border: '1px solid #79CFF7' 
                           }}>
                             <span className="text-xs font-bold neo-primary">{index + 1}</span>
                           </div>
