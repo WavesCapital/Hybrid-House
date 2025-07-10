@@ -674,13 +674,13 @@ const AthleteProfile = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     {data.balanceBonus > 0 && (
                       <div className="rounded-xl p-6" style={{ 
-                        background: 'linear-gradient(135deg, rgba(133, 226, 110, 0.1), rgba(121, 207, 247, 0.1))',
-                        border: '1px solid rgba(133, 226, 110, 0.3)'
+                        background: 'linear-gradient(135deg, rgba(121, 207, 247, 0.1), rgba(133, 226, 110, 0.1))',
+                        border: '1px solid rgba(121, 207, 247, 0.3)'
                       }}>
                         <div className="flex items-center space-x-3 mb-3">
                           <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ 
-                            background: 'rgba(133, 226, 110, 0.2)',
-                            border: '2px solid #85E26E' 
+                            background: 'rgba(121, 207, 247, 0.2)',
+                            border: '2px solid #79CFF7' 
                           }}>
                             <Trophy className="h-5 w-5 neo-primary" />
                           </div>
