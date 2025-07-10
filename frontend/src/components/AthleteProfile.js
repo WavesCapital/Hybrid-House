@@ -196,9 +196,9 @@ const AthleteProfile = () => {
     // Component scores
     const scores = [
       { label: 'Strength', value: Math.round(parseFloat(data.strengthScore)), color: '#79CFF7' },
-      { label: 'Endurance', value: Math.round(parseFloat(data.enduranceScore)), color: '#85E26E' },
-      { label: 'Body Comp', value: Math.round(parseFloat(data.bodyCompScore)), color: '#8D5CFF' },
-      { label: 'Recovery', value: Math.round(parseFloat(data.recoveryScore)), color: '#79CFF7' }
+      { label: 'Speed', value: Math.round(parseFloat(data.speedScore)), color: '#85E26E' },
+      { label: 'VO₂', value: Math.round(parseFloat(data.vo2Score)), color: '#8D5CFF' },
+      { label: 'Endurance', value: Math.round(parseFloat(data.enduranceScore)), color: '#79CFF7' }
     ];
     
     const startX = 150;
