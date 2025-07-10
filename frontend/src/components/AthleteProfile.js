@@ -367,7 +367,7 @@ const AthleteProfile = () => {
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between h-14 sm:h-16">
               <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                Athlete Profile
+                Hybrid House
               </h1>
               <div className="flex space-x-2 sm:space-x-3">
                 <Button
