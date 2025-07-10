@@ -74,10 +74,10 @@ const AthleteProfile = () => {
       clearInterval(progressInterval);
     }
 
-    // Start progress animation for 55 seconds
+    // Start progress animation for 3 seconds (shortened for testing)
     let progress = 0;
     const interval = setInterval(() => {
-      progress += (100 / 55); // 55 seconds for score
+      progress += (100 / 3); // 3 seconds for testing
       if (progress >= 100) {
         progress = 100;
         clearInterval(interval);
@@ -87,22 +87,15 @@ const AthleteProfile = () => {
     setProgressInterval(interval);
 
     try {
-      let athleteProfileData;
-      try {
-        athleteProfileData = JSON.parse(athleteProfile);
-      } catch {
-        athleteProfileData = athleteProfile;
-      }
-
-      // Only call score webhook
-      const data = await callWebhook(athleteProfileData, 'score');
+      // Use mock data for testing instead of API call
+      await new Promise(resolve => setTimeout(resolve, 3000)); // Simulate 3 second delay
       
       // Clear interval and set progress to 100%
       if (interval) {
         clearInterval(interval);
       }
       setLoadingProgress(100);
-      setScoreData(data);
+      setScoreData(mockAthleteResponse[0]); // Use mock data
 
     } catch (error) {
       console.error('Error:', error);
