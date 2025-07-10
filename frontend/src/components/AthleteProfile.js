@@ -159,46 +159,43 @@ const AthleteProfile = () => {
     canvas.width = 1200;
     canvas.height = 600;
     
-    // Create gradient background
+    // Create gradient background matching Neo design
     const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradient.addColorStop(0, '#1a1a2e');
-    gradient.addColorStop(0.5, '#16213e');
-    gradient.addColorStop(1, '#0f0f0f');
+    gradient.addColorStop(0, '#0A0B0C');
+    gradient.addColorStop(0.5, '#111314');
+    gradient.addColorStop(1, '#0A0B0C');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Add some texture/noise
+    // Add subtle texture
     for (let i = 0; i < 800; i++) {
-      ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.02})`;
+      ctx.fillStyle = `rgba(133, 226, 110, ${Math.random() * 0.02})`;
       ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 1, 1);
     }
     
     // Title
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 48px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.fillStyle = '#D9D9D9';
+    ctx.font = 'bold 48px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('My Hybrid Athlete Score', canvas.width / 2, 80);
     
-    // Main score
+    // Main score with Neo green
     const hybridScore = Math.round(parseFloat(data.hybridScore));
-    const scoreGradient = ctx.createLinearGradient(0, 120, 0, 220);
-    scoreGradient.addColorStop(0, '#3b82f6');
-    scoreGradient.addColorStop(1, '#8b5cf6');
-    ctx.fillStyle = scoreGradient;
-    ctx.font = 'bold 120px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.fillStyle = '#85E26E';
+    ctx.font = 'bold 120px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
     ctx.fillText(hybridScore.toString(), canvas.width / 2, 220);
     
     // Subtitle
-    ctx.fillStyle = '#9ca3af';
-    ctx.font = '24px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.fillStyle = '#9FA1A3';
+    ctx.font = '24px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
     ctx.fillText('Overall hybrid-fitness score', canvas.width / 2, 260);
     
     // Component scores
     const scores = [
-      { label: 'Strength', value: Math.round(parseFloat(data.strengthScore)), color: '#f97316' },
-      { label: 'Endurance', value: Math.round(parseFloat(data.enduranceScore)), color: '#10b981' },
-      { label: 'Body Comp', value: Math.round(parseFloat(data.bodyCompScore)), color: '#3b82f6' },
-      { label: 'Recovery', value: Math.round(parseFloat(data.recoveryScore)), color: '#8b5cf6' }
+      { label: 'Strength', value: Math.round(parseFloat(data.strengthScore)), color: '#79CFF7' },
+      { label: 'Endurance', value: Math.round(parseFloat(data.enduranceScore)), color: '#85E26E' },
+      { label: 'Body Comp', value: Math.round(parseFloat(data.bodyCompScore)), color: '#8D5CFF' },
+      { label: 'Recovery', value: Math.round(parseFloat(data.recoveryScore)), color: '#79CFF7' }
     ];
     
     const startX = 150;
@@ -211,24 +208,24 @@ const AthleteProfile = () => {
       // Score circle background
       ctx.beginPath();
       ctx.arc(x, y, 60, 0, 2 * Math.PI);
-      ctx.fillStyle = 'rgba(55, 65, 81, 0.8)';
+      ctx.fillStyle = '#111314';
       ctx.fill();
       
       // Score value
       ctx.fillStyle = score.color;
-      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.font = 'bold 36px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(score.value.toString(), x, y + 12);
       
       // Score label
-      ctx.fillStyle = '#d1d5db';
-      ctx.font = '18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.fillStyle = '#9FA1A3';
+      ctx.font = '18px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
       ctx.fillText(score.label, x, y + 90);
     });
     
     // Branding
-    ctx.fillStyle = '#4b5563';
-    ctx.font = '20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.fillStyle = '#6B6E71';
+    ctx.font = '20px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('Get your score at HybridHouse.ai', canvas.width / 2, canvas.height - 30);
     
@@ -270,7 +267,7 @@ const AthleteProfile = () => {
   };
 
   const showShareOptions = (imageDataUrl, shareText) => {
-    // Create a temporary modal with share options
+    // Create a temporary modal with share options using Neo design
     const modal = document.createElement('div');
     modal.style.cssText = `
       position: fixed;
@@ -278,7 +275,7 @@ const AthleteProfile = () => {
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.7);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -287,12 +284,14 @@ const AthleteProfile = () => {
     
     const content = document.createElement('div');
     content.style.cssText = `
-      background: #1f2937;
-      padding: 24px;
-      border-radius: 12px;
-      max-width: 500px;
+      background: #111314;
+      padding: 32px;
+      border-radius: 16px;
+      max-width: 480px;
       width: 90%;
       text-align: center;
+      border: 1px solid #1A1C1D;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.8);
     `;
     
     const encodedText = encodeURIComponent(shareText);
@@ -316,19 +315,19 @@ const AthleteProfile = () => {
     };
     
     content.innerHTML = `
-      <h3 style="color: white; margin-bottom: 20px;">Share Your Hybrid Score</h3>
-      <div style="margin-bottom: 20px;">
-        <img src="${imageDataUrl}" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Hybrid Score" />
+      <h3 style="color: #D9D9D9; margin-bottom: 24px; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 24px; font-weight: 600;">Share Your Hybrid Score</h3>
+      <div style="margin-bottom: 24px;">
+        <img src="${imageDataUrl}" style="max-width: 100%; height: auto; border-radius: 12px; border: 1px solid #1A1C1D;" alt="Hybrid Score" />
       </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px;">
-        <a href="https://twitter.com/intent/tweet?text=${encodedText}" target="_blank" style="background: #1da1f2; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px;">Twitter</a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}" target="_blank" style="background: #4267B2; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px;">Facebook</a>
-        <a href="instagram://library?AssetPath=${encodeURIComponent(imageDataUrl)}" style="background: #E4405F; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px;">Instagram</a>
-        <button id="copyImageBtn" style="background: #6b7280; color: white; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;">Copy Image</button>
-        <button onclick="navigator.clipboard.writeText('${shareText.replace(/'/g, "\\'")}'); alert('Text copied to clipboard!')" style="background: #374151; color: white; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;">Copy Text</button>
-        <a href="${imageDataUrl}" download="hybrid-score.png" style="background: #10b981; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px;">Download</a>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 12px; margin-bottom: 24px;">
+        <a href="https://twitter.com/intent/tweet?text=${encodedText}" target="_blank" style="background: #79CFF7; color: #0A0B0C; padding: 12px 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Twitter</a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}" target="_blank" style="background: #8D5CFF; color: #D9D9D9; padding: 12px 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Facebook</a>
+        <a href="instagram://library?AssetPath=${encodeURIComponent(imageDataUrl)}" style="background: #85E26E; color: #0A0B0C; padding: 12px 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Instagram</a>
+        <button id="copyImageBtn" style="background: #1A1C1D; color: #9FA1A3; padding: 12px 8px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Copy Image</button>
+        <button onclick="navigator.clipboard.writeText('${shareText.replace(/'/g, "\\'")}'); alert('Text copied to clipboard!')" style="background: #1A1C1D; color: #9FA1A3; padding: 12px 8px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Copy Text</button>
+        <a href="${imageDataUrl}" download="hybrid-score.png" style="background: #85E26E; color: #0A0B0C; padding: 12px 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Download</a>
       </div>
-      <button onclick="this.parentElement.parentElement.remove()" style="background: #374151; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer;">Close</button>
+      <button onclick="this.parentElement.parentElement.remove()" style="background: transparent; color: #6B6E71; padding: 8px 16px; border-radius: 8px; border: 2px solid #6B6E71; cursor: pointer; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Close</button>
     `;
     
     modal.appendChild(content);
@@ -350,7 +349,11 @@ const AthleteProfile = () => {
   const showCheckmark = !loading && loadingProgress === 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white">
+    <div className="min-h-screen" style={{ 
+      background: '#0A0B0C',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+      color: '#D9D9D9'
+    }}>
       <style jsx>{`
         @keyframes fade-in {
           0% { opacity: 0; transform: translateY(10px); }
@@ -359,33 +362,116 @@ const AthleteProfile = () => {
         .animate-fade-in {
           animation: fade-in 0.5s ease-out;
         }
+        .neo-card {
+          background: #111314;
+          border: 1px solid #1A1C1D;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+        }
+        .neo-surface-2 {
+          background: #1A1C1D;
+        }
+        .neo-text-primary {
+          color: #D9D9D9;
+        }
+        .neo-text-secondary {
+          color: #9FA1A3;
+        }
+        .neo-text-muted {
+          color: #6B6E71;
+        }
+        .neo-primary {
+          color: #85E26E;
+        }
+        .neo-cyan {
+          color: #79CFF7;
+        }
+        .neo-violet {
+          color: #8D5CFF;
+        }
+        .neo-btn-primary {
+          background: #85E26E;
+          color: #0A0B0C;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 20px;
+          font-weight: 600;
+          transition: all 200ms cubic-bezier(0.4,0,0.2,1);
+          box-shadow: 0 0 8px rgba(133, 226, 110, 0.35);
+        }
+        .neo-btn-primary:hover {
+          background: #69B258;
+          transform: translateY(-1px);
+        }
+        .neo-btn-secondary {
+          background: transparent;
+          color: #85E26E;
+          border: 2px solid #85E26E;
+          border-radius: 8px;
+          padding: 10px 18px;
+          font-weight: 600;
+          transition: all 200ms cubic-bezier(0.4,0,0.2,1);
+        }
+        .neo-btn-secondary:hover {
+          background: rgba(133, 226, 110, 0.1);
+        }
+        .neo-input {
+          background: #1A1C1D;
+          border: 1px solid #1A1C1D;
+          border-radius: 8px;
+          color: #D9D9D9;
+          transition: all 200ms cubic-bezier(0.4,0,0.2,1);
+        }
+        .neo-input:focus {
+          outline: none;
+          border-color: #85E26E;
+          box-shadow: 0 0 0 2px rgba(133, 226, 110, 0.35);
+        }
+        .neo-chip {
+          background: #85E26E;
+          color: #0A0B0C;
+          border-radius: 12px;
+          padding: 0 8px;
+          height: 22px;
+          display: inline-flex;
+          align-items: center;
+          font-size: 12px;
+          font-weight: 600;
+        }
+        .neo-progress-bar {
+          background: #1A1C1D;
+          border-radius: 10px;
+          overflow: hidden;
+        }
+        .neo-progress-fill {
+          background: #79CFF7;
+          height: 100%;
+          transition: width 400ms ease-in-out;
+        }
       `}</style>
 
       {/* Header with action buttons when results are shown */}
       {data && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-800">
+        <div className="fixed top-0 left-0 right-0 z-50 neo-surface-2" style={{ borderBottom: '1px solid #1A1C1D' }}>
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between h-14 sm:h-16">
-              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            <div className="flex items-center justify-between h-16">
+              <h1 className="text-xl font-bold neo-primary">
                 Hybrid House
               </h1>
-              <div className="flex space-x-2 sm:space-x-3">
-                <Button
-                  size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2"
+              <div className="flex space-x-3">
+                <button
+                  className="neo-btn-secondary text-sm px-4 py-2"
                   onClick={() => {/* TODO: Navigate to training plan creation */}}
                 >
-                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  <Plus className="h-4 w-4 mr-1" />
                   Training Plan
-                </Button>
-                <Button
-                  size="sm"
-                  className="bg-purple-600 hover:bg-purple-700 text-white text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2"
+                </button>
+                <button
+                  className="neo-btn-secondary text-sm px-4 py-2"
                   onClick={() => {/* TODO: Navigate to nutrition plan creation */}}
                 >
-                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  <Plus className="h-4 w-4 mr-1" />
                   Nutrition Plan
-                </Button>
+                </button>
               </div>
             </div>
           </div>
@@ -396,113 +482,108 @@ const AthleteProfile = () => {
         <div className="max-w-6xl mx-auto">
           {/* Hidden canvas for image generation */}
           <canvas ref={canvasRef} style={{ display: 'none' }} />
+          
           {/* Header - Only show when no results */}
           {!data && (
-            <div className="text-center mb-8 sm:mb-12 px-4">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400 bg-clip-text text-transparent leading-tight">
+            <div className="text-center mb-12 px-4">
+              <h1 className="text-6xl font-bold mb-6 neo-primary" style={{ lineHeight: '1.1' }}>
                 Hybrid House
               </h1>
-              <p className="text-lg sm:text-xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto">
+              <p className="text-xl neo-text-secondary mb-8 max-w-2xl mx-auto">
                 Get your hybrid athlete score and unlock your athletic potential
               </p>
               
               {/* Create Profile Button */}
-              <div className="mb-6 sm:mb-8">
+              <div className="mb-8">
                 <a
                   href="https://chatgpt.com/g/g-686e85594828819185c3264c65086ae2-hybrid-house-interviewer"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base"
+                  className="neo-btn-primary inline-block text-base"
                 >
                   Create Profile
                 </a>
               </div>
 
               {/* Input Form */}
-              <Card className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-gray-700 backdrop-blur-sm shadow-2xl max-w-4xl mx-auto">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-xl sm:text-2xl text-white flex items-center justify-center gap-2 sm:gap-3">
-                    <Target className="h-5 w-5 sm:h-6 sm:w-6" />
+              <div className="neo-card rounded-xl max-w-4xl mx-auto p-8">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-semibold neo-text-primary mb-2 flex items-center justify-center gap-3">
+                    <Target className="h-6 w-6 neo-primary" />
                     Paste your athlete profile
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-4 sm:px-6">
-                  <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-                    <Textarea
-                      placeholder="Paste your athlete profile here..."
-                      value={athleteProfile}
-                      onChange={(e) => setAthleteProfile(e.target.value)}
-                      className="min-h-[120px] sm:min-h-[140px] bg-gray-800/70 border-gray-600 text-white placeholder-gray-400 resize-none focus:ring-2 focus:ring-blue-500 transition-all text-sm sm:text-base"
-                      disabled={loading}
-                    />
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white font-semibold py-3 sm:py-4 text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                      disabled={loading || !athleteProfile.trim()}
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
-                          Analyzing Profile...
-                        </>
-                      ) : (
-                        <>
-                          <Zap className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                          Get My Hybrid Score
-                        </>
-                      )}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
+                  </h2>
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <textarea
+                    placeholder="Paste your athlete profile here..."
+                    value={athleteProfile}
+                    onChange={(e) => setAthleteProfile(e.target.value)}
+                    className="neo-input w-full min-h-[140px] p-4 resize-none"
+                    style={{ fontSize: '16px', lineHeight: '1.5' }}
+                    disabled={loading}
+                  />
+                  <button 
+                    type="submit" 
+                    className="neo-btn-primary w-full text-lg py-4"
+                    disabled={loading || !athleteProfile.trim()}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Analyzing Profile...
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="mr-2 h-5 w-5" />
+                        Get My Hybrid Score
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
             </div>
           )}
 
           {/* Loading Status */}
           {loading && (
-            <div className={`space-y-6 sm:space-y-8 px-4 ${data ? 'pt-20' : ''}`}>
+            <div className={`space-y-8 px-4 ${data ? 'pt-20' : ''}`}>
               <div className="text-center">
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Calculating Your Hybrid Score</h2>
-                <p className="text-gray-400 text-sm sm:text-base">Analyzing your athletic profile...</p>
+                <h2 className="text-3xl font-bold neo-text-primary mb-2">Calculating Your Hybrid Score</h2>
+                <p className="neo-text-secondary">Analyzing your athletic profile...</p>
               </div>
               <div className="max-w-2xl mx-auto">
-                <div className="flex items-center space-x-3 sm:space-x-4 p-4 sm:p-6 bg-gray-800/30 rounded-xl border border-gray-700">
-                  <div className={`p-2 sm:p-3 rounded-full transition-all duration-500 ${
-                    showCheckmark ? 'bg-green-500/20 scale-110' : 'bg-blue-500/20 animate-pulse'
-                  }`}>
-                    {showCheckmark ? (
-                      <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-400 animate-pulse" />
-                    ) : (
-                      <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin text-blue-400" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className={`font-semibold transition-colors duration-300 text-sm sm:text-base ${
-                      showCheckmark ? 'text-green-400' : 'text-blue-400'
-                    }`}>
-                      Performance Analysis
-                    </h3>
-                    <div className="w-full bg-gray-700 rounded-full h-2 sm:h-3 mt-2 overflow-hidden">
-                      <div 
-                        className={`h-2 sm:h-3 rounded-full transition-all duration-500 ${
-                          showCheckmark ? 'bg-green-400' : 'bg-blue-400'
-                        }`}
-                        style={{ 
-                          width: `${Math.min(loadingProgress, 100)}%`,
-                          transition: showCheckmark ? 'width 0.5s ease-out, background-color 0.5s ease-out' : 'width 0.3s ease-out'
-                        }}
-                      />
+                <div className="neo-card rounded-xl p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 rounded-full" style={{
+                      background: showCheckmark ? 'rgba(133, 226, 110, 0.2)' : 'rgba(121, 207, 247, 0.2)'
+                    }}>
+                      {showCheckmark ? (
+                        <CheckCircle className="h-6 w-6 neo-primary animate-pulse" />
+                      ) : (
+                        <Loader2 className="h-6 w-6 neo-cyan animate-spin" />
+                      )}
                     </div>
-                    {!showCheckmark && (
-                      <div className="text-xs text-gray-400 mt-1">
-                        {Math.round(loadingProgress)}% complete
+                    <div className="flex-1">
+                      <h3 className={`font-semibold ${showCheckmark ? 'neo-primary' : 'neo-cyan'} transition-colors duration-300`}>
+                        Performance Analysis
+                      </h3>
+                      <div className="neo-progress-bar w-full h-3 mt-2">
+                        <div 
+                          className="neo-progress-fill"
+                          style={{ width: `${Math.min(loadingProgress, 100)}%` }}
+                        />
                       </div>
-                    )}
-                    {showCheckmark && (
-                      <div className="text-xs text-green-400 mt-1 animate-fade-in">
-                        ✓ Complete
-                      </div>
-                    )}
+                      {!showCheckmark && (
+                        <div className="text-xs neo-text-muted mt-1">
+                          {Math.round(loadingProgress)}% complete
+                        </div>
+                      )}
+                      {showCheckmark && (
+                        <div className="text-xs neo-primary mt-1 animate-fade-in">
+                          ✓ Complete
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -511,239 +592,236 @@ const AthleteProfile = () => {
 
           {/* Error Display */}
           {error && (
-            <Card className="bg-red-900/20 border-red-700 mb-8">
-              <CardContent className="p-6">
-                <p className="text-red-400 flex items-center space-x-2">
-                  <AlertCircle className="h-5 w-5" />
-                  <span>Error: {error}</span>
-                </p>
-              </CardContent>
-            </Card>
+            <div className="neo-card rounded-xl mb-8 p-6" style={{ borderColor: '#FF4B4B' }}>
+              <p className="flex items-center space-x-2" style={{ color: '#FF4B4B' }}>
+                <AlertCircle className="h-5 w-5" />
+                <span>Error: {error}</span>
+              </p>
+            </div>
           )}
 
           {/* Hybrid Score Results */}
           {data && (
-            <div className={`space-y-6 sm:space-y-8 px-4 ${loading ? '' : 'pt-20'}`}>
+            <div className={`space-y-8 px-4 ${loading ? '' : 'pt-20'}`}>
               
               {/* Hybrid Score Section */}
-              <section className="space-y-6 sm:space-y-8">
+              <section className="space-y-8">
                 <div className="text-center">
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">Your Hybrid Score</h2>
-                  <div className="text-6xl sm:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4 sm:mb-6 leading-tight">
+                  <h2 className="text-5xl font-bold neo-text-primary mb-4">Your Hybrid Score</h2>
+                  <div className="text-8xl font-bold neo-primary mb-6" style={{ lineHeight: '1' }}>
                     {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : Math.round(parseFloat(data.hybridScore))}
                   </div>
-                  <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto px-4 mb-6">
+                  <p className="text-xl neo-text-secondary max-w-2xl mx-auto mb-6">
                     Your overall hybrid-fitness score on a 0-100 scale
                   </p>
                   
                   {/* Share Button */}
-                  <Button
+                  <button
                     onClick={handleShare}
-                    className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="neo-btn-primary px-6 py-3"
                   >
                     <Share2 className="h-4 w-4 mr-2" />
                     Share My Score
-                  </Button>
+                  </button>
                 </div>
 
                 {/* Score Breakdown */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                   {[
-                    { key: 'strength', label: 'Strength', value: data.strengthScore, icon: Dumbbell, color: 'from-orange-500 to-red-500' },
-                    { key: 'endurance', label: 'Endurance', value: data.enduranceScore, icon: Heart, color: 'from-green-500 to-emerald-500' },
-                    { key: 'bodyComp', label: 'Body Comp', value: data.bodyCompScore, icon: Scale, color: 'from-blue-500 to-cyan-500' },
-                    { key: 'recovery', label: 'Recovery', value: data.recoveryScore, icon: Moon, color: 'from-purple-500 to-pink-500' }
+                    { key: 'strength', label: 'Strength', value: data.strengthScore, color: '#79CFF7' },
+                    { key: 'endurance', label: 'Endurance', value: data.enduranceScore, color: '#85E26E' },
+                    { key: 'bodyComp', label: 'Body Comp', value: data.bodyCompScore, color: '#8D5CFF' },
+                    { key: 'recovery', label: 'Recovery', value: data.recoveryScore, color: '#79CFF7' }
                   ].map((score) => (
-                    <Card key={score.key} className="bg-gray-800/50 border-gray-700 text-center hover:scale-105 transition-transform">
-                      <CardContent className="p-3 sm:p-6">
-                        <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-4 rounded-full bg-gradient-to-r ${score.color} flex items-center justify-center`}>
-                          <score.icon className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
-                        </div>
-                        <div className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">
-                          {animatedScores[score.key] ? Math.round(animatedScores[score.key]) : Math.round(parseFloat(score.value))}
-                        </div>
-                        <div className="text-sm sm:text-base text-gray-300">{score.label}</div>
-                      </CardContent>
-                    </Card>
+                    <div key={score.key} className="neo-card rounded-xl p-6 text-center hover:scale-105 transition-transform duration-200">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ 
+                        background: `${score.color}20`,
+                        border: `2px solid ${score.color}` 
+                      }}>
+                        {score.key === 'strength' && <Dumbbell className="h-8 w-8" style={{ color: score.color }} />}
+                        {score.key === 'endurance' && <Heart className="h-8 w-8" style={{ color: score.color }} />}
+                        {score.key === 'bodyComp' && <Scale className="h-8 w-8" style={{ color: score.color }} />}
+                        {score.key === 'recovery' && <Moon className="h-8 w-8" style={{ color: score.color }} />}
+                      </div>
+                      <div className="text-3xl font-bold neo-text-primary mb-2">
+                        {animatedScores[score.key] ? Math.round(animatedScores[score.key]) : Math.round(parseFloat(score.value))}
+                      </div>
+                      <div className="neo-text-secondary">{score.label}</div>
+                    </div>
                   ))}
                 </div>
 
                 {/* Score Explanation */}
-                <Card className="bg-gray-800/30 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="text-xl sm:text-2xl text-white">What's the Hybrid Athlete Score?</CardTitle>
-                  </CardHeader>
-                  <CardContent className="prose prose-invert max-w-none px-4 sm:px-6">
-                    <p className="text-gray-300 text-base sm:text-lg mb-6">
-                      Think of it as your <strong>overall "hybrid-fitness GPA"</strong> on a 0 – 100 scale:
-                    </p>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-                      <div className="space-y-4">
-                        <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <Dumbbell className="h-4 w-4 sm:h-5 sm:w-5 text-orange-400" />
-                            <h4 className="text-white font-semibold text-sm sm:text-base">Strength</h4>
-                          </div>
-                          <p className="text-gray-300 text-xs sm:text-sm">How much weight you can lift relative to your body-weight (bench, squat, deadlift).</p>
-                          <p className="text-orange-400 text-xs sm:text-sm mt-2">Power for sprints, hills, injury-proofing.</p>
+                <div className="neo-card rounded-xl p-8">
+                  <h3 className="text-2xl font-semibold neo-text-primary mb-6">What's the Hybrid Athlete Score?</h3>
+                  
+                  <p className="neo-text-secondary text-lg mb-8">
+                    Think of it as your <strong className="neo-primary">overall "hybrid-fitness GPA"</strong> on a 0 – 100 scale:
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div className="space-y-6">
+                      <div className="neo-surface-2 rounded-lg p-4">
+                        <div className="flex items-center space-x-3 mb-3">
+                          <Dumbbell className="h-5 w-5 neo-cyan" />
+                          <h4 className="neo-text-primary font-semibold">Strength</h4>
                         </div>
-                        
-                        <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-green-400" />
-                            <h4 className="text-white font-semibold text-sm sm:text-base">Endurance</h4>
-                          </div>
-                          <p className="text-gray-300 text-xs sm:text-sm">Your engine—VO₂ max plus best mile time.</p>
-                          <p className="text-green-400 text-xs sm:text-sm mt-2">Determines how long and how hard you can keep moving.</p>
-                        </div>
+                        <p className="neo-text-secondary text-sm mb-2">How much weight you can lift relative to your body-weight (bench, squat, deadlift).</p>
+                        <p className="neo-cyan text-sm">Power for sprints, hills, injury-proofing.</p>
                       </div>
                       
-                      <div className="space-y-4">
-                        <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <Scale className="h-4 w-4 sm:h-5 sm:w-5 text-blue-400" />
-                            <h4 className="text-white font-semibold text-sm sm:text-base">Body-comp</h4>
-                          </div>
-                          <p className="text-gray-300 text-xs sm:text-sm">How close you are to a healthy, performance-lean body-fat range.</p>
-                          <p className="text-blue-400 text-xs sm:text-sm mt-2">Better power-to-weight and joint health.</p>
+                      <div className="neo-surface-2 rounded-lg p-4">
+                        <div className="flex items-center space-x-3 mb-3">
+                          <Heart className="h-5 w-5 neo-primary" />
+                          <h4 className="neo-text-primary font-semibold">Endurance</h4>
                         </div>
-                        
-                        <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <Moon className="h-4 w-4 sm:h-5 sm:w-5 text-purple-400" />
-                            <h4 className="text-white font-semibold text-sm sm:text-base">Recovery</h4>
-                          </div>
-                          <p className="text-gray-300 text-xs sm:text-sm">HRV and resting heart-rate—how well your body bounces back.</p>
-                          <p className="text-purple-400 text-xs sm:text-sm mt-2">Faster gains, fewer burn-outs.</p>
-                        </div>
+                        <p className="neo-text-secondary text-sm mb-2">Your engine—VO₂ max plus best mile time.</p>
+                        <p className="neo-primary text-sm">Determines how long and how hard you can keep moving.</p>
                       </div>
                     </div>
-
-                    <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-lg p-4 sm:p-6 border border-blue-800/30">
-                      <h4 className="text-white font-semibold mb-3 text-sm sm:text-base">The Balance Bonus</h4>
-                      <p className="text-gray-300 mb-4 text-sm sm:text-base">
-                        We average those slices, then add a <strong>"balance bonus."</strong> If your strength and endurance levels are close together, you score extra points—because true hybrid athletes aren't one-sided.
-                      </p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
-                        <div className="text-center">
-                          <div className="text-xl sm:text-2xl font-bold text-green-400">100 points</div>
-                          <p className="text-gray-300">Elite strength, elite cardio, dialed-in body-comp, and stellar recovery with good balance.</p>
+                    
+                    <div className="space-y-6">
+                      <div className="neo-surface-2 rounded-lg p-4">
+                        <div className="flex items-center space-x-3 mb-3">
+                          <Scale className="h-5 w-5 neo-violet" />
+                          <h4 className="neo-text-primary font-semibold">Body-comp</h4>
                         </div>
-                        <div className="text-center">
-                          <div className="text-xl sm:text-2xl font-bold text-yellow-400">50 points</div>
-                          <p className="text-gray-300">Recreational lifter or runner with room to grow in other areas.</p>
-                        </div>
+                        <p className="neo-text-secondary text-sm mb-2">How close you are to a healthy, performance-lean body-fat range.</p>
+                        <p className="neo-violet text-sm">Better power-to-weight and joint health.</p>
                       </div>
-                      <p className="text-blue-400 mt-4 text-center text-sm sm:text-base">
-                        Your score helps you see <strong>which dial to turn next</strong>—lift heavier, run faster, lean out, or sleep/recover better—to level up as a complete hybrid athlete.
-                      </p>
+                      
+                      <div className="neo-surface-2 rounded-lg p-4">
+                        <div className="flex items-center space-x-3 mb-3">
+                          <Moon className="h-5 w-5 neo-cyan" />
+                          <h4 className="neo-text-primary font-semibold">Recovery</h4>
+                        </div>
+                        <p className="neo-text-secondary text-sm mb-2">HRV and resting heart-rate—how well your body bounces back.</p>
+                        <p className="neo-cyan text-sm">Faster gains, fewer burn-outs.</p>
+                      </div>
                     </div>
+                  </div>
 
-                    {/* Detailed Metrics */}
-                    <Card className="bg-gray-800/50 border-gray-700 mt-6 sm:mt-8">
-                      <CardHeader>
-                        <CardTitle className="text-lg sm:text-xl text-white flex items-center space-x-2">
-                          <Activity className="h-5 w-5 sm:h-6 sm:w-6" />
-                          <span>Your Metrics</span>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                          {[
-                            { 
-                              label: 'Body Weight', 
-                              value: Math.round(data.scoreInputsUsed.bodyWeightKg * 2.20462), 
-                              unit: 'lbs', 
-                              color: 'text-blue-400' 
-                            },
-                            { 
-                              label: 'Body Fat', 
-                              value: data.scoreInputsUsed.bodyFatPercent, 
-                              unit: '%', 
-                              color: 'text-green-400' 
-                            },
-                            { 
-                              label: 'HRV', 
-                              value: data.scoreInputsUsed.hrvMs, 
-                              unit: 'ms', 
-                              color: 'text-purple-400' 
-                            },
-                            { 
-                              label: 'Resting HR', 
-                              value: data.scoreInputsUsed.restingHrBpm, 
-                              unit: 'bpm', 
-                              color: 'text-red-400' 
-                            },
-                            { 
-                              label: 'VO2 Max', 
-                              value: data.scoreInputsUsed.vo2Max, 
-                              unit: 'ml/kg/min', 
-                              color: 'text-orange-400' 
-                            },
-                            { 
-                              label: 'Mile Time', 
-                              value: `${Math.floor(data.scoreInputsUsed.mileSeconds / 60)}:${String(Math.round(data.scoreInputsUsed.mileSeconds % 60)).padStart(2, '0')}`, 
-                              unit: '', 
-                              color: 'text-cyan-400' 
-                            },
-                            { 
-                              label: 'Bench 1RM', 
-                              value: data.scoreInputsUsed.bench1RmKg ? Math.round(data.scoreInputsUsed.bench1RmKg * 2.20462) : 'N/A', 
-                              unit: data.scoreInputsUsed.bench1RmKg ? 'lbs' : '', 
-                              color: 'text-yellow-400' 
-                            },
-                            { 
-                              label: 'Squat 1RM', 
-                              value: data.scoreInputsUsed.squat1RmKg ? Math.round(data.scoreInputsUsed.squat1RmKg * 2.20462) : 'N/A', 
-                              unit: data.scoreInputsUsed.squat1RmKg ? 'lbs' : '', 
-                              color: 'text-pink-400' 
-                            }
-                          ].map((metric, index) => (
-                            <div key={index} className="bg-gray-800/30 rounded-lg p-3 sm:p-4 text-center">
-                              <div className={`text-lg sm:text-xl font-bold ${metric.color} mb-1`}>
-                                {metric.value}
-                              </div>
-                              {metric.unit && <div className="text-xs text-gray-400">{metric.unit}</div>}
-                              <div className="text-xs text-gray-300 mt-1">{metric.label}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
+                  <div className="rounded-lg p-6" style={{ 
+                    background: 'linear-gradient(135deg, rgba(133, 226, 110, 0.1), rgba(121, 207, 247, 0.1))',
+                    border: '1px solid rgba(133, 226, 110, 0.2)'
+                  }}>
+                    <h4 className="neo-text-primary font-semibold mb-4">The Balance Bonus</h4>
+                    <p className="neo-text-secondary mb-6">
+                      We average those slices, then add a <strong className="neo-primary">"balance bonus."</strong> If your strength and endurance levels are close together, you score extra points—because true hybrid athletes aren't one-sided.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold neo-primary">100 points</div>
+                        <p className="neo-text-secondary">Elite strength, elite cardio, dialed-in body-comp, and stellar recovery with good balance.</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold neo-cyan">50 points</div>
+                        <p className="neo-text-secondary">Recreational lifter or runner with room to grow in other areas.</p>
+                      </div>
+                    </div>
+                    <p className="neo-primary mt-6 text-center">
+                      Your score helps you see <strong>which dial to turn next</strong>—lift heavier, run faster, lean out, or sleep/recover better—to level up as a complete hybrid athlete.
+                    </p>
+                  </div>
 
-                    {/* Next Steps */}
-                    <Card className="bg-gradient-to-r from-green-900/20 to-blue-900/20 border-green-800/30 mt-6 sm:mt-8">
-                      <CardHeader>
-                        <CardTitle className="text-lg sm:text-xl text-white flex items-center space-x-2">
-                          <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
-                          <span>Ready for the Next Step?</span>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-300 mb-4 text-sm sm:text-base">
-                          Now that you know your hybrid score, create personalized training and nutrition plans to improve your weakest areas and maintain your strengths.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                          <Button
-                            className="bg-green-600 hover:bg-green-700 text-white flex-1"
-                            onClick={() => {/* TODO: Navigate to training plan creation */}}
-                          >
-                            <Plus className="h-4 w-4 mr-2" />
-                            Create Training Plan
-                          </Button>
-                          <Button
-                            className="bg-purple-600 hover:bg-purple-700 text-white flex-1"
-                            onClick={() => {/* TODO: Navigate to nutrition plan creation */}}
-                          >
-                            <Plus className="h-4 w-4 mr-2" />
-                            Create Nutrition Plan
-                          </Button>
+                  {/* Detailed Metrics */}
+                  <div className="neo-card rounded-xl mt-8 p-6">
+                    <h4 className="text-xl font-semibold neo-text-primary mb-6 flex items-center space-x-2">
+                      <Activity className="h-6 w-6 neo-primary" />
+                      <span>Your Metrics</span>
+                    </h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {[
+                        { 
+                          label: 'Body Weight', 
+                          value: Math.round(data.scoreInputsUsed.bodyWeightKg * 2.20462), 
+                          unit: 'lbs', 
+                          color: '#79CFF7' 
+                        },
+                        { 
+                          label: 'Body Fat', 
+                          value: data.scoreInputsUsed.bodyFatPercent, 
+                          unit: '%', 
+                          color: '#85E26E' 
+                        },
+                        { 
+                          label: 'HRV', 
+                          value: data.scoreInputsUsed.hrvMs, 
+                          unit: 'ms', 
+                          color: '#8D5CFF' 
+                        },
+                        { 
+                          label: 'Resting HR', 
+                          value: data.scoreInputsUsed.restingHrBpm, 
+                          unit: 'bpm', 
+                          color: '#79CFF7' 
+                        },
+                        { 
+                          label: 'VO2 Max', 
+                          value: data.scoreInputsUsed.vo2Max, 
+                          unit: 'ml/kg/min', 
+                          color: '#85E26E' 
+                        },
+                        { 
+                          label: 'Mile Time', 
+                          value: `${Math.floor(data.scoreInputsUsed.mileSeconds / 60)}:${String(Math.round(data.scoreInputsUsed.mileSeconds % 60)).padStart(2, '0')}`, 
+                          unit: '', 
+                          color: '#8D5CFF' 
+                        },
+                        { 
+                          label: 'Bench 1RM', 
+                          value: data.scoreInputsUsed.bench1RmKg ? Math.round(data.scoreInputsUsed.bench1RmKg * 2.20462) : 'N/A', 
+                          unit: data.scoreInputsUsed.bench1RmKg ? 'lbs' : '', 
+                          color: '#79CFF7' 
+                        },
+                        { 
+                          label: 'Squat 1RM', 
+                          value: data.scoreInputsUsed.squat1RmKg ? Math.round(data.scoreInputsUsed.squat1RmKg * 2.20462) : 'N/A', 
+                          unit: data.scoreInputsUsed.squat1RmKg ? 'lbs' : '', 
+                          color: '#85E26E' 
+                        }
+                      ].map((metric, index) => (
+                        <div key={index} className="neo-surface-2 rounded-lg p-4 text-center">
+                          <div className="text-xl font-bold mb-1" style={{ color: metric.color }}>
+                            {metric.value}
+                          </div>
+                          {metric.unit && <div className="text-xs neo-text-muted">{metric.unit}</div>}
+                          <div className="text-xs neo-text-secondary mt-1">{metric.label}</div>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </CardContent>
-                </Card>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Next Steps */}
+                  <div className="rounded-xl mt-8 p-6" style={{ 
+                    background: 'linear-gradient(135deg, rgba(133, 226, 110, 0.1), rgba(141, 92, 255, 0.1))',
+                    border: '1px solid rgba(133, 226, 110, 0.3)'
+                  }}>
+                    <h4 className="text-xl font-semibold neo-text-primary mb-4 flex items-center space-x-2">
+                      <ChevronRight className="h-6 w-6 neo-primary" />
+                      <span>Ready for the Next Step?</span>
+                    </h4>
+                    <p className="neo-text-secondary mb-6">
+                      Now that you know your hybrid score, create personalized training and nutrition plans to improve your weakest areas and maintain your strengths.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <button
+                        className="neo-btn-primary flex-1"
+                        onClick={() => {/* TODO: Navigate to training plan creation */}}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create Training Plan
+                      </button>
+                      <button
+                        className="neo-btn-secondary flex-1"
+                        onClick={() => {/* TODO: Navigate to nutrition plan creation */}}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create Nutrition Plan
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </section>
             </div>
           )}
