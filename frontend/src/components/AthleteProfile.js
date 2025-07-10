@@ -93,8 +93,9 @@ const AthleteProfile = () => {
         athleteProfileData = athleteProfile;
       }
 
-      // Only call score webhook
-      const data = await callWebhook(athleteProfileData, 'score');
+      // Only call test endpoint for now to demonstrate new UI
+      const response = await fetch(`${BACKEND_URL}/api/test-score`);
+      const data = await response.json();
       
       // Clear interval and set progress to 100%
       if (interval) {
