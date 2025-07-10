@@ -529,12 +529,10 @@ const AthleteProfile = () => {
                   >
                     {loading ? (
                       <>
-                        <Loader2 className="mr-3 h-5 w-5 animate-spin" />
                         Analyzing Profile...
                       </>
                     ) : (
                       <>
-                        <Zap className="mr-3 h-5 w-5" />
                         Get My Hybrid Score
                       </>
                     )}
