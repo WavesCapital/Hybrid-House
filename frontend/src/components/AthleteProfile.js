@@ -624,29 +624,41 @@ const AthleteProfile = () => {
                 </div>
 
                 {/* Score Breakdown */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                   {[
-                    { key: 'strength', label: 'Strength', value: data.strengthScore, color: '#79CFF7' },
-                    { key: 'endurance', label: 'Endurance', value: data.enduranceScore, color: '#85E26E' },
-                    { key: 'bodyComp', label: 'Body Comp', value: data.bodyCompScore, color: '#8D5CFF' },
-                    { key: 'recovery', label: 'Recovery', value: data.recoveryScore, color: '#79CFF7' }
-                  ].map((score) => (
-                    <div key={score.key} className="neo-card rounded-xl p-6 text-center hover:scale-105 transition-transform duration-200">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ 
-                        background: `${score.color}20`,
-                        border: `2px solid ${score.color}` 
-                      }}>
-                        {score.key === 'strength' && <Dumbbell className="h-8 w-8" style={{ color: score.color }} />}
-                        {score.key === 'endurance' && <Heart className="h-8 w-8" style={{ color: score.color }} />}
-                        {score.key === 'bodyComp' && <Scale className="h-8 w-8" style={{ color: score.color }} />}
-                        {score.key === 'recovery' && <Moon className="h-8 w-8" style={{ color: score.color }} />}
+                    { key: 'strength', label: 'Strength', value: data.strengthScore, comment: data.strengthComment, color: '#79CFF7', icon: Dumbbell },
+                    { key: 'speed', label: 'Speed', value: data.speedScore, comment: data.speedComment, color: '#85E26E', icon: Zap },
+                    { key: 'vo2', label: 'VO₂ Max', value: data.vo2Score, comment: data.vo2Comment, color: '#8D5CFF', icon: Heart },
+                    { key: 'distance', label: 'Distance', value: data.distanceScore, comment: data.distanceComment, color: '#79CFF7', icon: MapPin },
+                    { key: 'volume', label: 'Volume', value: data.volumeScore, comment: data.volumeComment, color: '#85E26E', icon: BarChart3 },
+                    { key: 'endurance', label: 'Endurance', value: data.enduranceScore, comment: data.enduranceComment, color: '#8D5CFF', icon: Activity },
+                    { key: 'recovery', label: 'Recovery', value: data.recoveryScore, comment: data.recoveryComment, color: '#79CFF7', icon: Moon }
+                  ].map((score) => {
+                    const IconComponent = score.icon;
+                    return (
+                      <div key={score.key} className="neo-card rounded-xl p-6 hover:scale-105 transition-transform duration-200">
+                        <div className="flex items-start space-x-4">
+                          <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ 
+                            background: `${score.color}20`,
+                            border: `2px solid ${score.color}` 
+                          }}>
+                            <IconComponent className="h-6 w-6" style={{ color: score.color }} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="neo-text-primary font-semibold">{score.label}</h3>
+                              <div className="text-2xl font-bold neo-text-primary">
+                                {animatedScores[score.key] ? Math.round(animatedScores[score.key]) : Math.round(parseFloat(score.value))}
+                              </div>
+                            </div>
+                            <p className="neo-text-secondary text-sm leading-relaxed">
+                              {score.comment}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-3xl font-bold neo-text-primary mb-2">
-                        {animatedScores[score.key] ? Math.round(animatedScores[score.key]) : Math.round(parseFloat(score.value))}
-                      </div>
-                      <div className="neo-text-secondary">{score.label}</div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Score Explanation */}
