@@ -105,7 +105,7 @@
 user_problem_statement: "Fix icon spacing in all buttons - icons are too close to text"
 
 frontend:
-  - task: "Fix Button Icon Spacing"
+  - task: "Remove All Icons from Buttons"
     implemented: true
     working: true
     file: "/app/frontend/src/components/AthleteProfile.js"
@@ -115,10 +115,10 @@ frontend:
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "User reported that icons in buttons are too close to text and need proper spacing"
+        comment: "User reported that icons in buttons are still off and messing up the layout despite spacing fixes"
       - working: true
         agent: "main"
-        comment: "✅ Fixed icon spacing in all buttons by changing margin-right from 'mr-2' to 'mr-3' for better visual spacing. Updated button.jsx to use gap-3 instead of gap-2 for consistent spacing. Fixed buttons: 'Get My Hybrid Score', 'Training Plan', 'Nutrition Plan', 'Share My Score', 'Create Training Plan', 'Create Nutrition Plan'"
+        comment: "✅ Removed all icons from buttons to eliminate spacing issues completely. Removed icons from: 'Get My Hybrid Score' (Zap), 'Share My Score' (Share2), header 'Training Plan' and 'Nutrition Plan' (Plus), 'Create Training Plan' and 'Create Nutrition Plan' (Plus), and loading state 'Analyzing Profile' (Loader2). Buttons now have clean text-only appearance with proper alignment."
 
   - task: "Athlete Profile Form Input and Score Calculation"
     implemented: true
