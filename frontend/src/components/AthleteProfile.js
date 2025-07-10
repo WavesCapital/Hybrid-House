@@ -620,7 +620,7 @@ const AthleteProfile = () => {
                     onClick={handleShare}
                     className="neo-btn-primary px-6 py-3"
                   >
-                    <Share2 className="h-4 w-4 mr-2" />
+                    <Share2 className="h-4 w-4 mr-3" />
                     Share My Score
                   </button>
                 </div>
