@@ -904,8 +904,8 @@ const AthleteProfile = () => {
 
                   {/* Next Steps */}
                   <div className="rounded-xl mt-8 p-6" style={{ 
-                    background: 'linear-gradient(135deg, rgba(133, 226, 110, 0.1), rgba(141, 92, 255, 0.1))',
-                    border: '1px solid rgba(133, 226, 110, 0.3)'
+                    background: 'linear-gradient(135deg, rgba(121, 207, 247, 0.1), rgba(141, 92, 255, 0.1))',
+                    border: '1px solid rgba(121, 207, 247, 0.3)'
                   }}>
                     <h4 className="text-xl font-semibold neo-text-primary mb-4 flex items-center space-x-2">
                       <ChevronRight className="h-6 w-6 neo-primary" />
@@ -916,7 +916,7 @@ const AthleteProfile = () => {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4">
                       <button
-                        className="neo-btn-primary flex-1"
+                        className="neo-btn-secondary flex-1"
                         onClick={() => {/* TODO: Navigate to training plan creation */}}
                       >
                         Create Training Plan
