@@ -493,7 +493,7 @@ const AthleteProfile = () => {
           <canvas ref={canvasRef} style={{ display: 'none' }} />
           
           {/* Header - Only show when no results */}
-          {!data && (
+          {!data && !loading && (
             <div className="text-center mb-12 px-4">
               <h1 className="text-6xl font-bold mb-6 neo-primary" style={{ lineHeight: '1.1' }}>
                 Hybrid House
@@ -518,7 +518,6 @@ const AthleteProfile = () => {
               <div className="neo-card rounded-xl max-w-4xl mx-auto p-8">
                 <div className="mb-6">
                   <h2 className="text-2xl font-semibold neo-text-primary mb-2 flex items-center justify-center gap-3">
-                    <Target className="h-6 w-6 neo-primary" />
                     Paste your athlete profile
                   </h2>
                 </div>
@@ -536,15 +535,7 @@ const AthleteProfile = () => {
                     className="neo-btn-primary w-full text-lg py-4"
                     disabled={loading || !athleteProfile.trim()}
                   >
-                    {loading ? (
-                      <>
-                        Analyzing Profile...
-                      </>
-                    ) : (
-                      <>
-                        Get My Hybrid Score
-                      </>
-                    )}
+                    Get My Hybrid Score
                   </button>
                 </form>
               </div>
