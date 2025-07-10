@@ -462,14 +462,14 @@ const AthleteProfile = () => {
                   className="neo-btn-secondary text-sm px-4 py-2"
                   onClick={() => {/* TODO: Navigate to training plan creation */}}
                 >
-                  <Plus className="h-4 w-4 mr-1" />
+                  <Plus className="h-4 w-4 mr-2" />
                   Training Plan
                 </button>
                 <button
                   className="neo-btn-secondary text-sm px-4 py-2"
                   onClick={() => {/* TODO: Navigate to nutrition plan creation */}}
                 >
-                  <Plus className="h-4 w-4 mr-1" />
+                  <Plus className="h-4 w-4 mr-2" />
                   Nutrition Plan
                 </button>
               </div>
