@@ -23,6 +23,7 @@ const AthleteProfile = () => {
   const [error, setError] = useState(null);
   const [animatedScores, setAnimatedScores] = useState({});
   const [progressInterval, setProgressInterval] = useState(null);
+  const canvasRef = useRef(null);
 
   const callWebhook = async (athleteProfileData, deliverable) => {
     const controller = new AbortController();
