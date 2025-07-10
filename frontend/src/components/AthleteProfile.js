@@ -10,7 +10,7 @@ import {
   CheckCircle, Clock, MapPin, Utensils, Dumbbell, Timer, 
   TrendingUp, Star, Award, BarChart3, Scale, Brain, ExternalLink,
   Flame, Droplets, Moon, Coffee, AlertCircle, ChevronRight, Shield,
-  CheckCircle2, Bed, Smartphone, Info, Pill
+  CheckCircle2, Bed, Smartphone, Info, Pill, Plus
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -18,30 +18,11 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const AthleteProfile = () => {
   const [athleteProfile, setAthleteProfile] = useState('');
   const [loading, setLoading] = useState(false);
-  const [loadingStatus, setLoadingStatus] = useState({
-    score: false,
-    trainingPlan: false,
-    nutritionPlan: false
-  });
-  const [loadingProgress, setLoadingProgress] = useState({
-    score: 0,
-    trainingPlan: 0,
-    nutritionPlan: 0
-  });
-  const [progressIntervals, setProgressIntervals] = useState({});
-  const [responses, setResponses] = useState({
-    score: null,
-    trainingPlan: null,
-    nutritionPlan: null
-  });
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [scoreData, setScoreData] = useState(null);
   const [error, setError] = useState(null);
   const [animatedScores, setAnimatedScores] = useState({});
-  const [activeTab, setActiveTab] = useState('score');
-
-  // Refs for scrolling
-  const scoreRef = useRef(null);
-  const trainingRef = useRef(null);
-  const nutritionRef = useRef(null);
+  const [progressInterval, setProgressInterval] = useState(null);
 
   const callWebhook = async (athleteProfileData, deliverable) => {
     const controller = new AbortController();
@@ -77,83 +58,31 @@ const AthleteProfile = () => {
     }
   };
 
-  // Progress bar animation based on actual response times
-  useEffect(() => {
-    if (loading) {
-      const progressTimings = {
-        score: 55, // 55 seconds
-        nutritionPlan: 75, // 75 seconds
-        trainingPlan: 240 // 4 minutes
-      };
-      
-      // Clear any existing intervals first
-      Object.values(progressIntervals).forEach(interval => {
-        if (interval) clearInterval(interval);
-      });
-      
-      const newIntervals = {};
-      
-      Object.entries(progressTimings).forEach(([deliverable, totalTime]) => {
-        if (loadingStatus[deliverable]) {
-          let progress = 0;
-          const incrementValue = 100 / totalTime; // Smooth linear increment
-          
-          const interval = setInterval(() => {
-            if (!loadingStatus[deliverable]) {
-              clearInterval(interval);
-              return;
-            }
-            
-            progress += incrementValue;
-            
-            // Cap training plan at 99% if it takes longer than expected
-            if (deliverable === 'trainingPlan' && progress >= 99) {
-              progress = 99;
-            } else if (progress >= 100) {
-              progress = 100;
-            }
-            
-            setLoadingProgress(prev => ({ ...prev, [deliverable]: Math.min(progress, 100) }));
-          }, 1000);
-          
-          newIntervals[deliverable] = interval;
-        }
-      });
-      
-      setProgressIntervals(newIntervals);
-    }
-  }, [loading]);
-
-  // Clean up intervals when component unmounts
-  useEffect(() => {
-    return () => {
-      Object.values(progressIntervals).forEach(interval => {
-        if (interval) clearInterval(interval);
-      });
-    };
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!athleteProfile.trim()) return;
 
     setLoading(true);
     setError(null);
-    setResponses({
-      score: null,
-      trainingPlan: null,
-      nutritionPlan: null
-    });
-    setLoadingProgress({
-      score: 0,
-      trainingPlan: 0,
-      nutritionPlan: 0
-    });
-    // Clear any existing intervals
-    Object.values(progressIntervals).forEach(interval => {
-      if (interval) clearInterval(interval);
-    });
-    setProgressIntervals({});
+    setScoreData(null);
+    setLoadingProgress(0);
+    
+    // Clear any existing interval
+    if (progressInterval) {
+      clearInterval(progressInterval);
+    }
+
+    // Start progress animation for 55 seconds
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += (100 / 55); // 55 seconds for score
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+      }
+      setLoadingProgress(Math.min(progress, 100));
+    }, 1000);
+    setProgressInterval(interval);
 
     try {
       let athleteProfileData;
@@ -163,56 +92,22 @@ const AthleteProfile = () => {
         athleteProfileData = athleteProfile;
       }
 
-      const deliverables = ['score', 'trainingPlan', 'nutritionPlan'];
+      // Only call score webhook
+      const data = await callWebhook(athleteProfileData, 'score');
       
-      setLoadingStatus({
-        score: true,
-        trainingPlan: true,
-        nutritionPlan: true
-      });
-
-      const promises = deliverables.map(async (deliverable) => {
-        try {
-          const data = await callWebhook(athleteProfileData, deliverable);
-          // Clear interval and set progress to 100% when complete
-          if (progressIntervals[deliverable]) {
-            clearInterval(progressIntervals[deliverable]);
-          }
-          setLoadingStatus(prev => ({ ...prev, [deliverable]: false }));
-          setLoadingProgress(prev => ({ ...prev, [deliverable]: 100 }));
-          return { deliverable, data, success: true };
-        } catch (error) {
-          console.error(`Error fetching ${deliverable}:`, error);
-          if (progressIntervals[deliverable]) {
-            clearInterval(progressIntervals[deliverable]);
-          }
-          setLoadingStatus(prev => ({ ...prev, [deliverable]: false }));
-          return { deliverable, error: error.message, success: false };
-        }
-      });
-
-      const results = await Promise.all(promises);
-      
-      const newResponses = {};
-      
-      results.forEach(result => {
-        if (result.success) {
-          newResponses[result.deliverable] = result.data;
-        } else {
-          console.error(`Failed to fetch ${result.deliverable}:`, result.error);
-        }
-      });
-
-      setResponses(newResponses);
+      // Clear interval and set progress to 100%
+      if (interval) {
+        clearInterval(interval);
+      }
+      setLoadingProgress(100);
+      setScoreData(data);
 
     } catch (error) {
       console.error('Error:', error);
       setError(error.message);
-      setLoadingStatus({
-        score: false,
-        trainingPlan: false,
-        nutritionPlan: false
-      });
+      if (interval) {
+        clearInterval(interval);
+      }
     } finally {
       setLoading(false);
     }
@@ -220,15 +115,15 @@ const AthleteProfile = () => {
 
   // Animate score counters
   useEffect(() => {
-    const scoreData = responses.score?.[0] || responses.score;
-    if (scoreData) {
+    const data = scoreData?.[0] || scoreData;
+    if (data) {
       const scores = {
-        hybrid: parseFloat(scoreData.hybridScore),
-        strength: parseFloat(scoreData.strengthScore),
-        endurance: parseFloat(scoreData.enduranceScore),
-        bodyComp: parseFloat(scoreData.bodyCompScore),
-        recovery: parseFloat(scoreData.recoveryScore),
-        balance: parseFloat(scoreData.balanceBonus)
+        hybrid: parseFloat(data.hybridScore),
+        strength: parseFloat(data.strengthScore),
+        endurance: parseFloat(data.enduranceScore),
+        bodyComp: parseFloat(data.bodyCompScore),
+        recovery: parseFloat(data.recoveryScore),
+        balance: parseFloat(data.balanceBonus)
       };
 
       Object.entries(scores).forEach(([key, targetValue]) => {
@@ -244,100 +139,19 @@ const AthleteProfile = () => {
         }, 20);
       });
     }
-  }, [responses.score]);
+  }, [scoreData]);
 
-  // Auto-scroll to sections
-  const scrollToSection = (section) => {
-    setActiveTab(section);
-    const refs = {
-      score: scoreRef,
-      training: trainingRef,
-      nutrition: nutritionRef
+  // Clean up interval on unmount
+  useEffect(() => {
+    return () => {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+      }
     };
-    refs[section]?.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, [progressInterval]);
 
-  const hasResults = responses.score && responses.trainingPlan && responses.nutritionPlan;
-  const scoreData = responses.score?.[0] || responses.score;
-  const trainingData = responses.trainingPlan?.[0] || responses.trainingPlan;
-  const nutritionData = responses.nutritionPlan?.[0] || responses.nutritionPlan;
-
-  const LoadingCard = ({ title, isLoading, isComplete, icon: Icon, deliverable }) => {
-    const progress = loadingProgress[deliverable] || 0;
-    const showCheckmark = isComplete && progress === 100;
-    
-    return (
-      <div className="flex items-center space-x-3 sm:space-x-4 p-4 sm:p-6 bg-gray-800/30 rounded-xl border border-gray-700">
-        <div className={`p-2 sm:p-3 rounded-full transition-all duration-500 ${
-          showCheckmark ? 'bg-green-500/20 scale-110' : 
-          isLoading ? 'bg-blue-500/20 animate-pulse' : 'bg-gray-600/20'
-        }`}>
-          {isLoading && progress < 100 ? (
-            <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin text-blue-400" />
-          ) : showCheckmark ? (
-            <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-400 animate-pulse" />
-          ) : (
-            <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className={`font-semibold transition-colors duration-300 text-sm sm:text-base ${
-            showCheckmark ? 'text-green-400' : 
-            isLoading ? 'text-blue-400' : 'text-gray-400'
-          }`}>
-            {title}
-          </h3>
-          <div className="w-full bg-gray-700 rounded-full h-2 sm:h-3 mt-2 overflow-hidden">
-            <div 
-              className={`h-2 sm:h-3 rounded-full transition-all duration-500 ${
-                showCheckmark ? 'bg-green-400' : 
-                isLoading ? 'bg-blue-400' : 'bg-gray-600'
-              }`}
-              style={{ 
-                width: `${Math.min(progress, 100)}%`,
-                transition: showCheckmark ? 'width 0.5s ease-out, background-color 0.5s ease-out' : 'width 0.3s ease-out'
-              }}
-            />
-          </div>
-          {isLoading && progress < 100 && (
-            <div className="text-xs text-gray-400 mt-1">
-              {Math.round(progress)}% complete
-            </div>
-          )}
-          {showCheckmark && (
-            <div className="text-xs text-green-400 mt-1 animate-fade-in">
-              ✓ Complete
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  const DailyFlowCard = ({ day, actions }) => (
-    <Card className="bg-gray-800/50 border-gray-600">
-      <CardHeader>
-        <CardTitle className="text-white capitalize flex items-center space-x-2">
-          <Clock className="h-5 w-5" />
-          <span>{day.replace(/([A-Z])/g, ' $1').trim()} Day</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {actions.map((action, index) => (
-          <div key={index} className="flex items-start space-x-3 p-3 rounded-lg bg-gray-800/30 border border-gray-700">
-            <div className="flex items-center space-x-2 min-w-0 flex-1">
-              <Clock className="h-4 w-4 text-blue-400 flex-shrink-0" />
-              <span className="text-sm font-medium text-blue-400 min-w-fit">{action.clock}</span>
-              <span className="text-sm text-white">{action.item}</span>
-            </div>
-            <div className="text-xs text-gray-400 italic max-w-xs text-right">
-              {action.cue}
-            </div>
-          </div>
-        ))}
-      </CardContent>
-    </Card>
-  );
+  const data = scoreData?.[0] || scoreData;
+  const showCheckmark = !loading && loadingProgress === 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white">
@@ -350,45 +164,32 @@ const AthleteProfile = () => {
           animation: fade-in 0.5s ease-out;
         }
       `}</style>
-      {/* Fixed Navigation */}
-      {hasResults && (
+
+      {/* Header with action buttons when results are shown */}
+      {data && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-800">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between h-14 sm:h-16">
               <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
                 Athlete Profile
               </h1>
-              <div className="flex space-x-1">
-                <button
-                  onClick={() => scrollToSection('score')}
-                  className={`px-2 sm:px-4 py-1 sm:py-2 rounded-lg transition-all text-xs sm:text-sm ${
-                    activeTab === 'score' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'text-gray-300 hover:text-white hover:bg-gray-800'
-                  }`}
+              <div className="flex space-x-2 sm:space-x-3">
+                <Button
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2"
+                  onClick={() => {/* TODO: Navigate to training plan creation */}}
                 >
-                  Score
-                </button>
-                <button
-                  onClick={() => scrollToSection('training')}
-                  className={`px-2 sm:px-4 py-1 sm:py-2 rounded-lg transition-all text-xs sm:text-sm ${
-                    activeTab === 'training' 
-                      ? 'bg-green-600 text-white' 
-                      : 'text-gray-300 hover:text-white hover:bg-gray-800'
-                  }`}
+                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  Training Plan
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-purple-600 hover:bg-purple-700 text-white text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2"
+                  onClick={() => {/* TODO: Navigate to nutrition plan creation */}}
                 >
-                  Training
-                </button>
-                <button
-                  onClick={() => scrollToSection('nutrition')}
-                  className={`px-2 sm:px-4 py-1 sm:py-2 rounded-lg transition-all text-xs sm:text-sm ${
-                    activeTab === 'nutrition' 
-                      ? 'bg-purple-600 text-white' 
-                      : 'text-gray-300 hover:text-white hover:bg-gray-800'
-                  }`}
-                >
-                  Nutrition
-                </button>
+                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  Nutrition Plan
+                </Button>
               </div>
             </div>
           </div>
@@ -398,13 +199,13 @@ const AthleteProfile = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Header - Only show when no results */}
-          {!hasResults && (
+          {!data && (
             <div className="text-center mb-8 sm:mb-12 px-4">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400 bg-clip-text text-transparent leading-tight">
                 Athlete Profile
               </h1>
               <p className="text-lg sm:text-xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto">
-                Unlock your athletic potential with personalized insights
+                Get your hybrid athlete score and unlock your athletic potential
               </p>
               
               {/* Create Profile Button */}
@@ -449,7 +250,7 @@ const AthleteProfile = () => {
                       ) : (
                         <>
                           <Zap className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                          Generate Athletic Analysis
+                          Get My Hybrid Score
                         </>
                       )}
                     </Button>
@@ -461,33 +262,51 @@ const AthleteProfile = () => {
 
           {/* Loading Status */}
           {loading && (
-            <div className={`space-y-6 sm:space-y-8 px-4 ${hasResults ? 'pt-20' : ''}`}>
+            <div className={`space-y-6 sm:space-y-8 px-4 ${data ? 'pt-20' : ''}`}>
               <div className="text-center">
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">AI Analysis in Progress</h2>
-                <p className="text-gray-400 text-sm sm:text-base">Creating your personalized athletic profile...</p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Calculating Your Hybrid Score</h2>
+                <p className="text-gray-400 text-sm sm:text-base">Analyzing your athletic profile...</p>
               </div>
-              <div className="grid grid-cols-1 gap-4 sm:gap-6 max-w-4xl mx-auto">
-                <LoadingCard 
-                  title="Performance Scores" 
-                  isLoading={loadingStatus.score} 
-                  isComplete={!loadingStatus.score && responses.score !== null}
-                  icon={BarChart3}
-                  deliverable="score"
-                />
-                <LoadingCard 
-                  title="Training Plan" 
-                  isLoading={loadingStatus.trainingPlan} 
-                  isComplete={!loadingStatus.trainingPlan && responses.trainingPlan !== null}
-                  icon={Calendar}
-                  deliverable="trainingPlan"
-                />
-                <LoadingCard 
-                  title="Nutrition Plan" 
-                  isLoading={loadingStatus.nutritionPlan} 
-                  isComplete={!loadingStatus.nutritionPlan && responses.nutritionPlan !== null}
-                  icon={Apple}
-                  deliverable="nutritionPlan"
-                />
+              <div className="max-w-2xl mx-auto">
+                <div className="flex items-center space-x-3 sm:space-x-4 p-4 sm:p-6 bg-gray-800/30 rounded-xl border border-gray-700">
+                  <div className={`p-2 sm:p-3 rounded-full transition-all duration-500 ${
+                    showCheckmark ? 'bg-green-500/20 scale-110' : 'bg-blue-500/20 animate-pulse'
+                  }`}>
+                    {showCheckmark ? (
+                      <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-400 animate-pulse" />
+                    ) : (
+                      <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin text-blue-400" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className={`font-semibold transition-colors duration-300 text-sm sm:text-base ${
+                      showCheckmark ? 'text-green-400' : 'text-blue-400'
+                    }`}>
+                      Performance Analysis
+                    </h3>
+                    <div className="w-full bg-gray-700 rounded-full h-2 sm:h-3 mt-2 overflow-hidden">
+                      <div 
+                        className={`h-2 sm:h-3 rounded-full transition-all duration-500 ${
+                          showCheckmark ? 'bg-green-400' : 'bg-blue-400'
+                        }`}
+                        style={{ 
+                          width: `${Math.min(loadingProgress, 100)}%`,
+                          transition: showCheckmark ? 'width 0.5s ease-out, background-color 0.5s ease-out' : 'width 0.3s ease-out'
+                        }}
+                      />
+                    </div>
+                    {!showCheckmark && (
+                      <div className="text-xs text-gray-400 mt-1">
+                        {Math.round(loadingProgress)}% complete
+                      </div>
+                    )}
+                    {showCheckmark && (
+                      <div className="text-xs text-green-400 mt-1 animate-fade-in">
+                        ✓ Complete
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -504,560 +323,181 @@ const AthleteProfile = () => {
             </Card>
           )}
 
-          {/* Results Sections */}
-          {hasResults && (
-            <div className={`space-y-16 ${loading ? '' : 'pt-20'}`}>
+          {/* Hybrid Score Results */}
+          {data && (
+            <div className={`space-y-6 sm:space-y-8 px-4 ${loading ? '' : 'pt-20'}`}>
               
               {/* Hybrid Score Section */}
-              {scoreData && (
-                <section ref={scoreRef} className="space-y-6 sm:space-y-8 px-4">
-                  <div className="text-center">
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">Your Hybrid Score</h2>
-                    <div className="text-6xl sm:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4 sm:mb-6 leading-tight">
-                      {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : Math.round(parseFloat(scoreData.hybridScore))}
-                    </div>
-                    <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto px-4">
-                      Your overall hybrid-fitness score on a 0-100 scale
+              <section className="space-y-6 sm:space-y-8">
+                <div className="text-center">
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">Your Hybrid Score</h2>
+                  <div className="text-6xl sm:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4 sm:mb-6 leading-tight">
+                    {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : Math.round(parseFloat(data.hybridScore))}
+                  </div>
+                  <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto px-4">
+                    Your overall hybrid-fitness score on a 0-100 scale
+                  </p>
+                </div>
+
+                {/* Score Breakdown */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                  {[
+                    { key: 'strength', label: 'Strength', value: data.strengthScore, icon: Dumbbell, color: 'from-orange-500 to-red-500' },
+                    { key: 'endurance', label: 'Endurance', value: data.enduranceScore, icon: Heart, color: 'from-green-500 to-emerald-500' },
+                    { key: 'bodyComp', label: 'Body Comp', value: data.bodyCompScore, icon: Scale, color: 'from-blue-500 to-cyan-500' },
+                    { key: 'recovery', label: 'Recovery', value: data.recoveryScore, icon: Moon, color: 'from-purple-500 to-pink-500' }
+                  ].map((score) => (
+                    <Card key={score.key} className="bg-gray-800/50 border-gray-700 text-center hover:scale-105 transition-transform">
+                      <CardContent className="p-3 sm:p-6">
+                        <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-4 rounded-full bg-gradient-to-r ${score.color} flex items-center justify-center`}>
+                          <score.icon className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+                        </div>
+                        <div className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">
+                          {animatedScores[score.key] ? Math.round(animatedScores[score.key]) : Math.round(parseFloat(score.value))}
+                        </div>
+                        <div className="text-sm sm:text-base text-gray-300">{score.label}</div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {/* Score Explanation */}
+                <Card className="bg-gray-800/30 border-gray-700">
+                  <CardHeader>
+                    <CardTitle className="text-xl sm:text-2xl text-white">What's the Hybrid Athlete Score?</CardTitle>
+                  </CardHeader>
+                  <CardContent className="prose prose-invert max-w-none px-4 sm:px-6">
+                    <p className="text-gray-300 text-base sm:text-lg mb-6">
+                      Think of it as your <strong>overall "hybrid-fitness GPA"</strong> on a 0 – 100 scale:
                     </p>
-                  </div>
-
-                  {/* Score Breakdown */}
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                    {[
-                      { key: 'strength', label: 'Strength', value: scoreData.strengthScore, icon: Dumbbell, color: 'from-orange-500 to-red-500' },
-                      { key: 'endurance', label: 'Endurance', value: scoreData.enduranceScore, icon: Heart, color: 'from-green-500 to-emerald-500' },
-                      { key: 'bodyComp', label: 'Body Comp', value: scoreData.bodyCompScore, icon: Scale, color: 'from-blue-500 to-cyan-500' },
-                      { key: 'recovery', label: 'Recovery', value: scoreData.recoveryScore, icon: Moon, color: 'from-purple-500 to-pink-500' }
-                    ].map((score) => (
-                      <Card key={score.key} className="bg-gray-800/50 border-gray-700 text-center hover:scale-105 transition-transform">
-                        <CardContent className="p-3 sm:p-6">
-                          <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-4 rounded-full bg-gradient-to-r ${score.color} flex items-center justify-center`}>
-                            <score.icon className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                      <div className="space-y-4">
+                        <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <Dumbbell className="h-4 w-4 sm:h-5 sm:w-5 text-orange-400" />
+                            <h4 className="text-white font-semibold text-sm sm:text-base">Strength</h4>
                           </div>
-                          <div className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">
-                            {animatedScores[score.key] ? Math.round(animatedScores[score.key]) : Math.round(parseFloat(score.value))}
-                          </div>
-                          <div className="text-sm sm:text-base text-gray-300">{score.label}</div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-
-                  {/* Score Explanation */}
-                  <Card className="bg-gray-800/30 border-gray-700">
-                    <CardHeader>
-                      <CardTitle className="text-2xl text-white">What's the Hybrid Athlete Score?</CardTitle>
-                    </CardHeader>
-                    <CardContent className="prose prose-invert max-w-none">
-                      <p className="text-gray-300 text-lg mb-6">
-                        Think of it as your <strong>overall "hybrid-fitness GPA"</strong> on a 0 – 100 scale:
-                      </p>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div className="space-y-4">
-                          <div className="bg-gray-800/50 rounded-lg p-4">
-                            <div className="flex items-center space-x-3 mb-2">
-                              <Dumbbell className="h-5 w-5 text-orange-400" />
-                              <h4 className="text-white font-semibold">Strength</h4>
-                            </div>
-                            <p className="text-gray-300 text-sm">How much weight you can lift relative to your body-weight (bench, squat, deadlift).</p>
-                            <p className="text-orange-400 text-sm mt-2">Power for sprints, hills, injury-proofing.</p>
-                          </div>
-                          
-                          <div className="bg-gray-800/50 rounded-lg p-4">
-                            <div className="flex items-center space-x-3 mb-2">
-                              <Heart className="h-5 w-5 text-green-400" />
-                              <h4 className="text-white font-semibold">Endurance</h4>
-                            </div>
-                            <p className="text-gray-300 text-sm">Your engine—VO₂ max plus best mile time.</p>
-                            <p className="text-green-400 text-sm mt-2">Determines how long and how hard you can keep moving.</p>
-                          </div>
+                          <p className="text-gray-300 text-xs sm:text-sm">How much weight you can lift relative to your body-weight (bench, squat, deadlift).</p>
+                          <p className="text-orange-400 text-xs sm:text-sm mt-2">Power for sprints, hills, injury-proofing.</p>
                         </div>
                         
-                        <div className="space-y-4">
-                          <div className="bg-gray-800/50 rounded-lg p-4">
-                            <div className="flex items-center space-x-3 mb-2">
-                              <Scale className="h-5 w-5 text-blue-400" />
-                              <h4 className="text-white font-semibold">Body-comp</h4>
-                            </div>
-                            <p className="text-gray-300 text-sm">How close you are to a healthy, performance-lean body-fat range.</p>
-                            <p className="text-blue-400 text-sm mt-2">Better power-to-weight and joint health.</p>
+                        <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-green-400" />
+                            <h4 className="text-white font-semibold text-sm sm:text-base">Endurance</h4>
                           </div>
-                          
-                          <div className="bg-gray-800/50 rounded-lg p-4">
-                            <div className="flex items-center space-x-3 mb-2">
-                              <Moon className="h-5 w-5 text-purple-400" />
-                              <h4 className="text-white font-semibold">Recovery</h4>
-                            </div>
-                            <p className="text-gray-300 text-sm">HRV and resting heart-rate—how well your body bounces back.</p>
-                            <p className="text-purple-400 text-sm mt-2">Faster gains, fewer burn-outs.</p>
-                          </div>
+                          <p className="text-gray-300 text-xs sm:text-sm">Your engine—VO₂ max plus best mile time.</p>
+                          <p className="text-green-400 text-xs sm:text-sm mt-2">Determines how long and how hard you can keep moving.</p>
                         </div>
                       </div>
-
-                      <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-lg p-6 border border-blue-800/30">
-                        <h4 className="text-white font-semibold mb-3">The Balance Bonus</h4>
-                        <p className="text-gray-300 mb-4">
-                          We average those slices, then add a <strong>"balance bonus."</strong> If your strength and endurance levels are close together, you score extra points—because true hybrid athletes aren't one-sided.
-                        </p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-green-400">100 points</div>
-                            <p className="text-gray-300">Elite strength, elite cardio, dialed-in body-comp, and stellar recovery with good balance.</p>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-yellow-400">50 points</div>
-                            <p className="text-gray-300">Recreational lifter or runner with room to grow in other areas.</p>
-                          </div>
-                        </div>
-                        <p className="text-blue-400 mt-4 text-center">
-                          Your score helps you see <strong>which dial to turn next</strong>—lift heavier, run faster, lean out, or sleep/recover better—to level up as a complete hybrid athlete.
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </section>
-              )}
-
-              {/* Training Plan Section */}
-              {trainingData && (
-                <section ref={trainingRef} className="space-y-6 sm:space-y-8 px-4">
-                  <div className="text-center">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Training Plan</h2>
-                    <p className="text-lg sm:text-xl text-gray-300">
-                      {trainingData['Training Plan'].meta.title}
-                    </p>
-                    <p className="text-gray-400 mt-2 text-sm sm:text-base">
-                      {trainingData['Training Plan'].meta.overview}
-                    </p>
-                  </div>
-
-                  {/* Training Overview Cards */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                    <Card className="bg-gray-800/30 border-gray-700">
-                      <CardHeader className="pb-3 sm:pb-4">
-                        <CardTitle className="text-white flex items-center space-x-2 text-lg sm:text-xl">
-                          <Target className="h-4 w-4 sm:h-5 sm:w-5" />
-                          <span>Goals</span>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-3 px-4 sm:px-6">
-                        <div>
-                          <h4 className="text-xs sm:text-sm font-medium text-gray-400 mb-1">Primary</h4>
-                          <p className="text-white text-sm sm:text-base">{trainingData['Training Plan'].goals.primary}</p>
-                        </div>
-                        <div>
-                          <h4 className="text-xs sm:text-sm font-medium text-gray-400 mb-1">Secondary</h4>
-                          <p className="text-white text-sm sm:text-base">{trainingData['Training Plan'].goals.secondary}</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="bg-gray-800/30 border-gray-700">
-                      <CardHeader className="pb-3 sm:pb-4">
-                        <CardTitle className="text-white flex items-center space-x-2 text-lg sm:text-xl">
-                          <MapPin className="h-4 w-4 sm:h-5 sm:w-5" />
-                          <span>Equipment</span>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="px-4 sm:px-6">
-                        <div className="flex flex-wrap gap-1 sm:gap-2">
-                          {trainingData['Training Plan'].equipment.items.map((item, index) => (
-                            <Badge key={index} variant="outline" className="text-blue-400 border-blue-400 text-xs">
-                              {item}
-                            </Badge>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  {/* Run Progression & Recovery */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {trainingData['Training Plan'].runProgression && (
-                      <Card className="bg-gray-800/30 border-gray-700">
-                        <CardHeader>
-                          <CardTitle className="text-white flex items-center space-x-2">
-                            <TrendingUp className="h-5 w-5" />
-                            <span>Run Progression</span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Base Mileage</span>
-                            <span className="text-white font-semibold">{trainingData['Training Plan'].runProgression.baseMileage} miles</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Weekly Increase</span>
-                            <span className="text-green-400 font-semibold">{trainingData['Training Plan'].runProgression.weekOverWeekPct}%</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Long Run Start</span>
-                            <span className="text-blue-400 font-semibold">{trainingData['Training Plan'].runProgression.longRunStart} miles</span>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    {trainingData['Training Plan'].recovery && (
-                      <Card className="bg-gray-800/30 border-gray-700">
-                        <CardHeader>
-                          <CardTitle className="text-white flex items-center space-x-2">
-                            <Bed className="h-5 w-5" />
-                            <span>Recovery Protocol</span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Sleep Target</span>
-                            <span className="text-purple-400 font-semibold">{trainingData['Training Plan'].recovery.sleepTargetHrs} hours</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Sauna/Week</span>
-                            <span className="text-orange-400 font-semibold">{trainingData['Training Plan'].recovery.saunaPerWeek} sessions</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Daily Mobility</span>
-                            <span className="text-green-400 font-semibold">{trainingData['Training Plan'].recovery.mobilityMinPerDay} min</span>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-
-                  {/* Weekly Schedule */}
-                  <div className="space-y-6">
-                    {trainingData['Training Plan'].weeks.map((week, weekIndex) => (
-                      <Card key={weekIndex} className="bg-gray-800/30 border-gray-700">
-                        <CardHeader>
-                          <CardTitle className="text-2xl text-white">Week {week.week}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {week.days.map((day, dayIndex) => (
-                              <Card key={dayIndex} className="bg-gray-800/50 border-gray-600">
-                                <CardHeader className="pb-3">
-                                  <div className="flex justify-between items-center">
-                                    <h3 className="text-lg font-semibold text-white">{day.day}</h3>
-                                    <Badge variant="outline" className="text-xs capitalize">
-                                      {day.sessions[0]?.type}
-                                    </Badge>
-                                  </div>
-                                  <p className="text-sm text-gray-400">{day.focus}</p>
-                                </CardHeader>
-                                <CardContent className="space-y-3">
-                                  {day.sessions.map((session, sessionIndex) => (
-                                    <div key={sessionIndex}>
-                                      <div className="flex justify-between items-center mb-2">
-                                        <h4 className="text-sm font-medium text-white">{session.label}</h4>
-                                        <span className="text-xs text-gray-400">{session.start}-{session.end}</span>
-                                      </div>
-                                      {session.exercises.slice(0, 3).map((exercise, exerciseIndex) => (
-                                        <div key={exerciseIndex} className="text-sm text-gray-300 pl-3 border-l-2 border-gray-600">
-                                          <div className="flex justify-between">
-                                            <span>{exercise.name}</span>
-                                            <span className="text-xs text-gray-500">
-                                              {exercise.sets}×{exercise.reps}
-                                              {exercise.load > 0 && ` @ ${exercise.load}lbs`}
-                                            </span>
-                                          </div>
-                                        </div>
-                                      ))}
-                                      {session.distance > 0 && (
-                                        <div className="text-sm text-blue-400 pl-3 border-l-2 border-blue-600">
-                                          {session.distance} miles - {session.intensity}
-                                        </div>
-                                      )}
-                                    </div>
-                                  ))}
-                                </CardContent>
-                              </Card>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-
-                  {/* Training Notes */}
-                  <Card className="bg-gray-800/30 border-gray-700">
-                    <CardHeader>
-                      <CardTitle className="text-xl text-white flex items-center space-x-2">
-                        <Info className="h-5 w-5" />
-                        <span>Important Notes</span>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                      
                       <div className="space-y-4">
-                        <div>
-                          <h4 className="font-semibold text-white mb-2">Auto-regulation</h4>
-                          <p className="text-gray-300">{trainingData['Training Plan'].notes.autoRegulation}</p>
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-white mb-2">Safety</h4>
-                          <p className="text-gray-300">{trainingData['Training Plan'].notes.safety}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </section>
-              )}
-
-              {/* Nutrition Plan Section */}
-              {nutritionData && (
-                <section ref={nutritionRef} className="space-y-6 sm:space-y-8 px-4">
-                  <div className="text-center">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Nutrition Plan</h2>
-                    <p className="text-lg sm:text-xl text-gray-300">
-                      Personalized nutrition strategy to fuel your goals
-                    </p>
-                  </div>
-
-                  {/* Calorie Targets */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-                    {[
-                      { label: 'Lift Day', value: nutritionData['Nutrition Plan'].calorieTargets.liftDayKcal, color: 'text-blue-400' },
-                      { label: 'Run Day', value: nutritionData['Nutrition Plan'].calorieTargets.runDayKcal, color: 'text-green-400' },
-                      { label: 'Rest Day', value: nutritionData['Nutrition Plan'].calorieTargets.restDayKcal, color: 'text-purple-400' }
-                    ].map((target, index) => (
-                      <Card key={index} className="bg-gray-800/30 border-gray-700 text-center">
-                        <CardContent className="p-4 sm:p-6">
-                          <h3 className="text-base sm:text-lg font-semibold text-white mb-2">{target.label}</h3>
-                          <div className={`text-3xl sm:text-4xl font-bold ${target.color} mb-1`}>
-                            {target.value}
+                        <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <Scale className="h-4 w-4 sm:h-5 sm:w-5 text-blue-400" />
+                            <h4 className="text-white font-semibold text-sm sm:text-base">Body-comp</h4>
                           </div>
-                          <p className="text-gray-400 text-sm">calories</p>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-
-                  {/* Macro Targets */}
-                  <Card className="bg-gray-800/30 border-gray-700">
-                    <CardHeader className="pb-3 sm:pb-4">
-                      <CardTitle className="text-white text-lg sm:text-xl">Daily Macro Targets</CardTitle>
-                    </CardHeader>
-                    <CardContent className="px-4 sm:px-6">
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-                        {[
-                          { label: 'Protein', value: nutritionData['Nutrition Plan'].nutritionTargets.macroTargetsG.protein, unit: 'g', color: 'text-green-400' },
-                          { label: 'Carbs', value: nutritionData['Nutrition Plan'].nutritionTargets.macroTargetsG.carb, unit: 'g', color: 'text-blue-400' },
-                          { label: 'Fat', value: nutritionData['Nutrition Plan'].nutritionTargets.macroTargetsG.fat, unit: 'g', color: 'text-yellow-400' }
-                        ].map((macro, index) => (
-                          <div key={index} className="text-center">
-                            <div className={`text-4xl sm:text-5xl font-bold ${macro.color} mb-2`}>
-                              {macro.value}{macro.unit}
-                            </div>
-                            <div className="text-gray-300 text-sm sm:text-base">{macro.label}</div>
+                          <p className="text-gray-300 text-xs sm:text-sm">How close you are to a healthy, performance-lean body-fat range.</p>
+                          <p className="text-blue-400 text-xs sm:text-sm mt-2">Better power-to-weight and joint health.</p>
+                        </div>
+                        
+                        <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <Moon className="h-4 w-4 sm:h-5 sm:w-5 text-purple-400" />
+                            <h4 className="text-white font-semibold text-sm sm:text-base">Recovery</h4>
                           </div>
-                        ))}
+                          <p className="text-gray-300 text-xs sm:text-sm">HRV and resting heart-rate—how well your body bounces back.</p>
+                          <p className="text-purple-400 text-xs sm:text-sm mt-2">Faster gains, fewer burn-outs.</p>
+                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
 
-                  {/* Meal Suggestions */}
-                  <Card className="bg-gray-800/30 border-gray-700">
-                    <CardHeader>
-                      <CardTitle className="text-white">Suggested Meals</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {nutritionData['Nutrition Plan'].suggestedMeals.slice(0, 6).map((meal, index) => (
-                          <Card key={index} className="bg-gray-800/50 border-gray-600">
-                            <CardContent className="p-4">
-                              <h4 className="font-semibold text-white mb-2">{meal.name}</h4>
-                              <div className="grid grid-cols-3 gap-2 text-sm mb-3">
-                                <span className="text-green-400">P: {meal.macrosG.protein}g</span>
-                                <span className="text-blue-400">C: {meal.macrosG.carb}g</span>
-                                <span className="text-yellow-400">F: {meal.macrosG.fat}g</span>
-                              </div>
-                              <p className="text-xs text-gray-400 italic">{meal.note}</p>
-                            </CardContent>
-                          </Card>
-                        ))}
+                    <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-lg p-4 sm:p-6 border border-blue-800/30">
+                      <h4 className="text-white font-semibold mb-3 text-sm sm:text-base">The Balance Bonus</h4>
+                      <p className="text-gray-300 mb-4 text-sm sm:text-base">
+                        We average those slices, then add a <strong>"balance bonus."</strong> If your strength and endurance levels are close together, you score extra points—because true hybrid athletes aren't one-sided.
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                        <div className="text-center">
+                          <div className="text-xl sm:text-2xl font-bold text-green-400">100 points</div>
+                          <p className="text-gray-300">Elite strength, elite cardio, dialed-in body-comp, and stellar recovery with good balance.</p>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-xl sm:text-2xl font-bold text-yellow-400">50 points</div>
+                          <p className="text-gray-300">Recreational lifter or runner with room to grow in other areas.</p>
+                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                      <p className="text-blue-400 mt-4 text-center text-sm sm:text-base">
+                        Your score helps you see <strong>which dial to turn next</strong>—lift heavier, run faster, lean out, or sleep/recover better—to level up as a complete hybrid athlete.
+                      </p>
+                    </div>
 
-                  {/* Takeout Options */}
-                  {nutritionData['Nutrition Plan'].suggestedTakeout && (
-                    <Card className="bg-gray-800/30 border-gray-700">
+                    {/* Detailed Metrics */}
+                    <Card className="bg-gray-800/50 border-gray-700 mt-6 sm:mt-8">
                       <CardHeader>
-                        <CardTitle className="text-white flex items-center space-x-2">
-                          <Utensils className="h-5 w-5" />
-                          <span>Takeout Options</span>
+                        <CardTitle className="text-lg sm:text-xl text-white flex items-center space-x-2">
+                          <Activity className="h-5 w-5 sm:h-6 sm:w-6" />
+                          <span>Your Metrics</span>
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {nutritionData['Nutrition Plan'].suggestedTakeout.map((takeout, index) => (
-                            <Card key={index} className="bg-gray-800/50 border-gray-600">
-                              <CardContent className="p-4">
-                                <div className="flex justify-between items-start mb-3">
-                                  <div>
-                                    <h4 className="font-semibold text-white">{takeout.restaurant}</h4>
-                                    <p className="text-sm text-gray-300">{takeout.item}</p>
-                                  </div>
-                                  <Badge variant="outline" className="text-amber-400 border-amber-400">
-                                    Takeout
-                                  </Badge>
-                                </div>
-                                <div className="grid grid-cols-3 gap-2 text-sm mb-2">
-                                  <span className="text-green-400">P: {takeout.macrosG.protein}g</span>
-                                  <span className="text-blue-400">C: {takeout.macrosG.carb}g</span>
-                                  <span className="text-yellow-400">F: {takeout.macrosG.fat}g</span>
-                                </div>
-                                <p className="text-xs text-gray-400 italic">{takeout.note}</p>
-                              </CardContent>
-                            </Card>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                          {[
+                            { label: 'Body Weight', value: data.scoreInputsUsed.bodyWeightKg, unit: 'kg', color: 'text-blue-400' },
+                            { label: 'Body Fat', value: data.scoreInputsUsed.bodyFatPercent, unit: '%', color: 'text-green-400' },
+                            { label: 'HRV', value: data.scoreInputsUsed.hrvMs, unit: 'ms', color: 'text-purple-400' },
+                            { label: 'Resting HR', value: data.scoreInputsUsed.restingHrBpm, unit: 'bpm', color: 'text-red-400' },
+                            { label: 'VO2 Max', value: data.scoreInputsUsed.vo2Max, unit: 'ml/kg/min', color: 'text-orange-400' },
+                            { label: 'Mile Time', value: Math.floor(data.scoreInputsUsed.mileSeconds / 60), unit: 'min', color: 'text-cyan-400' },
+                            { label: 'Bench 1RM', value: data.scoreInputsUsed.bench1RmKg || 'N/A', unit: 'kg', color: 'text-yellow-400' },
+                            { label: 'Squat 1RM', value: data.scoreInputsUsed.squat1RmKg || 'N/A', unit: 'kg', color: 'text-pink-400' }
+                          ].map((metric, index) => (
+                            <div key={index} className="bg-gray-800/30 rounded-lg p-3 sm:p-4 text-center">
+                              <div className={`text-lg sm:text-xl font-bold ${metric.color} mb-1`}>
+                                {metric.value}
+                              </div>
+                              <div className="text-xs text-gray-400">{metric.unit}</div>
+                              <div className="text-xs text-gray-300 mt-1">{metric.label}</div>
+                            </div>
                           ))}
                         </div>
                       </CardContent>
                     </Card>
-                  )}
 
-                  {/* Daily Flows */}
-                  {nutritionData['Nutrition Plan'].dailyFlowVariants && (
-                    <Card className="bg-gray-800/30 border-gray-700">
+                    {/* Next Steps */}
+                    <Card className="bg-gradient-to-r from-green-900/20 to-blue-900/20 border-green-800/30 mt-6 sm:mt-8">
                       <CardHeader>
-                        <CardTitle className="text-white flex items-center space-x-2">
-                          <Clock className="h-5 w-5" />
-                          <span>Daily Nutrition Flows</span>
+                        <CardTitle className="text-lg sm:text-xl text-white flex items-center space-x-2">
+                          <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                          <span>Ready for the Next Step?</span>
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                          {nutritionData['Nutrition Plan'].dailyFlowVariants.map((flow, index) => (
-                            <DailyFlowCard key={index} day={flow.dayType} actions={flow.actions} />
-                          ))}
+                        <p className="text-gray-300 mb-4 text-sm sm:text-base">
+                          Now that you know your hybrid score, create personalized training and nutrition plans to improve your weakest areas and maintain your strengths.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                          <Button
+                            className="bg-green-600 hover:bg-green-700 text-white flex-1"
+                            onClick={() => {/* TODO: Navigate to training plan creation */}}
+                          >
+                            <Plus className="h-4 w-4 mr-2" />
+                            Create Training Plan
+                          </Button>
+                          <Button
+                            className="bg-purple-600 hover:bg-purple-700 text-white flex-1"
+                            onClick={() => {/* TODO: Navigate to nutrition plan creation */}}
+                          >
+                            <Plus className="h-4 w-4 mr-2" />
+                            Create Nutrition Plan
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>
-                  )}
-
-                  {/* Hydration & Daily Totals */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {nutritionData['Nutrition Plan'].hydrationTargets && (
-                      <Card className="bg-gray-800/30 border-gray-700">
-                        <CardHeader>
-                          <CardTitle className="text-white flex items-center space-x-2">
-                            <Droplets className="h-5 w-5" />
-                            <span>Hydration Targets</span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            <div className="flex justify-between items-center">
-                              <span className="text-gray-300">Lift Day</span>
-                              <span className="text-blue-400 font-semibold">
-                                {nutritionData['Nutrition Plan'].hydrationTargets.liftDayLiters}L
-                              </span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-gray-300">Run Day</span>
-                              <span className="text-green-400 font-semibold">
-                                {nutritionData['Nutrition Plan'].hydrationTargets.runDayLiters}L
-                              </span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-gray-300">Rest Day</span>
-                              <span className="text-purple-400 font-semibold">
-                                {nutritionData['Nutrition Plan'].hydrationTargets.restDayLiters}L
-                              </span>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    {nutritionData['Nutrition Plan'].dailyTotals && (
-                      <Card className="bg-gray-800/30 border-gray-700">
-                        <CardHeader>
-                          <CardTitle className="text-white flex items-center space-x-2">
-                            <Pill className="h-5 w-5" />
-                            <span>Daily Supplements</span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            {Object.entries(nutritionData['Nutrition Plan'].dailyTotals).map(([dayType, totals]) => (
-                              <div key={dayType} className="bg-gray-800/50 rounded-lg p-4">
-                                <h4 className="text-white font-semibold mb-2 capitalize">
-                                  {dayType.replace(/([A-Z])/g, ' $1').trim()}
-                                </h4>
-                                <div className="grid grid-cols-2 gap-2 text-sm">
-                                  <div>
-                                    <span className="text-gray-400">Caffeine: </span>
-                                    <span className="text-orange-400">{totals.caffeineMg}mg</span>
-                                  </div>
-                                  <div>
-                                    <span className="text-gray-400">Creatine: </span>
-                                    <span className="text-blue-400">{totals.creatineG}g</span>
-                                  </div>
-                                  <div>
-                                    <span className="text-gray-400">Magnesium: </span>
-                                    <span className="text-purple-400">{totals.magnesiumMg}mg</span>
-                                  </div>
-                                  <div>
-                                    <span className="text-gray-400">EPA+DHA: </span>
-                                    <span className="text-green-400">{totals.epaPlusDhaG}g</span>
-                                  </div>
-                                </div>
-                                <p className="text-xs text-gray-500 mt-2 italic">{totals.note}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-
-                  {/* Guardrails & Checkpoints */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {nutritionData['Nutrition Plan'].guardrails && (
-                      <Card className="bg-gray-800/30 border-gray-700">
-                        <CardHeader>
-                          <CardTitle className="text-white flex items-center space-x-2">
-                            <Shield className="h-5 w-5" />
-                            <span>Guardrails</span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-3">
-                            {nutritionData['Nutrition Plan'].guardrails.map((guardrail, index) => (
-                              <div key={index} className="flex items-start space-x-3">
-                                <CheckCircle2 className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
-                                <p className="text-gray-300 text-sm">{guardrail}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    {nutritionData['Nutrition Plan'].checkpoints && (
-                      <Card className="bg-gray-800/30 border-gray-700">
-                        <CardHeader>
-                          <CardTitle className="text-white flex items-center space-x-2">
-                            <CheckCircle2 className="h-5 w-5" />
-                            <span>Progress Checkpoints</span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-3">
-                            {nutritionData['Nutrition Plan'].checkpoints.map((checkpoint, index) => (
-                              <div key={index} className="flex items-start space-x-3">
-                                <Calendar className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
-                                <p className="text-gray-300 text-sm">{checkpoint}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-                </section>
-              )}
+                  </CardContent>
+                </Card>
+              </section>
             </div>
           )}
         </div>
