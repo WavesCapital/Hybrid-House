@@ -790,7 +790,7 @@ const AthleteProfile = () => {
                         <h4 className="neo-text-primary font-semibold text-lg">Endurance Score</h4>
                       </div>
                       <p className="neo-text-secondary leading-relaxed">
-                        Shows your combined running ability, including your speed, cardiovascular fitness (VO₂ max), longest run distance, and weekly running volume. A strong endurance score means you can sustain efforts over long distances and tough workouts.
+                        Shows your combined running ability, including your speed, cardiovascular fitness, longest run distance, and weekly running volume. A strong endurance score means you can sustain efforts over long distances and tough workouts.
                       </p>
                     </div>
                     
@@ -812,48 +812,6 @@ const AthleteProfile = () => {
                       <p className="neo-text-secondary leading-relaxed">
                         Rewards how balanced you are between strength and endurance. Being evenly skilled in both areas is the hallmark of a true hybrid athlete.
                       </p>
-                    </div>
-                    
-                    <div className="neo-surface-2 rounded-lg p-6">
-                      <div className="flex items-center space-x-3 mb-4">
-                        <AlertCircle className="h-6 w-6" style={{ color: '#FF4B4B' }} />
-                        <h4 className="neo-text-primary font-semibold text-lg">Hybrid Penalty</h4>
-                      </div>
-                      <p className="neo-text-secondary leading-relaxed">
-                        If some performance data is missing, you might see a small penalty. Providing detailed info ensures the most accurate score possible.
-                      </p>
-                    </div>
-                    
-                    <div className="neo-surface-2 rounded-lg p-6">
-                      <div className="flex items-center space-x-3 mb-4">
-                        <Target className="h-6 w-6 neo-primary" />
-                        <h4 className="neo-text-primary font-semibold text-lg">Overall Hybrid Score</h4>
-                      </div>
-                      <p className="neo-text-secondary leading-relaxed mb-4">
-                        Your final score blends strength, endurance, recovery, and balance into one easy-to-understand rating.
-                      </p>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="neo-text-secondary text-sm">90–100:</span>
-                          <span className="neo-primary font-semibold text-sm">Elite Hybrid Athlete</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="neo-text-secondary text-sm">80–89:</span>
-                          <span className="neo-cyan font-semibold text-sm">Very Good – Well-rounded</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="neo-text-secondary text-sm">70–79:</span>
-                          <span className="neo-green font-semibold text-sm">Solid – On the right track</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="neo-text-secondary text-sm">60–69:</span>
-                          <span className="neo-violet font-semibold text-sm">Needs work – Potential to grow</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="neo-text-secondary text-sm">Below 60:</span>
-                          <span className="neo-text-muted font-semibold text-sm">Beginner – Exciting room to improve!</span>
-                        </div>
-                      </div>
                     </div>
                   </div>
 
