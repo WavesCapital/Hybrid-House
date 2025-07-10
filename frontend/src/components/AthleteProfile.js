@@ -850,32 +850,31 @@ const AthleteProfile = () => {
                     </div>
                   </div>
 
-                  {/* Next Steps */}
-                  <div className="rounded-xl mt-8 p-6" style={{ 
-                    background: 'linear-gradient(135deg, rgba(121, 207, 247, 0.1), rgba(141, 92, 255, 0.1))',
-                    border: '1px solid rgba(121, 207, 247, 0.3)'
-                  }}>
-                    <h4 className="text-xl font-semibold neo-text-primary mb-4 flex items-center space-x-2">
-                      <ChevronRight className="h-6 w-6 neo-primary" />
-                      <span>Ready for the Next Step?</span>
-                    </h4>
-                    <p className="neo-text-secondary mb-6">
-                      Now that you know your hybrid score, create personalized training and nutrition plans to improve your weakest areas and maintain your strengths.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <button
-                        className="neo-btn-secondary flex-1"
-                        onClick={() => {/* TODO: Navigate to training plan creation */}}
-                      >
-                        Create Training Plan
-                      </button>
-                      <button
-                        className="neo-btn-secondary flex-1"
-                        onClick={() => {/* TODO: Navigate to nutrition plan creation */}}
-                      >
-                        Create Nutrition Plan
-                      </button>
-                    </div>
+                {/* Next Steps */}
+                <div className="rounded-xl mt-8 p-6" style={{ 
+                  background: 'linear-gradient(135deg, rgba(121, 207, 247, 0.1), rgba(141, 92, 255, 0.1))',
+                  border: '1px solid rgba(121, 207, 247, 0.3)'
+                }}>
+                  <h4 className="text-xl font-semibold neo-text-primary mb-4 flex items-center space-x-2">
+                    <ChevronRight className="h-6 w-6 neo-primary" />
+                    <span>Ready for the Next Step?</span>
+                  </h4>
+                  <p className="neo-text-secondary mb-6">
+                    Now that you know your hybrid score, create personalized training and nutrition plans to improve your weakest areas and maintain your strengths.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <button
+                      className="neo-btn-secondary flex-1"
+                      onClick={() => {/* TODO: Navigate to training plan creation */}}
+                    >
+                      Create Training Plan
+                    </button>
+                    <button
+                      className="neo-btn-secondary flex-1"
+                      onClick={() => {/* TODO: Navigate to nutrition plan creation */}}
+                    >
+                      Create Nutrition Plan
+                    </button>
                   </div>
                 </div>
               </section>
