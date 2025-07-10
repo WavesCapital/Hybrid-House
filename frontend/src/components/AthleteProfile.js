@@ -837,51 +837,63 @@ const AthleteProfile = () => {
                       {[
                         { 
                           label: 'Body Weight', 
-                          value: Math.round(data.scoreInputsUsed.bodyWeightKg * 2.20462), 
+                          value: data.inputsUsed?.bodyWeightLb || 'N/A', 
                           unit: 'lbs', 
                           color: '#79CFF7' 
                         },
                         { 
-                          label: 'Body Fat', 
-                          value: data.scoreInputsUsed.bodyFatPercent, 
-                          unit: '%', 
-                          color: '#85E26E' 
-                        },
-                        { 
-                          label: 'HRV', 
-                          value: data.scoreInputsUsed.hrvMs, 
-                          unit: 'ms', 
-                          color: '#8D5CFF' 
-                        },
-                        { 
-                          label: 'Resting HR', 
-                          value: data.scoreInputsUsed.restingHrBpm, 
-                          unit: 'bpm', 
-                          color: '#79CFF7' 
-                        },
-                        { 
                           label: 'VO2 Max', 
-                          value: data.scoreInputsUsed.vo2Max, 
+                          value: data.inputsUsed?.vo2Max || 'N/A', 
                           unit: 'ml/kg/min', 
                           color: '#85E26E' 
                         },
                         { 
                           label: 'Mile Time', 
-                          value: `${Math.floor(data.scoreInputsUsed.mileSeconds / 60)}:${String(Math.round(data.scoreInputsUsed.mileSeconds % 60)).padStart(2, '0')}`, 
+                          value: data.inputsUsed?.mileSeconds ? `${Math.floor(data.inputsUsed.mileSeconds / 60)}:${String(Math.round(data.inputsUsed.mileSeconds % 60)).padStart(2, '0')}` : 'N/A', 
                           unit: '', 
                           color: '#8D5CFF' 
                         },
                         { 
-                          label: 'Bench 1RM', 
-                          value: data.scoreInputsUsed.bench1RmKg ? Math.round(data.scoreInputsUsed.bench1RmKg * 2.20462) : 'N/A', 
-                          unit: data.scoreInputsUsed.bench1RmKg ? 'lbs' : '', 
+                          label: 'Long Run', 
+                          value: data.inputsUsed?.longRunMiles || 'N/A', 
+                          unit: data.inputsUsed?.longRunMiles ? 'mi' : '', 
                           color: '#79CFF7' 
                         },
                         { 
-                          label: 'Squat 1RM', 
-                          value: data.scoreInputsUsed.squat1RmKg ? Math.round(data.scoreInputsUsed.squat1RmKg * 2.20462) : 'N/A', 
-                          unit: data.scoreInputsUsed.squat1RmKg ? 'lbs' : '', 
+                          label: 'Weekly Miles', 
+                          value: data.inputsUsed?.weeklyMiles || 'N/A', 
+                          unit: data.inputsUsed?.weeklyMiles ? 'mi/wk' : '', 
                           color: '#85E26E' 
+                        },
+                        { 
+                          label: 'HRV', 
+                          value: data.inputsUsed?.hrvMs || 'N/A', 
+                          unit: data.inputsUsed?.hrvMs ? 'ms' : '', 
+                          color: '#8D5CFF' 
+                        },
+                        { 
+                          label: 'Resting HR', 
+                          value: data.inputsUsed?.restingHrBpm || 'N/A', 
+                          unit: data.inputsUsed?.restingHrBpm ? 'bpm' : '', 
+                          color: '#79CFF7' 
+                        },
+                        { 
+                          label: 'Bench 1RM', 
+                          value: data.inputsUsed?.bench1RmLb || 'N/A', 
+                          unit: data.inputsUsed?.bench1RmLb ? 'lbs' : '', 
+                          color: '#85E26E' 
+                        },
+                        { 
+                          label: 'Squat 1RM', 
+                          value: data.inputsUsed?.squat1RmLb || 'N/A', 
+                          unit: data.inputsUsed?.squat1RmLb ? 'lbs' : '', 
+                          color: '#8D5CFF' 
+                        },
+                        { 
+                          label: 'Dead 1RM', 
+                          value: data.inputsUsed?.dead1RmLb || 'N/A', 
+                          unit: data.inputsUsed?.dead1RmLb ? 'lbs' : '', 
+                          color: '#79CFF7' 
                         }
                       ].map((metric, index) => (
                         <div key={index} className="neo-surface-2 rounded-lg p-4 text-center">
