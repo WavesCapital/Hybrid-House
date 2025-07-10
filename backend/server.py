@@ -47,6 +47,58 @@ async def create_status_check(input: StatusCheckCreate):
     _ = await db.status_checks.insert_one(status_obj.dict())
     return status_obj
 
+@api_router.get("/test-score")
+async def get_test_score():
+    """Test endpoint that returns sample score data with new structure"""
+    return [
+        {
+            "id": "msg_test123",
+            "type": "message", 
+            "status": "completed",
+            "inputsUsed": {
+                "bodyWeightLb": 163,
+                "vo2Max": 49,
+                "mileSeconds": 463,
+                "longRunMiles": 7.2,
+                "weeklyMiles": 12,
+                "hrvMs": 68,
+                "restingHrBpm": 48,
+                "bench1RmLb": 262.5,
+                "squat1RmLb": 0,
+                "dead1RmLb": 0
+            },
+            "strengthScore": 92.1,
+            "strengthComment": "Excellent pressing power—your bench is >1.6×BW and already in the 'advanced' range. Fill in squat and dead numbers to round out total-body strength, but upper-body force production is elite for a hybrid athlete.",
+            "speedScore": 85.6,
+            "speedComment": "A 7:43 mile puts you comfortably under the 8-min barrier; you're ~70 s away from that sub-6. Sharpen speed with weekly tempo/interval work and keep trimming body-fat to move the needle.",
+            "vo2Score": 73.8,
+            "vo2Comment": "Lab-measured 49 ml/kg still trails elite hybrid range (55–60+). More zone-2 volume and strides will push this up over the next 8–12 weeks.",
+            "distanceScore": 70.9,
+            "distanceComment": "Solid long run of 7 mi, but ultra aspirations will need 10-13 mi in the near term and 16-20 mi blocks later. Build slowly (+1 mi every other week).",
+            "volumeScore": 72.1,
+            "volumeComment": "12 mpw is a good foundation, yet true hybrid balance usually starts flourishing at 20-25 mpw. Add a 3-4 mi easy double or extend two weekday runs.",
+            "enduranceScore": 75.6,
+            "enduranceComment": "Running engine is respectable but still lags behind your lifting; keep layering aerobic miles and targeted speedwork.",
+            "recoveryScore": 77.9,
+            "recoveryComment": "HRV 68 and RHR 48 show you're bouncing back well—sauna/foam-roll sessions are paying off. Prioritise 8 h sleep to nudge this into the 80s.",
+            "balanceBonus": 0,
+            "balanceComment": "Strength outpaces endurance by >15 pts—no bonus. Leveling them up will unlock extra score and on-course performance.",
+            "hybridPenalty": 4,
+            "penaltyComment": "Small deduction for reporting only one true 1-RM. Test or estimate squat/dead to remove this hit next cycle.",
+            "hybridScore": 70.9,
+            "hybridComment": "You're a muscle-forward hybrid: big bench, decent mile, and fair recovery. Elevate run volume and record full-body maxes to break into the 80-plus club.",
+            "tips": [
+                "Progress weekly mileage toward 20–25 with 80–90 % of it in zone-2 (easy conversational pace).",
+                "Add one quality session: 6×400 m at 5k pace or 3×1 km at 10k pace; recover fully between reps to chip away at the 6-min mile goal.",
+                "Cycle a lower-body strength block and formally test squat and deadlift 1-RMs; aim for 1.8×BW squat and 2.2×BW dead to match bench ratio.",
+                "Schedule a 10–12 mi long run every other week, building to 16 mi over 3 months to prepare for ultra volume.",
+                "Push sleep to 8 h average using a strict bedtime and pre-sleep wind-down; HRV should climb into the 70s.",
+                "Stay in a slight 250-300 kcal deficit while holding protein ≥0.8 g/lb to drop the last 8 lb without sacrificing muscle.",
+                "Use the Echo bike for low-impact aerobic flush rides on rest days; this adds volume without extra pounding."
+            ]
+        }
+    ]
+
 @api_router.get("/status", response_model=List[StatusCheck])
 async def get_status_checks():
     status_checks = await db.status_checks.find().to_list(1000)
