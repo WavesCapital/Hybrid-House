@@ -862,8 +862,8 @@ const AthleteProfile = () => {
                   </div>
                 </div>
 
-                  {/* Detailed Metrics */}
-                  <div className="neo-card rounded-xl mt-8 p-6">
+                {/* Detailed Metrics */}
+                <div className="neo-card rounded-xl p-6">
                     <h4 className="text-xl font-semibold neo-text-primary mb-6 flex items-center space-x-2">
                       <Activity className="h-6 w-6 neo-primary" />
                       <span>Your Metrics</span>
