@@ -243,7 +243,7 @@ const AthleteProfile = () => {
       const response = await fetch(imageDataUrl);
       const blob = await response.blob();
       
-      const shareText = `🏆 My Hybrid Athlete Score: ${Math.round(parseFloat(data.hybridScore))}/100\n\nStrength: ${Math.round(parseFloat(data.strengthScore))} | Endurance: ${Math.round(parseFloat(data.enduranceScore))} | Body Comp: ${Math.round(parseFloat(data.bodyCompScore))} | Recovery: ${Math.round(parseFloat(data.recoveryScore))}\n\nGet your score at: ${window.location.origin}`;
+      const shareText = `🏆 My Hybrid Athlete Score: ${Math.round(parseFloat(data.hybridScore))}/100\n\nStrength: ${Math.round(parseFloat(data.strengthScore))} | Endurance: ${Math.round(parseFloat(data.enduranceScore))} | Body Comp: ${Math.round(parseFloat(data.bodyCompScore))} | Recovery: ${Math.round(parseFloat(data.recoveryScore))}\n\nGet your score at HybridHouse.ai`;
       
       // Check if native sharing is available
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'hybrid-score.png', { type: 'image/png' })] })) {
