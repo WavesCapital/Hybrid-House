@@ -391,6 +391,8 @@ const AthleteProfile = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
+          {/* Hidden canvas for image generation */}
+          <canvas ref={canvasRef} style={{ display: 'none' }} />
           {/* Header - Only show when no results */}
           {!data && (
             <div className="text-center mb-8 sm:mb-12 px-4">
