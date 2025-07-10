@@ -182,9 +182,9 @@ const AthleteProfile = () => {
     ctx.textAlign = 'center';
     ctx.fillText('My Hybrid Athlete Score', canvas.width / 2, 80);
     
-    // Main score with Neo green
+    // Main score with Neo blue
     const hybridScore = Math.round(parseFloat(data.hybridScore));
-    ctx.fillStyle = '#85E26E';
+    ctx.fillStyle = '#79CFF7';
     ctx.font = 'bold 120px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
     ctx.fillText(hybridScore.toString(), canvas.width / 2, 220);
     
