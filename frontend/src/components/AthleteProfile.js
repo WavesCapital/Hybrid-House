@@ -661,6 +661,99 @@ const AthleteProfile = () => {
                   })}
                 </div>
 
+                {/* Balance & Penalty Information */}
+                {(data.balanceBonus > 0 || data.hybridPenalty > 0) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    {data.balanceBonus > 0 && (
+                      <div className="rounded-xl p-6" style={{ 
+                        background: 'linear-gradient(135deg, rgba(133, 226, 110, 0.1), rgba(121, 207, 247, 0.1))',
+                        border: '1px solid rgba(133, 226, 110, 0.3)'
+                      }}>
+                        <div className="flex items-center space-x-3 mb-3">
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ 
+                            background: 'rgba(133, 226, 110, 0.2)',
+                            border: '2px solid #85E26E' 
+                          }}>
+                            <Trophy className="h-5 w-5 neo-primary" />
+                          </div>
+                          <h4 className="text-lg font-semibold neo-primary">Balance Bonus: +{Math.round(data.balanceBonus)}</h4>
+                        </div>
+                        <p className="neo-text-secondary">{data.balanceComment}</p>
+                      </div>
+                    )}
+                    
+                    {data.hybridPenalty > 0 && (
+                      <div className="rounded-xl p-6" style={{ 
+                        background: 'linear-gradient(135deg, rgba(255, 75, 75, 0.1), rgba(255, 75, 75, 0.05))',
+                        border: '1px solid rgba(255, 75, 75, 0.3)'
+                      }}>
+                        <div className="flex items-center space-x-3 mb-3">
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ 
+                            background: 'rgba(255, 75, 75, 0.2)',
+                            border: '2px solid #FF4B4B' 
+                          }}>
+                            <AlertCircle className="h-5 w-5" style={{ color: '#FF4B4B' }} />
+                          </div>
+                          <h4 className="text-lg font-semibold" style={{ color: '#FF4B4B' }}>Penalty: -{Math.round(data.hybridPenalty)}</h4>
+                        </div>
+                        <p className="neo-text-secondary">{data.penaltyComment}</p>
+                      </div>
+                    )}
+                    
+                    {data.balanceBonus === 0 && data.balanceComment && (
+                      <div className="rounded-xl p-6" style={{ 
+                        background: 'linear-gradient(135deg, rgba(107, 110, 113, 0.1), rgba(107, 110, 113, 0.05))',
+                        border: '1px solid rgba(107, 110, 113, 0.3)'
+                      }}>
+                        <div className="flex items-center space-x-3 mb-3">
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ 
+                            background: 'rgba(107, 110, 113, 0.2)',
+                            border: '2px solid #6B6E71' 
+                          }}>
+                            <Scale className="h-5 w-5 neo-text-muted" />
+                          </div>
+                          <h4 className="text-lg font-semibold neo-text-muted">Balance Status</h4>
+                        </div>
+                        <p className="neo-text-secondary">{data.balanceComment}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Hybrid Score Commentary */}
+                <div className="neo-card rounded-xl p-6 mb-8">
+                  <h3 className="text-xl font-semibold neo-text-primary mb-4 flex items-center space-x-2">
+                    <Trophy className="h-6 w-6 neo-primary" />
+                    <span>Your Hybrid Profile</span>
+                  </h3>
+                  <p className="neo-text-secondary text-lg leading-relaxed">
+                    {data.hybridComment}
+                  </p>
+                </div>
+
+                {/* Actionable Tips */}
+                {data.tips && data.tips.length > 0 && (
+                  <div className="neo-card rounded-xl p-6 mb-8">
+                    <h3 className="text-xl font-semibold neo-text-primary mb-6 flex items-center space-x-2">
+                      <Target className="h-6 w-6 neo-primary" />
+                      <span>Action Plan</span>
+                    </h3>
+                    <div className="space-y-4">
+                      {data.tips.map((tip, index) => (
+                        <div key={index} className="flex items-start space-x-3">
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ 
+                            background: 'rgba(133, 226, 110, 0.2)',
+                            border: '1px solid #85E26E' 
+                          }}>
+                            <span className="text-xs font-bold neo-primary">{index + 1}</span>
+                          </div>
+                          <p className="neo-text-secondary leading-relaxed">{tip}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Score Explanation */}
                 <div className="neo-card rounded-xl p-8">
                   <h3 className="text-2xl font-semibold neo-text-primary mb-6">What's the Hybrid Athlete Score?</h3>
