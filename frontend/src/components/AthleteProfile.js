@@ -764,60 +764,10 @@ const AthleteProfile = () => {
 
                 {/* Score Explanation */}
                 <div className="neo-card rounded-xl p-8">
-                  <h3 className="text-2xl font-semibold neo-text-primary mb-6 flex items-center space-x-3">
-                    <Trophy className="h-7 w-7 neo-primary" />
-                    <span>Hybrid Athlete Score Breakdown</span>
-                  </h3>
-                  
-                  <p className="neo-text-secondary text-lg mb-8">
+                  <h3 className="text-2xl font-semibold neo-text-primary mb-6">Hybrid Athlete Score Breakdown</h3>
+                  <p className="neo-text-secondary text-lg mb-4">
                     Your Hybrid Athlete Score measures how well-rounded you are across strength, endurance, and recovery—core components of any successful hybrid athlete.
                   </p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div className="neo-surface-2 rounded-lg p-6">
-                      <div className="flex items-center space-x-3 mb-4">
-                        <Dumbbell className="h-6 w-6 neo-cyan" />
-                        <h4 className="neo-text-primary font-semibold text-lg">Strength Score</h4>
-                      </div>
-                      <p className="neo-text-secondary leading-relaxed">
-                        Measures your strength relative to your bodyweight. Higher scores show you're strong and powerful for your size—crucial for performance and overall athleticism.
-                      </p>
-                    </div>
-                    
-                    <div className="neo-surface-2 rounded-lg p-6">
-                      <div className="flex items-center space-x-3 mb-4">
-                        <Heart className="h-6 w-6 neo-green" />
-                        <h4 className="neo-text-primary font-semibold text-lg">Endurance Score</h4>
-                      </div>
-                      <p className="neo-text-secondary leading-relaxed">
-                        Shows your combined running ability, including your speed, cardiovascular fitness, longest run distance, and weekly running volume. A strong endurance score means you can sustain efforts over long distances and tough workouts.
-                      </p>
-                    </div>
-                    
-                    <div className="neo-surface-2 rounded-lg p-6">
-                      <div className="flex items-center space-x-3 mb-4">
-                        <Moon className="h-6 w-6 neo-violet" />
-                        <h4 className="neo-text-primary font-semibold text-lg">Recovery Score</h4>
-                      </div>
-                      <p className="neo-text-secondary leading-relaxed">
-                        Indicates how well your body recovers based on your heart-rate metrics. Higher scores mean you're rested and primed for optimal training, reducing injury risk and improving performance.
-                      </p>
-                    </div>
-                    
-                    <div className="neo-surface-2 rounded-lg p-6">
-                      <div className="flex items-center space-x-3 mb-4">
-                        <Scale className="h-6 w-6 neo-primary" />
-                        <h4 className="neo-text-primary font-semibold text-lg">Balance Bonus</h4>
-                      </div>
-                      <p className="neo-text-secondary leading-relaxed">
-                        Rewards how balanced you are between strength and endurance. Being evenly skilled in both areas is the hallmark of a true hybrid athlete.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="text-center">
-                    <p className="neo-primary font-semibold text-lg">Keep pushing—every step counts!</p>
-                  </div>
                 </div>
 
                 {/* Detailed Metrics */}
