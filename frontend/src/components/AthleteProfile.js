@@ -383,7 +383,7 @@ const AthleteProfile = () => {
           color: #6B6E71;
         }
         .neo-primary {
-          color: #85E26E;
+          color: #79CFF7;
         }
         .neo-cyan {
           color: #79CFF7;
@@ -391,26 +391,29 @@ const AthleteProfile = () => {
         .neo-violet {
           color: #8D5CFF;
         }
-        .neo-btn-primary {
-          background: rgba(133, 226, 110, 0.2);
+        .neo-green {
           color: #85E26E;
-          border: 2px solid #85E26E;
+        }
+        .neo-btn-primary {
+          background: rgba(121, 207, 247, 0.2);
+          color: #79CFF7;
+          border: 2px solid #79CFF7;
           border-radius: 8px;
           padding: 12px 20px;
           font-weight: 600;
           transition: all 200ms cubic-bezier(0.4,0,0.2,1);
-          box-shadow: 0 0 12px rgba(133, 226, 110, 0.25);
+          box-shadow: 0 0 12px rgba(121, 207, 247, 0.25);
           backdrop-filter: blur(8px);
         }
         .neo-btn-primary:hover {
-          background: rgba(133, 226, 110, 0.3);
-          box-shadow: 0 0 20px rgba(133, 226, 110, 0.4);
+          background: rgba(121, 207, 247, 0.3);
+          box-shadow: 0 0 20px rgba(121, 207, 247, 0.4);
           transform: translateY(-1px);
         }
         .neo-btn-secondary {
-          background: rgba(133, 226, 110, 0.1);
-          color: #85E26E;
-          border: 2px solid rgba(133, 226, 110, 0.5);
+          background: rgba(121, 207, 247, 0.1);
+          color: #79CFF7;
+          border: 2px solid rgba(121, 207, 247, 0.5);
           border-radius: 8px;
           padding: 10px 18px;
           font-weight: 600;
@@ -418,9 +421,9 @@ const AthleteProfile = () => {
           backdrop-filter: blur(6px);
         }
         .neo-btn-secondary:hover {
-          background: rgba(133, 226, 110, 0.2);
-          border-color: #85E26E;
-          box-shadow: 0 0 12px rgba(133, 226, 110, 0.3);
+          background: rgba(121, 207, 247, 0.2);
+          border-color: #79CFF7;
+          box-shadow: 0 0 12px rgba(121, 207, 247, 0.3);
         }
         .neo-input {
           background: #1A1C1D;
