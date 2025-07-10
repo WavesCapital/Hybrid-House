@@ -296,24 +296,47 @@ const AthleteProfile = () => {
     `;
     
     const encodedText = encodeURIComponent(shareText);
-    const encodedUrl = encodeURIComponent(window.location.origin);
+    const encodedUrl = encodeURIComponent('https://HybridHouse.ai');
+    
+    // Function to copy image to clipboard
+    const copyImageToClipboard = async () => {
+      try {
+        const response = await fetch(imageDataUrl);
+        const blob = await response.blob();
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'image/png': blob
+          })
+        ]);
+        alert('Image copied to clipboard!');
+      } catch (err) {
+        console.error('Failed to copy image: ', err);
+        alert('Failed to copy image to clipboard');
+      }
+    };
     
     content.innerHTML = `
-      <h3 style="color: white; margin-bottom: 20px;">Share Your Score</h3>
+      <h3 style="color: white; margin-bottom: 20px;">Share Your Hybrid Score</h3>
       <div style="margin-bottom: 20px;">
         <img src="${imageDataUrl}" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Hybrid Score" />
       </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 20px;">
-        <a href="https://twitter.com/intent/tweet?text=${encodedText}" target="_blank" style="background: #1da1f2; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold;">Twitter</a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}" target="_blank" style="background: #4267B2; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold;">Facebook</a>
-        <button onclick="navigator.clipboard.writeText('${shareText}'); alert('Copied to clipboard!')" style="background: #6b7280; color: white; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer;">Copy Text</button>
-        <a href="${imageDataUrl}" download="hybrid-score.png" style="background: #10b981; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold;">Download</a>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px;">
+        <a href="https://twitter.com/intent/tweet?text=${encodedText}" target="_blank" style="background: #1da1f2; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px;">Twitter</a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}" target="_blank" style="background: #4267B2; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px;">Facebook</a>
+        <a href="instagram://library?AssetPath=${encodeURIComponent(imageDataUrl)}" style="background: #E4405F; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px;">Instagram</a>
+        <button id="copyImageBtn" style="background: #6b7280; color: white; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;">Copy Image</button>
+        <button onclick="navigator.clipboard.writeText('${shareText.replace(/'/g, "\\'")}'); alert('Text copied to clipboard!')" style="background: #374151; color: white; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;">Copy Text</button>
+        <a href="${imageDataUrl}" download="hybrid-score.png" style="background: #10b981; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px;">Download</a>
       </div>
       <button onclick="this.parentElement.parentElement.remove()" style="background: #374151; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer;">Close</button>
     `;
     
     modal.appendChild(content);
     document.body.appendChild(modal);
+    
+    // Add event listener for copy image button
+    const copyImageBtn = content.querySelector('#copyImageBtn');
+    copyImageBtn.addEventListener('click', copyImageToClipboard);
     
     // Close on click outside
     modal.addEventListener('click', (e) => {
