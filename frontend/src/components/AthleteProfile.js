@@ -809,21 +809,8 @@ const AthleteProfile = () => {
                     border: '1px solid rgba(133, 226, 110, 0.2)'
                   }}>
                     <h4 className="neo-text-primary font-semibold mb-4">The Balance Bonus</h4>
-                    <p className="neo-text-secondary mb-6">
+                    <p className="neo-text-secondary">
                       We average those slices, then add a <strong className="neo-primary">"balance bonus."</strong> If your strength and endurance levels are close together, you score extra points—because true hybrid athletes aren't one-sided.
-                    </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold neo-primary">100 points</div>
-                        <p className="neo-text-secondary">Elite strength, elite cardio, dialed-in body-comp, and stellar recovery with good balance.</p>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold neo-cyan">50 points</div>
-                        <p className="neo-text-secondary">Recreational lifter or runner with room to grow in other areas.</p>
-                      </div>
-                    </div>
-                    <p className="neo-primary mt-6 text-center">
-                      Your score helps you see <strong>which dial to turn next</strong>—lift heavier, run faster, lean out, or sleep/recover better—to level up as a complete hybrid athlete.
                     </p>
                   </div>
 
