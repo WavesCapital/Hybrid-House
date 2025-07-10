@@ -804,14 +804,12 @@ const AthleteProfile = () => {
                         className="neo-btn-primary flex-1"
                         onClick={() => {/* TODO: Navigate to training plan creation */}}
                       >
-                        <Plus className="h-4 w-4 mr-3" />
                         Create Training Plan
                       </button>
                       <button
                         className="neo-btn-secondary flex-1"
                         onClick={() => {/* TODO: Navigate to nutrition plan creation */}}
                       >
-                        <Plus className="h-4 w-4 mr-3" />
                         Create Nutrition Plan
                       </button>
                     </div>
