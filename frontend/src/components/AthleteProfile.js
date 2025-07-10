@@ -434,11 +434,11 @@ const AthleteProfile = () => {
         }
         .neo-input:focus {
           outline: none;
-          border-color: #85E26E;
-          box-shadow: 0 0 0 2px rgba(133, 226, 110, 0.35);
+          border-color: #79CFF7;
+          box-shadow: 0 0 0 2px rgba(121, 207, 247, 0.35);
         }
         .neo-chip {
-          background: #85E26E;
+          background: #79CFF7;
           color: #0A0B0C;
           border-radius: 12px;
           padding: 0 8px;
