@@ -172,7 +172,7 @@ const AthleteProfile = () => {
     
     // Add subtle texture
     for (let i = 0; i < 800; i++) {
-      ctx.fillStyle = `rgba(133, 226, 110, ${Math.random() * 0.02})`;
+      ctx.fillStyle = `rgba(121, 207, 247, ${Math.random() * 0.02})`;
       ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 1, 1);
     }
     
