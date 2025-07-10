@@ -764,63 +764,103 @@ const AthleteProfile = () => {
 
                 {/* Score Explanation */}
                 <div className="neo-card rounded-xl p-8">
-                  <h3 className="text-2xl font-semibold neo-text-primary mb-6">What's the Hybrid Athlete Score?</h3>
+                  <h3 className="text-2xl font-semibold neo-text-primary mb-6 flex items-center space-x-3">
+                    <Trophy className="h-7 w-7 neo-primary" />
+                    <span>Hybrid Athlete Score Breakdown</span>
+                  </h3>
                   
                   <p className="neo-text-secondary text-lg mb-8">
-                    Think of it as your <strong className="neo-primary">overall "hybrid-fitness GPA"</strong> on a 0 – 100 scale:
+                    Your Hybrid Athlete Score measures how well-rounded you are across strength, endurance, and recovery—core components of any successful hybrid athlete.
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div className="space-y-6">
-                      <div className="neo-surface-2 rounded-lg p-4">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <Dumbbell className="h-5 w-5 neo-cyan" />
-                          <h4 className="neo-text-primary font-semibold">Strength</h4>
-                        </div>
-                        <p className="neo-text-secondary text-sm mb-2">How much weight you can lift relative to your body-weight (bench, squat, deadlift).</p>
-                        <p className="neo-cyan text-sm">Power for sprints, hills, injury-proofing.</p>
+                    <div className="neo-surface-2 rounded-lg p-6">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <Dumbbell className="h-6 w-6 neo-cyan" />
+                        <h4 className="neo-text-primary font-semibold text-lg">Strength Score</h4>
                       </div>
-                      
-                      <div className="neo-surface-2 rounded-lg p-4">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <Heart className="h-5 w-5 neo-primary" />
-                          <h4 className="neo-text-primary font-semibold">Endurance</h4>
-                        </div>
-                        <p className="neo-text-secondary text-sm mb-2">Your engine—VO₂ max plus best mile time.</p>
-                        <p className="neo-primary text-sm">Determines how long and how hard you can keep moving.</p>
-                      </div>
+                      <p className="neo-text-secondary leading-relaxed">
+                        Measures your strength relative to your bodyweight. Higher scores show you're strong and powerful for your size—crucial for performance and overall athleticism.
+                      </p>
                     </div>
                     
-                    <div className="space-y-6">
-                      <div className="neo-surface-2 rounded-lg p-4">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <Scale className="h-5 w-5 neo-violet" />
-                          <h4 className="neo-text-primary font-semibold">Body-comp</h4>
-                        </div>
-                        <p className="neo-text-secondary text-sm mb-2">How close you are to a healthy, performance-lean body-fat range.</p>
-                        <p className="neo-violet text-sm">Better power-to-weight and joint health.</p>
+                    <div className="neo-surface-2 rounded-lg p-6">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <Heart className="h-6 w-6 neo-green" />
+                        <h4 className="neo-text-primary font-semibold text-lg">Endurance Score</h4>
                       </div>
-                      
-                      <div className="neo-surface-2 rounded-lg p-4">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <Moon className="h-5 w-5 neo-cyan" />
-                          <h4 className="neo-text-primary font-semibold">Recovery</h4>
+                      <p className="neo-text-secondary leading-relaxed">
+                        Shows your combined running ability, including your speed, cardiovascular fitness (VO₂ max), longest run distance, and weekly running volume. A strong endurance score means you can sustain efforts over long distances and tough workouts.
+                      </p>
+                    </div>
+                    
+                    <div className="neo-surface-2 rounded-lg p-6">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <Moon className="h-6 w-6 neo-violet" />
+                        <h4 className="neo-text-primary font-semibold text-lg">Recovery Score</h4>
+                      </div>
+                      <p className="neo-text-secondary leading-relaxed">
+                        Indicates how well your body recovers based on your heart-rate metrics. Higher scores mean you're rested and primed for optimal training, reducing injury risk and improving performance.
+                      </p>
+                    </div>
+                    
+                    <div className="neo-surface-2 rounded-lg p-6">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <Scale className="h-6 w-6 neo-primary" />
+                        <h4 className="neo-text-primary font-semibold text-lg">Balance Bonus</h4>
+                      </div>
+                      <p className="neo-text-secondary leading-relaxed">
+                        Rewards how balanced you are between strength and endurance. Being evenly skilled in both areas is the hallmark of a true hybrid athlete.
+                      </p>
+                    </div>
+                    
+                    <div className="neo-surface-2 rounded-lg p-6">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <AlertCircle className="h-6 w-6" style={{ color: '#FF4B4B' }} />
+                        <h4 className="neo-text-primary font-semibold text-lg">Hybrid Penalty</h4>
+                      </div>
+                      <p className="neo-text-secondary leading-relaxed">
+                        If some performance data is missing, you might see a small penalty. Providing detailed info ensures the most accurate score possible.
+                      </p>
+                    </div>
+                    
+                    <div className="neo-surface-2 rounded-lg p-6">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <Target className="h-6 w-6 neo-primary" />
+                        <h4 className="neo-text-primary font-semibold text-lg">Overall Hybrid Score</h4>
+                      </div>
+                      <p className="neo-text-secondary leading-relaxed mb-4">
+                        Your final score blends strength, endurance, recovery, and balance into one easy-to-understand rating.
+                      </p>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="neo-text-secondary text-sm">90–100:</span>
+                          <span className="neo-primary font-semibold text-sm">Elite Hybrid Athlete</span>
                         </div>
-                        <p className="neo-text-secondary text-sm mb-2">HRV and resting heart-rate—how well your body bounces back.</p>
-                        <p className="neo-cyan text-sm">Faster gains, fewer burn-outs.</p>
+                        <div className="flex justify-between items-center">
+                          <span className="neo-text-secondary text-sm">80–89:</span>
+                          <span className="neo-cyan font-semibold text-sm">Very Good – Well-rounded</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="neo-text-secondary text-sm">70–79:</span>
+                          <span className="neo-green font-semibold text-sm">Solid – On the right track</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="neo-text-secondary text-sm">60–69:</span>
+                          <span className="neo-violet font-semibold text-sm">Needs work – Potential to grow</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="neo-text-secondary text-sm">Below 60:</span>
+                          <span className="neo-text-muted font-semibold text-sm">Beginner – Exciting room to improve!</span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="rounded-lg p-6" style={{ 
-                    background: 'linear-gradient(135deg, rgba(121, 207, 247, 0.1), rgba(141, 92, 255, 0.1))',
-                    border: '1px solid rgba(121, 207, 247, 0.2)'
-                  }}>
-                    <h4 className="neo-text-primary font-semibold mb-4">The Balance Bonus</h4>
-                    <p className="neo-text-secondary">
-                      We average those slices, then add a <strong className="neo-primary">"balance bonus."</strong> If your strength and endurance levels are close together, you score extra points—because true hybrid athletes aren't one-sided.
-                    </p>
+                  <div className="text-center">
+                    <p className="neo-primary font-semibold text-lg">Keep pushing—every step counts!</p>
                   </div>
+                </div>
 
                   {/* Detailed Metrics */}
                   <div className="neo-card rounded-xl mt-8 p-6">
