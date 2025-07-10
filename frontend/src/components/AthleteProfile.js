@@ -527,9 +527,18 @@ const AthleteProfile = () => {
                   <div className="text-6xl sm:text-7xl lg:text-8xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4 sm:mb-6 leading-tight">
                     {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : Math.round(parseFloat(data.hybridScore))}
                   </div>
-                  <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto px-4">
+                  <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto px-4 mb-6">
                     Your overall hybrid-fitness score on a 0-100 scale
                   </p>
+                  
+                  {/* Share Button */}
+                  <Button
+                    onClick={handleShare}
+                    className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Share My Score
+                  </Button>
                 </div>
 
                 {/* Score Breakdown */}
