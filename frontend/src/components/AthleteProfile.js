@@ -813,8 +813,8 @@ const AthleteProfile = () => {
                   </div>
 
                   <div className="rounded-lg p-6" style={{ 
-                    background: 'linear-gradient(135deg, rgba(133, 226, 110, 0.1), rgba(121, 207, 247, 0.1))',
-                    border: '1px solid rgba(133, 226, 110, 0.2)'
+                    background: 'linear-gradient(135deg, rgba(121, 207, 247, 0.1), rgba(133, 226, 110, 0.1))',
+                    border: '1px solid rgba(121, 207, 247, 0.2)'
                   }}>
                     <h4 className="neo-text-primary font-semibold mb-4">The Balance Bonus</h4>
                     <p className="neo-text-secondary">
