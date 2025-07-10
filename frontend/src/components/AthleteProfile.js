@@ -12,6 +12,7 @@ import {
   Flame, Droplets, Moon, Coffee, AlertCircle, ChevronRight, Shield,
   CheckCircle2, Bed, Smartphone, Info, Pill, Plus, Share2, Download
 } from 'lucide-react';
+import { mockAthleteResponse } from '../mock';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
