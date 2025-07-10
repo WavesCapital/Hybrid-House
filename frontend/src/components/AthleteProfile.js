@@ -468,19 +468,19 @@ const AthleteProfile = () => {
               <h1 className="text-xl font-bold neo-primary">
                 Hybrid House
               </h1>
-              <div className="flex space-x-3">
-                <button
-                  className="neo-btn-secondary text-sm px-4 py-2"
+              <div className="flex space-x-6">
+                <span
+                  className="neo-text-secondary hover:neo-primary cursor-pointer transition-colors duration-200 text-sm font-medium"
                   onClick={() => {/* TODO: Navigate to training plan creation */}}
                 >
                   Training Plan
-                </button>
-                <button
-                  className="neo-btn-secondary text-sm px-4 py-2"
+                </span>
+                <span
+                  className="neo-text-secondary hover:neo-primary cursor-pointer transition-colors duration-200 text-sm font-medium"
                   onClick={() => {/* TODO: Navigate to nutrition plan creation */}}
                 >
                   Nutrition Plan
-                </button>
+                </span>
               </div>
             </div>
           </div>
