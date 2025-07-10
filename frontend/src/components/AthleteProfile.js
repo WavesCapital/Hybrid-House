@@ -121,10 +121,13 @@ const AthleteProfile = () => {
       const scores = {
         hybrid: parseFloat(data.hybridScore),
         strength: parseFloat(data.strengthScore),
+        speed: parseFloat(data.speedScore),
+        vo2: parseFloat(data.vo2Score),
+        distance: parseFloat(data.distanceScore),
+        volume: parseFloat(data.volumeScore),
         endurance: parseFloat(data.enduranceScore),
-        bodyComp: parseFloat(data.bodyCompScore),
         recovery: parseFloat(data.recoveryScore),
-        balance: parseFloat(data.balanceBonus)
+        balance: parseFloat(data.balanceBonus || 0)
       };
 
       Object.entries(scores).forEach(([key, targetValue]) => {
