@@ -102,15 +102,30 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Fix icon spacing in all buttons - icons are too close to text"
+user_problem_statement: "Update UI to display new detailed webhook response data including individual score comments, balance/penalty information, and actionable tips"
 
 frontend:
-  - task: "Remove All Icons from Buttons"
+  - task: "Update UI for Enhanced Webhook Response"
     implemented: true
     working: true
     file: "/app/frontend/src/components/AthleteProfile.js"
     stuck_count: 0
     priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "User updated webhook to return detailed data with 7 score categories, comments, balance/penalty info, and tips. Need to redesign UI to display all this data beautifully."
+      - working: true
+        agent: "main"
+        comment: "✅ Successfully redesigned UI to display all new webhook data: 7 detailed score cards (Strength, Speed, VO₂, Distance, Volume, Endurance, Recovery) with individual comments, Balance/Penalty status sections, Hybrid Profile commentary, numbered Action Plan with tips, and updated metrics using new field names (bodyWeightLb, etc.). Maintains Neo Design System aesthetic with proper spacing and colors."
+
+  - task: "Remove All Icons from Buttons"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/AthleteProfile.js"
+    stuck_count: 0
+    priority: "medium"
     needs_retesting: false
     status_history:
       - working: "NA"
