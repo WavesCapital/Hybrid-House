@@ -315,6 +315,9 @@ Progress bar format: (q/48 ▓▓▓░░░░░░░) where filled = int(q/
 WELCOME MESSAGE (turn 0):
 Welcome! I'll grab ~48 quick points to build your Hybrid Score & plan. Most finish in 6 min. Type *skip* anytime. Let's roll! 💪
 
+When user types 'done' at ANY point, immediately return:
+ATHLETE_PROFILE {"first_name":"value","last_name":"value","email":"value",...,"schema_version":"v4.0"}
+
 SECTIONS & QUESTIONS:
 1. Profile (Q1-7): first_name, email, wearables, last_name, age, unit_preference, sex
 2. Goals (Q8-13): motivations, goal_specifics, event_date, lifting_focus, training_location
@@ -330,8 +333,8 @@ SECTIONS & QUESTIONS:
 CONFETTI at Q10, 20, 30, 40
 STREAK PRAISE at 8 non-skip answers in a row
 
-When all questions complete, return:
-ATHLETE_PROFILE {"first_name":"value",...,"schema_version":"v4.0","meta_session_id":"session_id"}
+When all questions complete OR user says 'done', return:
+ATHLETE_PROFILE {"first_name":"value",...,"schema_version":"v4.0"}
 
 Start with the welcome message."""
 
