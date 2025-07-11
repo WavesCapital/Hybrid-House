@@ -714,7 +714,11 @@ class BackendTester:
             ("JWT Configuration", self.test_jwt_secret_configuration),
             ("OpenAI Responses API Integration", self.test_openai_responses_api_integration),
             ("GPT-4.1 Model Configuration", self.test_gpt41_model_configuration),
-            ("Alpha Version System Message", self.test_alpha_version_system_message),
+            ("Comprehensive 48-Question System", self.test_comprehensive_48_question_system),
+            ("Milestone Detection System", self.test_milestone_detection_system),
+            ("Streak Detection System", self.test_streak_detection_system),
+            ("Completion Detection System", self.test_completion_detection_system),
+            ("Progress Tracking System", self.test_progress_tracking_system),
             ("EmergentIntegrations Removal", self.test_emergentintegrations_removal)
         ]
         
