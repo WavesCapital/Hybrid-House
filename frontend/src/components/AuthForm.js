@@ -24,14 +24,23 @@ export default function AuthForm() {
       }
 
       if (result.error) {
-        setMessage(result.error.message);
+        if (result.error.message.includes('Email not confirmed')) {
+          setMessage('Please check your email and click the confirmation link to activate your account.');
+        } else {
+          setMessage(result.error.message);
+        }
       } else {
         if (!isLogin) {
-          // With email confirmation disabled, user should be signed in immediately
-          setMessage('Account created successfully! Redirecting...');
-          setTimeout(() => {
-            // The auth context will handle the redirect automatically
-          }, 1000);
+          // Check if user is immediately logged in (no email confirmation)
+          if (result.data?.session) {
+            setMessage('Account created successfully! Welcome to Hybrid House! 🎉');
+            setTimeout(() => {
+              // The auth context will handle the redirect automatically
+            }, 1500);
+          } else {
+            // Email confirmation is still enabled
+            setMessage('Account created! Please check your email and click the confirmation link to activate your account.');
+          }
         } else {
           setMessage('Welcome back! Redirecting...');
         }
