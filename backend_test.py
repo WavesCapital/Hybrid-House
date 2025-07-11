@@ -739,10 +739,10 @@ class BackendTester:
         print(f"Tests Passed: {passed_tests}/{total_tests}")
         
         if passed_tests == total_tests:
-            print("🎉 ALL TESTS PASSED - OpenAI Responses API with GPT-4.1 integration is working correctly!")
+            print("🎉 ALL TESTS PASSED - Enhanced Interview Flow with GPT-4.1 and 48-question system is working correctly!")
             return True
         else:
-            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in OpenAI Responses API integration")
+            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in Enhanced Interview Flow system")
             return False
 
 if __name__ == "__main__":
