@@ -103,10 +103,18 @@ class BackendTester:
                 if method == "GET":
                     response = self.session.get(f"{API_BASE_URL}{endpoint}")
                 elif method == "POST":
-                    response = self.session.post(f"{API_BASE_URL}{endpoint}", json={
-                        "profile_text": "Test profile",
-                        "score_data": {"test": "data"}
-                    })
+                    if endpoint == "/athlete-profiles":
+                        response = self.session.post(f"{API_BASE_URL}{endpoint}", json={
+                            "profile_text": "Test profile",
+                            "score_data": {"test": "data"}
+                        })
+                    elif endpoint == "/interview/start":
+                        response = self.session.post(f"{API_BASE_URL}{endpoint}", json={})
+                    elif endpoint == "/interview/chat":
+                        response = self.session.post(f"{API_BASE_URL}{endpoint}", json={
+                            "messages": [{"role": "user", "content": "Hello"}],
+                            "session_id": "test-session-id"
+                        })
                 
                 # Should return 401 or 403 for unauthorized access
                 if response.status_code in [401, 403]:
