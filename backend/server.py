@@ -1,14 +1,19 @@
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from supabase import create_client, Client
 from jose import jwt, JWTError
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 import os
 import uuid
+import json
+import asyncio
 from datetime import datetime
+import requests
 
 load_dotenv()
 
