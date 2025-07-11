@@ -109,19 +109,24 @@ const AthleteProfile = () => {
 
       // Save the athlete profile to the database
       try {
-        const authToken = user?.access_token;
-        if (authToken) {
-          await axios.post(`${BACKEND_URL}/api/athlete-profiles`, {
-            profile_text: athleteProfile,
-            score_data: data,
-            created_at: new Date().toISOString()
-          }, {
-            headers: {
-              'Authorization': `Bearer ${authToken}`,
-              'Content-Type': 'application/json'
-            }
-          });
-          console.log('Profile saved successfully');
+        if (user) {
+          // Get the current session to access the token
+          const { data: { session } } = await supabase.auth.getSession();
+          const authToken = session?.access_token;
+          
+          if (authToken) {
+            await axios.post(`${BACKEND_URL}/api/athlete-profiles`, {
+              profile_text: athleteProfile,
+              score_data: data,
+              created_at: new Date().toISOString()
+            }, {
+              headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+              }
+            });
+            console.log('Profile saved successfully');
+          }
         }
       } catch (saveError) {
         console.error('Error saving profile:', saveError);
