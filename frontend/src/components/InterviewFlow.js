@@ -334,7 +334,7 @@ const InterviewFlow = () => {
                       disabled={isLoading || !currentMessage.trim()}
                       className="h-12 px-6"
                     >
-                      Send
+                      {isLoading ? 'Sending...' : 'Send'}
                     </Button>
                     <Button
                       onClick={skipQuestion}
