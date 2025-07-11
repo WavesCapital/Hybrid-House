@@ -27,7 +27,13 @@ export default function AuthForm() {
         setMessage(result.error.message);
       } else {
         if (!isLogin) {
-          setMessage('Check your email for the confirmation link!');
+          // With email confirmation disabled, user should be signed in immediately
+          setMessage('Account created successfully! Redirecting...');
+          setTimeout(() => {
+            // The auth context will handle the redirect automatically
+          }, 1000);
+        } else {
+          setMessage('Welcome back! Redirecting...');
         }
       }
     } catch (error) {
