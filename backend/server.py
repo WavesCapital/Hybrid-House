@@ -631,6 +631,32 @@ async def get_interview_session(
             detail="Error retrieving interview session"
         )
 
+@api_router.get("/athlete-profiles/{profile_id}")
+async def get_athlete_profile(
+    profile_id: str,
+    user: dict = Depends(verify_jwt)
+):
+    """Get athlete profile by ID"""
+    user_id = user["sub"]
+    
+    try:
+        result = supabase.table('athlete_profiles').select("*").eq('id', profile_id).eq('user_id', user_id).execute()
+        
+        if not result.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Athlete profile not found"
+            )
+        
+        return result.data[0]
+        
+    except Exception as e:
+        print(f"Error getting athlete profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving athlete profile"
+        )
+
 async def trigger_score_computation(profile_id: str, profile_json: dict):
     """Trigger external webhook for score computation"""
     try:
