@@ -696,6 +696,13 @@ const InterviewFlow = () => {
           </div>
         )}
       </div>
+
+      {/* Streak Badge Overlay */}
+      {showStreakBadge && (
+        <div className="streak-badge">
+          🔥 {streakCount} Streak! 🔥
+        </div>
+      )}
     </div>
   );
 };
