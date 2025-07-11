@@ -339,19 +339,8 @@ async def start_interview(user: dict = Depends(verify_jwt)):
                 "status": "resumed"
             }
         
-        # Create new session
-        initial_messages = [
-            {
-                "role": "system",
-                "content": INTERVIEW_SYSTEM_MESSAGE,
-                "timestamp": datetime.utcnow().isoformat()
-            },
-            {
-                "role": "assistant",
-                "content": "Hi! I'm your Hybrid House Coach. I'll ask you a few quick questions to build your athlete profile. Let's start with the basics:\n\nWhat's your first name?",
-                "timestamp": datetime.utcnow().isoformat()
-            }
-        ]
+        # Create new session with empty messages - OpenAI will generate the first message
+        initial_messages = []
         
         session_data = {
             "id": session_id,
@@ -365,12 +354,64 @@ async def start_interview(user: dict = Depends(verify_jwt)):
         
         result = supabase.table('interview_sessions').insert(session_data).execute()
         
-        return {
-            "session_id": session_id,
-            "messages": initial_messages,
-            "current_index": 0,
-            "status": "started"
-        }
+        # Get the first message from OpenAI
+        try:
+            print("Getting first message from OpenAI...")
+            response = openai_client.responses.create(
+                model="gpt-4.1",
+                input=[],  # Empty input - OpenAI generates first message from instructions
+                instructions=INTERVIEW_SYSTEM_MESSAGE,
+                store=False,
+                temperature=0.7
+            )
+            print(f"OpenAI first message call successful! Response ID: {response.id}")
+            
+            first_message_text = response.output_text
+            print(f"First message: {first_message_text[:100]}...")
+            
+            # Add the first assistant message to the session
+            first_message = {
+                "role": "assistant",
+                "content": first_message_text,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
+            updated_messages = [first_message]
+            
+            # Update session with first message
+            supabase.table('interview_sessions').update({
+                "messages": updated_messages,
+                "updated_at": datetime.utcnow().isoformat()
+            }).eq('id', session_id).execute()
+            
+            return {
+                "session_id": session_id,
+                "messages": updated_messages,
+                "current_index": 0,
+                "status": "started"
+            }
+            
+        except Exception as e:
+            print(f"Error getting first message from OpenAI: {e}")
+            # Fall back to a simple message if OpenAI fails
+            fallback_message = {
+                "role": "assistant", 
+                "content": "Hi! I'm your Hybrid House Coach. What's your first name?",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
+            updated_messages = [fallback_message]
+            supabase.table('interview_sessions').update({
+                "messages": updated_messages,
+                "updated_at": datetime.utcnow().isoformat()
+            }).eq('id', session_id).execute()
+            
+            return {
+                "session_id": session_id,
+                "messages": updated_messages,
+                "current_index": 0,
+                "status": "started"
+            }
         
     except Exception as e:
         print(f"Error starting interview: {e}")
