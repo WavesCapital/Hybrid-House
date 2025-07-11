@@ -580,18 +580,20 @@ const InterviewFlow = () => {
 
             {/* Completion Message */}
             {isCompleted && !isComputingScore && !scoreData && (
-              <Card className="w-full max-w-2xl mx-auto p-8 text-center">
-                <h2 className="text-2xl font-bold text-primary mb-4">
-                  Interview Complete! 🎉
-                </h2>
-                <p className="text-muted-foreground mb-6">
-                  Your athlete profile has been created and we're computing your Hybrid Athlete Score. 
-                  You'll see your results in just a moment.
-                </p>
-                <div className="animate-pulse">
-                  <div className="h-2 bg-primary rounded-full"></div>
+              <div className="gradient-border max-w-2xl mx-auto">
+                <div className="gradient-border-inner p-12 text-center">
+                  <h2 className="text-3xl font-bold neo-primary mb-6">
+                    Interview Complete! 🎉
+                  </h2>
+                  <p className="neo-text-secondary mb-8 leading-relaxed">
+                    Your athlete profile has been created and we're computing your Hybrid Athlete Score. 
+                    You'll see your results in just a moment.
+                  </p>
+                  <div className="w-full bg-gray-800 rounded-full h-2">
+                    <div className="neo-progress-fill h-2 rounded-full animate-pulse"></div>
+                  </div>
                 </div>
-              </Card>
+              </div>
             )}
           </div>
         )}
