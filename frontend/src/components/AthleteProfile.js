@@ -105,6 +105,27 @@ const AthleteProfile = () => {
       setLoadingProgress(100);
       setScoreData(data);
 
+      // Save the athlete profile to the database
+      try {
+        const authToken = user?.access_token;
+        if (authToken) {
+          await axios.post(`${BACKEND_URL}/api/athlete-profiles`, {
+            profile_text: athleteProfile,
+            score_data: data,
+            created_at: new Date().toISOString()
+          }, {
+            headers: {
+              'Authorization': `Bearer ${authToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          console.log('Profile saved successfully');
+        }
+      } catch (saveError) {
+        console.error('Error saving profile:', saveError);
+        // Don't show error to user as this is background save
+      }
+
     } catch (error) {
       console.error('Error:', error);
       setError(error.message);
