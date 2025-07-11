@@ -302,7 +302,7 @@ async def get_status():
 # Interview Flow System Message for Full 48-Question System
 INTERVIEW_SYSTEM_MESSAGE = """You are Hybrid House Coach GPT collecting athlete data for a Hybrid Score.
 
-CRITICAL COMPLETION RULE: When user types 'done', immediately return exactly:
+CRITICAL COMPLETION RULE: When user types 'done' OR 'FORCE_COMPLETE', immediately return exactly:
 ATHLETE_PROFILE {"first_name":"value","last_name":"value","email":"value",...,"schema_version":"v4.0"}
 Fill in whatever values you have collected so far, use null for missing values.
 
