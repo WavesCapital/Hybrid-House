@@ -512,11 +512,15 @@ async def chat_interview(
             )
         
         # Check if interview is complete
-        if response_text.startswith("INTAKE_COMPLETE"):
+        if response_text.startswith("ATHLETE_PROFILE"):
             # Parse the JSON profile
             try:
-                json_part = response_text.split('\n', 1)[1] if '\n' in response_text else response_text.split('INTAKE_COMPLETE')[1]
+                json_part = response_text.split('\n', 1)[1] if '\n' in response_text else response_text.split('ATHLETE_PROFILE')[1]
                 profile_json = json.loads(json_part.strip())
+                
+                # Add session metadata
+                profile_json["meta_session_id"] = session_id
+                profile_json["schema_version"] = "v4.0"
                 
                 # Save athlete profile
                 profile_data = {
@@ -540,7 +544,7 @@ async def chat_interview(
                 }).eq('id', session_id).execute()
                 
                 return {
-                    "response": "Thank you! Your profile has been created and we're computing your Hybrid Athlete Score. You'll see the results shortly!",
+                    "response": f"Thanks, {profile_json.get('first_name', 'there')}! I've got your complete profile. Your Hybrid Score will hit your inbox in minutes. 🚀",
                     "completed": True,
                     "profile_id": profile_data["id"]
                 }
