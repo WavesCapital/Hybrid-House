@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AuthForm from './components/AuthForm';
 import AthleteProfile from './components/AthleteProfile';
+import InterviewFlow from './components/InterviewFlow';
 import './App.css';
 
 // Protected Route Wrapper
