@@ -143,38 +143,53 @@ class BackendTester:
         
         return all_passed
     
-    def test_mongodb_connection(self):
-        """Test MongoDB connection by checking if unprotected endpoints work"""
+    def test_supabase_connection(self):
+        """Test Supabase connection via status endpoint"""
         try:
-            # Test status endpoint which uses MongoDB
-            response = self.session.post(f"{API_BASE_URL}/status", json={"client_name": "mongodb_test"})
+            response = self.session.get(f"{API_BASE_URL}/status")
             
-            if response.status_code in [200, 201]:
+            if response.status_code == 200:
                 data = response.json()
-                if "id" in data and "client_name" in data:
-                    self.log_test("MongoDB Connection", True, "Successfully created status record", data)
+                if isinstance(data, list) and len(data) > 0:
+                    # Check for Supabase status
+                    supabase_status = None
+                    jwt_status = None
                     
-                    # Try to retrieve it
-                    get_response = self.session.get(f"{API_BASE_URL}/status")
-                    if get_response.status_code == 200:
-                        status_list = get_response.json()
-                        if isinstance(status_list, list) and len(status_list) > 0:
-                            self.log_test("MongoDB Read", True, f"Successfully retrieved {len(status_list)} status records")
-                            return True
+                    for status_check in data:
+                        if status_check.get("component") == "Supabase":
+                            supabase_status = status_check
+                        elif status_check.get("component") == "Supabase JWT":
+                            jwt_status = status_check
+                    
+                    if supabase_status:
+                        if supabase_status.get("status") == "healthy":
+                            self.log_test("Supabase Connection", True, "Supabase connection is healthy", supabase_status)
                         else:
-                            self.log_test("MongoDB Read", False, "No status records found")
+                            self.log_test("Supabase Connection", False, f"Supabase status: {supabase_status.get('status')}", supabase_status)
                             return False
                     else:
-                        self.log_test("MongoDB Read", False, f"HTTP {get_response.status_code}", get_response.text)
+                        self.log_test("Supabase Connection", False, "Supabase status not found in response", data)
                         return False
+                    
+                    if jwt_status:
+                        if jwt_status.get("status") == "configured":
+                            self.log_test("Supabase JWT Configuration", True, "JWT secret is configured", jwt_status)
+                        else:
+                            self.log_test("Supabase JWT Configuration", False, f"JWT status: {jwt_status.get('status')}", jwt_status)
+                            return False
+                    else:
+                        self.log_test("Supabase JWT Configuration", False, "JWT status not found in response", data)
+                        return False
+                    
+                    return True
                 else:
-                    self.log_test("MongoDB Connection", False, "Unexpected response format", data)
+                    self.log_test("Supabase Connection", False, "Empty or invalid status response", data)
                     return False
             else:
-                self.log_test("MongoDB Connection", False, f"HTTP {response.status_code}", response.text)
+                self.log_test("Supabase Connection", False, f"HTTP {response.status_code}", response.text)
                 return False
         except Exception as e:
-            self.log_test("MongoDB Connection", False, "Connection test failed", str(e))
+            self.log_test("Supabase Connection", False, "Connection test failed", str(e))
             return False
     
     def test_cors_configuration(self):
