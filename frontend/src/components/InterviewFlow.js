@@ -141,6 +141,14 @@ const InterviewFlow = () => {
     const content = messageContent || currentMessage.trim();
     if (!content || !sessionId || isLoading) return;
 
+    // Prevent rapid successive requests (debounce)
+    const now = Date.now();
+    if (now - lastRequestTime < 1000) {
+      console.log('Request too soon, ignoring...');
+      return;
+    }
+    setLastRequestTime(now);
+
     // Prevent multiple simultaneous requests
     if (isLoading) {
       console.log('Already processing a request, ignoring...');
