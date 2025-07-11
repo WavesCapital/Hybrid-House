@@ -585,9 +585,10 @@ async def chat_interview(
         
         messages.append(assistant_message)
         
-        # Update session with assistant response
+        # Update session with assistant response and new response ID
         supabase.table('interview_sessions').update({
             "messages": messages,
+            "last_response_id": response.id,
             "updated_at": datetime.utcnow().isoformat()
         }).eq('id', session_id).execute()
         
