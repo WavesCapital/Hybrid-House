@@ -222,6 +222,15 @@ const InterviewFlow = () => {
 
   // Skip current question
   const skipQuestion = () => {
+    if (isLoading) return;
+    
+    // Prevent rapid successive requests
+    const now = Date.now();
+    if (now - lastRequestTime < 1000) {
+      console.log('Skip request too soon, ignoring...');
+      return;
+    }
+    
     sendMessage('skip');
   };
 
