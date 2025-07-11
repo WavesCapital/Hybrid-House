@@ -444,21 +444,11 @@ async def chat_interview(
                 temperature=0.7
             )
             
-            # Extract response text from the correct structure
-            if response.output and len(response.output) > 0:
-                # Get the first message output
-                message_output = response.output[0]
-                if message_output.content and len(message_output.content) > 0:
-                    # Get the text from the first content item
-                    content_item = message_output.content[0]
-                    if content_item.type == "output_text":
-                        response_text = content_item.text
-                    else:
-                        raise Exception("Unexpected content type in response")
-                else:
-                    raise Exception("No content in message output")
-            else:
-                raise Exception("No output in response")
+            # Extract response text using the SDK helper method
+            response_text = response.output_text
+            
+            if not response_text:
+                raise Exception("No response text generated")
             
         except Exception as e:
             print(f"Error with OpenAI Responses API: {e}")
