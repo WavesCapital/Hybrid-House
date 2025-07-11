@@ -426,25 +426,25 @@ const InterviewFlow = () => {
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Messages */}
-            <div className="space-y-4 min-h-[400px]">
+            <div className="space-y-6 min-h-[400px] pb-6">
               {messages.map((message, index) => (
                 <div
                   key={index}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[80%] p-4 rounded-2xl ${
+                    className={`max-w-[85%] p-6 rounded-2xl ${
                       message.role === 'user'
-                        ? 'bg-primary text-primary-foreground ml-12'
-                        : 'bg-surface-secondary text-foreground mr-12'
+                        ? 'chat-bubble-user ml-16'
+                        : 'chat-bubble-assistant mr-16'
                     }`}
                   >
-                    <p className="text-base leading-6 whitespace-pre-wrap">
+                    <div className="text-base leading-relaxed whitespace-pre-wrap">
                       {message.content}
-                    </p>
-                    <div className="text-xs opacity-70 mt-2">
+                    </div>
+                    <div className="text-xs opacity-60 mt-3">
                       {new Date(message.timestamp).toLocaleTimeString()}
                     </div>
                   </div>
@@ -454,11 +454,14 @@ const InterviewFlow = () => {
               {/* Loading indicator */}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-surface-secondary p-4 rounded-2xl mr-12">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce delay-100"></div>
-                      <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce delay-200"></div>
+                  <div className="chat-bubble-assistant p-6 rounded-2xl mr-16">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-primary rounded-full loading-dots"></div>
+                        <div className="w-2 h-2 bg-primary rounded-full loading-dots" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-2 h-2 bg-primary rounded-full loading-dots" style={{ animationDelay: '0.4s' }}></div>
+                      </div>
+                      <span className="neo-text-secondary text-sm">Coach is thinking...</span>
                     </div>
                   </div>
                 </div>
