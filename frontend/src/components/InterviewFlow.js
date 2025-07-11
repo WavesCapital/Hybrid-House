@@ -472,40 +472,41 @@ const InterviewFlow = () => {
 
             {/* Input Area */}
             {!isCompleted && (
-              <div className="sticky bottom-0 bg-background-primary/80 backdrop-blur-sm border-t border-border pt-4">
-                <div className="flex items-end space-x-2">
+              <div className="sticky bottom-0 backdrop-blur-lg border-t pt-6" style={{ 
+                background: 'rgba(10, 11, 12, 0.9)', 
+                borderColor: '#1A1C1D' 
+              }}>
+                <div className="flex items-end space-x-4">
                   <div className="flex-1">
                     <textarea
                       value={currentMessage}
                       onChange={(e) => setCurrentMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
                       placeholder="Type your answer here..."
-                      className="w-full p-3 border border-border rounded-xl bg-surface-secondary text-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      className="neo-input w-full resize-none"
                       rows="3"
                       disabled={isLoading}
                     />
                   </div>
-                  <div className="flex flex-col space-y-2">
+                  <div className="flex flex-col space-y-3">
                     <Button
                       onClick={() => sendMessage()}
                       disabled={isLoading || !currentMessage.trim()}
-                      className="h-12 px-6"
+                      className="neo-btn-primary h-12 px-8"
                     >
                       {isLoading ? 'Sending...' : 'Send'}
                     </Button>
                     <Button
                       onClick={skipQuestion}
                       disabled={isLoading}
-                      variant="outline"
-                      className="h-12 px-6"
+                      className="neo-btn-secondary h-10 px-6"
                     >
                       Skip
                     </Button>
                     <Button
                       onClick={() => sendMessage('FORCE_COMPLETE')}
                       disabled={isLoading}
-                      variant="secondary"
-                      className="h-10 px-4 text-sm"
+                      className="neo-btn-secondary h-8 px-4 text-xs"
                     >
                       Finish Early
                     </Button>
