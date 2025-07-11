@@ -222,7 +222,7 @@ class BackendTester:
     def test_jwt_secret_configuration(self):
         """Test that JWT secret is properly configured by checking error messages"""
         try:
-            # Use a malformed JWT token to trigger JWT processing
+            # Use a malformed JWT token to trigger JWT processing with new Supabase secret
             headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"}
             response = self.session.get(f"{API_BASE_URL}/profile", headers=headers)
             
@@ -230,13 +230,13 @@ class BackendTester:
                 try:
                     error_data = response.json()
                     if "detail" in error_data and "authentication" in error_data["detail"].lower():
-                        self.log_test("JWT Secret Configuration", True, "JWT processing is working (proper error message)", error_data)
+                        self.log_test("JWT Secret Configuration", True, "JWT processing with Supabase secret is working (proper error message)", error_data)
                         return True
                     else:
                         self.log_test("JWT Secret Configuration", False, "Unexpected error format", error_data)
                         return False
                 except:
-                    self.log_test("JWT Secret Configuration", True, "JWT processing is working (401 response)")
+                    self.log_test("JWT Secret Configuration", True, "JWT processing with Supabase secret is working (401 response)")
                     return True
             else:
                 self.log_test("JWT Secret Configuration", False, f"Expected 401 but got HTTP {response.status_code}", response.text)
