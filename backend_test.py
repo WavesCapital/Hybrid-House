@@ -256,7 +256,7 @@ class BackendTester:
             ("Unprotected Endpoints", self.test_unprotected_endpoints),
             ("Protected Endpoints (No Token)", self.test_protected_endpoints_without_token),
             ("Protected Endpoints (Invalid Token)", self.test_protected_endpoints_with_invalid_token),
-            ("MongoDB Integration", self.test_mongodb_connection),
+            ("Supabase Integration", self.test_supabase_connection),
             ("CORS Configuration", self.test_cors_configuration),
             ("JWT Configuration", self.test_jwt_secret_configuration)
         ]
