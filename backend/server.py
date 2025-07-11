@@ -76,6 +76,7 @@ class InterviewSession(BaseModel):
     status: str
     messages: List[InterviewMessage]
     current_index: int
+    last_response_id: Optional[str] = None
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
 
