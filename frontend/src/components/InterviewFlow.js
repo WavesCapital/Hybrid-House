@@ -189,11 +189,19 @@ const InterviewFlow = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-lg font-semibold text-foreground">Hybrid House Interview</h1>
-            <span className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground">
+              <span className="font-medium">{sectionInfo.section}</span>
+              {" • "}
               {currentIndex} of {TOTAL_QUESTIONS} questions
-            </span>
+            </div>
           </div>
-          <Progress value={progress} className="w-full h-2" />
+          <div className="flex items-center space-x-2 mb-2">
+            <Progress value={progress} className="flex-1 h-2" />
+            <span className="text-sm font-medium text-foreground">{Math.round(progress)}%</span>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            Section {sectionInfo.sectionProgress}/{sectionInfo.sectionTotal} • {sectionInfo.section}
+          </div>
         </div>
       </div>
 
