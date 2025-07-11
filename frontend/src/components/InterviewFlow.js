@@ -249,7 +249,109 @@ const InterviewFlow = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background-primary">
+    <div className="min-h-screen" style={{ background: '#0A0B0C' }}>
+      <style jsx>{`
+        .neo-text-primary { color: #D9D9D9; }
+        .neo-text-secondary { color: #9FA1A3; }
+        .neo-text-muted { color: #6B6E71; }
+        .neo-primary { color: #79CFF7; }
+        .neo-card {
+          background: #181B1D;
+          border: 1px solid #1A1C1D;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          backdrop-filter: blur(8px);
+        }
+        .neo-input {
+          background: #0F1112;
+          border: 1px solid #1A1C1D;
+          color: #D9D9D9;
+          border-radius: 8px;
+          padding: 12px 16px;
+          font-size: 16px;
+          transition: all 200ms cubic-bezier(0.4,0,0.2,1);
+        }
+        .neo-input:focus {
+          outline: none;
+          border-color: #79CFF7;
+          box-shadow: 0 0 0 3px rgba(121, 207, 247, 0.15);
+        }
+        .neo-btn-primary {
+          background: rgba(121, 207, 247, 0.2);
+          color: #79CFF7;
+          border: 2px solid #79CFF7;
+          border-radius: 8px;
+          padding: 12px 20px;
+          font-weight: 600;
+          transition: all 200ms cubic-bezier(0.4,0,0.2,1);
+          box-shadow: 0 0 12px rgba(121, 207, 247, 0.25);
+          backdrop-filter: blur(8px);
+        }
+        .neo-btn-primary:hover {
+          background: rgba(121, 207, 247, 0.3);
+          box-shadow: 0 0 20px rgba(121, 207, 247, 0.4);
+          transform: translateY(-1px);
+        }
+        .neo-btn-primary:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          transform: none;
+        }
+        .neo-btn-secondary {
+          background: rgba(159, 161, 163, 0.1);
+          color: #9FA1A3;
+          border: 1px solid #1A1C1D;
+          border-radius: 8px;
+          padding: 8px 16px;
+          font-weight: 500;
+          transition: all 200ms cubic-bezier(0.4,0,0.2,1);
+          backdrop-filter: blur(8px);
+        }
+        .neo-btn-secondary:hover {
+          background: rgba(159, 161, 163, 0.15);
+          border-color: #79CFF7;
+        }
+        .neo-progress-bar {
+          background: #0F1112;
+          border-radius: 8px;
+          overflow: hidden;
+          height: 8px;
+        }
+        .neo-progress-fill {
+          background: linear-gradient(90deg, #79CFF7, #4FC3F7);
+          height: 100%;
+          transition: width 0.3s ease;
+          box-shadow: 0 0 8px rgba(121, 207, 247, 0.3);
+        }
+        .chat-bubble-user {
+          background: rgba(121, 207, 247, 0.15);
+          color: #79CFF7;
+          border: 1px solid rgba(121, 207, 247, 0.3);
+          backdrop-filter: blur(8px);
+        }
+        .chat-bubble-assistant {
+          background: #181B1D;
+          color: #D9D9D9;
+          border: 1px solid #1A1C1D;
+          backdrop-filter: blur(8px);
+        }
+        .loading-dots {
+          animation: loading-dots 1.5s infinite;
+        }
+        @keyframes loading-dots {
+          0%, 60%, 100% { transform: scale(1); opacity: 0.4; }
+          30% { transform: scale(1.2); opacity: 1; }
+        }
+        .gradient-border {
+          background: linear-gradient(45deg, #79CFF7, #4FC3F7);
+          padding: 1px;
+          border-radius: 12px;
+        }
+        .gradient-border-inner {
+          background: #181B1D;
+          border-radius: 11px;
+          height: 100%;
+        }
+      `}</style>
       {/* Progress Bar */}
       <div className="sticky top-0 z-10 bg-background-primary/80 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-4">
