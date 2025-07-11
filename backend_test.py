@@ -40,16 +40,16 @@ class BackendTester:
         })
     
     def test_api_root(self):
-        """Test if the API root endpoint is responding"""
+        """Test if the API root endpoint is responding with Supabase message"""
         try:
             response = self.session.get(f"{API_BASE_URL}/")
             if response.status_code == 200:
                 data = response.json()
-                if "message" in data and "API" in data["message"]:
-                    self.log_test("API Root Endpoint", True, "API is responding correctly", data)
+                if "message" in data and "Supabase" in data["message"]:
+                    self.log_test("API Root Endpoint", True, "API is responding with Supabase message", data)
                     return True
                 else:
-                    self.log_test("API Root Endpoint", False, "Unexpected response format", data)
+                    self.log_test("API Root Endpoint", False, "Expected Supabase message not found", data)
                     return False
             else:
                 self.log_test("API Root Endpoint", False, f"HTTP {response.status_code}", response.text)
