@@ -352,23 +352,37 @@ const InterviewFlow = () => {
           height: 100%;
         }
       `}</style>
-      {/* Progress Bar */}
-      <div className="sticky top-0 z-10 bg-background-primary/80 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-lg font-semibold text-foreground">Hybrid House Interview</h1>
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium">{sectionInfo.section}</span>
-              {" • "}
-              {currentIndex} of {TOTAL_QUESTIONS} questions
+      {/* Header with Progress */}
+      <div className="sticky top-0 z-10 backdrop-blur-lg border-b" style={{ 
+        background: 'rgba(24, 27, 29, 0.8)', 
+        borderColor: '#1A1C1D' 
+      }}>
+        <div className="container mx-auto px-6 py-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold neo-primary">Hybrid House Interview</h1>
+              <p className="neo-text-secondary">Building your personalized athlete profile</p>
+            </div>
+            <div className="text-right">
+              <div className="text-sm neo-text-secondary mb-1">
+                {sectionInfo.section} • {currentIndex} of {TOTAL_QUESTIONS}
+              </div>
+              <div className="text-xs neo-text-muted">
+                Section {sectionInfo.sectionProgress}/{sectionInfo.sectionTotal}
+              </div>
             </div>
           </div>
-          <div className="flex items-center space-x-2 mb-2">
-            <Progress value={progress} className="flex-1 h-2" />
-            <span className="text-sm font-medium text-foreground">{Math.round(progress)}%</span>
-          </div>
-          <div className="text-xs text-muted-foreground">
-            Section {sectionInfo.sectionProgress}/{sectionInfo.sectionTotal} • {sectionInfo.section}
+          
+          <div className="flex items-center space-x-4">
+            <div className="flex-1 neo-progress-bar">
+              <div 
+                className="neo-progress-fill" 
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+            <span className="text-sm font-semibold neo-primary min-w-[40px]">
+              {Math.round(progress)}%
+            </span>
           </div>
         </div>
       </div>
