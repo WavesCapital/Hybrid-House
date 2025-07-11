@@ -56,6 +56,25 @@ class StatusCheck(BaseModel):
     status: str
     details: Optional[str] = None
 
+# Interview Flow Models
+class InterviewMessage(BaseModel):
+    role: str
+    content: str
+    timestamp: Optional[str] = None
+
+class InterviewRequest(BaseModel):
+    messages: List[InterviewMessage]
+    session_id: Optional[str] = None
+
+class InterviewSession(BaseModel):
+    id: str
+    user_id: str
+    status: str
+    messages: List[InterviewMessage]
+    current_index: int
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
 # JWT verification
 async def verify_jwt(credentials: HTTPBearer = Depends(security)):
     try:
