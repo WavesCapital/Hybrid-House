@@ -20,6 +20,8 @@ const InterviewFlow = () => {
   const [scoreData, setScoreData] = useState(null);
   const [isComputingScore, setIsComputingScore] = useState(false);
   const [lastRequestTime, setLastRequestTime] = useState(0);
+  const [streakCount, setStreakCount] = useState(0);
+  const [showStreakBadge, setShowStreakBadge] = useState(false);
   const { user, session } = useAuth();
   const { toast } = useToast();
   const messagesEndRef = useRef(null);
