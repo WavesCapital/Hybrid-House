@@ -1,0 +1,286 @@
+#!/usr/bin/env python3
+"""
+Backend API Testing for Hybrid House Supabase Authentication Integration
+Tests JWT authentication, protected endpoints, and MongoDB integration
+"""
+
+import requests
+import json
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+# Load environment variables
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / 'frontend' / '.env')
+
+# Get backend URL from frontend env
+BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
+API_BASE_URL = f"{BACKEND_URL}/api"
+
+print(f"Testing backend at: {API_BASE_URL}")
+
+class BackendTester:
+    def __init__(self):
+        self.session = requests.Session()
+        self.test_results = []
+        
+    def log_test(self, test_name, success, message, details=None):
+        """Log test results"""
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status}: {test_name} - {message}")
+        if details:
+            print(f"   Details: {details}")
+        
+        self.test_results.append({
+            'test': test_name,
+            'success': success,
+            'message': message,
+            'details': details
+        })
+    
+    def test_api_root(self):
+        """Test if the API root endpoint is responding"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/")
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data and "API" in data["message"]:
+                    self.log_test("API Root Endpoint", True, "API is responding correctly", data)
+                    return True
+                else:
+                    self.log_test("API Root Endpoint", False, "Unexpected response format", data)
+                    return False
+            else:
+                self.log_test("API Root Endpoint", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("API Root Endpoint", False, "Connection failed", str(e))
+            return False
+    
+    def test_unprotected_endpoints(self):
+        """Test endpoints that should work without authentication"""
+        endpoints = [
+            ("/status", "GET"),
+            ("/test-score", "GET")
+        ]
+        
+        all_passed = True
+        for endpoint, method in endpoints:
+            try:
+                if method == "GET":
+                    response = self.session.get(f"{API_BASE_URL}{endpoint}")
+                elif method == "POST":
+                    response = self.session.post(f"{API_BASE_URL}{endpoint}", json={"client_name": "test_client"})
+                
+                if response.status_code in [200, 201]:
+                    self.log_test(f"Unprotected {method} {endpoint}", True, f"HTTP {response.status_code}", response.json())
+                else:
+                    self.log_test(f"Unprotected {method} {endpoint}", False, f"HTTP {response.status_code}", response.text)
+                    all_passed = False
+            except Exception as e:
+                self.log_test(f"Unprotected {method} {endpoint}", False, "Request failed", str(e))
+                all_passed = False
+        
+        return all_passed
+    
+    def test_protected_endpoints_without_token(self):
+        """Test that protected endpoints reject requests without JWT tokens"""
+        protected_endpoints = [
+            ("/profile", "GET"),
+            ("/athlete-profiles", "GET"),
+            ("/athlete-profiles", "POST"),
+            ("/athlete-profiles/test-id", "GET")
+        ]
+        
+        all_passed = True
+        for endpoint, method in protected_endpoints:
+            try:
+                if method == "GET":
+                    response = self.session.get(f"{API_BASE_URL}{endpoint}")
+                elif method == "POST":
+                    response = self.session.post(f"{API_BASE_URL}{endpoint}", json={
+                        "profile_text": "Test profile",
+                        "score_data": {"test": "data"}
+                    })
+                
+                # Should return 401 or 403 for unauthorized access
+                if response.status_code in [401, 403]:
+                    self.log_test(f"Protected {method} {endpoint} (No Token)", True, f"Correctly rejected with HTTP {response.status_code}")
+                else:
+                    self.log_test(f"Protected {method} {endpoint} (No Token)", False, f"Should reject but got HTTP {response.status_code}", response.text)
+                    all_passed = False
+            except Exception as e:
+                self.log_test(f"Protected {method} {endpoint} (No Token)", False, "Request failed", str(e))
+                all_passed = False
+        
+        return all_passed
+    
+    def test_protected_endpoints_with_invalid_token(self):
+        """Test that protected endpoints reject requests with invalid JWT tokens"""
+        invalid_tokens = [
+            "invalid_token",
+            "Bearer invalid_token",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.signature"
+        ]
+        
+        all_passed = True
+        for token in invalid_tokens:
+            headers = {"Authorization": f"Bearer {token}"}
+            
+            try:
+                response = self.session.get(f"{API_BASE_URL}/profile", headers=headers)
+                
+                # Should return 401 for invalid token
+                if response.status_code == 401:
+                    self.log_test(f"Invalid Token Test ({token[:20]}...)", True, f"Correctly rejected with HTTP {response.status_code}")
+                else:
+                    self.log_test(f"Invalid Token Test ({token[:20]}...)", False, f"Should reject but got HTTP {response.status_code}", response.text)
+                    all_passed = False
+            except Exception as e:
+                self.log_test(f"Invalid Token Test ({token[:20]}...)", False, "Request failed", str(e))
+                all_passed = False
+        
+        return all_passed
+    
+    def test_mongodb_connection(self):
+        """Test MongoDB connection by checking if unprotected endpoints work"""
+        try:
+            # Test status endpoint which uses MongoDB
+            response = self.session.post(f"{API_BASE_URL}/status", json={"client_name": "mongodb_test"})
+            
+            if response.status_code in [200, 201]:
+                data = response.json()
+                if "id" in data and "client_name" in data:
+                    self.log_test("MongoDB Connection", True, "Successfully created status record", data)
+                    
+                    # Try to retrieve it
+                    get_response = self.session.get(f"{API_BASE_URL}/status")
+                    if get_response.status_code == 200:
+                        status_list = get_response.json()
+                        if isinstance(status_list, list) and len(status_list) > 0:
+                            self.log_test("MongoDB Read", True, f"Successfully retrieved {len(status_list)} status records")
+                            return True
+                        else:
+                            self.log_test("MongoDB Read", False, "No status records found")
+                            return False
+                    else:
+                        self.log_test("MongoDB Read", False, f"HTTP {get_response.status_code}", get_response.text)
+                        return False
+                else:
+                    self.log_test("MongoDB Connection", False, "Unexpected response format", data)
+                    return False
+            else:
+                self.log_test("MongoDB Connection", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("MongoDB Connection", False, "Connection test failed", str(e))
+            return False
+    
+    def test_cors_configuration(self):
+        """Test CORS configuration"""
+        try:
+            response = self.session.options(f"{API_BASE_URL}/")
+            
+            # Check for CORS headers
+            cors_headers = [
+                'access-control-allow-origin',
+                'access-control-allow-methods',
+                'access-control-allow-headers'
+            ]
+            
+            found_headers = []
+            for header in cors_headers:
+                if header in response.headers:
+                    found_headers.append(f"{header}: {response.headers[header]}")
+            
+            if found_headers:
+                self.log_test("CORS Configuration", True, "CORS headers present", found_headers)
+                return True
+            else:
+                self.log_test("CORS Configuration", False, "No CORS headers found", dict(response.headers))
+                return False
+        except Exception as e:
+            self.log_test("CORS Configuration", False, "CORS test failed", str(e))
+            return False
+    
+    def test_jwt_secret_configuration(self):
+        """Test that JWT secret is properly configured by checking error messages"""
+        try:
+            # Use a malformed JWT token to trigger JWT processing
+            headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"}
+            response = self.session.get(f"{API_BASE_URL}/profile", headers=headers)
+            
+            if response.status_code == 401:
+                try:
+                    error_data = response.json()
+                    if "detail" in error_data and "authentication" in error_data["detail"].lower():
+                        self.log_test("JWT Secret Configuration", True, "JWT processing is working (proper error message)", error_data)
+                        return True
+                    else:
+                        self.log_test("JWT Secret Configuration", False, "Unexpected error format", error_data)
+                        return False
+                except:
+                    self.log_test("JWT Secret Configuration", True, "JWT processing is working (401 response)")
+                    return True
+            else:
+                self.log_test("JWT Secret Configuration", False, f"Expected 401 but got HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("JWT Secret Configuration", False, "JWT test failed", str(e))
+            return False
+    
+    def run_all_tests(self):
+        """Run all backend tests"""
+        print("=" * 60)
+        print("STARTING BACKEND API TESTS")
+        print("=" * 60)
+        
+        tests = [
+            ("API Connectivity", self.test_api_root),
+            ("Unprotected Endpoints", self.test_unprotected_endpoints),
+            ("Protected Endpoints (No Token)", self.test_protected_endpoints_without_token),
+            ("Protected Endpoints (Invalid Token)", self.test_protected_endpoints_with_invalid_token),
+            ("MongoDB Integration", self.test_mongodb_connection),
+            ("CORS Configuration", self.test_cors_configuration),
+            ("JWT Configuration", self.test_jwt_secret_configuration)
+        ]
+        
+        passed_tests = 0
+        total_tests = len(tests)
+        
+        for test_name, test_func in tests:
+            print(f"\n--- Testing: {test_name} ---")
+            try:
+                if test_func():
+                    passed_tests += 1
+            except Exception as e:
+                print(f"❌ FAIL: {test_name} - Unexpected error: {str(e)}")
+        
+        print("\n" + "=" * 60)
+        print("BACKEND TEST SUMMARY")
+        print("=" * 60)
+        print(f"Tests Passed: {passed_tests}/{total_tests}")
+        
+        if passed_tests == total_tests:
+            print("🎉 ALL TESTS PASSED - Backend authentication system is working correctly!")
+            return True
+        else:
+            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in backend authentication system")
+            return False
+
+if __name__ == "__main__":
+    tester = BackendTester()
+    success = tester.run_all_tests()
+    
+    # Print detailed results
+    print("\n" + "=" * 60)
+    print("DETAILED TEST RESULTS")
+    print("=" * 60)
+    for result in tester.test_results:
+        status = "✅" if result['success'] else "❌"
+        print(f"{status} {result['test']}: {result['message']}")
+        if result['details']:
+            print(f"   {result['details']}")
+    
+    exit(0 if success else 1)
