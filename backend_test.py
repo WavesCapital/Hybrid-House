@@ -353,7 +353,7 @@ class BackendTester:
     def run_all_tests(self):
         """Run all backend tests"""
         print("=" * 60)
-        print("STARTING BACKEND API TESTS")
+        print("STARTING BACKEND API TESTS - INTERVIEW FLOW FOCUS")
         print("=" * 60)
         
         tests = [
@@ -361,9 +361,12 @@ class BackendTester:
             ("Unprotected Endpoints", self.test_unprotected_endpoints),
             ("Protected Endpoints (No Token)", self.test_protected_endpoints_without_token),
             ("Protected Endpoints (Invalid Token)", self.test_protected_endpoints_with_invalid_token),
+            ("Interview Flow Endpoints (No Auth)", self.test_interview_flow_endpoints_without_auth),
             ("Supabase Integration", self.test_supabase_connection),
             ("CORS Configuration", self.test_cors_configuration),
-            ("JWT Configuration", self.test_jwt_secret_configuration)
+            ("JWT Configuration", self.test_jwt_secret_configuration),
+            ("OpenAI Integration Setup", self.test_openai_integration_check),
+            ("Database Table Requirements", self.test_database_table_requirements)
         ]
         
         passed_tests = 0
