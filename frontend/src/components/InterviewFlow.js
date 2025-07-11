@@ -18,6 +18,7 @@ const InterviewFlow = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [scoreData, setScoreData] = useState(null);
   const [isComputingScore, setIsComputingScore] = useState(false);
+  const [lastRequestTime, setLastRequestTime] = useState(0);
   const { user, session } = useAuth();
   const { toast } = useToast();
   const messagesEndRef = useRef(null);
