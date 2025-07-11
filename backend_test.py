@@ -517,6 +517,8 @@ class BackendTester:
         except Exception as e:
             self.log_test("Progress Tracking System", False, "Progress tracking system test failed", str(e))
             return False
+    
+    def test_emergentintegrations_removal(self):
         """Test that the system has moved away from emergentintegrations to direct OpenAI client"""
         try:
             # We can verify this by checking that the interview endpoints are working
