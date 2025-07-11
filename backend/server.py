@@ -25,6 +25,8 @@ security = HTTPBearer()
 SUPABASE_URL = os.environ.get('SUPABASE_URL')
 SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY')
 SUPABASE_JWT_SECRET = os.environ.get('SUPABASE_JWT_SECRET')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+WEBHOOK_URL = "https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c"
 
 # Supabase client with service key for backend operations
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
