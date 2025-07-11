@@ -362,6 +362,14 @@ const InterviewFlow = () => {
                     >
                       Skip
                     </Button>
+                    <Button
+                      onClick={() => sendMessage('FORCE_COMPLETE')}
+                      disabled={isLoading}
+                      variant="secondary"
+                      className="h-10 px-4 text-sm"
+                    >
+                      Finish Early
+                    </Button>
                   </div>
                 </div>
               </div>
