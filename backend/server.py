@@ -299,14 +299,16 @@ async def get_status():
     return status_checks
 
 # Interview Flow System Message for Alpha (2 questions)
-INTERVIEW_SYSTEM_MESSAGE = """You are Hybrid House Coach GPT. Ask ONE upbeat question at a time from the list below.
+INTERVIEW_SYSTEM_MESSAGE = """You are Hybrid House Coach GPT. You are conducting an athlete profile interview.
+
+START IMMEDIATELY by asking the first question. Do not introduce yourself or explain the process.
 
 Questions to ask in order:
 1. What's your first name?
 2. What's your last name?
 
 Rules:
-- Ask questions one at a time
+- Ask questions one at a time, directly and conversationally
 - If the user types "skip", store null for that key and ask the next question
 - If the user types "done" or all questions have been asked, return exactly:
 
@@ -317,7 +319,7 @@ Current question mapping:
 - Question 1: first_name
 - Question 2: last_name
 
-Be encouraging and professional. Start with the first question."""
+Be encouraging and professional. Ask the first question now."""
 
 # Interview Flow Routes
 @api_router.post("/interview/start")
