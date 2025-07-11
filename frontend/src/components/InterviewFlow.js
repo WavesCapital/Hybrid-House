@@ -387,24 +387,44 @@ const InterviewFlow = () => {
         </div>
       </div>
 
-      {/* Chat Interface */}
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
+      {/* Main Content */}
+      <div className="container mx-auto px-6 py-8 max-w-4xl">
         {!sessionId ? (
-          <Card className="w-full max-w-2xl mx-auto p-8 text-center">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Welcome to Your Athlete Profile Interview
-            </h2>
-            <p className="text-muted-foreground mb-6 text-lg">
-              I'm your Hybrid House Coach. I'll ask you a few quick questions to build your personalized athlete profile.
-            </p>
-            <Button
-              onClick={startInterview}
-              disabled={isLoading}
-              className="w-full max-w-xs h-12 text-lg"
-            >
-              {isLoading ? 'Starting...' : 'Start Interview'}
-            </Button>
-          </Card>
+          <div className="gradient-border max-w-2xl mx-auto">
+            <div className="gradient-border-inner p-12 text-center">
+              <h2 className="text-4xl font-bold neo-primary mb-6">
+                Ready to Build Your Profile?
+              </h2>
+              <p className="neo-text-secondary mb-8 text-lg leading-relaxed">
+                I'm your Hybrid House Coach. I'll ask you ~48 quick questions to build your 
+                personalized athlete profile and compute your Hybrid Score. Most athletes 
+                finish in about 6 minutes.
+              </p>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center space-x-3 neo-text-secondary">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <span>Intelligent conversation flow</span>
+                </div>
+                <div className="flex items-center space-x-3 neo-text-secondary">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <span>Auto-save your progress</span>
+                </div>
+                <div className="flex items-center space-x-3 neo-text-secondary">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <span>Skip any question anytime</span>
+                </div>
+              </div>
+              
+              <Button
+                onClick={startInterview}
+                disabled={isLoading}
+                className="neo-btn-primary w-full max-w-xs h-14 text-lg font-semibold"
+              >
+                {isLoading ? 'Starting...' : 'Start Interview 🚀'}
+              </Button>
+            </div>
+          </div>
         ) : (
           <div className="space-y-4">
             {/* Messages */}
