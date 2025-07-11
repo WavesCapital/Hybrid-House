@@ -517,35 +517,34 @@ const InterviewFlow = () => {
 
             {/* Score Display */}
             {scoreData && (
-              <div className="fixed inset-0 bg-background-primary z-50 overflow-y-auto">
-                <div className="container mx-auto px-4 py-6 max-w-4xl">
-                  <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-primary mb-2">
+              <div className="fixed inset-0 z-50 overflow-y-auto" style={{ background: '#0A0B0C' }}>
+                <div className="container mx-auto px-6 py-12 max-w-6xl">
+                  <div className="text-center mb-12">
+                    <h1 className="text-5xl font-bold neo-primary mb-4">
                       Your Hybrid Athlete Score
                     </h1>
-                    <p className="text-xl text-muted-foreground">
+                    <p className="text-xl neo-text-secondary">
                       Complete analysis of your athletic profile
                     </p>
                   </div>
                   
-                  {/* Score cards would go here - using the existing AthleteProfile component structure */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                     {Object.entries(scoreData).map(([key, value]) => (
-                      <Card key={key} className="p-6">
-                        <h3 className="text-lg font-semibold text-foreground mb-2">
+                      <div key={key} className="neo-card p-8 rounded-xl">
+                        <h3 className="text-lg font-semibold neo-text-primary mb-3">
                           {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                         </h3>
-                        <div className="text-2xl font-bold text-primary">
+                        <div className="text-3xl font-bold neo-primary">
                           {typeof value === 'number' ? Math.round(value) : value}
                         </div>
-                      </Card>
+                      </div>
                     ))}
                   </div>
                   
-                  <div className="text-center mt-8">
+                  <div className="text-center">
                     <Button 
                       onClick={() => window.location.href = '/'}
-                      className="w-full max-w-xs h-12"
+                      className="neo-btn-primary w-full max-w-md h-14 text-lg"
                     >
                       Return to Dashboard
                     </Button>
