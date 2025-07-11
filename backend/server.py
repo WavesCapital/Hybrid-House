@@ -1,12 +1,14 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPBearer
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from jose import jwt, JWTError
 import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 import uuid
 from datetime import datetime
 
@@ -14,19 +16,32 @@ from datetime import datetime
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
+# Environment variables
 mongo_url = os.environ['MONGO_URL']
+SUPABASE_JWT_SECRET = os.environ.get('SUPABASE_JWT_SECRET')
+
+# MongoDB connection
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
 app = FastAPI()
 
-# Create a router with the /api prefix
+# Create a router with the /api prefix and security
 api_router = APIRouter(prefix="/api")
+security = HTTPBearer()
 
+# Pydantic models
+class UserProfile(BaseModel):
+    email: str
+    name: Optional[str] = None
+    created_at: Optional[str] = None
 
-# Define Models
+class AthleteProfileData(BaseModel):
+    profile_text: str
+    score_data: Optional[dict] = None
+    created_at: Optional[str] = None
+
 class StatusCheck(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     client_name: str
@@ -35,10 +50,28 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
-# Add your routes to the router instead of directly to app
+# JWT verification
+async def verify_jwt(credentials: HTTPBearer = Depends(security)):
+    try:
+        token = credentials.credentials
+        payload = jwt.decode(
+            token, 
+            SUPABASE_JWT_SECRET,
+            audience="authenticated",
+            algorithms=["HS256"]
+        )
+        return payload
+    except JWTError as e:
+        print(f"JWT Error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication token"
+        )
+
+# Routes
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Hybrid House API with Authentication"}
 
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
@@ -98,6 +131,92 @@ async def get_test_score():
             ]
         }
     ]
+
+# Protected routes
+@api_router.get("/profile")
+async def get_user_profile(user: dict = Depends(verify_jwt)):
+    """Get the current user's profile"""
+    user_id = user["sub"]
+    profile = await db.user_profiles.find_one({"user_id": user_id})
+    
+    if not profile:
+        # Create default profile
+        profile_data = {
+            "user_id": user_id,
+            "email": user.get("email"),
+            "name": user.get("user_metadata", {}).get("name"),
+            "created_at": user.get("created_at")
+        }
+        await db.user_profiles.insert_one(profile_data)
+        profile = profile_data
+    
+    # Convert ObjectId to string if present
+    if "_id" in profile:
+        profile["_id"] = str(profile["_id"])
+    
+    return profile
+
+@api_router.post("/athlete-profiles")
+async def save_athlete_profile(
+    profile_data: AthleteProfileData,
+    user: dict = Depends(verify_jwt)
+):
+    """Save an athlete profile for the authenticated user"""
+    user_id = user["sub"]
+    
+    # Create profile document
+    profile_doc = {
+        "id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "profile_text": profile_data.profile_text,
+        "score_data": profile_data.score_data,
+        "created_at": profile_data.created_at,
+        "updated_at": profile_data.created_at
+    }
+    
+    result = await db.athlete_profiles.insert_one(profile_doc)
+    
+    return {
+        "id": profile_doc["id"],
+        "message": "Athlete profile saved successfully"
+    }
+
+@api_router.get("/athlete-profiles")
+async def get_athlete_profiles(user: dict = Depends(verify_jwt)):
+    """Get all athlete profiles for the authenticated user"""
+    user_id = user["sub"]
+    
+    profiles = await db.athlete_profiles.find(
+        {"user_id": user_id}
+    ).sort("created_at", -1).to_list(100)
+    
+    # Convert ObjectIds to strings
+    for profile in profiles:
+        profile["_id"] = str(profile["_id"])
+    
+    return profiles
+
+@api_router.get("/athlete-profiles/{profile_id}")
+async def get_athlete_profile(
+    profile_id: str,
+    user: dict = Depends(verify_jwt)
+):
+    """Get a specific athlete profile for the authenticated user"""
+    user_id = user["sub"]
+    
+    profile = await db.athlete_profiles.find_one({
+        "id": profile_id,
+        "user_id": user_id
+    })
+    
+    if not profile:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Profile not found"
+        )
+    
+    profile["_id"] = str(profile["_id"])
+    return profile
 
 @api_router.get("/status", response_model=List[StatusCheck])
 async def get_status_checks():
