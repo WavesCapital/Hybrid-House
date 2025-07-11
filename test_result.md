@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Migrate from MongoDB + Supabase auth to pure Supabase for both authentication and database storage"
+user_problem_statement: "Complete Supabase integration setup with all credentials and database configuration"
 
 backend:
   - task: "Pure Supabase Backend Migration"
