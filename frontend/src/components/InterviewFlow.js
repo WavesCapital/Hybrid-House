@@ -29,6 +29,22 @@ const InterviewFlow = () => {
   }, [messages]);
 
   const progress = Math.min((currentIndex / TOTAL_QUESTIONS) * 100, 100);
+  
+  // Calculate section progress for better UX
+  const getSectionInfo = (index) => {
+    if (index <= 7) return { section: "Profile", sectionProgress: index, sectionTotal: 7 };
+    if (index <= 13) return { section: "Goals", sectionProgress: index - 7, sectionTotal: 6 };
+    if (index <= 19) return { section: "Training", sectionProgress: index - 13, sectionTotal: 6 };
+    if (index <= 24) return { section: "History", sectionProgress: index - 19, sectionTotal: 5 };
+    if (index <= 29) return { section: "Recovery", sectionProgress: index - 24, sectionTotal: 5 };
+    if (index <= 30) return { section: "Metrics", sectionProgress: index - 29, sectionTotal: 1 };
+    if (index <= 42) return { section: "Nutrition", sectionProgress: index - 30, sectionTotal: 12 };
+    if (index <= 46) return { section: "Injuries", sectionProgress: index - 42, sectionTotal: 4 };
+    if (index <= 52) return { section: "Brag Zone", sectionProgress: index - 46, sectionTotal: 6 };
+    return { section: "Final", sectionProgress: index - 52, sectionTotal: 3 };
+  };
+  
+  const sectionInfo = getSectionInfo(currentIndex);
 
   // Start interview session
   const startInterview = async () => {
