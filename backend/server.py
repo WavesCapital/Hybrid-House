@@ -1,35 +1,37 @@
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
+from supabase import create_client, Client
 from jose import jwt, JWTError
+from pydantic import BaseModel
+from typing import Optional, List
 import os
-import logging
-from pathlib import Path
-from pydantic import BaseModel, Field
-from typing import List, Optional
 import uuid
 from datetime import datetime
 
+load_dotenv()
 
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
-
-# Environment variables
-mongo_url = os.environ['MONGO_URL']
-SUPABASE_JWT_SECRET = os.environ.get('SUPABASE_JWT_SECRET')
-
-# MongoDB connection
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
-
-# Create the main app without a prefix
 app = FastAPI()
-
-# Create a router with the /api prefix and security
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer()
+
+# Environment variables
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY')
+SUPABASE_JWT_SECRET = os.environ.get('SUPABASE_JWT_SECRET')
+
+# Supabase client with service key for backend operations
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure appropriately for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Pydantic models
 class UserProfile(BaseModel):
@@ -43,12 +45,9 @@ class AthleteProfileData(BaseModel):
     created_at: Optional[str] = None
 
 class StatusCheck(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
-
-class StatusCheckCreate(BaseModel):
-    client_name: str
+    component: str
+    status: str
+    details: Optional[str] = None
 
 # JWT verification
 async def verify_jwt(credentials: HTTPBearer = Depends(security)):
@@ -70,15 +69,8 @@ async def verify_jwt(credentials: HTTPBearer = Depends(security)):
 
 # Routes
 @api_router.get("/")
-async def root():
-    return {"message": "Hybrid House API with Authentication"}
-
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.dict()
-    status_obj = StatusCheck(**status_dict)
-    _ = await db.status_checks.insert_one(status_obj.dict())
-    return status_obj
+async def read_root():
+    return {"message": "Hybrid House API with Supabase"}
 
 @api_router.get("/test-score")
 async def get_test_score():
@@ -137,24 +129,31 @@ async def get_test_score():
 async def get_user_profile(user: dict = Depends(verify_jwt)):
     """Get the current user's profile"""
     user_id = user["sub"]
-    profile = await db.user_profiles.find_one({"user_id": user_id})
     
-    if not profile:
-        # Create default profile
-        profile_data = {
-            "user_id": user_id,
-            "email": user.get("email"),
-            "name": user.get("user_metadata", {}).get("name"),
-            "created_at": user.get("created_at")
-        }
-        await db.user_profiles.insert_one(profile_data)
-        profile = profile_data
-    
-    # Convert ObjectId to string if present
-    if "_id" in profile:
-        profile["_id"] = str(profile["_id"])
-    
-    return profile
+    try:
+        # Check if user profile exists in Supabase
+        result = supabase.table('user_profiles').select("*").eq('user_id', user_id).execute()
+        
+        if result.data:
+            return result.data[0]
+        else:
+            # Create default profile
+            profile_data = {
+                "user_id": user_id,
+                "email": user.get("email"),
+                "name": user.get("user_metadata", {}).get("name"),
+                "created_at": datetime.utcnow().isoformat()
+            }
+            
+            insert_result = supabase.table('user_profiles').insert(profile_data).execute()
+            return insert_result.data[0]
+            
+    except Exception as e:
+        print(f"Error in get_user_profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving user profile"
+        )
 
 @api_router.post("/athlete-profiles")
 async def save_athlete_profile(
@@ -164,37 +163,46 @@ async def save_athlete_profile(
     """Save an athlete profile for the authenticated user"""
     user_id = user["sub"]
     
-    # Create profile document
-    profile_doc = {
-        "id": str(uuid.uuid4()),
-        "user_id": user_id,
-        "profile_text": profile_data.profile_text,
-        "score_data": profile_data.score_data,
-        "created_at": profile_data.created_at,
-        "updated_at": profile_data.created_at
-    }
-    
-    result = await db.athlete_profiles.insert_one(profile_doc)
-    
-    return {
-        "id": profile_doc["id"],
-        "message": "Athlete profile saved successfully"
-    }
+    try:
+        # Create profile document
+        profile_doc = {
+            "id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "profile_text": profile_data.profile_text,
+            "score_data": profile_data.score_data,
+            "created_at": profile_data.created_at or datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat()
+        }
+        
+        result = supabase.table('athlete_profiles').insert(profile_doc).execute()
+        
+        return {
+            "id": profile_doc["id"],
+            "message": "Athlete profile saved successfully"
+        }
+        
+    except Exception as e:
+        print(f"Error saving athlete profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error saving athlete profile"
+        )
 
 @api_router.get("/athlete-profiles")
 async def get_athlete_profiles(user: dict = Depends(verify_jwt)):
     """Get all athlete profiles for the authenticated user"""
     user_id = user["sub"]
     
-    profiles = await db.athlete_profiles.find(
-        {"user_id": user_id}
-    ).sort("created_at", -1).to_list(100)
-    
-    # Convert ObjectIds to strings
-    for profile in profiles:
-        profile["_id"] = str(profile["_id"])
-    
-    return profiles
+    try:
+        result = supabase.table('athlete_profiles').select("*").eq('user_id', user_id).order('created_at', desc=True).execute()
+        return result.data
+        
+    except Exception as e:
+        print(f"Error getting athlete profiles: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving athlete profiles"
+        )
 
 @api_router.get("/athlete-profiles/{profile_id}")
 async def get_athlete_profile(
@@ -204,43 +212,76 @@ async def get_athlete_profile(
     """Get a specific athlete profile for the authenticated user"""
     user_id = user["sub"]
     
-    profile = await db.athlete_profiles.find_one({
-        "id": profile_id,
-        "user_id": user_id
-    })
-    
-    if not profile:
+    try:
+        result = supabase.table('athlete_profiles').select("*").eq('id', profile_id).eq('user_id', user_id).execute()
+        
+        if not result.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Profile not found"
+            )
+        
+        return result.data[0]
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error getting athlete profile: {e}")
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Profile not found"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving athlete profile"
         )
-    
-    profile["_id"] = str(profile["_id"])
-    return profile
 
 @api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    status_checks = await db.status_checks.find().to_list(1000)
-    return [StatusCheck(**status_check) for status_check in status_checks]
+async def get_status():
+    status_checks = []
+    
+    # Check Supabase connection
+    try:
+        # Test connection by trying to select from auth.users
+        result = supabase.table('user_profiles').select("id").limit(1).execute()
+        status_checks.append(StatusCheck(
+            component="Supabase",
+            status="healthy",
+            details="Connection successful"
+        ))
+    except Exception as e:
+        status_checks.append(StatusCheck(
+            component="Supabase",
+            status="unhealthy",
+            details=str(e)
+        ))
+    
+    # Check Supabase JWT configuration
+    if SUPABASE_JWT_SECRET:
+        status_checks.append(StatusCheck(
+            component="Supabase JWT",
+            status="configured",
+            details="JWT secret is set"
+        ))
+    else:
+        status_checks.append(StatusCheck(
+            component="Supabase JWT",
+            status="not configured",
+            details="JWT secret is missing"
+        ))
+    
+    return status_checks
 
-# Include the router in the main app
 app.include_router(api_router)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+@app.on_event("startup")
+async def startup_event():
+    print("Starting up Hybrid House API with Supabase...")
+    
+    # Test Supabase connection
+    try:
+        # Try to access Supabase
+        result = supabase.table('user_profiles').select("id").limit(1).execute()
+        print("✅ Successfully connected to Supabase")
+    except Exception as e:
+        print(f"❌ Failed to connect to Supabase: {e}")
 
 @app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
+async def shutdown_event():
+    print("Shutting down Hybrid House API...")
