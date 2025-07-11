@@ -666,16 +666,34 @@ async def trigger_score_computation(profile_id: str, profile_json: dict):
             "deliverable": "score"
         }
         
+        print(f"Triggering score computation for profile {profile_id}")
+        
         # Make async request to webhook
         response = requests.post(
             WEBHOOK_URL,
             json=webhook_data,
             headers={"Content-Type": "application/json"},
-            timeout=30
+            timeout=60  # Increased timeout for score computation
         )
         
         if response.status_code == 200:
             print(f"Successfully triggered score computation for profile {profile_id}")
+            
+            # Parse the response and save to database
+            try:
+                score_data = response.json()
+                
+                # Update the athlete profile with score data
+                supabase.table('athlete_profiles').update({
+                    "score_data": score_data,
+                    "updated_at": datetime.utcnow().isoformat()
+                }).eq('id', profile_id).execute()
+                
+                print(f"Score data saved for profile {profile_id}")
+                
+            except Exception as e:
+                print(f"Error parsing/saving score data: {e}")
+                
         else:
             print(f"Webhook request failed with status {response.status_code}: {response.text}")
             
