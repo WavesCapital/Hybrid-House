@@ -555,19 +555,26 @@ const InterviewFlow = () => {
 
             {/* Score Computing Loading */}
             {isComputingScore && (
-              <div className="fixed inset-0 bg-background-primary/80 backdrop-blur-sm z-50 flex items-center justify-center">
-                <Card className="w-full max-w-md p-8 text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                  <h2 className="text-2xl font-bold text-primary mb-4">
-                    Computing Your Score! 🚀
-                  </h2>
-                  <p className="text-muted-foreground mb-6">
-                    We're analyzing your profile and calculating your Hybrid Athlete Score. This usually takes about 30 seconds.
-                  </p>
-                  <div className="text-sm text-muted-foreground">
-                    Please wait while we crunch the numbers...
+              <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm" style={{ 
+                background: 'rgba(10, 11, 12, 0.8)' 
+              }}>
+                <div className="gradient-border max-w-md w-full mx-6">
+                  <div className="gradient-border-inner p-12 text-center">
+                    <div className="mb-8">
+                      <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+                    </div>
+                    <h2 className="text-3xl font-bold neo-primary mb-6">
+                      Computing Your Score! 🚀
+                    </h2>
+                    <p className="neo-text-secondary mb-8 leading-relaxed">
+                      We're analyzing your profile and calculating your Hybrid Athlete Score. 
+                      This usually takes about 30 seconds.
+                    </p>
+                    <div className="text-sm neo-text-muted">
+                      Please wait while we crunch the numbers...
+                    </div>
                   </div>
-                </Card>
+                </div>
               </div>
             )}
 
