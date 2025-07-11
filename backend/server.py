@@ -487,16 +487,28 @@ async def chat_interview(
             
             # Debug: Print what we're sending to OpenAI
             print(f"Sending to OpenAI (cleaned): {conversation_input}")
+            print(f"Using previous_response_id: {session.get('last_response_id')}")
             
-            # Create the response using OpenAI Responses API
+            # Create the response using OpenAI Responses API with conversation state
             print("Making OpenAI API call...")
-            response = openai_client.responses.create(
-                model="gpt-4.1",
-                input=conversation_input,
-                instructions=INTERVIEW_SYSTEM_MESSAGE,
-                store=False,  # Don't store responses in OpenAI
-                temperature=0.7
-            )
+            
+            # Use previous_response_id for conversation state if available
+            api_params = {
+                "model": "gpt-4.1",
+                "input": conversation_input,
+                "store": True,  # Store for conversation continuity
+                "temperature": 0.7
+            }
+            
+            # Add previous_response_id if available for conversation state
+            if session.get('last_response_id'):
+                api_params["previous_response_id"] = session['last_response_id']
+            else:
+                # First call needs instructions
+                api_params["instructions"] = INTERVIEW_SYSTEM_MESSAGE
+            
+            response = openai_client.responses.create(**api_params)
+            
             print(f"OpenAI API call successful! Response ID: {response.id}")
             
             # Extract response text using the SDK helper method
