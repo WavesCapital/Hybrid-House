@@ -90,7 +90,11 @@ class BackendTester:
             ("/profile", "GET"),
             ("/athlete-profiles", "GET"),
             ("/athlete-profiles", "POST"),
-            ("/athlete-profiles/test-id", "GET")
+            ("/athlete-profiles/test-id", "GET"),
+            # Interview Flow endpoints
+            ("/interview/start", "POST"),
+            ("/interview/chat", "POST"),
+            ("/interview/session/test-session-id", "GET")
         ]
         
         all_passed = True
