@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Integrate Supabase authentication and user accounts system for the Hybrid House application"
+user_problem_statement: "Migrate from MongoDB + Supabase auth to pure Supabase for both authentication and database storage"
 
 backend:
   - task: "Supabase JWT Authentication Integration"
