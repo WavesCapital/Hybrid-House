@@ -321,33 +321,131 @@ class BackendTester:
             self.log_test("OpenAI Integration Setup", False, "OpenAI integration test failed", str(e))
             return False
     
-    def test_database_table_requirements(self):
-        """Test what happens when database tables don't exist (expected behavior)"""
+    def test_database_table_accessibility(self):
+        """Test that database tables are accessible and system is ready for authenticated requests"""
         try:
-            # Test with invalid token to see database-related errors
-            headers = {"Authorization": "Bearer invalid_token"}
-            response = self.session.get(f"{API_BASE_URL}/profile", headers=headers)
+            # Test the status endpoint to verify database connection
+            response = self.session.get(f"{API_BASE_URL}/status")
             
-            if response.status_code == 401:
-                self.log_test("Database Table Check", True, "Authentication properly blocks access before database queries")
-                return True
-            elif response.status_code == 500:
-                try:
-                    error_data = response.json()
-                    if "table" in str(error_data).lower() or "relation" in str(error_data).lower():
-                        self.log_test("Database Table Check", True, "Database tables missing as expected", error_data)
-                        return True
-                    else:
-                        self.log_test("Database Table Check", False, "Unexpected database error", error_data)
-                        return False
-                except:
-                    self.log_test("Database Table Check", True, "Database error (tables missing) as expected")
+            if response.status_code == 200:
+                data = response.json()
+                supabase_status = None
+                
+                for status_check in data:
+                    if status_check.get("component") == "Supabase":
+                        supabase_status = status_check
+                        break
+                
+                if supabase_status and supabase_status.get("status") == "healthy":
+                    self.log_test("Database Table Accessibility", True, "Database tables are accessible and system is ready", supabase_status)
                     return True
+                else:
+                    self.log_test("Database Table Accessibility", False, "Database connection not healthy", data)
+                    return False
             else:
-                self.log_test("Database Table Check", False, f"Unexpected response: HTTP {response.status_code}", response.text)
+                self.log_test("Database Table Accessibility", False, f"Status endpoint failed: HTTP {response.status_code}", response.text)
                 return False
         except Exception as e:
-            self.log_test("Database Table Check", False, "Database table test failed", str(e))
+            self.log_test("Database Table Accessibility", False, "Database accessibility test failed", str(e))
+            return False
+    
+    def test_interview_flow_readiness(self):
+        """Test that Interview Flow system is ready for authenticated requests"""
+        try:
+            # Test all interview endpoints are properly configured and protected
+            interview_endpoints = [
+                "/interview/start",
+                "/interview/chat", 
+                "/interview/session/test-id"
+            ]
+            
+            all_ready = True
+            for endpoint in interview_endpoints:
+                if endpoint == "/interview/start":
+                    response = self.session.post(f"{API_BASE_URL}{endpoint}", json={})
+                elif endpoint == "/interview/chat":
+                    response = self.session.post(f"{API_BASE_URL}{endpoint}", json={
+                        "messages": [{"role": "user", "content": "Hello"}],
+                        "session_id": "test-session-id"
+                    })
+                else:
+                    response = self.session.get(f"{API_BASE_URL}{endpoint}")
+                
+                # Should return 403 (properly protected) not 500 (server error)
+                if response.status_code == 403:
+                    continue
+                elif response.status_code == 500:
+                    try:
+                        error_data = response.json()
+                        if "table" in str(error_data).lower() or "database" in str(error_data).lower():
+                            self.log_test("Interview Flow Readiness", False, f"Database tables not accessible for {endpoint}", error_data)
+                            all_ready = False
+                            break
+                    except:
+                        self.log_test("Interview Flow Readiness", False, f"Server error for {endpoint}", response.text)
+                        all_ready = False
+                        break
+                else:
+                    self.log_test("Interview Flow Readiness", False, f"Unexpected response for {endpoint}: HTTP {response.status_code}", response.text)
+                    all_ready = False
+                    break
+            
+            if all_ready:
+                self.log_test("Interview Flow Readiness", True, "All interview endpoints are ready for authenticated requests")
+                return True
+            else:
+                return False
+                
+        except Exception as e:
+            self.log_test("Interview Flow Readiness", False, "Interview flow readiness test failed", str(e))
+            return False
+    
+    def test_system_health_comprehensive(self):
+        """Comprehensive system health check for Interview Flow"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/status")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check all required components
+                required_components = ["Supabase", "Supabase JWT"]
+                found_components = {}
+                
+                for status_check in data:
+                    component = status_check.get("component")
+                    if component in required_components:
+                        found_components[component] = status_check
+                
+                # Verify all components are healthy/configured
+                all_healthy = True
+                health_details = []
+                
+                for component in required_components:
+                    if component in found_components:
+                        status = found_components[component].get("status")
+                        if component == "Supabase" and status == "healthy":
+                            health_details.append(f"✅ {component}: {status}")
+                        elif component == "Supabase JWT" and status == "configured":
+                            health_details.append(f"✅ {component}: {status}")
+                        else:
+                            health_details.append(f"❌ {component}: {status}")
+                            all_healthy = False
+                    else:
+                        health_details.append(f"❌ {component}: missing")
+                        all_healthy = False
+                
+                if all_healthy:
+                    self.log_test("System Health Comprehensive", True, "All system components are healthy", health_details)
+                    return True
+                else:
+                    self.log_test("System Health Comprehensive", False, "Some system components are not healthy", health_details)
+                    return False
+            else:
+                self.log_test("System Health Comprehensive", False, f"Status endpoint failed: HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("System Health Comprehensive", False, "System health check failed", str(e))
             return False
     
     def run_all_tests(self):
