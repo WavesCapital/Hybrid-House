@@ -8,6 +8,7 @@ from jose import jwt, JWTError
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+from openai import OpenAI
 import os
 import uuid
 import json
