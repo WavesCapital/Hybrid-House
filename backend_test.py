@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing for Hybrid House Supabase Authentication Integration
-Tests JWT authentication, protected endpoints, and MongoDB integration
+Backend API Testing for Hybrid House Pure Supabase Integration
+Tests JWT authentication, protected endpoints, and Supabase database integration
 """
 
 import requests
