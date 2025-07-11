@@ -96,6 +96,12 @@ const InterviewFlow = () => {
     const content = messageContent || currentMessage.trim();
     if (!content || !sessionId || isLoading) return;
 
+    // Prevent multiple simultaneous requests
+    if (isLoading) {
+      console.log('Already processing a request, ignoring...');
+      return;
+    }
+
     const userMessage = {
       role: 'user',
       content,
@@ -132,10 +138,8 @@ const InterviewFlow = () => {
 
       if (response.data.completed) {
         setIsCompleted(true);
-        toast({
-          title: "Interview Complete!",
-          description: "Your profile has been created and we're computing your Hybrid Athlete Score.",
-        });
+        // Start score computation and display
+        await handleInterviewCompletion(response.data.profile_id);
       }
 
       // Auto-save toast
