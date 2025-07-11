@@ -762,7 +762,9 @@ async def chat_interview(
         return {
             "response": response_text,
             "completed": False,
-            "current_index": len([m for m in messages if m["role"] == "user"])
+            "current_index": len([m for m in messages if m["role"] == "user"]),
+            "milestone_detected": milestone_detected,
+            "streak_detected": streak_detected
         }
         
     except Exception as e:
