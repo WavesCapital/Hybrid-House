@@ -750,9 +750,9 @@ if __name__ == "__main__":
     success = tester.run_all_tests()
     
     # Print detailed results
-    print("\n" + "=" * 60)
+    print("\n" + "=" * 80)
     print("DETAILED TEST RESULTS")
-    print("=" * 60)
+    print("=" * 80)
     for result in tester.test_results:
         status = "✅" if result['success'] else "❌"
         print(f"{status} {result['test']}: {result['message']}")
