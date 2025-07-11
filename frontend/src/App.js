@@ -43,6 +43,22 @@ function AppContent() {
             path="/" 
             element={
               <ProtectedRoute>
+                <InterviewFlow />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/interview" 
+            element={
+              <ProtectedRoute>
+                <InterviewFlow />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/paste" 
+            element={
+              <ProtectedRoute>
                 <AthleteProfile />
               </ProtectedRoute>
             } 
