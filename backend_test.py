@@ -696,9 +696,9 @@ class BackendTester:
     
     def run_all_tests(self):
         """Run all backend tests"""
-        print("=" * 60)
-        print("OPENAI RESPONSES API WITH GPT-4.1 INTEGRATION TESTING")
-        print("=" * 60)
+        print("=" * 80)
+        print("ENHANCED INTERVIEW FLOW WITH GPT-4.1 AND 48-QUESTION SYSTEM TESTING")
+        print("=" * 80)
         
         tests = [
             ("API Connectivity", self.test_api_root),
