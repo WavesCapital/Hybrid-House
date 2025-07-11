@@ -39,20 +39,86 @@ export default function AuthForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ background: '#0A0B0C' }}>
+      <style jsx>{`
+        .neo-text-primary {
+          color: #D9D9D9;
+        }
+        .neo-text-secondary {
+          color: #9FA1A3;
+        }
+        .neo-text-muted {
+          color: #6B6E71;
+        }
+        .neo-primary {
+          color: #79CFF7;
+        }
+        .neo-card {
+          background: #181B1D;
+          border: 1px solid #1A1C1D;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .neo-input {
+          background: #0F1112;
+          border: 1px solid #1A1C1D;
+          color: #D9D9D9;
+          border-radius: 8px;
+          padding: 12px 16px;
+          font-size: 16px;
+          transition: all 200ms cubic-bezier(0.4,0,0.2,1);
+        }
+        .neo-input:focus {
+          outline: none;
+          border-color: #79CFF7;
+          box-shadow: 0 0 0 3px rgba(121, 207, 247, 0.15);
+        }
+        .neo-btn-primary {
+          background: rgba(121, 207, 247, 0.2);
+          color: #79CFF7;
+          border: 2px solid #79CFF7;
+          border-radius: 8px;
+          padding: 12px 20px;
+          font-weight: 600;
+          transition: all 200ms cubic-bezier(0.4,0,0.2,1);
+          box-shadow: 0 0 12px rgba(121, 207, 247, 0.25);
+          backdrop-filter: blur(8px);
+        }
+        .neo-btn-primary:hover {
+          background: rgba(121, 207, 247, 0.3);
+          box-shadow: 0 0 20px rgba(121, 207, 247, 0.4);
+          transform: translateY(-1px);
+        }
+        .neo-btn-primary:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          transform: none;
+        }
+        .error-message {
+          color: #FF4B4B;
+        }
+        .success-message {
+          color: #85E26E;
+        }
+      `}</style>
+      
       <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold neo-primary">
-            {isLogin ? 'Sign in to your account' : 'Create your account'}
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-5xl font-bold mb-4 neo-primary" style={{ lineHeight: '1.1' }}>
+            Hybrid House
+          </h1>
+          <h2 className="text-2xl font-semibold neo-text-primary mb-2">
+            {isLogin ? 'Welcome back' : 'Join the community'}
           </h2>
-          <p className="mt-2 text-center text-sm neo-text-secondary">
-            Welcome to Hybrid House
+          <p className="neo-text-secondary">
+            {isLogin ? 'Sign in to access your hybrid athlete profile' : 'Create your account to get started'}
           </p>
         </div>
         
-        <div className="neo-card rounded-xl p-8">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+        {/* Auth Card */}
+        <div className="neo-card rounded-xl p-8 space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="sr-only">
+              <label htmlFor="email" className="block text-sm font-semibold neo-text-primary mb-2">
                 Email address
               </label>
               <input
@@ -62,7 +128,7 @@ export default function AuthForm() {
                 autoComplete="email"
                 required
                 className="neo-input w-full"
-                placeholder="Email address"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
@@ -70,7 +136,7 @@ export default function AuthForm() {
             </div>
             
             <div>
-              <label htmlFor="password" className="sr-only">
+              <label htmlFor="password" className="block text-sm font-semibold neo-text-primary mb-2">
                 Password
               </label>
               <input
@@ -80,39 +146,70 @@ export default function AuthForm() {
                 autoComplete={isLogin ? 'current-password' : 'new-password'}
                 required
                 className="neo-input w-full"
-                placeholder="Password"
+                placeholder={isLogin ? 'Enter your password' : 'Create a password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
               />
+              {!isLogin && (
+                <p className="mt-2 text-xs neo-text-muted">
+                  Password should be at least 6 characters long
+                </p>
+              )}
             </div>
 
             {message && (
-              <div className={`text-sm text-center ${message.includes('error') || message.includes('Invalid') ? 'text-red-500' : 'neo-primary'}`}>
+              <div className={`text-sm text-center p-3 rounded-lg ${
+                message.includes('error') || message.includes('Invalid') || message.includes('not') 
+                  ? 'error-message bg-red-500 bg-opacity-10 border border-red-500 border-opacity-20' 
+                  : 'success-message bg-green-500 bg-opacity-10 border border-green-500 border-opacity-20'
+              }`}>
                 {message}
               </div>
             )}
 
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="neo-btn-primary w-full py-3"
-              >
-                {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Sign Up')}
-              </button>
-            </div>
-
-            <div className="text-center">
-              <button
-                type="button"
-                className="neo-text-secondary hover:neo-primary transition-colors duration-200"
-                onClick={() => setIsLogin(!isLogin)}
-              >
-                {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="neo-btn-primary w-full py-3 text-lg font-semibold"
+            >
+              {loading ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                  <span>{isLogin ? 'Signing in...' : 'Creating account...'}</span>
+                </div>
+              ) : (
+                isLogin ? 'Sign In' : 'Create Account'
+              )}
+            </button>
           </form>
+
+          {/* Toggle Auth Mode */}
+          <div className="text-center pt-4 border-t border-gray-700">
+            <button
+              type="button"
+              className="neo-text-secondary hover:neo-primary transition-colors duration-200 text-sm font-medium"
+              onClick={() => {
+                setIsLogin(!isLogin);
+                setMessage('');
+                setEmail('');
+                setPassword('');
+              }}
+              disabled={loading}
+            >
+              {isLogin ? "Don't have an account? " : 'Already have an account? '}
+              <span className="neo-primary font-semibold">
+                {isLogin ? 'Sign up' : 'Sign in'}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center">
+          <p className="text-xs neo-text-muted">
+            By {isLogin ? 'signing in' : 'creating an account'}, you agree to our terms of service and privacy policy
+          </p>
         </div>
       </div>
     </div>
