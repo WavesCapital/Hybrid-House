@@ -361,7 +361,7 @@ async def start_interview(user: dict = Depends(verify_jwt)):
             print("Getting first message from OpenAI...")
             response = openai_client.responses.create(
                 model="gpt-4.1",
-                input=[],  # Empty input - OpenAI generates first message from instructions
+                input=[{"role": "user", "content": "start"}],  # Minimal input to trigger first message
                 instructions=INTERVIEW_SYSTEM_MESSAGE,
                 store=False,
                 temperature=0.7
@@ -371,7 +371,7 @@ async def start_interview(user: dict = Depends(verify_jwt)):
             first_message_text = response.output_text
             print(f"First message: {first_message_text[:100]}...")
             
-            # Add the first assistant message to the session
+            # Add the first assistant message to the session (don't include the "start" trigger)
             first_message = {
                 "role": "assistant",
                 "content": first_message_text,
