@@ -422,21 +422,28 @@ async def chat_interview(
             "updated_at": datetime.utcnow().isoformat()
         }).eq('id', session_id).execute()
         
-        # Create LLM chat instance
-        chat = LlmChat(
-            api_key=OPENAI_API_KEY,
-            session_id=session_id,
-            system_message=INTERVIEW_SYSTEM_MESSAGE
-        ).with_model("openai", "gpt-4o")
-        
-        # Prepare messages for LLM (exclude system message for conversation)
-        llm_messages = [m for m in messages if m["role"] != "system"]
-        
-        # Create user message for LLM
-        user_msg = UserMessage(text=user_message.content)
-        
-        # Generate response
-        response = await chat.send_message(user_msg)
+        # Create OpenAI responses API call using GPT-4.1
+        try:
+            # Prepare conversation messages for Responses API
+            conversation_messages = [m for m in messages if m["role"] != "system"]
+            
+            # Create the response using OpenAI Responses API
+            response = openai_client.responses.create(
+                model="gpt-4.1",
+                input=conversation_messages,
+                instructions=INTERVIEW_SYSTEM_MESSAGE,
+                store=False  # Don't store responses in OpenAI
+            )
+            
+            # Extract response text
+            response_text = response.output_text
+            
+        except Exception as e:
+            print(f"Error with OpenAI Responses API: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error processing interview chat with OpenAI"
+            )
         
         # Check if interview is complete
         if response.startswith("INTAKE_COMPLETE"):
