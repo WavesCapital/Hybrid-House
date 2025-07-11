@@ -435,6 +435,9 @@ async def chat_interview(
                         # Note: Don't include timestamp or other custom fields
                     })
             
+            # Debug: Print what we're sending to OpenAI
+            print(f"Sending to OpenAI: {conversation_input}")
+            
             # Create the response using OpenAI Responses API
             response = openai_client.responses.create(
                 model="gpt-4.1",
