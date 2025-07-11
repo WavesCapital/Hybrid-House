@@ -679,12 +679,13 @@ async def chat_interview(
                 detail=f"Error processing interview chat with OpenAI: {str(e)}"
             )
         
-        # Check if interview is complete
-        if response_text.startswith("ATHLETE_PROFILE"):
+        # Check if interview is complete - look for the new ATHLETE_PROFILE::: trigger
+        if "ATHLETE_PROFILE:::" in response_text:
             # Parse the JSON profile
             try:
-                json_part = response_text.split('\n', 1)[1] if '\n' in response_text else response_text.split('ATHLETE_PROFILE')[1]
-                profile_json = json.loads(json_part.strip())
+                # Split on ATHLETE_PROFILE::: and get the JSON part
+                json_part = response_text.split("ATHLETE_PROFILE:::")[1].strip()
+                profile_json = json.loads(json_part)
                 
                 # Add session metadata
                 profile_json["meta_session_id"] = session_id
