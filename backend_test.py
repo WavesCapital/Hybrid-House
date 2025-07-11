@@ -568,7 +568,7 @@ class BackendTester:
     def run_all_tests(self):
         """Run all backend tests"""
         print("=" * 60)
-        print("INTERVIEW FLOW BACKEND TESTING - DATABASE TABLES VERIFICATION")
+        print("OPENAI RESPONSES API WITH GPT-4.1 INTEGRATION TESTING")
         print("=" * 60)
         
         tests = [
@@ -583,7 +583,10 @@ class BackendTester:
             ("Supabase Integration", self.test_supabase_connection),
             ("CORS Configuration", self.test_cors_configuration),
             ("JWT Configuration", self.test_jwt_secret_configuration),
-            ("OpenAI Integration Setup", self.test_openai_integration_check)
+            ("OpenAI Responses API Integration", self.test_openai_responses_api_integration),
+            ("GPT-4.1 Model Configuration", self.test_gpt41_model_configuration),
+            ("Alpha Version System Message", self.test_alpha_version_system_message),
+            ("EmergentIntegrations Removal", self.test_emergentintegrations_removal)
         ]
         
         passed_tests = 0
@@ -603,10 +606,10 @@ class BackendTester:
         print(f"Tests Passed: {passed_tests}/{total_tests}")
         
         if passed_tests == total_tests:
-            print("🎉 ALL TESTS PASSED - Backend Supabase authentication system is working correctly!")
+            print("🎉 ALL TESTS PASSED - OpenAI Responses API with GPT-4.1 integration is working correctly!")
             return True
         else:
-            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in backend Supabase authentication system")
+            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in OpenAI Responses API integration")
             return False
 
 if __name__ == "__main__":
