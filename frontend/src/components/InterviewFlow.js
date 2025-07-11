@@ -415,6 +415,31 @@ const InterviewFlow = () => {
           border-radius: 11px;
           height: 100%;
         }
+        .streak-badge {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: linear-gradient(45deg, #FF6B6B, #FFE66D);
+          color: white;
+          padding: 20px 40px;
+          border-radius: 50px;
+          font-size: 24px;
+          font-weight: bold;
+          box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+          animation: streak-bounce 0.6s ease-out;
+          z-index: 1000;
+        }
+        @keyframes streak-bounce {
+          0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+          50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        .mono-progress {
+          font-family: 'Courier New', monospace;
+          font-size: 12px;
+          letter-spacing: 1px;
+        }
       `}</style>
       {/* Header with Progress */}
       <div className="sticky top-0 z-10 backdrop-blur-lg border-b" style={{ 
