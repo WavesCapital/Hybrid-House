@@ -441,6 +441,58 @@ async def chat_interview(
         # Add user message to session
         messages = session["messages"]
         user_message = request.messages[-1]  # Get the latest user message
+        
+        # Check for force completion trigger
+        if user_message.content.upper() in ['FORCE_COMPLETE', 'DONE', 'FINISH']:
+            print("Force completion triggered!")
+            
+            # Create a minimal profile with collected data
+            collected_data = {}
+            
+            # Extract any data from the conversation
+            user_messages = [m for m in messages if m["role"] == "user"]
+            if len(user_messages) > 0:
+                collected_data["first_name"] = user_messages[0]["content"]
+            if len(user_messages) > 1:
+                collected_data["last_name"] = user_messages[1]["content"] if user_messages[1]["content"] not in ['skip', 'done', 'FORCE_COMPLETE'] else None
+            
+            # Fill in defaults for required fields
+            profile_json = {
+                "first_name": collected_data.get("first_name", "User"),
+                "last_name": collected_data.get("last_name", None),
+                "email": None,
+                "age": None,
+                "schema_version": "v4.0",
+                "meta_session_id": session_id
+            }
+            
+            # Save athlete profile
+            profile_data = {
+                "id": str(uuid.uuid4()),
+                "user_id": user_id,
+                "profile_json": profile_json,
+                "completed_at": datetime.utcnow().isoformat(),
+                "created_at": datetime.utcnow().isoformat(),
+                "updated_at": datetime.utcnow().isoformat()
+            }
+            
+            profile_result = supabase.table('athlete_profiles').insert(profile_data).execute()
+            
+            # Trigger score computation
+            await trigger_score_computation(profile_data["id"], profile_json)
+            
+            # Update session status
+            supabase.table('interview_sessions').update({
+                "status": "complete",
+                "updated_at": datetime.utcnow().isoformat()
+            }).eq('id', session_id).execute()
+            
+            return {
+                "response": f"Thanks, {profile_json.get('first_name', 'there')}! I've created your profile with the information provided. Your Hybrid Score will be ready shortly! 🚀",
+                "completed": True,
+                "profile_id": profile_data["id"]
+            }
+        
         messages.append({
             "role": user_message.role,
             "content": user_message.content,
