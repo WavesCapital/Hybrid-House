@@ -43,8 +43,8 @@ const InterviewFlow = () => {
     if (index <= 30) return { section: "Metrics", sectionProgress: index - 29, sectionTotal: 1 };
     if (index <= 42) return { section: "Nutrition", sectionProgress: index - 30, sectionTotal: 12 };
     if (index <= 46) return { section: "Injuries", sectionProgress: index - 42, sectionTotal: 4 };
-    if (index <= 52) return { section: "Brag Zone", sectionProgress: index - 46, sectionTotal: 6 };
-    return { section: "Final", sectionProgress: index - 52, sectionTotal: 3 };
+    if (index <= 46) return { section: "Brag Zone", sectionProgress: index - 42, sectionTotal: 4 };
+    return { section: "Final", sectionProgress: index - 46, sectionTotal: 2 };
   };
   
   const sectionInfo = getSectionInfo(currentIndex);
