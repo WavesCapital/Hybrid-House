@@ -451,7 +451,7 @@ class BackendTester:
     def run_all_tests(self):
         """Run all backend tests"""
         print("=" * 60)
-        print("STARTING BACKEND API TESTS - INTERVIEW FLOW FOCUS")
+        print("INTERVIEW FLOW BACKEND TESTING - DATABASE TABLES VERIFICATION")
         print("=" * 60)
         
         tests = [
