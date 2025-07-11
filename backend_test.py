@@ -278,10 +278,10 @@ class BackendTester:
         print(f"Tests Passed: {passed_tests}/{total_tests}")
         
         if passed_tests == total_tests:
-            print("🎉 ALL TESTS PASSED - Backend authentication system is working correctly!")
+            print("🎉 ALL TESTS PASSED - Backend Supabase authentication system is working correctly!")
             return True
         else:
-            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in backend authentication system")
+            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in backend Supabase authentication system")
             return False
 
 if __name__ == "__main__":
