@@ -131,11 +131,11 @@ backend:
 
   - task: "OpenAI Integration with emergentintegrations"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
@@ -149,6 +149,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ OPENAI RESPONSES API WITH GPT-4.1 INTEGRATION TESTING COMPLETE: Successfully verified the switch from emergentintegrations to direct OpenAI client using Responses API ✅. OpenAI Responses API integration properly configured with GPT-4.1 model ✅, interview chat endpoint configured and protected ✅, Alpha version system message (2 questions: first_name, last_name) properly implemented ✅, emergentintegrations successfully removed from active code path ✅. All interview endpoints (/api/interview/start, /api/interview/chat, /api/interview/session/{id}) are ready for authenticated use with new OpenAI Responses API. System shows improved conversation state management and semantic events handling as expected. Minor: CORS headers not visible but API fully functional."
+      - working: false
+        agent: "testing"
+        comment: "❌ OPENAI RESPONSES API TIMESTAMP ISSUE DETECTED: Comprehensive testing (14/15 tests passed) shows system is mostly working but OpenAI Responses API calls are failing with 400 error: 'Unknown parameter: input[0].timestamp'. Backend logs show actual API calls being made but rejected due to timestamp fields still being included in request. The fix mentioned in review request is incomplete - timestamps are still being sent to OpenAI API despite filtering code being present. All other components working: API connectivity ✅, system health ✅, database tables accessible ✅, JWT authentication ✅, interview endpoints properly protected ✅, GPT-4.1 model configured ✅, Alpha version system message ready ✅. Critical issue: OpenAI API calls return 500 errors due to timestamp parameter rejection."
 
   - task: "Interview Flow API Endpoints"
     implemented: true
