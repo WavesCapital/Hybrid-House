@@ -425,24 +425,45 @@ async def chat_interview(
         # Create OpenAI responses API call using GPT-4.1
         try:
             # Prepare conversation messages for Responses API
-            conversation_messages = [m for m in messages if m["role"] != "system"]
+            # Convert our message format to the expected format
+            conversation_input = []
+            for msg in messages:
+                if msg["role"] != "system":  # Skip system messages, use instructions instead
+                    conversation_input.append({
+                        "role": msg["role"],
+                        "content": msg["content"]
+                    })
             
             # Create the response using OpenAI Responses API
             response = openai_client.responses.create(
                 model="gpt-4.1",
-                input=conversation_messages,
+                input=conversation_input,
                 instructions=INTERVIEW_SYSTEM_MESSAGE,
-                store=False  # Don't store responses in OpenAI
+                store=False,  # Don't store responses in OpenAI
+                temperature=0.7
             )
             
-            # Extract response text
-            response_text = response.output_text
+            # Extract response text from the correct structure
+            if response.output and len(response.output) > 0:
+                # Get the first message output
+                message_output = response.output[0]
+                if message_output.content and len(message_output.content) > 0:
+                    # Get the text from the first content item
+                    content_item = message_output.content[0]
+                    if content_item.type == "output_text":
+                        response_text = content_item.text
+                    else:
+                        raise Exception("Unexpected content type in response")
+                else:
+                    raise Exception("No content in message output")
+            else:
+                raise Exception("No output in response")
             
         except Exception as e:
             print(f"Error with OpenAI Responses API: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Error processing interview chat with OpenAI"
+                detail=f"Error processing interview chat with OpenAI: {str(e)}"
             )
         
         # Check if interview is complete
