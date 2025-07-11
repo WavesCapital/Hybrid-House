@@ -456,15 +456,17 @@ class BackendTester:
         
         tests = [
             ("API Connectivity", self.test_api_root),
+            ("System Health Comprehensive", self.test_system_health_comprehensive),
+            ("Database Table Accessibility", self.test_database_table_accessibility),
             ("Unprotected Endpoints", self.test_unprotected_endpoints),
             ("Protected Endpoints (No Token)", self.test_protected_endpoints_without_token),
             ("Protected Endpoints (Invalid Token)", self.test_protected_endpoints_with_invalid_token),
             ("Interview Flow Endpoints (No Auth)", self.test_interview_flow_endpoints_without_auth),
+            ("Interview Flow Readiness", self.test_interview_flow_readiness),
             ("Supabase Integration", self.test_supabase_connection),
             ("CORS Configuration", self.test_cors_configuration),
             ("JWT Configuration", self.test_jwt_secret_configuration),
-            ("OpenAI Integration Setup", self.test_openai_integration_check),
-            ("Database Table Requirements", self.test_database_table_requirements)
+            ("OpenAI Integration Setup", self.test_openai_integration_check)
         ]
         
         passed_tests = 0
