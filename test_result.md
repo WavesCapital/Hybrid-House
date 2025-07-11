@@ -122,6 +122,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ COMPREHENSIVE TESTING COMPLETED: All core authentication functionality verified working correctly. API root endpoint responding ✅, unprotected endpoints accessible ✅, protected endpoints properly rejecting unauthorized requests (403/401) ✅, JWT verification working with proper error messages ✅, MongoDB integration fully functional (create/read operations) ✅. Minor: CORS headers not visible in responses but API is accessible and functional. Authentication system is production-ready."
+      - working: true
+        agent: "testing"
+        comment: "✅ NEW SUPABASE CREDENTIALS TESTING COMPLETE: Updated backend_test.py for pure Supabase integration and executed comprehensive testing. Results: API root endpoint with Supabase message ✅, JWT verification with new secret working correctly ✅, protected endpoints properly secured (403/401 responses) ✅, unprotected endpoints accessible ✅, JWT configuration verified ✅. Expected behavior: user_profiles table doesn't exist yet (will be auto-created on first auth access). Minor: CORS headers not visible but API fully functional. Authentication system ready for user registration/login with new Supabase credentials."
 
 frontend:
   - task: "Supabase Authentication Frontend"
