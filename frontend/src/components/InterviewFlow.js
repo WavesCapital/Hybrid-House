@@ -434,6 +434,9 @@ const InterviewFlow = () => {
               <div className="text-xs neo-text-muted">
                 Section {sectionInfo.sectionProgress}/{sectionInfo.sectionTotal}
               </div>
+              <div className="text-xs neo-text-muted mt-1 font-mono">
+                ({currentIndex}/{TOTAL_QUESTIONS} {generateProgressBar(currentIndex, TOTAL_QUESTIONS)})
+              </div>
             </div>
           </div>
           
