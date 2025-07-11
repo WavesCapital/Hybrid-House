@@ -440,6 +440,7 @@ async def chat_interview(
             print(f"Sending to OpenAI (cleaned): {conversation_input}")
             
             # Create the response using OpenAI Responses API
+            print("Making OpenAI API call...")
             response = openai_client.responses.create(
                 model="gpt-4.1",
                 input=conversation_input,
@@ -447,9 +448,11 @@ async def chat_interview(
                 store=False,  # Don't store responses in OpenAI
                 temperature=0.7
             )
+            print(f"OpenAI API call successful! Response ID: {response.id}")
             
             # Extract response text using the SDK helper method
             response_text = response.output_text
+            print(f"Extracted response text: {response_text[:100]}...")
             
             if not response_text:
                 raise Exception("No response text generated")
