@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Complete Supabase integration setup with all credentials and database configuration"
+user_problem_statement: "Implement Interview Flow for Hybrid House application with OpenAI streaming chat, Supabase integration, and score computation"
 
 backend:
   - task: "Pure Supabase Integration with New Credentials"
@@ -129,6 +129,51 @@ backend:
         agent: "testing"
         comment: "✅ NEW SUPABASE CREDENTIALS TESTING COMPLETE: Updated backend_test.py for pure Supabase integration and executed comprehensive testing. Results: API root endpoint with Supabase message ✅, JWT verification with new secret working correctly ✅, protected endpoints properly secured (403/401 responses) ✅, unprotected endpoints accessible ✅, JWT configuration verified ✅. Expected behavior: user_profiles table doesn't exist yet (will be auto-created on first auth access). Minor: CORS headers not visible but API fully functional. Authentication system ready for user registration/login with new Supabase credentials."
 
+  - task: "OpenAI Integration with emergentintegrations"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Need to integrate OpenAI API for streaming chat responses in interview flow"
+      - working: false
+        agent: "main"
+        comment: "✅ Installed emergentintegrations library, added OpenAI API key to environment, created interview flow endpoints with streaming chat, system message setup for Alpha version (2 questions). Issue: Database tables don't exist yet, need manual creation in Supabase dashboard."
+
+  - task: "Interview Flow API Endpoints"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Need to create API endpoints for interview flow: start session, chat streaming, session management"
+      - working: false
+        agent: "main"
+        comment: "✅ Created interview flow endpoints: /api/interview/start, /api/interview/chat, /api/interview/session/{id}. Includes session management, OpenAI streaming integration, auto-save functionality, completion detection, and webhook trigger for score computation. Issue: Database tables need manual creation."
+
+  - task: "Database Schema Creation"
+    implemented: true
+    working: false
+    file: "/app/SUPABASE_TABLES_CREATE.sql"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Need to create database tables for interview_sessions and update athlete_profiles table"
+      - working: false
+        agent: "main"
+        comment: "✅ Created comprehensive database schema with user_profiles, athlete_profiles (updated with profile_json), interview_sessions tables. Added RLS policies, triggers, and functions. Issue: Automatic table creation via API failed, need manual execution in Supabase dashboard."
+
 frontend:
   - task: "Supabase Authentication Frontend with New Credentials"
     implemented: true
@@ -144,6 +189,36 @@ frontend:
       - working: true
         agent: "main"
         comment: "✅ Updated frontend .env with new anon key, authentication forms working beautifully, signup/login UI is clean and professional, ready for user testing. Screenshots confirm forms are working correctly."
+
+  - task: "Interview Flow Frontend Component"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/InterviewFlow.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Need to create chat interface for interview flow with progress bar, auto-save, and streaming responses"
+      - working: false
+        agent: "main"
+        comment: "✅ Created comprehensive interview flow component with chat interface, progress bar (2 questions for Alpha), auto-save functionality, session management, streaming responses, skip functionality, and completion handling. Styled with Neo Design System. Issue: Backend tables need to be created first."
+
+  - task: "Route Updates for Interview Flow"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Need to update routing to make interview flow mandatory and hide paste profile behind /paste URL"
+      - working: false
+        agent: "main"
+        comment: "✅ Updated App.js routing: Interview flow now on root path (/), paste profile hidden behind /paste URL, added /interview route. Interview flow is now mandatory for new users as requested."
 
 infrastructure:
   - task: "Credentials Management and Storage"
