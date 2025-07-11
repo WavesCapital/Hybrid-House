@@ -529,7 +529,7 @@ async def chat_interview(
             
             # Use previous_response_id for conversation state if available
             api_params = {
-                "model": "gpt-4.1",
+                "model": "gpt-4.1-mini",
                 "input": conversation_input,
                 "store": True,  # Store for conversation continuity
                 "temperature": 0.7
