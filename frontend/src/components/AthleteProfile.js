@@ -17,6 +17,7 @@ import {
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const AthleteProfile = () => {
+  const { user, signOut } = useAuth();
   const [athleteProfile, setAthleteProfile] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
