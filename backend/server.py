@@ -368,7 +368,7 @@ async def start_interview(user: dict = Depends(verify_jwt)):
                 model="gpt-4.1",
                 input=[{"role": "user", "content": "start"}],  # Minimal input to trigger first message
                 instructions=INTERVIEW_SYSTEM_MESSAGE,
-                store=False,
+                store=True,  # Store the initial message
                 temperature=0.7
             )
             print(f"OpenAI first message call successful! Response ID: {response.id}")
@@ -385,9 +385,10 @@ async def start_interview(user: dict = Depends(verify_jwt)):
             
             updated_messages = [first_message]
             
-            # Update session with first message
+            # Update session with first message and response ID
             supabase.table('interview_sessions').update({
                 "messages": updated_messages,
+                "last_response_id": response.id,
                 "updated_at": datetime.utcnow().isoformat()
             }).eq('id', session_id).execute()
             
