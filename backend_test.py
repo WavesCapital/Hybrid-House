@@ -733,9 +733,9 @@ class BackendTester:
             except Exception as e:
                 print(f"❌ FAIL: {test_name} - Unexpected error: {str(e)}")
         
-        print("\n" + "=" * 60)
+        print("\n" + "=" * 80)
         print("BACKEND TEST SUMMARY")
-        print("=" * 60)
+        print("=" * 80)
         print(f"Tests Passed: {passed_tests}/{total_tests}")
         
         if passed_tests == total_tests:
