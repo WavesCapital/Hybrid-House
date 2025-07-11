@@ -160,7 +160,7 @@ backend:
         comment: "Adding confetti animations and streak tracking to frontend interview flow"
       - working: true
         agent: "main"
-        comment: "✅ Successfully implemented: 1) Added canvas-confetti library for milestone animations, 2) Added confetti triggers at milestones (Q10, 20, 30, 40), 3) Added streak tracking with visual indicators, 4) Added progress bar with filled/empty blocks format (<current>/<48> ▓▓░░░░░░░░), 5) Added streak badge overlay with fire animation, 6) Added milestone and streak toast notifications. Frontend is ready for testing with enhanced gamification features."
+        comment: "✅ FRONTEND PROGRESS BAR FIXED: Removed progress bar from OpenAI questions as requested by user - now progress bar only appears in UI header. Cleaned up the header display to be more minimal and focused. Frontend matches user requirements for clean question display."
 
   - task: "Interview Flow API Endpoints"
     implemented: true
