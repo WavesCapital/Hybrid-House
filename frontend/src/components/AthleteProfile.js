@@ -462,6 +462,32 @@ const AthleteProfile = () => {
         }
       `}</style>
 
+      {/* User Header */}
+      {user && (
+        <div className="flex justify-between items-center mb-8 px-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ 
+              background: 'rgba(121, 207, 247, 0.2)',
+              border: '2px solid #79CFF7' 
+            }}>
+              <span className="neo-primary font-semibold text-sm">
+                {user.email?.charAt(0).toUpperCase()}
+              </span>
+            </div>
+            <div>
+              <div className="neo-text-primary font-semibold">{user.email}</div>
+              <div className="neo-text-secondary text-sm">Hybrid Athlete</div>
+            </div>
+          </div>
+          <button
+            onClick={signOut}
+            className="neo-text-secondary hover:neo-primary transition-colors duration-200 text-sm font-medium"
+          >
+            Sign Out
+          </button>
+        </div>
+      )}
+
       {/* Header with action buttons when results are shown */}
       {data && (
         <div className="fixed top-0 left-0 right-0 z-50 neo-surface-2" style={{ borderBottom: '1px solid #1A1C1D' }}>
