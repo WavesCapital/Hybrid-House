@@ -325,22 +325,13 @@ Begin with your introduction and then ask the first question."""
 # Interview Flow Routes
 @api_router.post("/interview/start")
 async def start_interview(user: dict = Depends(verify_jwt)):
-    """Start a new interview session"""
+    """Start a new interview session - always starts fresh"""
     user_id = user["sub"]
     session_id = str(uuid.uuid4())
     
     try:
-        # Check if there's an existing active session
-        existing_session = supabase.table('interview_sessions').select("*").eq('user_id', user_id).eq('status', 'active').execute()
-        
-        if existing_session.data:
-            # Return existing session
-            return {
-                "session_id": existing_session.data[0]["id"],
-                "messages": existing_session.data[0]["messages"],
-                "current_index": existing_session.data[0]["current_index"],
-                "status": "resumed"
-            }
+        # Delete any existing active sessions for this user (start fresh every time)
+        supabase.table('interview_sessions').delete().eq('user_id', user_id).eq('status', 'active').execute()
         
         # Create new session with empty messages - OpenAI will generate the first message
         initial_messages = []
@@ -399,7 +390,7 @@ async def start_interview(user: dict = Depends(verify_jwt)):
             # Fall back to a simple message if OpenAI fails
             fallback_message = {
                 "role": "assistant", 
-                "content": "Hi! I'm your Hybrid House Coach. What's your first name?",
+                "content": "Hi! I'm your Hybrid House Coach. I'll ask you a few quick questions to build your athlete profile. Let's start with the basics - what's your first name?",
                 "timestamp": datetime.utcnow().isoformat()
             }
             
