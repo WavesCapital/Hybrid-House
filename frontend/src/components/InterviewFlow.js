@@ -236,11 +236,11 @@ const InterviewFlow = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-background-primary flex items-center justify-center p-4">
-        <Card className="w-full max-w-md p-8 text-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0A0B0C' }}>
+        <Card className="w-full max-w-md p-8 text-center neo-card">
           <h2 className="text-2xl font-bold text-primary mb-4">Authentication Required</h2>
           <p className="text-muted-foreground mb-6">Please log in to start your athlete profile interview.</p>
-          <Button onClick={() => window.location.href = '/'} className="w-full">
+          <Button onClick={() => window.location.href = '/'} className="w-full neo-btn-primary">
             Return to Login
           </Button>
         </Card>
