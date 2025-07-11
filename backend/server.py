@@ -21,8 +21,18 @@ SUPABASE_URL = os.environ.get('SUPABASE_URL')
 SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY')
 SUPABASE_JWT_SECRET = os.environ.get('SUPABASE_JWT_SECRET')
 
-# Supabase client with service key for backend operations
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+# For now, use in-memory storage until Supabase tables are created
+# This allows authentication to work while database setup is pending
+user_profiles_cache = {}
+athlete_profiles_cache = {}
+
+# Initialize Supabase client (will handle connection gracefully)
+try:
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+    print("✅ Supabase client initialized")
+except Exception as e:
+    print(f"⚠️ Supabase client error: {e}")
+    supabase = None
 
 # CORS middleware
 app.add_middleware(
