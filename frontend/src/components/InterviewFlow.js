@@ -349,22 +349,76 @@ const InterviewFlow = () => {
               </div>
             )}
 
+            {/* Score Display */}
+            {scoreData && (
+              <div className="fixed inset-0 bg-background-primary z-50 overflow-y-auto">
+                <div className="container mx-auto px-4 py-6 max-w-4xl">
+                  <div className="text-center mb-8">
+                    <h1 className="text-4xl font-bold text-primary mb-2">
+                      Your Hybrid Athlete Score
+                    </h1>
+                    <p className="text-xl text-muted-foreground">
+                      Complete analysis of your athletic profile
+                    </p>
+                  </div>
+                  
+                  {/* Score cards would go here - using the existing AthleteProfile component structure */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Object.entries(scoreData).map(([key, value]) => (
+                      <Card key={key} className="p-6">
+                        <h3 className="text-lg font-semibold text-foreground mb-2">
+                          {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </h3>
+                        <div className="text-2xl font-bold text-primary">
+                          {typeof value === 'number' ? Math.round(value) : value}
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                  
+                  <div className="text-center mt-8">
+                    <Button 
+                      onClick={() => window.location.href = '/'}
+                      className="w-full max-w-xs h-12"
+                    >
+                      Return to Dashboard
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Score Computing Loading */}
+            {isComputingScore && (
+              <div className="fixed inset-0 bg-background-primary/80 backdrop-blur-sm z-50 flex items-center justify-center">
+                <Card className="w-full max-w-md p-8 text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                  <h2 className="text-2xl font-bold text-primary mb-4">
+                    Computing Your Score! 🚀
+                  </h2>
+                  <p className="text-muted-foreground mb-6">
+                    We're analyzing your profile and calculating your Hybrid Athlete Score. This usually takes about 30 seconds.
+                  </p>
+                  <div className="text-sm text-muted-foreground">
+                    Please wait while we crunch the numbers...
+                  </div>
+                </Card>
+              </div>
+            )}
+
             {/* Completion Message */}
-            {isCompleted && (
+            {isCompleted && !isComputingScore && !scoreData && (
               <Card className="w-full max-w-2xl mx-auto p-8 text-center">
                 <h2 className="text-2xl font-bold text-primary mb-4">
                   Interview Complete! 🎉
                 </h2>
                 <p className="text-muted-foreground mb-6">
                   Your athlete profile has been created and we're computing your Hybrid Athlete Score. 
-                  You'll be redirected to your results shortly.
+                  You'll see your results in just a moment.
                 </p>
-                <Button
-                  onClick={() => window.location.href = '/'}
-                  className="w-full max-w-xs"
-                >
-                  Return to Dashboard
-                </Button>
+                <div className="animate-pulse">
+                  <div className="h-2 bg-primary rounded-full"></div>
+                </div>
               </Card>
             )}
           </div>
