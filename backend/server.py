@@ -446,10 +446,10 @@ async def chat_interview(
             )
         
         # Check if interview is complete
-        if response.startswith("INTAKE_COMPLETE"):
+        if response_text.startswith("INTAKE_COMPLETE"):
             # Parse the JSON profile
             try:
-                json_part = response.split('\n', 1)[1] if '\n' in response else response.split('INTAKE_COMPLETE')[1]
+                json_part = response_text.split('\n', 1)[1] if '\n' in response_text else response_text.split('INTAKE_COMPLETE')[1]
                 profile_json = json.loads(json_part.strip())
                 
                 # Save athlete profile
@@ -495,7 +495,7 @@ async def chat_interview(
         # Add assistant response to session
         assistant_message = {
             "role": "assistant",
-            "content": response,
+            "content": response_text,
             "timestamp": datetime.utcnow().isoformat()
         }
         
@@ -508,7 +508,7 @@ async def chat_interview(
         }).eq('id', session_id).execute()
         
         return {
-            "response": response,
+            "response": response_text,
             "completed": False,
             "current_index": len([m for m in messages if m["role"] == "user"])
         }
