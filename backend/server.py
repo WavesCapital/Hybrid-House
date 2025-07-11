@@ -425,18 +425,19 @@ async def chat_interview(
         # Create OpenAI responses API call using GPT-4.1
         try:
             # Prepare conversation messages for Responses API
-            # Convert our message format to the expected format (clean format without timestamps)
+            # IMPORTANT: Remove all custom fields (timestamps, etc.) - OpenAI only accepts role and content
             conversation_input = []
             for msg in messages:
                 if msg["role"] != "system":  # Skip system messages, use instructions instead
-                    conversation_input.append({
+                    # Only include role and content - filter out timestamp and other fields
+                    clean_message = {
                         "role": msg["role"],
                         "content": msg["content"]
-                        # Note: Don't include timestamp or other custom fields
-                    })
+                    }
+                    conversation_input.append(clean_message)
             
             # Debug: Print what we're sending to OpenAI
-            print(f"Sending to OpenAI: {conversation_input}")
+            print(f"Sending to OpenAI (cleaned): {conversation_input}")
             
             # Create the response using OpenAI Responses API
             response = openai_client.responses.create(
