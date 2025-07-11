@@ -7,7 +7,7 @@ import { useToast } from '../hooks/use-toast';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-const TOTAL_QUESTIONS = 2; // Alpha version with 2 questions
+const TOTAL_QUESTIONS = 48; // Updated to full interview system
 
 const InterviewFlow = () => {
   const [messages, setMessages] = useState([]);
