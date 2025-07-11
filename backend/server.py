@@ -425,13 +425,14 @@ async def chat_interview(
         # Create OpenAI responses API call using GPT-4.1
         try:
             # Prepare conversation messages for Responses API
-            # Convert our message format to the expected format
+            # Convert our message format to the expected format (clean format without timestamps)
             conversation_input = []
             for msg in messages:
                 if msg["role"] != "system":  # Skip system messages, use instructions instead
                     conversation_input.append({
                         "role": msg["role"],
                         "content": msg["content"]
+                        # Note: Don't include timestamp or other custom fields
                     })
             
             # Create the response using OpenAI Responses API
