@@ -672,6 +672,18 @@ async def chat_interview(
             if not response_text:
                 raise Exception("No response text generated")
             
+            # Check for confetti milestones and streak tracking
+            milestone_detected = False
+            streak_detected = False
+            
+            # Check for confetti triggers (🎉)
+            if "🎉" in response_text:
+                milestone_detected = True
+            
+            # Check for streak triggers (🔥)
+            if "🔥" in response_text:
+                streak_detected = True
+            
         except Exception as e:
             print(f"Error with OpenAI Responses API: {e}")
             raise HTTPException(
