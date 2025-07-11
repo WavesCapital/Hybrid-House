@@ -93,6 +93,48 @@ const InterviewFlow = () => {
     }
   };
 
+  const handleInterviewCompletion = async (profileId) => {
+    setIsComputingScore(true);
+    
+    try {
+      // Poll for score computation results
+      const checkScore = async () => {
+        const response = await axios.get(
+          `${BACKEND_URL}/api/athlete-profiles/${profileId}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+            },
+          }
+        );
+        
+        if (response.data.score_data) {
+          setScoreData(response.data.score_data);
+          setIsComputingScore(false);
+          toast({
+            title: "Score Ready! 🎉",
+            description: "Your Hybrid Athlete Score has been computed.",
+          });
+        } else {
+          // Continue polling
+          setTimeout(checkScore, 3000);
+        }
+      };
+      
+      // Start polling after a short delay
+      setTimeout(checkScore, 2000);
+      
+    } catch (error) {
+      console.error('Error checking score:', error);
+      setIsComputingScore(false);
+      toast({
+        title: "Score Computation Error",
+        description: "There was an issue computing your score. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Send message
   const sendMessage = async (messageContent = null) => {
     const content = messageContent || currentMessage.trim();
