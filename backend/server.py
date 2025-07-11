@@ -294,6 +294,273 @@ async def get_status():
     
     return status_checks
 
+# Interview Flow System Message for Alpha (2 questions)
+INTERVIEW_SYSTEM_MESSAGE = """You are Hybrid House Coach GPT. Ask ONE upbeat question at a time from the list below.
+
+Questions to ask in order:
+1. What's your first name?
+2. What's your last name?
+
+Rules:
+- Ask questions one at a time
+- If the user types "skip", store null for that key and ask the next question
+- If the user types "done" or all questions have been asked, return exactly:
+
+INTAKE_COMPLETE
+{ "first_name": "<value>", "last_name": "<value>" }
+
+Current question mapping:
+- Question 1: first_name
+- Question 2: last_name
+
+Be encouraging and professional. Start with the first question."""
+
+# Interview Flow Routes
+@api_router.post("/interview/start")
+async def start_interview(user: dict = Depends(verify_jwt)):
+    """Start a new interview session"""
+    user_id = user["sub"]
+    session_id = str(uuid.uuid4())
+    
+    try:
+        # Check if there's an existing active session
+        existing_session = supabase.table('interview_sessions').select("*").eq('user_id', user_id).eq('status', 'active').execute()
+        
+        if existing_session.data:
+            # Return existing session
+            return {
+                "session_id": existing_session.data[0]["id"],
+                "messages": existing_session.data[0]["messages"],
+                "current_index": existing_session.data[0]["current_index"],
+                "status": "resumed"
+            }
+        
+        # Create new session
+        initial_messages = [
+            {
+                "role": "system",
+                "content": INTERVIEW_SYSTEM_MESSAGE,
+                "timestamp": datetime.utcnow().isoformat()
+            },
+            {
+                "role": "assistant",
+                "content": "Hi! I'm your Hybrid House Coach. I'll ask you a few quick questions to build your athlete profile. Let's start with the basics:\n\nWhat's your first name?",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        ]
+        
+        session_data = {
+            "id": session_id,
+            "user_id": user_id,
+            "status": "active",
+            "messages": initial_messages,
+            "current_index": 0,
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat()
+        }
+        
+        result = supabase.table('interview_sessions').insert(session_data).execute()
+        
+        return {
+            "session_id": session_id,
+            "messages": initial_messages,
+            "current_index": 0,
+            "status": "started"
+        }
+        
+    except Exception as e:
+        print(f"Error starting interview: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error starting interview session"
+        )
+
+@api_router.post("/interview/chat")
+async def chat_interview(
+    request: InterviewRequest,
+    user: dict = Depends(verify_jwt)
+):
+    """Stream chat responses for interview"""
+    user_id = user["sub"]
+    session_id = request.session_id
+    
+    if not session_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Session ID is required"
+        )
+    
+    try:
+        # Get session from database
+        session_result = supabase.table('interview_sessions').select("*").eq('id', session_id).eq('user_id', user_id).execute()
+        
+        if not session_result.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Interview session not found"
+            )
+        
+        session = session_result.data[0]
+        
+        # Add user message to session
+        messages = session["messages"]
+        user_message = request.messages[-1]  # Get the latest user message
+        messages.append({
+            "role": user_message.role,
+            "content": user_message.content,
+            "timestamp": datetime.utcnow().isoformat()
+        })
+        
+        # Update session in database
+        updated_session = supabase.table('interview_sessions').update({
+            "messages": messages,
+            "current_index": len([m for m in messages if m["role"] == "user"]),
+            "updated_at": datetime.utcnow().isoformat()
+        }).eq('id', session_id).execute()
+        
+        # Create LLM chat instance
+        chat = LlmChat(
+            api_key=OPENAI_API_KEY,
+            session_id=session_id,
+            system_message=INTERVIEW_SYSTEM_MESSAGE
+        ).with_model("openai", "gpt-4o")
+        
+        # Prepare messages for LLM (exclude system message for conversation)
+        llm_messages = [m for m in messages if m["role"] != "system"]
+        
+        # Create user message for LLM
+        user_msg = UserMessage(text=user_message.content)
+        
+        # Generate response
+        response = await chat.send_message(user_msg)
+        
+        # Check if interview is complete
+        if response.startswith("INTAKE_COMPLETE"):
+            # Parse the JSON profile
+            try:
+                json_part = response.split('\n', 1)[1] if '\n' in response else response.split('INTAKE_COMPLETE')[1]
+                profile_json = json.loads(json_part.strip())
+                
+                # Save athlete profile
+                profile_data = {
+                    "id": str(uuid.uuid4()),
+                    "user_id": user_id,
+                    "profile_json": profile_json,
+                    "completed_at": datetime.utcnow().isoformat(),
+                    "created_at": datetime.utcnow().isoformat(),
+                    "updated_at": datetime.utcnow().isoformat()
+                }
+                
+                profile_result = supabase.table('athlete_profiles').insert(profile_data).execute()
+                
+                # Trigger score computation
+                await trigger_score_computation(profile_data["id"], profile_json)
+                
+                # Update session status
+                supabase.table('interview_sessions').update({
+                    "status": "complete",
+                    "updated_at": datetime.utcnow().isoformat()
+                }).eq('id', session_id).execute()
+                
+                return {
+                    "response": "Thank you! Your profile has been created and we're computing your Hybrid Athlete Score. You'll see the results shortly!",
+                    "completed": True,
+                    "profile_id": profile_data["id"]
+                }
+                
+            except Exception as e:
+                print(f"Error parsing completion response: {e}")
+                # Mark session as error
+                supabase.table('interview_sessions').update({
+                    "status": "error",
+                    "updated_at": datetime.utcnow().isoformat()
+                }).eq('id', session_id).execute()
+                
+                return {
+                    "response": "I apologize, but there was an error processing your profile. Please try again.",
+                    "error": True
+                }
+        
+        # Add assistant response to session
+        assistant_message = {
+            "role": "assistant",
+            "content": response,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+        messages.append(assistant_message)
+        
+        # Update session with assistant response
+        supabase.table('interview_sessions').update({
+            "messages": messages,
+            "updated_at": datetime.utcnow().isoformat()
+        }).eq('id', session_id).execute()
+        
+        return {
+            "response": response,
+            "completed": False,
+            "current_index": len([m for m in messages if m["role"] == "user"])
+        }
+        
+    except Exception as e:
+        print(f"Error in chat interview: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error processing interview chat"
+        )
+
+@api_router.get("/interview/session/{session_id}")
+async def get_interview_session(
+    session_id: str,
+    user: dict = Depends(verify_jwt)
+):
+    """Get interview session details"""
+    user_id = user["sub"]
+    
+    try:
+        result = supabase.table('interview_sessions').select("*").eq('id', session_id).eq('user_id', user_id).execute()
+        
+        if not result.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Interview session not found"
+            )
+        
+        return result.data[0]
+        
+    except Exception as e:
+        print(f"Error getting interview session: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving interview session"
+        )
+
+async def trigger_score_computation(profile_id: str, profile_json: dict):
+    """Trigger external webhook for score computation"""
+    try:
+        # Prepare webhook payload
+        webhook_data = {
+            "athleteProfile": profile_json,
+            "deliverable": "score"
+        }
+        
+        # Make async request to webhook
+        response = requests.post(
+            WEBHOOK_URL,
+            json=webhook_data,
+            headers={"Content-Type": "application/json"},
+            timeout=30
+        )
+        
+        if response.status_code == 200:
+            print(f"Successfully triggered score computation for profile {profile_id}")
+        else:
+            print(f"Webhook request failed with status {response.status_code}: {response.text}")
+            
+    except Exception as e:
+        print(f"Error triggering score computation: {e}")
+        # Don't raise exception as this is a background task
+
 app.include_router(api_router)
 
 @app.on_event("startup")
