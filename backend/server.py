@@ -348,7 +348,7 @@ async def start_interview(user: dict = Depends(verify_jwt)):
         try:
             print("Getting first message from OpenAI...")
             response = openai_client.responses.create(
-                model="gpt-4.1",
+                model="gpt-4.1-mini",
                 input=[{"role": "user", "content": "start"}],  # Minimal input to trigger first message
                 instructions=INTERVIEW_SYSTEM_MESSAGE,
                 store=True,  # Store the initial message
