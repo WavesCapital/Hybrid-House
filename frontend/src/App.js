@@ -1,17 +1,66 @@
-import React from "react";
-import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AthleteProfile from "./components/AthleteProfile";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import AuthForm from './components/AuthForm';
+import AthleteProfile from './components/AthleteProfile';
+import './App.css';
+
+// Protected Route Wrapper
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0A0B0C' }}>
+        <div className="text-center">
+          <div className="neo-primary text-xl">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+  
+  return children;
+}
+
+// Main App Content
+function AppContent() {
+  const { user } = useAuth();
+
+  return (
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route 
+            path="/auth" 
+            element={user ? <Navigate to="/" replace /> : <AuthForm />} 
+          />
+          <Route 
+            path="/" 
+            element={
+              <ProtectedRoute>
+                <AthleteProfile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="*" 
+            element={<Navigate to="/" replace />} 
+          />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
 
 function App() {
   return (
-    <div className="App dark">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<AthleteProfile />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
