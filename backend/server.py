@@ -424,7 +424,7 @@ Start with a primer message. In a concise way, let them know what to expect, get
 
 ### 5 · Completion
 
-When all 55 core fields are filled (value or `null`) **or** the athlete types `done`:
+When all 48 core fields are filled (value or `null`) **or** the athlete types `done`:
 
 1. Assemble JSON with all keys in § 4 plus `"schema_version":"v4.0","meta_session_id":"<session-id>"`.
 2. Emit exactly:
