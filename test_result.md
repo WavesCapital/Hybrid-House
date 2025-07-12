@@ -300,7 +300,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Kendall Toole Personality System - 55 Question Interview Flow"
     - "Frontend Updates for 55-Question Kendall Toole System"
   stuck_tasks: []
   test_all: false
