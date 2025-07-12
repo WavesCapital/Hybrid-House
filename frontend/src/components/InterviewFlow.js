@@ -257,8 +257,10 @@ const InterviewFlow = () => {
 
       if (response.data.completed) {
         setIsCompleted(true);
-        // Start score computation and display
-        await handleInterviewCompletion(response.data.profile_id);
+        // Navigate to the original AthleteProfile page to display scores
+        setTimeout(() => {
+          navigate('/paste');
+        }, 2000); // Give a moment for the completion message to be seen
       }
 
       // Auto-save toast
