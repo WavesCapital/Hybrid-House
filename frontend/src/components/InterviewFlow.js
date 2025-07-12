@@ -172,6 +172,21 @@ const InterviewFlow = () => {
     }
   };
 
+  // Fetch scores from backend
+  const fetchScores = async (profileId) => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/profile-scores/${profileId}`, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching scores:', error);
+      throw error;
+    }
+  };
+
   // Send message
   const sendMessage = async (messageContent = null) => {
     const content = messageContent || currentMessage.trim();
