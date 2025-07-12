@@ -525,7 +525,8 @@ const InterviewFlow = () => {
                     </div>
                   </div>
                 </div>
-              ))}
+              ))
+            })()}
               
               {/* Loading indicator */}
               {isLoading && (
