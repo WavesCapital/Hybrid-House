@@ -732,7 +732,7 @@ async def chat_interview(
                 }).eq('id', session_id).execute()
                 
                 return {
-                    "response": f"Thanks, {profile_json.get('first_name', 'there')}! I've got your complete profile. Your Hybrid Score will hit your inbox in minutes. 🚀",
+                    "response": f"Thanks, {profile_json.get('first_name', 'there')}! Your hybrid athlete profile is complete. Your Hybrid Score will hit your inbox in minutes! 🚀",
                     "completed": True,
                     "profile_id": profile_data["id"]
                 }
