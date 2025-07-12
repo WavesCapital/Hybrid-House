@@ -736,7 +736,7 @@ async def chat_interview(
                     "error": True
                 }
         
-        # Add assistant response to session
+        # Add assistant response to session messages
         assistant_message = {
             "role": "assistant",
             "content": response_text,
@@ -745,9 +745,10 @@ async def chat_interview(
         
         messages.append(assistant_message)
         
-        # Update session with assistant response and new response ID
+        # Update session with both user and assistant messages and new response ID
         supabase.table('interview_sessions').update({
             "messages": messages,
+            "current_index": len([m for m in messages if m["role"] == "user"]),
             "last_response_id": response.id,
             "updated_at": datetime.utcnow().isoformat()
         }).eq('id', session_id).execute()
