@@ -691,39 +691,20 @@ async def chat_interview(
             
             print(f"OpenAI API call successful! Response ID: {response.id}")
             
-            # Extract response text using the SDK helper method
+            # Extract response text using the proper SDK helper method
+            # The output_text helper aggregates all text from output items
             response_text = response.output_text
-            print(f"Extracted response text: {response_text[:100]}...")
+            print(f"Extracted response text via output_text helper: {response_text[:100]}...")
             
             if not response_text:
                 raise Exception("No response text generated")
                 
-            # Handle multiple messages from OpenAI - take FIRST meaningful message
-            # that's not a recap or system message
-            if '\n\n' in response_text:
-                segments = [seg.strip() for seg in response_text.split('\n\n') if seg.strip()]
-                if len(segments) > 1:
-                    print(f"Multiple message segments detected: {len(segments)}")
-                    print(f"All segments: {segments}")
-                    
-                    # For completion responses, keep full response
-                    if "ATHLETE_PROFILE:::" in response_text:
-                        pass  # Keep full response for completion
-                    else:
-                        # Find the segment that looks like a proper next question
-                        # Avoid recap segments and welcome messages
-                        for segment in segments:
-                            # Skip if it contains recap keywords or welcome messages
-                            if any(keyword in segment.lower() for keyword in ['recap:', 'welcome to hybrid house', 'first up:', 'great to meet you']):
-                                continue
-                            # Use the first non-recap segment as the question
-                            response_text = segment
-                            print(f"Using filtered segment: {response_text[:100]}...")
-                            break
-                        else:
-                            # If no good segment found, use the first one
-                            response_text = segments[0]
-                            print(f"No good segment found, using first: {response_text[:100]}...")
+            # Debug: Print the full output structure to understand what OpenAI is returning
+            print(f"Response output structure: {response.output}")
+            print(f"Number of output items: {len(response.output) if response.output else 0}")
+            
+            # The output_text helper already handles multiple output items properly
+            # No need for manual segment filtering - trust the SDK
             
             # Check for confetti milestones and streak tracking
             milestone_detected = False
