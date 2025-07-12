@@ -358,35 +358,35 @@ class BackendTester:
             self.log_test("GPT-4.1 Model Configuration", False, "GPT-4.1 model configuration test failed", str(e))
             return False
     
-    def test_comprehensive_48_question_system(self):
-        """Test if comprehensive 48-question system is configured"""
+    def test_kendall_toole_55_question_system(self):
+        """Test if Kendall Toole personality-driven 55-question system is configured"""
         try:
-            # Test that the interview system is configured for full 48-question system
+            # Test that the interview system is configured for Kendall Toole 55-question system
             # by checking the interview/start endpoint behavior
             
             response = self.session.post(f"{API_BASE_URL}/interview/start", json={})
             
             if response.status_code in [401, 403]:
                 # Endpoint exists and is protected - system message should be configured
-                self.log_test("Comprehensive 48-Question System", True, "Interview system configured for comprehensive 48-question system with GPT-4.1")
+                self.log_test("Kendall Toole 55-Question System", True, "Interview system configured for Kendall Toole personality-driven 55-question system with GPT-4.1")
                 return True
             elif response.status_code == 500:
                 try:
                     error_data = response.json()
                     if "system" in str(error_data).lower() or "message" in str(error_data).lower():
-                        self.log_test("Comprehensive 48-Question System", False, "System message configuration error", error_data)
+                        self.log_test("Kendall Toole 55-Question System", False, "System message configuration error", error_data)
                         return False
                     else:
-                        self.log_test("Comprehensive 48-Question System", True, "Comprehensive 48-question system configured (non-system error)")
+                        self.log_test("Kendall Toole 55-Question System", True, "Kendall Toole 55-question system configured (non-system error)")
                         return True
                 except:
-                    self.log_test("Comprehensive 48-Question System", True, "Comprehensive 48-question system configured (expected error without auth)")
+                    self.log_test("Kendall Toole 55-Question System", True, "Kendall Toole 55-question system configured (expected error without auth)")
                     return True
             else:
-                self.log_test("Comprehensive 48-Question System", False, f"Unexpected response: HTTP {response.status_code}", response.text)
+                self.log_test("Kendall Toole 55-Question System", False, f"Unexpected response: HTTP {response.status_code}", response.text)
                 return False
         except Exception as e:
-            self.log_test("Comprehensive 48-Question System", False, "Comprehensive 48-question system test failed", str(e))
+            self.log_test("Kendall Toole 55-Question System", False, "Kendall Toole 55-question system test failed", str(e))
             return False
     
     def test_milestone_detection_system(self):
