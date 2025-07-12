@@ -658,15 +658,13 @@ async def chat_interview(
                 "model": "gpt-4.1",  # Updated to gpt-4.1 from gpt-4.1-mini
                 "input": conversation_input,
                 "store": True,  # Store for conversation continuity
-                "temperature": 0.7
+                "temperature": 0.7,
+                "instructions": INTERVIEW_SYSTEM_MESSAGE  # Always include instructions for every call
             }
             
             # Add previous_response_id if available for conversation state
             if session.get('last_response_id'):
                 api_params["previous_response_id"] = session['last_response_id']
-            else:
-                # First call needs instructions
-                api_params["instructions"] = INTERVIEW_SYSTEM_MESSAGE
             
             response = openai_client.responses.create(**api_params)
             
