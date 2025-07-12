@@ -8,7 +8,7 @@ import axios from 'axios';
 import confetti from 'canvas-confetti';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-const TOTAL_QUESTIONS = 48; // Updated to full interview system
+const TOTAL_QUESTIONS = 55; // Updated to new 55-question system
 
 const InterviewFlow = () => {
   const [messages, setMessages] = useState([]);
