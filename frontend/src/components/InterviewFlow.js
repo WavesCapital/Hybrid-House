@@ -4,6 +4,7 @@ import { Card } from './ui/card';
 import { Progress } from './ui/progress';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import confetti from 'canvas-confetti';
 
