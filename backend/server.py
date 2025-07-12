@@ -620,13 +620,6 @@ async def chat_interview(
             "timestamp": datetime.utcnow().isoformat()
         })
         
-        # Update session in database
-        updated_session = supabase.table('interview_sessions').update({
-            "messages": messages,
-            "current_index": len([m for m in messages if m["role"] == "user"]),
-            "updated_at": datetime.utcnow().isoformat()
-        }).eq('id', session_id).execute()
-        
         # Create OpenAI responses API call using GPT-4.1
         try:
             # Prepare conversation messages for Responses API
