@@ -653,6 +653,12 @@ async def chat_interview(
             # Add previous_response_id if available for conversation state
             if session.get('last_response_id'):
                 api_params["previous_response_id"] = session['last_response_id']
+                
+                # Safeguard: If we detect conversation corruption (too many messages),
+                # start fresh without previous_response_id
+                if len(conversation_input) > 30:  # More than 15 exchanges
+                    print("Conversation getting too long, starting fresh thread")
+                    api_params.pop("previous_response_id", None)
             
             response = openai_client.responses.create(**api_params)
             
