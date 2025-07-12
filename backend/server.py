@@ -98,6 +98,21 @@ async def verify_jwt(credentials: HTTPBearer = Depends(security)):
             detail="Invalid authentication token"
         )
 
+async def get_current_user(payload: dict = Depends(verify_jwt)):
+    """Get current user from JWT payload"""
+    try:
+        return {
+            "id": payload["sub"],
+            "email": payload.get("email"),
+            "user_metadata": payload.get("user_metadata", {})
+        }
+    except Exception as e:
+        print(f"Error getting current user: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials"
+        )
+
 # Routes
 @api_router.get("/")
 async def read_root():
