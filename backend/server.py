@@ -455,6 +455,24 @@ ATHLETE_PROFILE:::{JSON}
 **End of hybrid-tuned prompt — follow precisely.**"""
 
 # Interview Flow Routes
+@api_router.post("/interview/reset")
+async def reset_interview_session(current_user = Depends(get_current_user)):
+    """Reset the current interview session"""
+    try:
+        user_id = current_user['id']
+        
+        # Delete any existing active sessions for this user
+        supabase.table('interview_sessions').delete().eq('user_id', user_id).eq('status', 'active').execute()
+        
+        return {"status": "reset", "message": "Interview session has been reset"}
+        
+    except Exception as e:
+        print(f"Error resetting interview session: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error resetting interview session: {str(e)}"
+        )
+
 @api_router.post("/interview/start")
 async def start_interview(user: dict = Depends(verify_jwt)):
     """Start a new interview session - always starts fresh"""
