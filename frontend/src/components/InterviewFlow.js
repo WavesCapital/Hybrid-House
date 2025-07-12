@@ -630,7 +630,9 @@ const InterviewFlow = () => {
                           {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                         </h3>
                         <div className="text-3xl font-bold neo-primary">
-                          {typeof value === 'number' ? Math.round(value) : value}
+                          {typeof value === 'number' ? Math.round(value) : 
+                           typeof value === 'object' ? (Array.isArray(value) ? `${value.length} items` : 'Object') :
+                           String(value)}
                         </div>
                       </div>
                     ))}
