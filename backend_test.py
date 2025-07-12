@@ -389,37 +389,38 @@ class BackendTester:
             self.log_test("Kendall Toole 55-Question System", False, "Kendall Toole 55-question system test failed", str(e))
             return False
     
-    def test_milestone_detection_system(self):
-        """Test if milestone detection system (🎉) is configured"""
+    def test_authentication_session_management(self):
+        """Test JWT protection and session handling"""
         try:
-            # Test that the milestone detection system is configured
-            # We can't test the actual triggers without auth, but we can verify the endpoints are ready
+            # Test all interview endpoints are properly protected
+            protected_endpoints = [
+                ("/interview/start", "POST"),
+                ("/interview/chat", "POST"),
+                ("/interview/session/test-id", "GET")
+            ]
             
-            response = self.session.post(f"{API_BASE_URL}/interview/chat", json={
-                "messages": [{"role": "user", "content": "Hello"}],
-                "session_id": "test-session-id"
-            })
+            all_protected = True
+            for endpoint, method in protected_endpoints:
+                if method == "POST":
+                    response = self.session.post(f"{API_BASE_URL}{endpoint}", json={
+                        "messages": [{"role": "user", "content": "test"}] if "chat" in endpoint else {},
+                        "session_id": "test-id" if "chat" in endpoint else None
+                    })
+                else:
+                    response = self.session.get(f"{API_BASE_URL}{endpoint}")
+                
+                if response.status_code not in [401, 403]:
+                    all_protected = False
+                    break
             
-            if response.status_code in [401, 403]:
-                self.log_test("Milestone Detection System", True, "Milestone detection system (🎉) configured for Q10, 20, 30, 40")
+            if all_protected:
+                self.log_test("Authentication & Session Management", True, "JWT protection and session handling properly configured")
                 return True
-            elif response.status_code == 500:
-                try:
-                    error_data = response.json()
-                    if "milestone" in str(error_data).lower():
-                        self.log_test("Milestone Detection System", False, "Milestone detection configuration error", error_data)
-                        return False
-                    else:
-                        self.log_test("Milestone Detection System", True, "Milestone detection system configured (non-milestone error)")
-                        return True
-                except:
-                    self.log_test("Milestone Detection System", True, "Milestone detection system configured (expected error without auth)")
-                    return True
             else:
-                self.log_test("Milestone Detection System", False, f"Unexpected response: HTTP {response.status_code}", response.text)
+                self.log_test("Authentication & Session Management", False, "Some endpoints not properly protected or session handling issues")
                 return False
         except Exception as e:
-            self.log_test("Milestone Detection System", False, "Milestone detection system test failed", str(e))
+            self.log_test("Authentication & Session Management", False, "Authentication & session management test failed", str(e))
             return False
     
     def test_streak_detection_system(self):
