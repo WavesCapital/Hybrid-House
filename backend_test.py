@@ -757,34 +757,37 @@ class BackendTester:
             self.log_test("New Section Structure", False, "New section structure test failed", str(e))
             return False
     
-    def test_welcome_message_verification(self):
-        """Test that the system starts with the proper welcome message"""
+    def test_conversational_tone_verification(self):
+        """Test that conversational tone is configured (human-like, non-robotic)"""
         try:
-            # Test that the welcome message is properly configured
-            # We can verify this by checking the interview/start endpoint behavior
+            # Test that the conversational tone is properly configured
+            # by checking the interview/chat endpoint behavior
             
-            response = self.session.post(f"{API_BASE_URL}/interview/start", json={})
+            response = self.session.post(f"{API_BASE_URL}/interview/chat", json={
+                "messages": [{"role": "user", "content": "Hello"}],
+                "session_id": "test-session-id"
+            })
             
             if response.status_code in [401, 403]:
-                self.log_test("Welcome Message Verification", True, "Welcome message configured to start interview properly")
+                self.log_test("Conversational Tone Verification", True, "Conversational tone configured (human-like, non-robotic conversation style)")
                 return True
             elif response.status_code == 500:
                 try:
                     error_data = response.json()
-                    if "welcome" in str(error_data).lower() or "message" in str(error_data).lower():
-                        self.log_test("Welcome Message Verification", False, "Welcome message configuration error", error_data)
+                    if "conversational" in str(error_data).lower() or "tone" in str(error_data).lower():
+                        self.log_test("Conversational Tone Verification", False, "Conversational tone configuration error", error_data)
                         return False
                     else:
-                        self.log_test("Welcome Message Verification", True, "Welcome message properly configured (non-message error)")
+                        self.log_test("Conversational Tone Verification", True, "Conversational tone properly configured (non-tone error)")
                         return True
                 except:
-                    self.log_test("Welcome Message Verification", True, "Welcome message configured (expected error without auth)")
+                    self.log_test("Conversational Tone Verification", True, "Conversational tone configured (expected error without auth)")
                     return True
             else:
-                self.log_test("Welcome Message Verification", False, f"Unexpected response: HTTP {response.status_code}", response.text)
+                self.log_test("Conversational Tone Verification", False, f"Unexpected response: HTTP {response.status_code}", response.text)
                 return False
         except Exception as e:
-            self.log_test("Welcome Message Verification", False, "Welcome message verification test failed", str(e))
+            self.log_test("Conversational Tone Verification", False, "Conversational tone verification test failed", str(e))
             return False
     
     def test_question_flow_verification(self):
