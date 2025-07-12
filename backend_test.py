@@ -918,9 +918,9 @@ class BackendTester:
             return False
 
     def run_all_tests(self):
-        """Run all backend tests"""
+        """Run all backend tests for Kendall Toole 55-Question System"""
         print("=" * 80)
-        print("FIXED INTERVIEW FLOW SYSTEM TESTING - SYSTEM PROMPT VERIFICATION")
+        print("KENDALL TOOLE 55-QUESTION PERSONALITY SYSTEM TESTING")
         print("=" * 80)
         
         tests = [
@@ -929,17 +929,17 @@ class BackendTester:
             ("System Health Comprehensive", self.test_system_health_comprehensive),
             ("Database Table Accessibility", self.test_database_table_accessibility),
             
-            # System Prompt Verification Tests (Primary Focus)
-            ("System Prompt Verification", self.test_system_prompt_verification),
-            ("Question Structure Verification", self.test_question_structure_verification),
-            ("Welcome Message Verification", self.test_welcome_message_verification),
-            ("Question Flow Verification", self.test_question_flow_verification),
-            ("Completion Logic Verification", self.test_completion_detection_system),
-            ("Milestone/Streak Detection", self.test_milestone_detection_system),
-            ("Streak Detection System", self.test_streak_detection_system),
-            ("Session Management Verification", self.test_session_management_verification),
-            ("Authentication Verification", self.test_authentication_verification),
-            ("Error Handling Verification", self.test_error_handling_verification),
+            # Kendall Toole 55-Question System Tests (Primary Focus)
+            ("Kendall Toole Personality System", self.test_kendall_toole_personality_system),
+            ("Kendall Toole 55-Question System", self.test_kendall_toole_55_question_system),
+            ("New Section Structure", self.test_new_section_structure),
+            ("Conversational Tone Verification", self.test_conversational_tone_verification),
+            ("v4.4-NP-LN System Prompt", self.test_v44_np_ln_system_prompt),
+            ("Primer Message Verification", self.test_primer_message_verification),
+            ("Section Recaps Verification", self.test_section_recaps_verification),
+            ("55-Question Completion Logic", self.test_55_question_completion_logic),
+            ("Stateful Conversations Verification", self.test_stateful_conversations_verification),
+            ("Authentication & Session Management", self.test_authentication_session_management),
             
             # Supporting System Tests
             ("Unprotected Endpoints", self.test_unprotected_endpoints),
@@ -952,7 +952,7 @@ class BackendTester:
             ("JWT Configuration", self.test_jwt_secret_configuration),
             ("OpenAI Responses API Integration", self.test_openai_responses_api_integration),
             ("GPT-4.1 Model Configuration", self.test_gpt41_model_configuration),
-            ("Comprehensive 48-Question System", self.test_comprehensive_48_question_system),
+            ("Streak Detection System", self.test_streak_detection_system),
             ("Progress Tracking System", self.test_progress_tracking_system),
             ("EmergentIntegrations Removal", self.test_emergentintegrations_removal)
         ]
@@ -974,10 +974,10 @@ class BackendTester:
         print(f"Tests Passed: {passed_tests}/{total_tests}")
         
         if passed_tests == total_tests:
-            print("🎉 ALL TESTS PASSED - Enhanced Interview Flow with GPT-4.1 and 48-question system is working correctly!")
+            print("🎉 ALL TESTS PASSED - Kendall Toole 55-Question Personality System is working correctly!")
             return True
         else:
-            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in Enhanced Interview Flow system")
+            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in Kendall Toole 55-Question System")
             return False
 
 if __name__ == "__main__":
