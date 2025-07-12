@@ -664,6 +664,18 @@ async def chat_interview(
             
             if not response_text:
                 raise Exception("No response text generated")
+                
+            # Safeguard: If response contains multiple distinct messages (separated by line breaks),
+            # take only the last substantial message to prevent multiple assistant messages
+            if '\n\n' in response_text:
+                # Split by double line breaks and take the last non-empty segment
+                segments = [seg.strip() for seg in response_text.split('\n\n') if seg.strip()]
+                if len(segments) > 1:
+                    print(f"Multiple message segments detected: {len(segments)}")
+                    # For completion, keep full response; for regular chat, take last segment
+                    if "ATHLETE_PROFILE:::" not in response_text:
+                        response_text = segments[-1]
+                        print(f"Using last segment: {response_text[:100]}...")
             
             # Check for confetti milestones and streak tracking
             milestone_detected = False
