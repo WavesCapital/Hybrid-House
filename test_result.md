@@ -129,20 +129,20 @@ backend:
         agent: "testing"
         comment: "✅ NEW SUPABASE CREDENTIALS TESTING COMPLETE: Updated backend_test.py for pure Supabase integration and executed comprehensive testing. Results: API root endpoint with Supabase message ✅, JWT verification with new secret working correctly ✅, protected endpoints properly secured (403/401 responses) ✅, unprotected endpoints accessible ✅, JWT configuration verified ✅. Expected behavior: user_profiles table doesn't exist yet (will be auto-created on first auth access). Minor: CORS headers not visible but API fully functional. Authentication system ready for user registration/login with new Supabase credentials."
 
-  - task: "Enhanced Interview Flow with GPT-4.1 and Full 48-Question System"
+  - task: "Kendall Toole Personality System - 55 Question Interview Flow"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Implementing comprehensive 48-question interview system with GPT-4.1 model upgrade and new features"
+        comment: "Implementing major upgrade to Kendall Toole personality-driven interview system with 55 questions"
       - working: true
         agent: "main"
-        comment: "✅ SYSTEM PROMPT FIXED: Updated system prompt to match user requirements exactly - removed progress bar from OpenAI questions (keeping it only in UI header), added proper question structure with exact wording, added welcome message, made system prompt more strict about following question catalog, fixed completion logic. Backend restarted with new system prompt."
+        comment: "✅ MAJOR PERSONALITY UPGRADE COMPLETE: Replaced entire system prompt with Kendall Toole personality-driven interview (v4.4-NP-LN). Features: 1) High-octane, pop-punk loving coach personality with mental health awareness, 2) Conversational tone - human-like, not robotic, 3) 55 questions instead of 48 with new sections (Identity, Motivation, Set-up, Backstory, Recovery, Body Metrics, Fuel & Kitchen, Injuries & Mileage, Brag Zone, Sign-off), 4) Section recaps with smooth transitions, 5) Suggested response buttons integrated, 6) Updated question ordering and personality-driven phrasing, 7) Primer message to set expectations, 8) Complete stateful conversation approach. Backend is ready for testing with new personality system."
       - working: true
         agent: "testing"
         comment: "✅ COMPREHENSIVE ENHANCED INTERVIEW FLOW TESTING COMPLETE: Executed comprehensive testing suite with 19 test scenarios (18/19 passed). Results: GPT-4.1 Model Configuration ✅, Comprehensive 48-Question System ✅, OpenAI Responses API Integration ✅, Milestone Detection System (🎉) for Q10,20,30,40 ✅, Streak Detection System (🔥) for 8 consecutive non-skip answers ✅, Completion Detection System (ATHLETE_PROFILE:::) ✅, Progress Tracking System with current_index ✅, Session Management ✅, JWT Authentication on all interview endpoints ✅, Database Operations ✅, EmergentIntegrations removal ✅. Production logs confirm: OpenAI API calls successful with response IDs, progress tracking working (34/48 progress bars), force completion working, score computation webhook working, database operations successful. System is fully operational and production-ready. Minor: CORS headers not visible but API fully functional."
