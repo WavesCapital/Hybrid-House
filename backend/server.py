@@ -673,10 +673,19 @@ async def chat_interview(
             
             print(f"OpenAI API call successful! Response ID: {response.id}")
             
-            # Extract response text using the proper SDK helper method
-            # The output_text helper aggregates all text from output items
-            response_text = response.output_text
-            print(f"Extracted response text via output_text helper: {response_text[:100]}...")
+            # Extract response text - use ONLY the first output message instead of aggregating all
+            # The Responses API can return multiple output messages, but we only want the first one
+            if response.output and len(response.output) > 0:
+                first_output = response.output[0]
+                if hasattr(first_output, 'content') and first_output.content:
+                    # Get text from first content item
+                    response_text = first_output.content[0].text if first_output.content else ""
+                else:
+                    response_text = ""
+            else:
+                response_text = ""
+                
+            print(f"Using FIRST output message only: {response_text[:100]}...")
             
             if not response_text:
                 raise Exception("No response text generated")
@@ -684,9 +693,8 @@ async def chat_interview(
             # Debug: Print the full output structure to understand what OpenAI is returning
             print(f"Response output structure: {response.output}")
             print(f"Number of output items: {len(response.output) if response.output else 0}")
-            
-            # The output_text helper already handles multiple output items properly
-            # No need for manual segment filtering - trust the SDK
+            if len(response.output) > 1:
+                print(f"WARNING: OpenAI returned {len(response.output)} output messages, using only the first one")
             
             # Check for confetti milestones and streak tracking
             milestone_detected = False
