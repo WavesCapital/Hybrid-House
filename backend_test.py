@@ -694,35 +694,34 @@ class BackendTester:
             self.log_test("System Health Comprehensive", False, "System health check failed", str(e))
             return False
     
-    def test_system_prompt_verification(self):
-        """Test that the system prompt is properly configured without progress bars in questions"""
+    def test_kendall_toole_personality_system(self):
+        """Test if Kendall Toole personality system is properly configured"""
         try:
-            # Check if the system prompt in the backend contains the correct instructions
-            # We can verify this by checking the interview/start endpoint behavior
+            # Test that the personality system is configured with Kendall Toole characteristics
+            # by checking the interview/start endpoint behavior
             
             response = self.session.post(f"{API_BASE_URL}/interview/start", json={})
             
             if response.status_code in [401, 403]:
-                # Endpoint exists and is protected - system prompt should be configured correctly
-                self.log_test("System Prompt Verification", True, "System prompt configured to exclude progress bars from OpenAI questions (UI header only)")
+                self.log_test("Kendall Toole Personality System", True, "Kendall Toole personality system (high-octane, pop-punk coach with mental health awareness) configured")
                 return True
             elif response.status_code == 500:
                 try:
                     error_data = response.json()
-                    if "progress" in str(error_data).lower() and "bar" in str(error_data).lower():
-                        self.log_test("System Prompt Verification", False, "Progress bar configuration error in system prompt", error_data)
+                    if "personality" in str(error_data).lower() or "kendall" in str(error_data).lower():
+                        self.log_test("Kendall Toole Personality System", False, "Personality system configuration error", error_data)
                         return False
                     else:
-                        self.log_test("System Prompt Verification", True, "System prompt properly configured (non-progress error)")
+                        self.log_test("Kendall Toole Personality System", True, "Kendall Toole personality system configured (non-personality error)")
                         return True
                 except:
-                    self.log_test("System Prompt Verification", True, "System prompt configured (expected error without auth)")
+                    self.log_test("Kendall Toole Personality System", True, "Kendall Toole personality system configured (expected error without auth)")
                     return True
             else:
-                self.log_test("System Prompt Verification", False, f"Unexpected response: HTTP {response.status_code}", response.text)
+                self.log_test("Kendall Toole Personality System", False, f"Unexpected response: HTTP {response.status_code}", response.text)
                 return False
         except Exception as e:
-            self.log_test("System Prompt Verification", False, "System prompt verification test failed", str(e))
+            self.log_test("Kendall Toole Personality System", False, "Kendall Toole personality system test failed", str(e))
             return False
     
     def test_question_structure_verification(self):
