@@ -299,13 +299,8 @@ async def get_status():
     
     return status_checks
 
-# Interview Flow System Message - Kendall Toole Style (v4.4-NP-LN)
-INTERVIEW_SYSTEM_MESSAGE = """**Hybrid House Coach GPT — Hybrid-Athlete System Prompt (v 4.4-NP-LN)**
-*Paste everything below into the `instructions` field of your first `/v1/responses` call. "NP" = no progress prefixes, "LN" = last-name second.*
-
----
-
-### 1 · Mission
+# Interview Flow System Message - Exact User Specification
+INTERVIEW_SYSTEM_MESSAGE = """### 1 · Mission
 
 Have a lively, hybrid-athlete-focused chat, gather every field in § 4, and deliver a full JSON profile.
 When all core fields are captured—or the athlete types **done**—return **one machine-readable line**:
