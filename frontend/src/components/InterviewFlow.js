@@ -623,20 +623,61 @@ const InterviewFlow = () => {
                     </p>
                   </div>
                   
+                  {/* Main Hybrid Score */}
+                  {scoreData.hybridScore && (
+                    <div className="text-center mb-12">
+                      <div className="text-8xl font-bold neo-primary mb-4">
+                        {Math.round(scoreData.hybridScore)}
+                      </div>
+                      <p className="text-xl neo-text-secondary">
+                        {scoreData.hybridComment}
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Score Categories */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                    {Object.entries(scoreData).map(([key, value]) => (
-                      <div key={key} className="neo-card p-8 rounded-xl">
+                    {[
+                      { key: 'strengthScore', comment: 'strengthComment', label: 'Strength' },
+                      { key: 'speedScore', comment: 'speedComment', label: 'Speed' },
+                      { key: 'vo2Score', comment: 'vo2Comment', label: 'VO₂ Max' },
+                      { key: 'distanceScore', comment: 'distanceComment', label: 'Distance' },
+                      { key: 'volumeScore', comment: 'volumeComment', label: 'Volume' },
+                      { key: 'enduranceScore', comment: 'enduranceComment', label: 'Endurance' },
+                      { key: 'recoveryScore', comment: 'recoveryComment', label: 'Recovery' }
+                    ].filter(item => scoreData[item.key] !== undefined).map((item) => (
+                      <div key={item.key} className="neo-card p-6 rounded-xl">
                         <h3 className="text-lg font-semibold neo-text-primary mb-3">
-                          {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                          {item.label}
                         </h3>
-                        <div className="text-3xl font-bold neo-primary">
-                          {typeof value === 'number' ? Math.round(value) : 
-                           typeof value === 'object' ? (Array.isArray(value) ? `${value.length} items` : 'Object') :
-                           String(value)}
+                        <div className="text-3xl font-bold neo-primary mb-3">
+                          {Math.round(scoreData[item.key])}
                         </div>
+                        {scoreData[item.comment] && (
+                          <p className="text-sm neo-text-secondary">
+                            {scoreData[item.comment]}
+                          </p>
+                        )}
                       </div>
                     ))}
                   </div>
+                  
+                  {/* Tips Section */}
+                  {scoreData.tips && Array.isArray(scoreData.tips) && scoreData.tips.length > 0 && (
+                    <div className="neo-card p-8 rounded-xl mb-8">
+                      <h3 className="text-2xl font-bold neo-text-primary mb-6">Action Plan</h3>
+                      <div className="space-y-4">
+                        {scoreData.tips.map((tip, index) => (
+                          <div key={index} className="flex items-start space-x-3">
+                            <span className="flex-shrink-0 w-6 h-6 bg-primary text-black rounded-full flex items-center justify-center text-sm font-bold">
+                              {index + 1}
+                            </span>
+                            <p className="neo-text-secondary">{tip}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   
                   <div className="text-center">
                     <Button 
