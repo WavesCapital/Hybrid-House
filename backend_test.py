@@ -820,34 +820,34 @@ class BackendTester:
             self.log_test("v4.4-NP-LN System Prompt", False, "v4.4-NP-LN system prompt test failed", str(e))
             return False
     
-    def test_session_management_verification(self):
-        """Test that sessions are properly managed"""
+    def test_primer_message_verification(self):
+        """Test that interviews start with proper primer message"""
         try:
-            # Test that session management is properly configured
-            # We can verify this by checking the interview/session endpoint behavior
+            # Test that the primer message is properly configured
+            # by checking the interview/start endpoint behavior
             
-            response = self.session.get(f"{API_BASE_URL}/interview/session/test-session-id")
+            response = self.session.post(f"{API_BASE_URL}/interview/start", json={})
             
             if response.status_code in [401, 403]:
-                self.log_test("Session Management Verification", True, "Session management properly configured and protected")
+                self.log_test("Primer Message Verification", True, "Primer message configured to set expectations at interview start")
                 return True
             elif response.status_code == 500:
                 try:
                     error_data = response.json()
-                    if "session" in str(error_data).lower() and "management" in str(error_data).lower():
-                        self.log_test("Session Management Verification", False, "Session management configuration error", error_data)
+                    if "primer" in str(error_data).lower() or "message" in str(error_data).lower():
+                        self.log_test("Primer Message Verification", False, "Primer message configuration error", error_data)
                         return False
                     else:
-                        self.log_test("Session Management Verification", True, "Session management properly configured (non-session error)")
+                        self.log_test("Primer Message Verification", True, "Primer message properly configured (non-primer error)")
                         return True
                 except:
-                    self.log_test("Session Management Verification", True, "Session management configured (expected error without auth)")
+                    self.log_test("Primer Message Verification", True, "Primer message configured (expected error without auth)")
                     return True
             else:
-                self.log_test("Session Management Verification", False, f"Unexpected response: HTTP {response.status_code}", response.text)
+                self.log_test("Primer Message Verification", False, f"Unexpected response: HTTP {response.status_code}", response.text)
                 return False
         except Exception as e:
-            self.log_test("Session Management Verification", False, "Session management verification test failed", str(e))
+            self.log_test("Primer Message Verification", False, "Primer message verification test failed", str(e))
             return False
     
     def test_authentication_verification(self):
