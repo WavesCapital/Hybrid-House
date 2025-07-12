@@ -25,6 +25,7 @@ const InterviewFlow = () => {
   const [showStreakBadge, setShowStreakBadge] = useState(false);
   const { user, session } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
