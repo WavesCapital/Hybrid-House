@@ -18,8 +18,7 @@ const InterviewFlow = () => {
   const [sessionId, setSessionId] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [scoreData, setScoreData] = useState(null);
-  const [isComputingScore, setIsComputingScore] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [lastRequestTime, setLastRequestTime] = useState(0);
   const [streakCount, setStreakCount] = useState(0);
   const [showStreakBadge, setShowStreakBadge] = useState(false);
