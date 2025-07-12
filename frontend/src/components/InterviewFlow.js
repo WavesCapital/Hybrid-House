@@ -491,9 +491,9 @@ const InterviewFlow = () => {
                 Ready to Build Your Profile?
               </h2>
               <p className="neo-text-secondary mb-8 text-lg leading-relaxed">
-                I'm your Hybrid House Coach. I'll ask you ~48 quick questions to build your 
-                personalized athlete profile and compute your Hybrid Score. Most athletes 
-                finish in about 6 minutes.
+                I'm your high-energy Hybrid House Coach! I'll ask you ~55 quick questions to build your 
+                personalized athlete profile and compute your Hybrid Score. We'll chat about your training, 
+                goals, and what makes you tick. Most athletes finish in about 8 minutes. Ready to roll? 💪
               </p>
               
               <div className="space-y-4 mb-8">
