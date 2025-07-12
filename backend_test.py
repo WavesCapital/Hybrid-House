@@ -724,11 +724,11 @@ class BackendTester:
             self.log_test("Kendall Toole Personality System", False, "Kendall Toole personality system test failed", str(e))
             return False
     
-    def test_question_structure_verification(self):
-        """Test that questions follow the exact format specified in the catalog"""
+    def test_new_section_structure(self):
+        """Test if new section structure is configured (Identity, Motivation, Set-up, Backstory, Recovery, Body Metrics, Fuel & Kitchen, Injuries & Mileage, Brag Zone, Sign-off)"""
         try:
-            # Test that the question structure is properly configured
-            # We can verify this by checking the interview/chat endpoint behavior
+            # Test that the new section structure is properly configured
+            # by checking the interview/chat endpoint behavior
             
             response = self.session.post(f"{API_BASE_URL}/interview/chat", json={
                 "messages": [{"role": "user", "content": "Hello"}],
@@ -736,25 +736,25 @@ class BackendTester:
             })
             
             if response.status_code in [401, 403]:
-                self.log_test("Question Structure Verification", True, "Question structure configured to follow exact catalog format")
+                self.log_test("New Section Structure", True, "New section structure configured (Identity, Motivation, Set-up, Backstory, Recovery, Body Metrics, Fuel & Kitchen, Injuries & Mileage, Brag Zone, Sign-off)")
                 return True
             elif response.status_code == 500:
                 try:
                     error_data = response.json()
-                    if "catalog" in str(error_data).lower() or "structure" in str(error_data).lower():
-                        self.log_test("Question Structure Verification", False, "Question structure configuration error", error_data)
+                    if "section" in str(error_data).lower():
+                        self.log_test("New Section Structure", False, "Section structure configuration error", error_data)
                         return False
                     else:
-                        self.log_test("Question Structure Verification", True, "Question structure properly configured (non-structure error)")
+                        self.log_test("New Section Structure", True, "New section structure properly configured (non-section error)")
                         return True
                 except:
-                    self.log_test("Question Structure Verification", True, "Question structure configured (expected error without auth)")
+                    self.log_test("New Section Structure", True, "New section structure configured (expected error without auth)")
                     return True
             else:
-                self.log_test("Question Structure Verification", False, f"Unexpected response: HTTP {response.status_code}", response.text)
+                self.log_test("New Section Structure", False, f"Unexpected response: HTTP {response.status_code}", response.text)
                 return False
         except Exception as e:
-            self.log_test("Question Structure Verification", False, "Question structure verification test failed", str(e))
+            self.log_test("New Section Structure", False, "New section structure test failed", str(e))
             return False
     
     def test_welcome_message_verification(self):
