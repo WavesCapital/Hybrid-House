@@ -570,6 +570,28 @@ const InterviewFlow = () => {
               </div>
             )}
 
+            {/* Completion Message */}
+            {isCompleted && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm" style={{ 
+                background: 'rgba(10, 11, 12, 0.8)' 
+              }}>
+                <div className="gradient-border max-w-md w-full mx-6">
+                  <div className="gradient-border-inner p-12 text-center">
+                    <h2 className="text-3xl font-bold neo-primary mb-6">
+                      Interview Complete! 🎉
+                    </h2>
+                    <p className="neo-text-secondary mb-8 leading-relaxed">
+                      Thanks for completing your profile! We're now computing your Hybrid Athlete Score.
+                      Redirecting you to the score page...
+                    </p>
+                    <div className="text-sm neo-text-muted">
+                      Taking you to your results in a moment...
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Streak Badge Overlay */}
             {showStreakBadge && (
               <div className="streak-badge">
