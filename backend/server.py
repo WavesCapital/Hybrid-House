@@ -683,9 +683,9 @@ async def chat_interview(
                 "instructions": INTERVIEW_SYSTEM_MESSAGE  # Always include instructions for every call
             }
             
-            # Temporary fix: Disable previous_response_id due to conversation corruption
-            # The OpenAI Responses API is returning multiple/corrupted messages when using conversation state
-            # api_params["previous_response_id"] = session['last_response_id']
+            # Re-enable previous_response_id for proper stateful conversations
+            if session.get('last_response_id'):
+                api_params["previous_response_id"] = session['last_response_id']
             
             response = openai_client.responses.create(**api_params)
             
