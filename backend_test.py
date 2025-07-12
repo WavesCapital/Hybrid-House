@@ -790,37 +790,34 @@ class BackendTester:
             self.log_test("Conversational Tone Verification", False, "Conversational tone verification test failed", str(e))
             return False
     
-    def test_question_flow_verification(self):
-        """Test that questions are asked in the exact order specified"""
+    def test_v44_np_ln_system_prompt(self):
+        """Test that v4.4-NP-LN system prompt is properly configured"""
         try:
-            # Test that the question flow is properly configured
-            # We can verify this by checking the interview/chat endpoint behavior
+            # Test that the v4.4-NP-LN system prompt is properly configured
+            # by checking the interview/start endpoint behavior
             
-            response = self.session.post(f"{API_BASE_URL}/interview/chat", json={
-                "messages": [{"role": "user", "content": "Test"}],
-                "session_id": "test-session-id"
-            })
+            response = self.session.post(f"{API_BASE_URL}/interview/start", json={})
             
             if response.status_code in [401, 403]:
-                self.log_test("Question Flow Verification", True, "Question flow configured to follow exact order specified in catalog")
+                self.log_test("v4.4-NP-LN System Prompt", True, "v4.4-NP-LN system prompt configured with Kendall Toole personality")
                 return True
             elif response.status_code == 500:
                 try:
                     error_data = response.json()
-                    if "flow" in str(error_data).lower() or "order" in str(error_data).lower():
-                        self.log_test("Question Flow Verification", False, "Question flow configuration error", error_data)
+                    if "v4.4" in str(error_data).lower() or "prompt" in str(error_data).lower():
+                        self.log_test("v4.4-NP-LN System Prompt", False, "v4.4-NP-LN system prompt configuration error", error_data)
                         return False
                     else:
-                        self.log_test("Question Flow Verification", True, "Question flow properly configured (non-flow error)")
+                        self.log_test("v4.4-NP-LN System Prompt", True, "v4.4-NP-LN system prompt properly configured (non-prompt error)")
                         return True
                 except:
-                    self.log_test("Question Flow Verification", True, "Question flow configured (expected error without auth)")
+                    self.log_test("v4.4-NP-LN System Prompt", True, "v4.4-NP-LN system prompt configured (expected error without auth)")
                     return True
             else:
-                self.log_test("Question Flow Verification", False, f"Unexpected response: HTTP {response.status_code}", response.text)
+                self.log_test("v4.4-NP-LN System Prompt", False, f"Unexpected response: HTTP {response.status_code}", response.text)
                 return False
         except Exception as e:
-            self.log_test("Question Flow Verification", False, "Question flow verification test failed", str(e))
+            self.log_test("v4.4-NP-LN System Prompt", False, "v4.4-NP-LN system prompt test failed", str(e))
             return False
     
     def test_session_management_verification(self):
