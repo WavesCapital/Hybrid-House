@@ -650,15 +650,9 @@ async def chat_interview(
                 "instructions": INTERVIEW_SYSTEM_MESSAGE  # Always include instructions for every call
             }
             
-            # Add previous_response_id if available for conversation state
-            if session.get('last_response_id'):
-                api_params["previous_response_id"] = session['last_response_id']
-                
-                # Safeguard: If we detect conversation corruption (too many messages),
-                # start fresh without previous_response_id
-                if len(conversation_input) > 30:  # More than 15 exchanges
-                    print("Conversation getting too long, starting fresh thread")
-                    api_params.pop("previous_response_id", None)
+            # Temporary fix: Disable previous_response_id due to conversation corruption
+            # The OpenAI Responses API is returning multiple/corrupted messages when using conversation state
+            # api_params["previous_response_id"] = session['last_response_id']
             
             response = openai_client.responses.create(**api_params)
             
