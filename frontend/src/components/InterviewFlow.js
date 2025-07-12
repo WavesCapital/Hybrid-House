@@ -67,18 +67,18 @@ const InterviewFlow = () => {
 
   const progress = Math.min((currentIndex / TOTAL_QUESTIONS) * 100, 100);
   
-  // Calculate section progress for better UX
+  // Calculate section progress for better UX - Updated for 55-question system
   const getSectionInfo = (index) => {
-    if (index <= 7) return { section: "Profile", sectionProgress: index, sectionTotal: 7 };
-    if (index <= 13) return { section: "Goals", sectionProgress: index - 7, sectionTotal: 6 };
-    if (index <= 19) return { section: "Training", sectionProgress: index - 13, sectionTotal: 6 };
-    if (index <= 24) return { section: "History", sectionProgress: index - 19, sectionTotal: 5 };
-    if (index <= 29) return { section: "Recovery", sectionProgress: index - 24, sectionTotal: 5 };
-    if (index <= 30) return { section: "Metrics", sectionProgress: index - 29, sectionTotal: 1 };
-    if (index <= 42) return { section: "Nutrition", sectionProgress: index - 30, sectionTotal: 12 };
-    if (index <= 46) return { section: "Injuries", sectionProgress: index - 42, sectionTotal: 4 };
-    if (index <= 46) return { section: "Brag Zone", sectionProgress: index - 42, sectionTotal: 4 };
-    return { section: "Final", sectionProgress: index - 46, sectionTotal: 2 };
+    if (index <= 7) return { section: "Identity", sectionProgress: index, sectionTotal: 7 };
+    if (index <= 12) return { section: "Motivation", sectionProgress: index - 7, sectionTotal: 5 };
+    if (index <= 18) return { section: "Set-up", sectionProgress: index - 12, sectionTotal: 6 };
+    if (index <= 23) return { section: "Backstory", sectionProgress: index - 18, sectionTotal: 5 };
+    if (index <= 28) return { section: "Recovery", sectionProgress: index - 23, sectionTotal: 5 };
+    if (index <= 29) return { section: "Body Metrics", sectionProgress: index - 28, sectionTotal: 1 };
+    if (index <= 41) return { section: "Fuel & Kitchen", sectionProgress: index - 29, sectionTotal: 12 };
+    if (index <= 45) return { section: "Injuries & Mileage", sectionProgress: index - 41, sectionTotal: 4 };
+    if (index <= 52) return { section: "Brag Zone", sectionProgress: index - 45, sectionTotal: 7 };
+    return { section: "Sign-off", sectionProgress: index - 52, sectionTotal: 3 };
   };
   
   const sectionInfo = getSectionInfo(currentIndex);
