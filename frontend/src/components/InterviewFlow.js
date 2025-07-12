@@ -484,7 +484,28 @@ const InterviewFlow = () => {
           <div className="space-y-6">
             {/* Messages */}
             <div className="space-y-6 min-h-[400px] pb-6">
-              {messages.map((message, index) => (
+              {/* Filter messages to only show first assistant message when multiple consecutive assistant messages exist */}
+            {(() => {
+              const getDisplayMessages = (messages) => {
+                const filteredMessages = [];
+                let lastRole = null;
+                
+                for (const message of messages) {
+                  // If this is an assistant message and the last message was also assistant, skip it
+                  if (message.role === 'assistant' && lastRole === 'assistant') {
+                    console.log('Skipping duplicate assistant message:', message.content.substring(0, 50) + '...');
+                    continue;
+                  }
+                  
+                  filteredMessages.push(message);
+                  lastRole = message.role;
+                }
+                
+                return filteredMessages;
+              };
+
+              const displayMessages = getDisplayMessages(messages);
+              return displayMessages.map((message, index) => (
                 <div
                   key={index}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
