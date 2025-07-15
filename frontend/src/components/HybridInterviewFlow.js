@@ -10,7 +10,6 @@ import {
   BarChart3, Activity, Moon, Scale, CheckCircle, Loader2 
 } from 'lucide-react';
 import axios from 'axios';
-import confetti from 'canvas-confetti';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const TOTAL_QUESTIONS = 11; // Essential questions for hybrid score
