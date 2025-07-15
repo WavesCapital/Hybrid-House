@@ -373,10 +373,30 @@ const HybridScoreResults = () => {
           background: rgba(159, 161, 163, 0.2);
           color: #D9D9D9;
         }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+          .container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+          }
+          
+          .grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .text-8xl {
+            font-size: 4rem;
+          }
+          
+          .text-5xl {
+            font-size: 2.5rem;
+          }
+        }
         `}
       </style>
 
-      <div className="container mx-auto px-6 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
