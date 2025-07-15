@@ -539,8 +539,7 @@ async def start_hybrid_interview(user: dict = Depends(verify_jwt)):
             "status": "active",
             "messages": [],
             "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
-            "interview_type": "hybrid"
+            "updated_at": datetime.utcnow().isoformat()
         }
         
         result = supabase.table('interview_sessions').insert(session_data).execute()
