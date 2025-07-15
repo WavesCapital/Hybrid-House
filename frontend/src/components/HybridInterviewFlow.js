@@ -129,7 +129,10 @@ const HybridInterviewFlow = () => {
         });
       }
     } finally {
-      setIsCalculatingScore(false);
+      // Don't immediately set calculating to false - let the redirect happen first
+      setTimeout(() => {
+        setIsCalculatingScore(false);
+      }, 1000);
     }
   }, [navigate, session, toast]);
 
