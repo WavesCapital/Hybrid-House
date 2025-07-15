@@ -321,8 +321,10 @@ const HybridInterviewFlow = () => {
     }
   };
 
-  // Calculate section progress for better UX - Updated for 11-question system
-  const progress = Math.min((currentIndex / TOTAL_QUESTIONS) * 100, 100);
+  // Memoize expensive calculations
+  const progress = useMemo(() => {
+    return Math.min((currentIndex / TOTAL_QUESTIONS) * 100, 100);
+  }, [currentIndex]);
 
   return (
     <div className="min-h-screen" style={{ background: '#0A0B0C' }}>
