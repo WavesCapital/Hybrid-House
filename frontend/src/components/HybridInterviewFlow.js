@@ -65,12 +65,6 @@ const HybridInterviewFlow = () => {
     scrollToBottom();
   }, [messages]);
 
-  useEffect(() => {
-    if (user && session) {
-      startInterview();
-    }
-  }, [user, session]);
-
   const startInterview = async () => {
     try {
       const response = await axios.post(
