@@ -561,7 +561,7 @@ const HybridInterviewFlow = () => {
               </div>
             )}
           </div>
-        </Card>
+        )}
       </div>
     </div>
   );
