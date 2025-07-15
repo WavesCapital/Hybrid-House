@@ -299,10 +299,10 @@ const HybridInterviewFlow = () => {
       if (response.data.completed) {
         setIsCompleted(true);
         
-        // Wait for backend webhook to complete and then fetch score data
-        setTimeout(() => {
-          fetchScoreData();
-        }, 3000); // Wait 3 seconds for backend webhook to complete
+        // Call webhook immediately with the athlete profile data
+        if (!isCalculatingScore) {
+          triggerWebhookForScore(response.data.response);
+        }
       }
 
     } catch (error) {
