@@ -593,7 +593,8 @@ async def start_hybrid_interview(user: dict = Depends(verify_jwt)):
             
             return {
                 "session_id": session_id,
-                "message": response_text,
+                "messages": updated_messages,
+                "current_index": 0,
                 "status": "started"
             }
             
