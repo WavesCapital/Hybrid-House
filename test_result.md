@@ -353,8 +353,7 @@ metadata:
   test_sequence: 2
 
 test_plan:
-  current_focus:
-    - "Hybrid Interview Frontend Component (11 questions)"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
