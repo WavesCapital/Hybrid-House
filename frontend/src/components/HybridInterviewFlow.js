@@ -48,7 +48,7 @@ const HybridInterviewFlow = () => {
       
       // Set up abort controller for timeout
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 150000); // 2 minutes 30 seconds
+      const timeoutId = setTimeout(() => controller.abort(), 240000); // 4 minutes
 
       const response = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
         method: 'POST',
