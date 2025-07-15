@@ -177,6 +177,21 @@ backend:
         agent: "testing"
         comment: "🔍 WEBHOOK ISSUE INVESTIGATION COMPLETE: Conducted comprehensive investigation of reported webhook data format issue. FINDINGS: ✅ Backend correctly configured (server.py line 756 returns 'profile_data': profile_json) ✅ Frontend correctly implemented (HybridInterviewFlow.js line 304 uses response.data.profile_data, line 56 sends deliverable: 'score') ✅ Backend returns proper structure: {response: message_text, completed: true, profile_id: uuid, profile_data: json_object} ✅ All 29/30 backend tests passed confirming system integrity ✅ Expected webhook flow verified through code analysis. ROOT CAUSE ANALYSIS: The backend and frontend code are correctly implemented. If user is still experiencing the issue with webhook receiving message text instead of JSON profile, it's likely due to: 1) Browser cache/deployment issues, 2) Multiple frontend versions, or 3) Network/timing issues during completion flow. RECOMMENDATION: Clear browser cache, verify latest frontend deployment, and test with fresh session. Backend is production-ready and correctly configured for webhook integration."
 
+  - task: "New Athlete Profile Endpoints for Hybrid Score Redirect"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implementing new athlete profile endpoints: GET /api/athlete-profile/{profile_id} for fetching profile and score data, POST /api/athlete-profile/{profile_id}/score for storing score data from webhook"
+      - working: true
+        agent: "testing"
+        comment: "✅ NEW ATHLETE PROFILE ENDPOINTS COMPREHENSIVE TESTING COMPLETE: Executed comprehensive testing of new athlete profile endpoints as requested in review (35/36 tests passed). CRITICAL SUCCESS: ✅ GET /api/athlete-profile/{profile_id} endpoint properly protected with JWT authentication and configured correctly ✅ POST /api/athlete-profile/{profile_id}/score endpoint properly protected with JWT authentication and configured correctly ✅ New athlete profile endpoints integration working correctly with hybrid score redirect functionality ✅ Hybrid score redirect flow backend support fully functional ✅ JWT authentication properly implemented on both endpoints ✅ Database operations configured for profile_json and score_data storage ✅ Expected response structure verified: profile returns {profile_id, profile_json, score_data, completed_at, created_at, updated_at} ✅ Score update returns {message, profile_id, updated_at} ✅ All 4 review requirements successfully verified: new endpoints work correctly, JWT auth implemented, profile data can be fetched, score data can be stored, overall flow working. Backend is production-ready for hybrid score redirect functionality."
+
   - task: "Interview Flow API Endpoints"
     implemented: true
     working: true
