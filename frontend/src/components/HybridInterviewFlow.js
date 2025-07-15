@@ -78,6 +78,7 @@ const HybridInterviewFlow = () => {
       // Then redirect to score results page using the profileId parameter
       if (profileId) {
         console.log('Redirecting to /hybrid-score/' + profileId);
+        setCompletedProfileId(profileId);
         
         // Use multiple methods to ensure redirect works on all browsers
         try {
@@ -99,6 +100,14 @@ const HybridInterviewFlow = () => {
               window.location.href = `/hybrid-score/${profileId}`;
             }
           }, 500);
+          
+          // Method 4: Show manual button if redirect failed
+          setTimeout(() => {
+            if (window.location.pathname !== `/hybrid-score/${profileId}`) {
+              console.log('All redirect methods failed, showing manual button');
+              setRedirectFailed(true);
+            }
+          }, 2000);
           
         } catch (navError) {
           console.error('Navigation error:', navError);
