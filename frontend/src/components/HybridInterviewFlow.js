@@ -37,6 +37,26 @@ const HybridInterviewFlow = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Animate progress bar (reaches 99% at 2 minutes)
+  const animateProgress = () => {
+    const startTime = Date.now();
+    const duration = 120000; // 2 minutes in milliseconds
+    const targetProgress = 99;
+    
+    const updateProgress = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min((elapsed / duration) * targetProgress, targetProgress);
+      
+      setCalculationProgress(progress);
+      
+      if (progress < targetProgress && isCalculatingScore) {
+        requestAnimationFrame(updateProgress);
+      }
+    };
+    
+    updateProgress();
+  };
+
   // Trigger webhook for score calculation
   const triggerWebhookForScore = async (athleteProfileData, profileId) => {
     try {
@@ -46,6 +66,10 @@ const HybridInterviewFlow = () => {
       });
       
       setIsCalculatingScore(true);
+      setCalculationProgress(0);
+      
+      // Start progress animation
+      animateProgress();
       
       // Set up abort controller for timeout
       const controller = new AbortController();
