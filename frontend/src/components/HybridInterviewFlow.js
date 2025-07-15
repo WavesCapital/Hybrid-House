@@ -332,6 +332,11 @@ const HybridInterviewFlow = () => {
       if (response.data.completed) {
         setIsCompleted(true);
         
+        // Store profile ID for score storage
+        if (response.data.profile_id) {
+          setCurrentProfileId(response.data.profile_id);
+        }
+        
         // Call webhook with the actual athlete profile JSON data
         if (!isCalculatingScore && response.data.profile_data) {
           triggerWebhookForScore(response.data.profile_data);
