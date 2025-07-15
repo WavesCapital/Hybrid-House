@@ -132,6 +132,7 @@ const HybridInterviewFlow = () => {
       }
     } finally {
       setIsCalculatingScore(false);
+      setCalculationProgress(0);
     }
   };
 
