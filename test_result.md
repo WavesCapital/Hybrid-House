@@ -327,7 +327,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Hybrid Interview Flow - Essential Questions (11 questions)"
     - "Hybrid Interview Frontend Component (11 questions)"
   stuck_tasks: []
   test_all: false
