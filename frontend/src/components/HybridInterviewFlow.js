@@ -124,6 +124,12 @@ const HybridInterviewFlow = () => {
     
     if (!content || isLoading) return;
 
+    // Wait for sessionId to be set if this is the auto-start message
+    if (!sessionId && content === "Let's get started") {
+      console.log('Waiting for session ID to be set...');
+      return;
+    }
+
     // Debounce requests to prevent spam
     const now = Date.now();
     if (now - lastRequestTime < 1000) {
