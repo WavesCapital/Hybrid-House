@@ -59,8 +59,30 @@ const ProfilePage = () => {
     fetchProfiles();
   }, [session, toast]);
 
-  // Start editing a profile
-  const startEditing = (profile) => {
+  // Memoize statistics to prevent recalculation on every render
+  const profileStats = useMemo(() => {
+    const totalProfiles = profiles.length;
+    const latestScore = totalProfiles > 0 && profiles[0].score_data 
+      ? Math.round(parseFloat(profiles[0].score_data.hybridScore)) 
+      : '-';
+    const scoredProfiles = profiles.filter(p => p.score_data).length;
+    
+    return { totalProfiles, latestScore, scoredProfiles };
+  }, [profiles]);
+
+  // Memoize format date function
+  const formatDate = useCallback((dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }, []);
+
+  // Memoize functions to prevent unnecessary re-renders
+  const startEditing = useCallback((profile) => {
     setEditingProfile(profile.id);
     setEditForm({
       first_name: profile.profile_json.first_name || '',
@@ -73,16 +95,15 @@ const ProfilePage = () => {
       pb_squat_1rm: profile.profile_json.pb_squat_1rm || '',
       pb_deadlift_1rm: profile.profile_json.pb_deadlift_1rm || ''
     });
-  };
+  }, []);
 
-  // Cancel editing
-  const cancelEditing = () => {
+  const cancelEditing = useCallback(() => {
     setEditingProfile(null);
     setEditForm({});
-  };
+  }, []);
 
   // Save profile changes
-  const saveProfile = async (profileId) => {
+  const saveProfile = useCallback(async (profileId) => {
     try {
       setIsCalculating(true);
       
