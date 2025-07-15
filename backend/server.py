@@ -527,7 +527,7 @@ When all fields above have a value (or null) **or** user types **done**:
 async def start_hybrid_interview(user: dict = Depends(verify_jwt)):
     """Start a new hybrid interview session - always starts fresh with essential questions only"""
     try:
-        user_id = user['id']
+        user_id = user['sub']
         
         # Delete any existing active sessions for this user
         supabase.table('interview_sessions').delete().eq('user_id', user_id).eq('status', 'active').execute()
