@@ -48,6 +48,22 @@ function AppContent() {
             } 
           />
           <Route 
+            path="/full-interview" 
+            element={
+              <ProtectedRoute>
+                <InterviewFlow interviewType="full" />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/hybrid-interview" 
+            element={
+              <ProtectedRoute>
+                <HybridInterviewFlow />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
             path="/interview" 
             element={
               <ProtectedRoute>
