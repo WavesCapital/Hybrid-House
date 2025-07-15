@@ -302,12 +302,22 @@ const HybridInterviewFlow = () => {
         
         // Store profile ID for score storage
         const profileId = response.data.profile_id;
+        console.log('Completion response received:', {
+          completed: response.data.completed,
+          profile_id: profileId,
+          profile_data: response.data.profile_data ? 'Present' : 'Missing'
+        });
+        
         if (profileId) {
           setCurrentProfileId(profileId);
+          console.log('Set currentProfileId to:', profileId);
+        } else {
+          console.error('No profile_id in completion response!', response.data);
         }
         
         // Call webhook with the actual athlete profile JSON data
         if (!isCalculatingScore && response.data.profile_data) {
+          console.log('Calling webhook with profileId:', profileId);
           triggerWebhookForScore(response.data.profile_data, profileId);
         }
       }
