@@ -370,14 +370,6 @@ const HybridInterviewFlow = () => {
   };
 
   // Calculate section progress for better UX - Updated for 11-question system
-  const getSectionInfo = (index) => {
-    if (index <= 2) return { section: "Basic Info", sectionProgress: index, sectionTotal: 2 };
-    if (index <= 5) return { section: "Body Metrics", sectionProgress: index - 2, sectionTotal: 3 };
-    if (index <= 8) return { section: "Running Performance", sectionProgress: index - 5, sectionTotal: 3 };
-    return { section: "Strength Performance", sectionProgress: index - 8, sectionTotal: 3 };
-  };
-
-  const sectionInfo = getSectionInfo(currentIndex);
   const progress = Math.min((currentIndex / TOTAL_QUESTIONS) * 100, 100);
 
   return (
