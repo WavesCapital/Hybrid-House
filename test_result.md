@@ -333,6 +333,8 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "✅ HYBRID INTERVIEW IMPLEMENTATION COMPLETE: Successfully implemented both backend and frontend for the new shorter hybrid interview flow. Backend: Created separate endpoints (/api/hybrid-interview/start, /api/hybrid-interview/chat) with Essential-Score Prompt v1.0 system message configured for 11 questions. Frontend: Created HybridInterviewFlow component adapted for 11 essential questions with proper section progress calculation. Routing: Updated App.js to make hybrid interview default at root path (/), full interview moved to /full-interview. System ready for backend testing of new hybrid interview endpoints."
+  - agent: "main"
+    message: "✅ AUTO-START FUNCTIONALITY IMPLEMENTED: Fixed the issue where hybrid interview page wasn't automatically showing first question. Modified HybridInterviewFlow.js to automatically send 'Let's get started' message after session creation to kick off the conversation. Added sendFirstMessage function to handle initial auto-start message. UI now properly shows 'Hybrid Score - Essential Questions' with progress tracking (0 of 11 questions) and conversation auto-starts after user authentication. Ready for comprehensive backend testing."
 
 backend:
   - task: "Pure Supabase Integration with New Credentials"
