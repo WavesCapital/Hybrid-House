@@ -80,6 +80,10 @@ class InterviewSession(BaseModel):
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
 
+class UserMessageRequest(BaseModel):
+    messages: List[InterviewMessage]
+    session_id: str
+
 # JWT verification
 async def verify_jwt(credentials: HTTPBearer = Depends(security)):
     try:
