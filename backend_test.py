@@ -2302,6 +2302,12 @@ class BackendTester:
             ("System Health Comprehensive", self.test_system_health_comprehensive),
             ("Database Table Accessibility", self.test_database_table_accessibility),
             
+            # 🎯 DEBUG TESTS FOR PROFILE_ID ISSUE (PRIMARY FOCUS)
+            ("🔍 Hybrid Interview Completion Flow Debug", self.test_hybrid_interview_completion_flow_debug),
+            ("🔍 Athlete Profile Creation Logic", self.test_athlete_profile_creation_logic),
+            ("🔍 JSON Parsing Robustness", self.test_json_parsing_robustness),
+            ("🔍 Athlete Profile Parsing Simulation", self.test_athlete_profile_parsing_simulation),
+            
             # 🎯 PRIMARY TESTS: NEW ATHLETE PROFILE ENDPOINTS (as requested in review)
             ("🎯 GET Athlete Profile Endpoint", self.test_athlete_profile_get_endpoint),
             ("🎯 POST Athlete Profile Score Endpoint", self.test_athlete_profile_score_update_endpoint),
