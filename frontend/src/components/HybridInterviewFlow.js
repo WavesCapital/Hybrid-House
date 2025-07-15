@@ -138,7 +138,7 @@ const HybridInterviewFlow = () => {
       });
       return false;
     }
-  };
+  }, [session, toast]);
 
   // Confetti and streak functions removed to clean up UI
 
