@@ -618,7 +618,7 @@ const HybridInterviewFlow = () => {
                     value={currentMessage}
                     onChange={(e) => setCurrentMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Type your answer here... (Cmd+Enter for new line)"
+                    placeholder="Type your answer here..."
                     className="flex-1 px-4 py-3 rounded-xl bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:border-blue-500 focus:outline-none resize-none"
                     rows="2"
                     disabled={isLoading}
