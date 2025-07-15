@@ -207,18 +207,9 @@ const ProfilePage = () => {
         variant: "destructive",
       });
     }
-  };
+  }, [profiles, session, toast]);
 
-  // Format date
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+  // Format date function was moved to be memoized above
 
   if (isLoading) {
     return (
