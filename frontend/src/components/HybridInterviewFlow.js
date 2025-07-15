@@ -50,7 +50,7 @@ const HybridInterviewFlow = () => {
       setCalculationProgress(progress);
       
       if (progress < targetProgress && isCalculatingScore) {
-        requestAnimationFrame(updateProgress);
+        setTimeout(updateProgress, 100); // Update every 100ms
       }
     };
     
