@@ -522,7 +522,291 @@ When all fields above have a value (or null) **or** user types **done**:
 
 **End of prompt.**"""
 
-# Interview Flow Routes
+# Hybrid Interview Flow Routes (Essential Questions Only)
+@api_router.post("/hybrid-interview/start")
+async def start_hybrid_interview(user: dict = Depends(verify_jwt)):
+    """Start a new hybrid interview session - always starts fresh with essential questions only"""
+    try:
+        user_id = user['id']
+        
+        # Delete any existing active sessions for this user
+        supabase.table('interview_sessions').delete().eq('user_id', user_id).eq('status', 'active').execute()
+        
+        # Create new session
+        session_data = {
+            "id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "status": "active",
+            "messages": [],
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat(),
+            "interview_type": "hybrid"
+        }
+        
+        result = supabase.table('interview_sessions').insert(session_data).execute()
+        
+        if not result.data:
+            raise Exception("Failed to create session")
+        
+        session_id = result.data[0]['id']
+        
+        try:
+            print("Getting first message from OpenAI...")
+            response = openai_client.responses.create(
+                model="gpt-4.1",
+                input=[{"role": "user", "content": "start"}],  # Minimal input to trigger first message
+                instructions=HYBRID_INTERVIEW_SYSTEM_MESSAGE,
+                store=True,  # Store the initial message
+                temperature=0.7
+            )
+            
+            print(f"OpenAI API call successful! Response ID: {response.id}")
+            
+            # Extract response text - use ONLY the first output message
+            if response.output and len(response.output) > 0:
+                first_output = response.output[0]
+                if hasattr(first_output, 'content') and first_output.content:
+                    response_text = first_output.content[0].text if first_output.content else ""
+                else:
+                    response_text = ""
+            else:
+                response_text = ""
+            
+            if not response_text:
+                response_text = "Welcome to Hybrid House! I'm your coach for a quick hybrid score assessment. Let's gather the essential data—first, what's your name?"
+            
+            # Store the initial response and response_id
+            initial_message = {
+                "role": "assistant",
+                "content": response_text,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
+            updated_messages = [initial_message]
+            
+            # Update session with initial message and response_id
+            supabase.table('interview_sessions').update({
+                "messages": updated_messages,
+                "last_response_id": response.id,
+                "updated_at": datetime.utcnow().isoformat()
+            }).eq('id', session_id).execute()
+            
+            return {
+                "session_id": session_id,
+                "message": response_text,
+                "status": "started"
+            }
+            
+        except Exception as e:
+            print(f"Error with OpenAI: {e}")
+            # Fallback message if OpenAI fails
+            fallback_message = {
+                "role": "assistant",
+                "content": "Welcome to Hybrid House! I'm your coach for a quick hybrid score assessment. Let's gather the essential data—first, what's your name?",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
+            updated_messages = [fallback_message]
+            
+            supabase.table('interview_sessions').update({
+                "messages": updated_messages,
+                "updated_at": datetime.utcnow().isoformat()
+            }).eq('id', session_id).execute()
+            
+            return {
+                "session_id": session_id,
+                "message": fallback_message["content"],
+                "status": "started"
+            }
+            
+    except Exception as e:
+        print(f"Error starting hybrid interview: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error starting hybrid interview: {str(e)}"
+        )
+
+@api_router.post("/hybrid-interview/chat")
+async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = Depends(verify_jwt)):
+    """Send message to hybrid interview session"""
+    try:
+        user_id = user['id']
+        session_id = user_message.session_id
+        
+        # Get current session
+        session_result = supabase.table('interview_sessions').select('*').eq('id', session_id).eq('user_id', user_id).execute()
+        
+        if not session_result.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Session not found"
+            )
+        
+        session = session_result.data[0]
+        messages = session.get('messages', [])
+        
+        # Add user message to session
+        messages.append({
+            "role": user_message.messages[0].role,
+            "content": user_message.messages[0].content,
+            "timestamp": datetime.utcnow().isoformat()
+        })
+        
+        # Create OpenAI responses API call using GPT-4.1
+        try:
+            # Prepare conversation messages for Responses API
+            conversation_input = []
+            for msg in messages:
+                if msg["role"] != "system":
+                    clean_message = {
+                        "role": msg["role"],
+                        "content": msg["content"]
+                    }
+                    conversation_input.append(clean_message)
+            
+            print(f"Hybrid interview - Sending to OpenAI (cleaned): {conversation_input}")
+            print(f"Using previous_response_id: {session.get('last_response_id')}")
+            
+            # Create the response using OpenAI Responses API
+            api_params = {
+                "model": "gpt-4.1",
+                "input": conversation_input,
+                "store": True,
+                "temperature": 0.7,
+                "instructions": HYBRID_INTERVIEW_SYSTEM_MESSAGE
+            }
+            
+            # Re-enable previous_response_id for proper stateful conversations
+            if session.get('last_response_id'):
+                api_params["previous_response_id"] = session['last_response_id']
+            
+            response = openai_client.responses.create(**api_params)
+            
+            print(f"Hybrid interview - OpenAI API call successful! Response ID: {response.id}")
+            
+            # Extract response text - use ONLY the first output message
+            if response.output and len(response.output) > 0:
+                first_output = response.output[0]
+                if hasattr(first_output, 'content') and first_output.content:
+                    response_text = first_output.content[0].text if first_output.content else ""
+                else:
+                    response_text = ""
+            else:
+                response_text = ""
+                
+            print(f"Hybrid interview - Using FIRST output message only: {response_text[:100]}...")
+            
+            if not response_text:
+                raise Exception("No response text generated")
+                
+            print(f"Hybrid interview - Number of output items: {len(response.output) if response.output else 0}")
+            if len(response.output) > 1:
+                print(f"WARNING: OpenAI returned {len(response.output)} output messages for hybrid interview, using only the first one")
+            
+            # Check for confetti milestones and streak tracking
+            milestone_detected = False
+            streak_detected = False
+            
+            # Check for confetti triggers (🎉)
+            if "🎉" in response_text:
+                milestone_detected = True
+            
+            # Check for streak triggers (🔥)
+            if "🔥" in response_text:
+                streak_detected = True
+                
+            # Check if hybrid interview is complete - look for the new ATHLETE_PROFILE::: trigger
+            if "ATHLETE_PROFILE:::" in response_text:
+                # Parse the JSON profile
+                try:
+                    # Split on ATHLETE_PROFILE::: and get the JSON part
+                    json_part = response_text.split("ATHLETE_PROFILE:::")[1].strip()
+                    profile_json = json.loads(json_part)
+                    
+                    # Add session metadata
+                    profile_json["meta_session_id"] = session_id
+                    profile_json["schema_version"] = "v1.0"
+                    
+                    # Save athlete profile
+                    profile_data = {
+                        "id": str(uuid.uuid4()),
+                        "user_id": user_id,
+                        "profile_json": profile_json,
+                        "completed_at": datetime.utcnow().isoformat(),
+                        "created_at": datetime.utcnow().isoformat(),
+                        "updated_at": datetime.utcnow().isoformat()
+                    }
+                    
+                    profile_result = supabase.table('athlete_profiles').insert(profile_data).execute()
+                    
+                    # Trigger score computation
+                    await trigger_score_computation(profile_data["id"], profile_json)
+                    
+                    # Update session status
+                    supabase.table('interview_sessions').update({
+                        "status": "complete",
+                        "updated_at": datetime.utcnow().isoformat()
+                    }).eq('id', session_id).execute()
+                    
+                    return {
+                        "response": f"Thanks, {profile_json.get('first_name', 'there')}! Your hybrid score essentials are complete. Your Hybrid Score will hit your inbox in minutes! 🚀",
+                        "completed": True,
+                        "profile_id": profile_data["id"]
+                    }
+                    
+                except Exception as e:
+                    print(f"Error parsing hybrid interview completion response: {e}")
+                    # Mark session as error
+                    supabase.table('interview_sessions').update({
+                        "status": "error",
+                        "updated_at": datetime.utcnow().isoformat()
+                    }).eq('id', session_id).execute()
+                    
+                    return {
+                        "response": "I apologize, but there was an error processing your hybrid profile. Please try again.",
+                        "error": True
+                    }
+            
+            # Add assistant response to session messages
+            assistant_message = {
+                "role": "assistant",
+                "content": response_text,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
+            messages.append(assistant_message)
+            
+            # Update session with both user and assistant messages and new response ID
+            supabase.table('interview_sessions').update({
+                "messages": messages,
+                "current_index": len([m for m in messages if m["role"] == "user"]),
+                "last_response_id": response.id,
+                "updated_at": datetime.utcnow().isoformat()
+            }).eq('id', session_id).execute()
+            
+            return {
+                "response": response_text,
+                "completed": False,
+                "current_index": len([m for m in messages if m["role"] == "user"]),
+                "milestone_detected": milestone_detected,
+                "streak_detected": streak_detected
+            }
+            
+        except Exception as e:
+            print(f"Error with OpenAI Responses API: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error with OpenAI Responses API: {str(e)}"
+            )
+        
+    except Exception as e:
+        print(f"Error in hybrid interview chat: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error in hybrid interview chat: {str(e)}"
+        )
+
+# Full Interview Flow Routes
 @api_router.post("/interview/start")
 async def start_interview(user: dict = Depends(verify_jwt)):
     """Start a new interview session - always starts fresh"""
