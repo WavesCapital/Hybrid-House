@@ -119,7 +119,7 @@ const HybridScoreResults = () => {
     ctx.fillText('Get your score at HybridHouse.ai', canvas.width / 2, canvas.height - 30);
     
     return canvas.toDataURL('image/png', 0.9);
-  };
+  }, [scoreData]);
 
   // Handle share functionality (same as AthleteProfile)
   const handleShare = async () => {
