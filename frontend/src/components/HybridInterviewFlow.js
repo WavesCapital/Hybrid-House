@@ -28,6 +28,7 @@ const HybridInterviewFlow = () => {
   const [lastRequestTime, setLastRequestTime] = useState(0);
   const [streakCount, setStreakCount] = useState(0);
   const [showStreakBadge, setShowStreakBadge] = useState(false);
+  const [currentProfileId, setCurrentProfileId] = useState(null);
   const { user, session } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
