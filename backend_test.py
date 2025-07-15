@@ -1230,10 +1230,10 @@ class BackendTester:
         print(f"Tests Passed: {passed_tests}/{total_tests}")
         
         if passed_tests == total_tests:
-            print("🎉 ALL TESTS PASSED - Kendall Toole 55-Question Personality System is working correctly!")
+            print("🎉 ALL TESTS PASSED - Hybrid Interview Flow (Essential Questions) is working correctly!")
             return True
         else:
-            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in Kendall Toole 55-Question System")
+            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in Hybrid Interview Flow")
             return False
 
 if __name__ == "__main__":
