@@ -610,44 +610,46 @@ const HybridInterviewFlow = () => {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Area */}
+            {/* Sticky Input Area */}
             {!isCompleted && (
-              <div className="border-t border-gray-700 pt-6">
-                <div className="flex space-x-4">
-                  <textarea
-                    value={currentMessage}
-                    onChange={(e) => setCurrentMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Type your answer here..."
-                    className="flex-1 px-4 py-3 rounded-xl bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:border-blue-500 focus:outline-none resize-none"
-                    rows="2"
-                    disabled={isLoading}
-                  />
-                  <Button
-                    onClick={() => sendMessage()}
-                    disabled={isLoading || !currentMessage.trim()}
-                    className="neo-btn-primary px-8 py-3 rounded-xl h-auto"
-                  >
-                    Send
-                  </Button>
-                </div>
-                
-                <div className="flex justify-between items-center mt-4">
-                  <div className="flex space-x-3">
-                    <Button
-                      onClick={skipQuestion}
+              <div className="fixed bottom-0 left-0 right-0 z-10 bg-opacity-95 backdrop-blur-sm border-t border-gray-700 p-6" style={{ background: 'rgba(10, 11, 12, 0.95)' }}>
+                <div className="container mx-auto max-w-4xl">
+                  <div className="flex space-x-4">
+                    <textarea
+                      value={currentMessage}
+                      onChange={(e) => setCurrentMessage(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Type your answer here..."
+                      className="flex-1 px-4 py-3 rounded-xl bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:border-blue-500 focus:outline-none resize-none"
+                      rows="2"
                       disabled={isLoading}
-                      className="neo-btn-secondary text-sm px-4 py-2"
-                    >
-                      Skip
-                    </Button>
+                    />
                     <Button
-                      onClick={forceComplete}
-                      disabled={isLoading}
-                      className="neo-btn-secondary text-sm px-4 py-2"
+                      onClick={() => sendMessage()}
+                      disabled={isLoading || !currentMessage.trim()}
+                      className="neo-btn-primary px-8 py-3 rounded-xl h-auto"
                     >
-                      Finish Early
+                      Send
                     </Button>
+                  </div>
+                  
+                  <div className="flex justify-between items-center mt-4">
+                    <div className="flex space-x-3">
+                      <Button
+                        onClick={skipQuestion}
+                        disabled={isLoading}
+                        className="neo-btn-secondary text-sm px-4 py-2"
+                      >
+                        Skip
+                      </Button>
+                      <Button
+                        onClick={forceComplete}
+                        disabled={isLoading}
+                        className="neo-btn-secondary text-sm px-4 py-2"
+                      >
+                        Finish Early
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
