@@ -66,7 +66,17 @@ const HybridInterviewFlow = () => {
   }, [messages]);
 
   const startInterview = async () => {
+    if (!user || !session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to start your hybrid interview.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
+      setIsLoading(true);
       const response = await axios.post(
         `${BACKEND_URL}/api/hybrid-interview/start`,
         {},
@@ -78,34 +88,20 @@ const HybridInterviewFlow = () => {
         }
       );
 
-      const sessionId = response.data.session_id;
-      setSessionId(sessionId);
+      setSessionId(response.data.session_id);
+      setMessages(response.data.messages ? response.data.messages.filter(m => m.role !== 'system') : []);
+      setCurrentIndex(response.data.current_index || 0);
       
-      // Add the initial message from the response
-      const initialMessage = {
-        role: 'assistant',
-        content: response.data.message,
-        timestamp: new Date().toISOString(),
-      };
-      
-      setMessages([initialMessage]);
-
-      // Auto-save toast
       toast({
         title: "Hybrid Interview Started! 🚀",
         description: "Your answers will be auto-saved as we go.",
       });
-
-      // Automatically send the first user message to kick off the conversation
-      setTimeout(async () => {
-        await sendFirstMessage(sessionId);
-      }, 1000);
-
+      
     } catch (error) {
-      console.error('Error starting interview:', error);
+      console.error('Error starting hybrid interview:', error);
       toast({
-        title: "Error starting interview",
-        description: "Please try again or refresh the page.",
+        title: "Error",
+        description: "Failed to start hybrid interview. Please try again.",
         variant: "destructive",
       });
     } finally {
