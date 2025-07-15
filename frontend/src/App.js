@@ -6,6 +6,7 @@ import AthleteProfile from './components/AthleteProfile';
 import InterviewFlow from './components/InterviewFlow';
 import HybridInterviewFlow from './components/HybridInterviewFlow';
 import HybridScoreResults from './components/HybridScoreResults';
+import ProfilePage from './components/ProfilePage';
 import './App.css';
 
 // Protected Route Wrapper
