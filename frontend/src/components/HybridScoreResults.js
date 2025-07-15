@@ -379,31 +379,17 @@ const HybridScoreResults = () => {
       <div className="container mx-auto px-6 py-8 max-w-4xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-4">
-            <Button
-              onClick={() => navigate('/')}
-              className="neo-btn-secondary"
-              size="sm"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Interview
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold neo-primary">Your Hybrid Score</h1>
-              <p className="neo-text-secondary">
-                Complete analysis for {profileData?.first_name || 'your profile'}
-              </p>
-            </div>
+          <div>
+            <h1 className="text-3xl font-bold neo-primary">Your Hybrid Score</h1>
+            <p className="neo-text-secondary">
+              Complete analysis for {profileData?.first_name || 'your profile'}
+            </p>
           </div>
           
           <div className="flex space-x-3">
-            <Button className="neo-btn-secondary" size="sm">
+            <Button onClick={handleShare} className="neo-btn-secondary" size="sm">
               <Share2 className="h-4 w-4 mr-2" />
               Share Score
-            </Button>
-            <Button className="neo-btn-secondary" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Download Report
             </Button>
           </div>
         </div>
