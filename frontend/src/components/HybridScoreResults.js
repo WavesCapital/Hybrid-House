@@ -437,7 +437,7 @@ const HybridScoreResults = () => {
             <div className="text-center">
               <h2 className="text-5xl font-bold neo-text-primary mb-4">Your Hybrid Score</h2>
               <div className="text-8xl font-bold neo-primary mb-6" style={{ lineHeight: '1' }}>
-                {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : Math.round(parseFloat(scoreData.hybridScore))}
+                {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : hybridScoreValue}
               </div>
               <p className="text-xl neo-text-secondary max-w-2xl mx-auto mb-6">
                 Your overall hybrid-fitness score on a 0-100 scale
