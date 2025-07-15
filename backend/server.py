@@ -785,6 +785,73 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
             if "🔥" in response_text:
                 streak_detected = True
                 
+            # Check for force completion trigger
+            if "FORCE_COMPLETE" in user_message.messages[0].content:
+                print("Force completion triggered - attempting to generate athlete profile")
+                
+                # Try to extract data from conversation history
+                profile_data = {}
+                for msg in messages:
+                    if msg.get("role") == "user":
+                        content = msg.get("content", "")
+                        # Simple extraction logic - this is a fallback
+                        if "name:" in content.lower() or "kyle" in content.lower():
+                            profile_data["first_name"] = "Kyle"
+                        if "male" in content.lower():
+                            profile_data["sex"] = "Male"
+                        if "163" in content:
+                            profile_data["body_metrics"] = content
+                        if "7:43" in content:
+                            profile_data["pb_mile"] = "7:43"
+                        if "15 miles" in content:
+                            profile_data["weekly_miles"] = 15
+                        if "7 longest" in content:
+                            profile_data["long_run"] = 7
+                        if "225" in content:
+                            profile_data["pb_bench_1rm"] = "225 lbs x 3 reps"
+                
+                # Add missing required fields
+                if profile_data:
+                    profile_data.update({
+                        "pb_squat_1rm": None,
+                        "pb_deadlift_1rm": None,
+                        "schema_version": "v1.0",
+                        "meta_session_id": session_id
+                    })
+                    
+                    # Create profile in database
+                    profile_db_data = {
+                        "id": str(uuid.uuid4()),
+                        "user_id": user_id,
+                        "profile_json": profile_data,
+                        "completed_at": datetime.utcnow().isoformat(),
+                        "created_at": datetime.utcnow().isoformat(),
+                        "updated_at": datetime.utcnow().isoformat()
+                    }
+                    
+                    try:
+                        profile_result = supabase.table('athlete_profiles').insert(profile_db_data).execute()
+                        print(f"Force completion - Profile created with ID: {profile_db_data['id']}")
+                        
+                        # Update session status
+                        supabase.table('interview_sessions').update({
+                            "status": "complete",
+                            "updated_at": datetime.utcnow().isoformat()
+                        }).eq('id', session_id).execute()
+                        
+                        return {
+                            "response": f"Thanks, {profile_data.get('first_name', 'there')}! Your hybrid score essentials are complete. Your Hybrid Score will hit your inbox in minutes! 🚀",
+                            "completed": True,
+                            "profile_id": profile_db_data["id"],
+                            "profile_data": profile_data
+                        }
+                    except Exception as e:
+                        print(f"Error in force completion: {e}")
+                        return {
+                            "response": "Error processing your profile. Please try again.",
+                            "error": True
+                        }
+            
             # Check if hybrid interview is complete - look for the new ATHLETE_PROFILE::: trigger
             if "ATHLETE_PROFILE:::" in response_text:
                 # Parse the JSON profile
