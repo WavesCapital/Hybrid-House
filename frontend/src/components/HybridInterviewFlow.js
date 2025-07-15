@@ -7,7 +7,7 @@ import { useToast } from '../hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { 
   Trophy, Target, AlertCircle, Dumbbell, Zap, Heart, MapPin, 
-  BarChart3, Activity, Moon, Scale, CheckCircle, Loader2 
+  BarChart3, Activity, Moon, Scale, CheckCircle, Loader2, User 
 } from 'lucide-react';
 import axios from 'axios';
 
