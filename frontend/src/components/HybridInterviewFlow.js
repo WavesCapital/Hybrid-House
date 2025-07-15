@@ -105,7 +105,7 @@ const HybridInterviewFlow = () => {
     } finally {
       setIsCalculatingScore(false);
     }
-  };
+  }, [navigate, session, toast]);
 
   // Store score data in Supabase
   const storeScoreDataInSupabase = async (scoreData, profileId) => {
