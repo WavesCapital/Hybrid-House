@@ -254,12 +254,80 @@ async def get_athlete_profiles(user: dict = Depends(verify_jwt)):
             detail="Error retrieving athlete profiles"
         )
 
+@api_router.get("/athlete-profile/{profile_id}")
+async def get_athlete_profile(profile_id: str, user: dict = Depends(verify_jwt)):
+    """Get athlete profile and score data by profile ID"""
+    try:
+        user_id = user['sub']
+        
+        # Get athlete profile
+        profile_result = supabase.table('athlete_profiles').select('*').eq('id', profile_id).eq('user_id', user_id).execute()
+        
+        if not profile_result.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Profile not found"
+            )
+        
+        profile = profile_result.data[0]
+        
+        return {
+            "profile_id": profile['id'],
+            "profile_json": profile.get('profile_json', {}),
+            "score_data": profile.get('score_data', None),
+            "completed_at": profile.get('completed_at'),
+            "created_at": profile.get('created_at'),
+            "updated_at": profile.get('updated_at')
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error fetching athlete profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching athlete profile: {str(e)}"
+        )
+
+@api_router.post("/athlete-profile/{profile_id}/score")
+async def update_athlete_profile_score(profile_id: str, score_data: dict, user: dict = Depends(verify_jwt)):
+    """Update athlete profile with score data from webhook"""
+    try:
+        user_id = user['sub']
+        
+        # Update athlete profile with score data
+        update_result = supabase.table('athlete_profiles').update({
+            "score_data": score_data,
+            "updated_at": datetime.utcnow().isoformat()
+        }).eq('id', profile_id).eq('user_id', user_id).execute()
+        
+        if not update_result.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Profile not found"
+            )
+        
+        return {
+            "message": "Score data updated successfully",
+            "profile_id": profile_id,
+            "updated_at": update_result.data[0]['updated_at']
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error updating athlete profile score: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error updating athlete profile score: {str(e)}"
+        )
+
 @api_router.get("/athlete-profiles/{profile_id}")
-async def get_athlete_profile(
+async def get_athlete_profile_legacy(
     profile_id: str,
     user: dict = Depends(verify_jwt)
 ):
-    """Get a specific athlete profile for the authenticated user"""
+    """Get a specific athlete profile for the authenticated user (legacy endpoint)"""
     user_id = user["sub"]
     
     try:
