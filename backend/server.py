@@ -1104,7 +1104,8 @@ async def chat_interview(
                 return {
                     "response": f"Thanks, {profile_json.get('first_name', 'there')}! Your hybrid athlete profile is complete. Your Hybrid Score will hit your inbox in minutes! 🚀",
                     "completed": True,
-                    "profile_id": profile_data["id"]
+                    "profile_id": profile_data["id"],
+                    "profile_data": profile_json
                 }
                 
             except Exception as e:
