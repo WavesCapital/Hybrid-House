@@ -1574,6 +1574,8 @@ class BackendTester:
 
     def run_all_tests(self):
         """Run all backend tests with focus on Hybrid Interview Flow"""
+    def run_all_tests(self):
+        """Run all backend tests with focus on Hybrid Interview Flow"""
         print("=" * 80)
         print("HYBRID INTERVIEW FLOW - ESSENTIAL QUESTIONS TESTING")
         print("=" * 80)
@@ -1584,7 +1586,10 @@ class BackendTester:
             ("System Health Comprehensive", self.test_system_health_comprehensive),
             ("Database Table Accessibility", self.test_database_table_accessibility),
             
-            # Hybrid Interview Flow Tests (Primary Focus)
+            # 🎯 PRIMARY TEST: COMPREHENSIVE E2E HYBRID INTERVIEW COMPLETION FLOW
+            ("🎯 Hybrid Interview Completion Flow E2E", self.test_hybrid_interview_completion_flow_e2e),
+            
+            # Hybrid Interview Flow Tests (Supporting)
             ("Hybrid Interview Start Endpoint", self.test_hybrid_interview_start_endpoint),
             ("Hybrid Interview Chat Endpoint", self.test_hybrid_interview_chat_endpoint),
             ("Essential-Score Prompt v1.0 Configuration", self.test_essential_score_prompt_v10_configuration),
@@ -1594,7 +1599,7 @@ class BackendTester:
             ("Hybrid Interview Database Operations", self.test_hybrid_interview_database_operations),
             ("11 Essential Questions Coverage", self.test_11_essential_questions_coverage),
             
-            # SPECIAL WEBHOOK DEBUGGING TESTS
+            # WEBHOOK DEBUGGING TESTS
             ("Hybrid Interview Completion Flow", self.test_hybrid_interview_completion_flow),
             ("Webhook Data Format Analysis", self.test_webhook_data_format_analysis),
             
