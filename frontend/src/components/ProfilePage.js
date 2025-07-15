@@ -8,31 +8,60 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
 import { 
   User, Edit3, Save, X, Plus, Calendar, Trophy, 
-  BarChart3, Trash2, RefreshCw, TrendingUp
+  BarChart3, Trash2, RefreshCw, TrendingUp, Mail, 
+  Clock, CheckCircle, XCircle, Play, Award, Target
 } from 'lucide-react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const ProfilePage = () => {
+  const [userProfile, setUserProfile] = useState(null);
+  const [allInterviews, setAllInterviews] = useState([]);
   const [profiles, setProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingProfile, setEditingProfile] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [isCalculating, setIsCalculating] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
   const { user, session } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Load user profiles
+  // Load user profile and all interviews
   useEffect(() => {
-    const fetchProfiles = async () => {
+    const fetchData = async () => {
       if (!session) return;
 
       try {
         setIsLoading(true);
         
-        const response = await axios.get(
+        // Fetch user profile
+        const userProfileResponse = await axios.get(
+          `${BACKEND_URL}/api/user-profile`,
+          {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        setUserProfile(userProfileResponse.data);
+
+        // Fetch all interviews
+        const interviewsResponse = await axios.get(
+          `${BACKEND_URL}/api/all-interviews`,
+          {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        setAllInterviews(interviewsResponse.data.interviews || []);
+
+        // Fetch athlete profiles for editing
+        const profilesResponse = await axios.get(
           `${BACKEND_URL}/api/athlete-profiles`,
           {
             headers: {
@@ -41,14 +70,13 @@ const ProfilePage = () => {
             },
           }
         );
-
-        setProfiles(response.data.profiles || []);
+        setProfiles(profilesResponse.data.profiles || []);
         
       } catch (error) {
-        console.error('Error fetching profiles:', error);
+        console.error('Error fetching data:', error);
         toast({
-          title: "Error loading profiles",
-          description: "Failed to load your athlete profiles. Please try again.",
+          title: "Error loading profile",
+          description: "Failed to load your profile data. Please try again.",
           variant: "destructive",
         });
       } finally {
@@ -56,22 +84,24 @@ const ProfilePage = () => {
       }
     };
 
-    fetchProfiles();
+    fetchData();
   }, [session, toast]);
 
   // Memoize statistics to prevent recalculation on every render
   const profileStats = useMemo(() => {
-    const totalProfiles = profiles.length;
-    const latestScore = totalProfiles > 0 && profiles[0].score_data 
-      ? Math.round(parseFloat(profiles[0].score_data.hybridScore)) 
-      : '-';
-    const scoredProfiles = profiles.filter(p => p.score_data).length;
+    const totalInterviews = allInterviews.length;
+    const completedInterviews = allInterviews.filter(i => i.status === 'completed').length;
+    const inProgressInterviews = allInterviews.filter(i => i.status === 'in_progress').length;
+    const latestScore = completedInterviews > 0 && allInterviews[0].score_data 
+      ? Math.round(parseFloat(allInterviews[0].score_data.hybridScore)) 
+      : null;
     
-    return { totalProfiles, latestScore, scoredProfiles };
-  }, [profiles]);
+    return { totalInterviews, completedInterviews, inProgressInterviews, latestScore };
+  }, [allInterviews]);
 
   // Memoize format date function
   const formatDate = useCallback((dateString) => {
+    if (!dateString) return 'Not available';
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -79,6 +109,30 @@ const ProfilePage = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }, []);
+
+  // Get status icon and color
+  const getStatusInfo = useCallback((status) => {
+    switch (status) {
+      case 'completed':
+        return { icon: CheckCircle, color: '#85E26E', text: 'Completed' };
+      case 'in_progress':
+        return { icon: Play, color: '#79CFF7', text: 'In Progress' };
+      default:
+        return { icon: XCircle, color: '#FF4B4B', text: 'Failed' };
+    }
+  }, []);
+
+  // Get interview type display
+  const getInterviewTypeInfo = useCallback((type) => {
+    switch (type) {
+      case 'hybrid':
+        return { label: 'Hybrid Interview', description: '11 essential questions' };
+      case 'full':
+        return { label: 'Full Interview', description: '55 comprehensive questions' };
+      default:
+        return { label: 'Interview', description: 'Assessment' };
+    }
   }, []);
 
   // Memoize functions to prevent unnecessary re-renders
@@ -151,7 +205,7 @@ const ProfilePage = () => {
           }
         );
 
-        // Refresh profiles
+        // Refresh data
         window.location.reload();
         
         toast({
@@ -193,6 +247,7 @@ const ProfilePage = () => {
       );
 
       setProfiles(profiles.filter(p => p.id !== profileId));
+      setAllInterviews(allInterviews.filter(i => i.id !== profileId));
       
       toast({
         title: "Profile Deleted",
@@ -207,15 +262,13 @@ const ProfilePage = () => {
         variant: "destructive",
       });
     }
-  }, [profiles, session, toast]);
-
-  // Format date function was moved to be memoized above
+  }, [profiles, allInterviews, session, toast]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#0A0B0C' }}>
         <div className="text-center">
-          <div className="neo-primary text-xl mb-4">Loading your profiles...</div>
+          <div className="neo-primary text-xl mb-4">Loading your profile...</div>
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
         </div>
       </div>
@@ -273,6 +326,28 @@ const ProfilePage = () => {
           outline: none;
           border-color: #79CFF7;
         }
+        .neo-tab {
+          background: rgba(159, 161, 163, 0.1);
+          color: #9FA1A3;
+          border: 1px solid rgba(159, 161, 163, 0.3);
+          padding: 8px 16px;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .neo-tab.active {
+          background: linear-gradient(135deg, #79CFF7 0%, #4FC3F7 100%);
+          color: #0A0B0C;
+          border-color: #79CFF7;
+        }
+        .neo-tab:hover {
+          background: rgba(159, 161, 163, 0.2);
+          color: #D9D9D9;
+        }
+        .neo-tab.active:hover {
+          background: linear-gradient(135deg, #4FC3F7 0%, #79CFF7 100%);
+          color: #0A0B0C;
+        }
         
         /* Mobile optimizations */
         @media (max-width: 768px) {
@@ -292,11 +367,16 @@ const ProfilePage = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
-            <User className="h-8 w-8 neo-primary" />
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center">
+              <User className="h-8 w-8 text-white" />
+            </div>
             <div>
-              <h1 className="text-3xl font-bold neo-primary">Your Profile</h1>
-              <p className="neo-text-secondary">
-                Manage your athlete profiles and track your hybrid scores
+              <h1 className="text-3xl font-bold neo-primary">
+                {userProfile?.name || 'Your Profile'}
+              </h1>
+              <p className="neo-text-secondary flex items-center">
+                <Mail className="h-4 w-4 mr-2" />
+                {userProfile?.email || 'No email available'}
               </p>
             </div>
           </div>
@@ -310,62 +390,187 @@ const ProfilePage = () => {
           </Button>
         </div>
 
-        {/* Profile Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="neo-card rounded-xl p-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-full bg-blue-500 bg-opacity-20 flex items-center justify-center">
-                <Trophy className="h-6 w-6 neo-primary" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold neo-text-primary">{profileStats.totalProfiles}</div>
-                <div className="text-sm neo-text-secondary">Total Assessments</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="neo-card rounded-xl p-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-full bg-green-500 bg-opacity-20 flex items-center justify-center">
-                <BarChart3 className="h-6 w-6" style={{ color: '#85E26E' }} />
-              </div>
-              <div>
-                <div className="text-2xl font-bold neo-text-primary">{profileStats.latestScore}</div>
-                <div className="text-sm neo-text-secondary">Latest Score</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="neo-card rounded-xl p-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-full bg-purple-500 bg-opacity-20 flex items-center justify-center">
-                <TrendingUp className="h-6 w-6" style={{ color: '#8D5CFF' }} />
-              </div>
-              <div>
-                <div className="text-2xl font-bold neo-text-primary">{profileStats.scoredProfiles}</div>
-                <div className="text-sm neo-text-secondary">Scored Profiles</div>
-              </div>
-            </div>
-          </div>
+        {/* Navigation Tabs */}
+        <div className="flex space-x-2 mb-8">
+          <button
+            className={`neo-tab ${activeTab === 'overview' ? 'active' : ''}`}
+            onClick={() => setActiveTab('overview')}
+          >
+            Overview
+          </button>
+          <button
+            className={`neo-tab ${activeTab === 'interviews' ? 'active' : ''}`}
+            onClick={() => setActiveTab('interviews')}
+          >
+            All Interviews
+          </button>
+          <button
+            className={`neo-tab ${activeTab === 'manage' ? 'active' : ''}`}
+            onClick={() => setActiveTab('manage')}
+          >
+            Manage Profiles
+          </button>
         </div>
 
-        {/* Profiles List */}
-        <div className="space-y-6">
-          {profiles.length === 0 ? (
-            <div className="neo-card rounded-xl p-12 text-center">
-              <Trophy className="h-16 w-16 neo-primary mx-auto mb-4 opacity-50" />
-              <h3 className="text-xl font-semibold neo-text-primary mb-2">No profiles yet</h3>
-              <p className="neo-text-secondary mb-6">Take your first hybrid assessment to get started!</p>
-              <Button 
-                onClick={() => navigate('/')}
-                className="neo-btn-primary"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Take Assessment
-              </Button>
+        {/* Overview Tab */}
+        {activeTab === 'overview' && (
+          <div className="space-y-8">
+            {/* Statistics */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="neo-card rounded-xl p-6">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full bg-blue-500 bg-opacity-20 flex items-center justify-center">
+                    <BarChart3 className="h-6 w-6 neo-primary" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold neo-text-primary">{profileStats.totalInterviews}</div>
+                    <div className="text-sm neo-text-secondary">Total Interviews</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="neo-card rounded-xl p-6">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full bg-green-500 bg-opacity-20 flex items-center justify-center">
+                    <CheckCircle className="h-6 w-6" style={{ color: '#85E26E' }} />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold neo-text-primary">{profileStats.completedInterviews}</div>
+                    <div className="text-sm neo-text-secondary">Completed</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="neo-card rounded-xl p-6">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full bg-yellow-500 bg-opacity-20 flex items-center justify-center">
+                    <Clock className="h-6 w-6" style={{ color: '#FFD700' }} />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold neo-text-primary">{profileStats.inProgressInterviews}</div>
+                    <div className="text-sm neo-text-secondary">In Progress</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="neo-card rounded-xl p-6">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full bg-purple-500 bg-opacity-20 flex items-center justify-center">
+                    <Trophy className="h-6 w-6" style={{ color: '#8D5CFF' }} />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold neo-text-primary">{profileStats.latestScore || '-'}</div>
+                    <div className="text-sm neo-text-secondary">Latest Score</div>
+                  </div>
+                </div>
+              </div>
             </div>
-          ) : (
-            profiles.map((profile) => (
+
+            {/* Account Information */}
+            <div className="neo-card rounded-xl p-6">
+              <h3 className="text-xl font-semibold neo-text-primary mb-4 flex items-center">
+                <User className="h-6 w-6 mr-2" />
+                Account Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <span className="neo-text-secondary">User ID:</span>
+                  <span className="neo-text-primary ml-2 font-mono text-sm">{userProfile?.user_id || 'Not available'}</span>
+                </div>
+                <div>
+                  <span className="neo-text-secondary">Member Since:</span>
+                  <span className="neo-text-primary ml-2">{formatDate(userProfile?.created_at)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* All Interviews Tab */}
+        {activeTab === 'interviews' && (
+          <div className="space-y-6">
+            {allInterviews.length === 0 ? (
+              <div className="neo-card rounded-xl p-12 text-center">
+                <Trophy className="h-16 w-16 neo-primary mx-auto mb-4 opacity-50" />
+                <h3 className="text-xl font-semibold neo-text-primary mb-2">No interviews yet</h3>
+                <p className="neo-text-secondary mb-6">Take your first assessment to get started!</p>
+                <Button 
+                  onClick={() => navigate('/')}
+                  className="neo-btn-primary"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Take Assessment
+                </Button>
+              </div>
+            ) : (
+              allInterviews.map((interview) => {
+                const statusInfo = getStatusInfo(interview.status);
+                const typeInfo = getInterviewTypeInfo(interview.type);
+                const StatusIcon = statusInfo.icon;
+                
+                return (
+                  <div key={interview.id} className="neo-card rounded-xl p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 rounded-full bg-blue-500 bg-opacity-20 flex items-center justify-center">
+                          <StatusIcon className="h-6 w-6" style={{ color: statusInfo.color }} />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold neo-text-primary">
+                            {typeInfo.label}
+                          </h3>
+                          <p className="text-sm neo-text-secondary">{typeInfo.description}</p>
+                          <div className="flex items-center space-x-4 text-sm neo-text-muted mt-1">
+                            <span className="flex items-center">
+                              <Calendar className="h-4 w-4 mr-1" />
+                              {formatDate(interview.created_at)}
+                            </span>
+                            <span className="flex items-center">
+                              <span className="w-2 h-2 rounded-full mr-1" style={{ backgroundColor: statusInfo.color }}></span>
+                              {statusInfo.text}
+                            </span>
+                            {interview.score_data && (
+                              <span className="flex items-center">
+                                <Trophy className="h-4 w-4 mr-1" />
+                                Score: {Math.round(parseFloat(interview.score_data.hybridScore))}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex space-x-2">
+                        {interview.status === 'completed' && interview.score_data && (
+                          <Button
+                            onClick={() => navigate(`/hybrid-score/${interview.id}`)}
+                            className="neo-btn-secondary"
+                            size="sm"
+                          >
+                            <Award className="h-4 w-4 mr-1" />
+                            View Score
+                          </Button>
+                        )}
+                        {interview.status === 'in_progress' && (
+                          <Button
+                            onClick={() => navigate('/')}
+                            className="neo-btn-primary"
+                            size="sm"
+                          >
+                            <Play className="h-4 w-4 mr-1" />
+                            Resume
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        )}
+
+        {/* Manage Profiles Tab */}
+        {activeTab === 'manage' && (
               <div key={profile.id} className="neo-card rounded-xl p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-4">
