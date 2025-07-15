@@ -84,7 +84,8 @@ const HybridInterviewFlow = () => {
         }
       );
 
-      setSessionId(response.data.session_id);
+      const sessionId = response.data.session_id;
+      setSessionId(sessionId);
       
       // Add the initial message from the response
       const initialMessage = {
@@ -102,8 +103,8 @@ const HybridInterviewFlow = () => {
       });
 
       // Automatically send the first user message to kick off the conversation
-      setTimeout(() => {
-        sendMessage("Let's get started");
+      setTimeout(async () => {
+        await sendFirstMessage(sessionId);
       }, 1000);
 
     } catch (error) {
@@ -111,6 +112,53 @@ const HybridInterviewFlow = () => {
       toast({
         title: "Error starting interview",
         description: "Please try again or refresh the page.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Send the initial message to start the conversation
+  const sendFirstMessage = async (sessionId) => {
+    const userMessage = {
+      role: 'user',
+      content: "Let's get started",
+      timestamp: new Date().toISOString(),
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}/api/hybrid-interview/chat`,
+        {
+          messages: [userMessage],
+          session_id: sessionId,
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const assistantMessage = {
+        role: 'assistant',
+        content: response.data.response,
+        timestamp: new Date().toISOString(),
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
+      setCurrentIndex(response.data.current_index || 1);
+
+    } catch (error) {
+      console.error('Error sending first message:', error);
+      toast({
+        title: "Error starting conversation",
+        description: "Please try again.",
         variant: "destructive",
       });
     } finally {
