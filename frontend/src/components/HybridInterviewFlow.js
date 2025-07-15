@@ -69,10 +69,11 @@ const HybridInterviewFlow = () => {
       // Handle the response - it's an array with the score data
       const scoreData = Array.isArray(data) ? data[0] : data;
       
-      setScoreData(scoreData);
+      // Store score data in Supabase
+      await storeScoreDataInSupabase(scoreData);
       
-      // Animate scores
-      animateScores(scoreData);
+      // Redirect to score results page
+      navigate(`/hybrid-score/${currentProfileId}`);
       
     } catch (error) {
       if (error.name === 'AbortError') {
@@ -92,6 +93,37 @@ const HybridInterviewFlow = () => {
       }
     } finally {
       setIsCalculatingScore(false);
+    }
+  };
+
+  // Store score data in Supabase
+  const storeScoreDataInSupabase = async (scoreData) => {
+    try {
+      if (!currentProfileId) {
+        console.error('No profile ID available to store score data');
+        return;
+      }
+
+      const response = await axios.post(
+        `${BACKEND_URL}/api/athlete-profile/${currentProfileId}/score`,
+        scoreData,
+        {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      console.log('Score data stored successfully:', response.data);
+      
+    } catch (error) {
+      console.error('Error storing score data in Supabase:', error);
+      toast({
+        title: "Warning",
+        description: "Score calculated but may not be saved. Please contact support if this persists.",
+        variant: "destructive",
+      });
     }
   };
 
