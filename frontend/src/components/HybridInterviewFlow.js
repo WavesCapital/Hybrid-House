@@ -297,11 +297,10 @@ const HybridInterviewFlow = () => {
       if (response.data.completed) {
         setIsCompleted(true);
         
-        // Only trigger webhook if not already calculating
-        if (!isCalculatingScore) {
-          setIsCalculatingScore(true);
-          triggerWebhookForScore(response.data.response);
-        }
+        // Wait for backend webhook to complete and then fetch score data
+        setTimeout(() => {
+          fetchScoreData();
+        }, 3000); // Wait 3 seconds for backend webhook to complete
       }
 
     } catch (error) {
