@@ -808,6 +808,9 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                     
                     profile_result = supabase.table('athlete_profiles').insert(profile_data).execute()
                     
+                    print(f"Profile created with ID: {profile_data['id']}")
+                    print(f"Profile result: {profile_result}")
+                    
                     # Note: Frontend handles webhook calls to display results immediately
                     # Backend doesn't trigger webhook to avoid duplicate calls
                     
@@ -817,12 +820,15 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                         "updated_at": datetime.utcnow().isoformat()
                     }).eq('id', session_id).execute()
                     
-                    return {
+                    completion_response = {
                         "response": f"Thanks, {profile_json.get('first_name', 'there')}! Your hybrid score essentials are complete. Your Hybrid Score will hit your inbox in minutes! 🚀",
                         "completed": True,
                         "profile_id": profile_data["id"],
                         "profile_data": profile_json
                     }
+                    
+                    print(f"Returning completion response: {completion_response}")
+                    return completion_response
                     
                 except Exception as e:
                     print(f"Error parsing hybrid interview completion response: {e}")
