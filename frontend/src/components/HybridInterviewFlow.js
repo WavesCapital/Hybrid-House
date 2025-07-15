@@ -107,8 +107,8 @@ const HybridInterviewFlow = () => {
     }
   }, [navigate, session, toast]);
 
-  // Store score data in Supabase
-  const storeScoreDataInSupabase = async (scoreData, profileId) => {
+  // Memoized store score function
+  const storeScoreDataInSupabase = useCallback(async (scoreData, profileId) => {
     try {
       if (!profileId) {
         console.error('No profile ID available to store score data');
