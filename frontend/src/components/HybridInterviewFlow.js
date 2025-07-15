@@ -519,8 +519,8 @@ const HybridInterviewFlow = () => {
               </div>
             </div>
 
-            {/* Progress Bar */}
-            <div className="mb-8">
+            {/* Sticky Progress Bar */}
+            <div className="sticky top-0 z-10 bg-opacity-95 backdrop-blur-sm py-4 mb-8" style={{ background: 'rgba(10, 11, 12, 0.95)' }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm neo-text-secondary font-medium">
                   Progress
@@ -548,8 +548,8 @@ const HybridInterviewFlow = () => {
               </div>
             </div>
 
-            {/* Messages */}
-            <div className="space-y-6 min-h-[400px] pb-6">
+            {/* Messages - with bottom padding for sticky input */}
+            <div className="space-y-6 min-h-[400px] pb-32">
               {(() => {
                 // Filter messages to only show first assistant message when multiple consecutive assistant messages exist
                 const getDisplayMessages = (messages) => {
