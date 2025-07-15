@@ -1171,9 +1171,9 @@ class BackendTester:
             return False
 
     def run_all_tests(self):
-        """Run all backend tests for Kendall Toole 55-Question System"""
+        """Run all backend tests with focus on Hybrid Interview Flow"""
         print("=" * 80)
-        print("KENDALL TOOLE 55-QUESTION PERSONALITY SYSTEM TESTING")
+        print("HYBRID INTERVIEW FLOW - ESSENTIAL QUESTIONS TESTING")
         print("=" * 80)
         
         tests = [
@@ -1182,29 +1182,32 @@ class BackendTester:
             ("System Health Comprehensive", self.test_system_health_comprehensive),
             ("Database Table Accessibility", self.test_database_table_accessibility),
             
-            # Kendall Toole 55-Question System Tests (Primary Focus)
-            ("Kendall Toole Personality System", self.test_kendall_toole_personality_system),
-            ("Kendall Toole 55-Question System", self.test_kendall_toole_55_question_system),
-            ("New Section Structure", self.test_new_section_structure),
-            ("Conversational Tone Verification", self.test_conversational_tone_verification),
-            ("v4.4-NP-LN System Prompt", self.test_v44_np_ln_system_prompt),
-            ("Primer Message Verification", self.test_primer_message_verification),
-            ("Section Recaps Verification", self.test_section_recaps_verification),
-            ("55-Question Completion Logic", self.test_55_question_completion_logic),
-            ("Stateful Conversations Verification", self.test_stateful_conversations_verification),
-            ("Authentication & Session Management", self.test_authentication_session_management),
+            # Hybrid Interview Flow Tests (Primary Focus)
+            ("Hybrid Interview Start Endpoint", self.test_hybrid_interview_start_endpoint),
+            ("Hybrid Interview Chat Endpoint", self.test_hybrid_interview_chat_endpoint),
+            ("Essential-Score Prompt v1.0 Configuration", self.test_essential_score_prompt_v10_configuration),
+            ("Hybrid-Athlete Voice Configuration", self.test_hybrid_athlete_voice_configuration),
+            ("Hybrid Gamification Features", self.test_hybrid_gamification_features),
+            ("Hybrid Completion Trigger v1.0", self.test_hybrid_completion_trigger_v10),
+            ("Hybrid Interview Database Operations", self.test_hybrid_interview_database_operations),
+            ("11 Essential Questions Coverage", self.test_11_essential_questions_coverage),
             
             # Supporting System Tests
             ("Unprotected Endpoints", self.test_unprotected_endpoints),
             ("Protected Endpoints (No Token)", self.test_protected_endpoints_without_token),
             ("Protected Endpoints (Invalid Token)", self.test_protected_endpoints_with_invalid_token),
-            ("Interview Flow Endpoints (No Auth)", self.test_interview_flow_endpoints_without_auth),
-            ("Interview Flow Readiness", self.test_interview_flow_readiness),
             ("Supabase Integration", self.test_supabase_connection),
-            ("CORS Configuration", self.test_cors_configuration),
             ("JWT Configuration", self.test_jwt_secret_configuration),
             ("OpenAI Responses API Integration", self.test_openai_responses_api_integration),
             ("GPT-4.1 Model Configuration", self.test_gpt41_model_configuration),
+            ("Authentication & Session Management", self.test_authentication_session_management),
+            ("Stateful Conversations Verification", self.test_stateful_conversations_verification),
+            
+            # Full Interview System Tests (Secondary)
+            ("Kendall Toole 55-Question System", self.test_kendall_toole_55_question_system),
+            ("Interview Flow Endpoints (No Auth)", self.test_interview_flow_endpoints_without_auth),
+            ("Interview Flow Readiness", self.test_interview_flow_readiness),
+            ("CORS Configuration", self.test_cors_configuration),
             ("Streak Detection System", self.test_streak_detection_system),
             ("Progress Tracking System", self.test_progress_tracking_system),
             ("EmergentIntegrations Removal", self.test_emergentintegrations_removal)
