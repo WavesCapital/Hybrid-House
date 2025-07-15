@@ -200,10 +200,9 @@ const HybridInterviewFlow = () => {
 
       if (response.data.completed) {
         setIsCompleted(true);
-        // Navigate to the original AthleteProfile page to display scores
-        setTimeout(() => {
-          navigate('/paste');
-        }, 2000); // Give a moment for the completion message to be seen
+        
+        // Trigger webhook to get score data
+        triggerWebhookForScore(response.data.response);
       }
 
     } catch (error) {
