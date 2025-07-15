@@ -33,8 +33,8 @@ const HybridInterviewFlow = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Trigger webhook for score calculation
-  const triggerWebhookForScore = async (athleteProfileData, profileId) => {
+  // Memoized trigger webhook function
+  const triggerWebhookForScore = useCallback(async (athleteProfileData, profileId) => {
     try {
       console.log('triggerWebhookForScore called with:', {
         athleteProfileData: athleteProfileData ? 'Present' : 'Missing',
