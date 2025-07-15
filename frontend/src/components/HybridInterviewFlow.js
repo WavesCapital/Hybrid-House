@@ -71,12 +71,38 @@ const HybridInterviewFlow = () => {
       const scoreData = Array.isArray(data) ? data[0] : data;
       
       // Store score data in Supabase FIRST
-      await storeScoreDataInSupabase(scoreData, profileId);
+      const storeSuccess = await storeScoreDataInSupabase(scoreData, profileId);
       
       // Then redirect to score results page using the profileId parameter
       if (profileId) {
         console.log('Redirecting to /hybrid-score/' + profileId);
-        navigate(`/hybrid-score/${profileId}`);
+        
+        // Use multiple methods to ensure redirect works on all browsers
+        try {
+          // Method 1: React Router navigate
+          navigate(`/hybrid-score/${profileId}`);
+          
+          // Method 2: Fallback with setTimeout to ensure execution
+          setTimeout(() => {
+            if (window.location.pathname !== `/hybrid-score/${profileId}`) {
+              console.log('Fallback redirect triggered');
+              navigate(`/hybrid-score/${profileId}`, { replace: true });
+            }
+          }, 100);
+          
+          // Method 3: Last resort - native browser navigation
+          setTimeout(() => {
+            if (window.location.pathname !== `/hybrid-score/${profileId}`) {
+              console.log('Native redirect triggered');
+              window.location.href = `/hybrid-score/${profileId}`;
+            }
+          }, 500);
+          
+        } catch (navError) {
+          console.error('Navigation error:', navError);
+          // Force navigation as last resort
+          window.location.href = `/hybrid-score/${profileId}`;
+        }
       } else {
         console.error('No profile ID available for redirect');
         toast({
