@@ -254,6 +254,123 @@ async def get_athlete_profiles(user: dict = Depends(verify_jwt)):
             detail="Error retrieving athlete profiles"
         )
 
+@api_router.get("/athlete-profiles")
+async def get_user_athlete_profiles(user: dict = Depends(verify_jwt)):
+    """Get all athlete profiles for the authenticated user"""
+    try:
+        user_id = user['sub']
+        
+        # Get all athlete profiles for this user
+        profiles_result = supabase.table('athlete_profiles').select('*').eq('user_id', user_id).order('created_at', desc=True).execute()
+        
+        if not profiles_result.data:
+            return {
+                "profiles": [],
+                "total": 0
+            }
+        
+        # Format the profiles for frontend
+        formatted_profiles = []
+        for profile in profiles_result.data:
+            formatted_profile = {
+                "id": profile['id'],
+                "profile_json": profile.get('profile_json', {}),
+                "score_data": profile.get('score_data', None),
+                "completed_at": profile.get('completed_at'),
+                "created_at": profile.get('created_at'),
+                "updated_at": profile.get('updated_at')
+            }
+            formatted_profiles.append(formatted_profile)
+        
+        return {
+            "profiles": formatted_profiles,
+            "total": len(formatted_profiles)
+        }
+        
+    except Exception as e:
+        print(f"Error fetching user athlete profiles: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching athlete profiles: {str(e)}"
+        )
+
+@api_router.put("/athlete-profile/{profile_id}")
+async def update_athlete_profile(profile_id: str, profile_data: dict, user: dict = Depends(verify_jwt)):
+    """Update an existing athlete profile"""
+    try:
+        user_id = user['sub']
+        
+        # Validate that the profile belongs to the user
+        existing_profile = supabase.table('athlete_profiles').select('*').eq('id', profile_id).eq('user_id', user_id).execute()
+        
+        if not existing_profile.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Profile not found"
+            )
+        
+        # Update the profile
+        updated_data = {
+            "profile_json": profile_data,
+            "score_data": None,  # Clear existing score data when profile is updated
+            "updated_at": datetime.utcnow().isoformat()
+        }
+        
+        update_result = supabase.table('athlete_profiles').update(updated_data).eq('id', profile_id).eq('user_id', user_id).execute()
+        
+        if not update_result.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Profile not found"
+            )
+        
+        return {
+            "message": "Profile updated successfully",
+            "profile_id": profile_id,
+            "updated_at": update_result.data[0]['updated_at']
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error updating athlete profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error updating athlete profile: {str(e)}"
+        )
+
+@api_router.delete("/athlete-profile/{profile_id}")
+async def delete_athlete_profile(profile_id: str, user: dict = Depends(verify_jwt)):
+    """Delete an athlete profile"""
+    try:
+        user_id = user['sub']
+        
+        # Validate that the profile belongs to the user
+        existing_profile = supabase.table('athlete_profiles').select('*').eq('id', profile_id).eq('user_id', user_id).execute()
+        
+        if not existing_profile.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Profile not found"
+            )
+        
+        # Delete the profile
+        delete_result = supabase.table('athlete_profiles').delete().eq('id', profile_id).eq('user_id', user_id).execute()
+        
+        return {
+            "message": "Profile deleted successfully",
+            "profile_id": profile_id
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error deleting athlete profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error deleting athlete profile: {str(e)}"
+        )
+
 @api_router.get("/athlete-profile/{profile_id}")
 async def get_athlete_profile(profile_id: str, user: dict = Depends(verify_jwt)):
     """Get athlete profile and score data by profile ID"""
