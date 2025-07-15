@@ -2031,9 +2031,9 @@ class BackendTester:
             return False
 
     def run_all_tests(self):
-        """Run all backend tests with focus on Hybrid Interview Flow"""
+        """Run all backend tests with focus on Hybrid Interview Flow and New Athlete Profile Endpoints"""
         print("=" * 80)
-        print("HYBRID INTERVIEW FLOW - ESSENTIAL QUESTIONS TESTING")
+        print("HYBRID INTERVIEW FLOW & NEW ATHLETE PROFILE ENDPOINTS TESTING")
         print("=" * 80)
         
         tests = [
@@ -2042,7 +2042,13 @@ class BackendTester:
             ("System Health Comprehensive", self.test_system_health_comprehensive),
             ("Database Table Accessibility", self.test_database_table_accessibility),
             
-            # 🎯 PRIMARY TEST: COMPREHENSIVE E2E HYBRID INTERVIEW COMPLETION FLOW
+            # 🎯 PRIMARY TESTS: NEW ATHLETE PROFILE ENDPOINTS (as requested in review)
+            ("🎯 GET Athlete Profile Endpoint", self.test_athlete_profile_get_endpoint),
+            ("🎯 POST Athlete Profile Score Endpoint", self.test_athlete_profile_score_update_endpoint),
+            ("🎯 New Athlete Profile Endpoints Integration", self.test_new_athlete_profile_endpoints_integration),
+            ("🎯 Hybrid Score Redirect Flow Backend Support", self.test_hybrid_score_redirect_flow_backend_support),
+            
+            # 🎯 SECONDARY TEST: COMPREHENSIVE E2E HYBRID INTERVIEW COMPLETION FLOW
             ("🎯 Hybrid Interview Completion Flow E2E", self.test_hybrid_interview_completion_flow_e2e),
             
             # Hybrid Interview Flow Tests (Supporting)
@@ -2058,6 +2064,8 @@ class BackendTester:
             # WEBHOOK DEBUGGING TESTS
             ("Hybrid Interview Completion Flow", self.test_hybrid_interview_completion_flow),
             ("Webhook Data Format Analysis", self.test_webhook_data_format_analysis),
+            ("Webhook Issue Root Cause Analysis", self.test_webhook_issue_root_cause_analysis),
+            ("Backend Completion Response Structure", self.test_backend_completion_response_structure),
             
             # Supporting System Tests
             ("Unprotected Endpoints", self.test_unprotected_endpoints),
@@ -2097,10 +2105,10 @@ class BackendTester:
         print(f"Tests Passed: {passed_tests}/{total_tests}")
         
         if passed_tests == total_tests:
-            print("🎉 ALL TESTS PASSED - Hybrid Interview Flow (Essential Questions) is working correctly!")
+            print("🎉 ALL TESTS PASSED - New Athlete Profile Endpoints & Hybrid Interview Flow working correctly!")
             return True
         else:
-            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in Hybrid Interview Flow")
+            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in backend implementation")
             return False
 
 if __name__ == "__main__":
