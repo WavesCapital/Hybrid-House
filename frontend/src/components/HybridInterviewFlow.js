@@ -622,13 +622,13 @@ const HybridInterviewFlow = () => {
             {!isCompleted && (
               <div className="border-t border-gray-700 pt-6">
                 <div className="flex space-x-4">
-                  <input
-                    type="text"
+                  <textarea
                     value={currentMessage}
                     onChange={(e) => setCurrentMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Type your answer here..."
-                    className="flex-1 px-4 py-3 rounded-xl bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:border-blue-500 focus:outline-none"
+                    placeholder="Type your answer here... (Cmd+Enter for new line)"
+                    className="flex-1 px-4 py-3 rounded-xl bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:border-blue-500 focus:outline-none resize-none"
+                    rows="2"
                     disabled={isLoading}
                   />
                   <Button
