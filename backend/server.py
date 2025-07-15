@@ -788,9 +788,12 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
             if "ATHLETE_PROFILE:::" in response_text:
                 # Parse the JSON profile
                 try:
+                    print(f"ATHLETE_PROFILE::: detected in response: {response_text[:200]}...")
                     # Split on ATHLETE_PROFILE::: and get the JSON part
                     json_part = response_text.split("ATHLETE_PROFILE:::")[1].strip()
+                    print(f"JSON part extracted: {json_part}")
                     profile_json = json.loads(json_part)
+                    print(f"Profile JSON parsed: {profile_json}")
                     
                     # Add session metadata
                     profile_json["meta_session_id"] = session_id
@@ -832,6 +835,7 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                     
                 except Exception as e:
                     print(f"Error parsing hybrid interview completion response: {e}")
+                    print(f"Failed to parse response_text: {response_text}")
                     # Mark session as error
                     supabase.table('interview_sessions').update({
                         "status": "error",
