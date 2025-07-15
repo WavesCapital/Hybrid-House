@@ -37,57 +37,60 @@ const HybridInterviewFlow = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Trigger webhook for score calculation
-  const triggerWebhookForScore = async (athleteProfileData) => {
+  // Fetch score data from database after backend webhook completes
+  const fetchScoreData = async () => {
     try {
-      // Set up abort controller for timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 150000); // 2 minutes 30 seconds
-
-      const response = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          athleteProfile: athleteProfileData,
-          deliverable: 'score'
-        }),
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Webhook request failed with status: ${response.status}`);
-      }
-
-      const data = await response.json();
+      setIsCalculatingScore(true);
       
-      // Handle the response - it's an array with the score data
-      const scoreData = Array.isArray(data) ? data[0] : data;
+      // Poll the database for score data
+      let attempts = 0;
+      const maxAttempts = 30; // 30 attempts * 5 seconds = 2.5 minutes
       
-      setScoreData(scoreData);
+      const pollForScore = async () => {
+        attempts++;
+        
+        try {
+          const response = await axios.get(
+            `${BACKEND_URL}/api/athlete-profile`,
+            {
+              headers: {
+                'Authorization': `Bearer ${session.access_token}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          
+          if (response.data?.score_data) {
+            const scoreData = response.data.score_data;
+            setScoreData(scoreData);
+            animateScores(scoreData);
+            return true;
+          }
+          
+          if (attempts < maxAttempts) {
+            setTimeout(pollForScore, 5000); // Check every 5 seconds
+          } else {
+            throw new Error('Score calculation timed out');
+          }
+          
+        } catch (error) {
+          if (attempts < maxAttempts) {
+            setTimeout(pollForScore, 5000);
+          } else {
+            throw error;
+          }
+        }
+      };
       
-      // Animate scores
-      animateScores(scoreData);
+      await pollForScore();
       
     } catch (error) {
-      if (error.name === 'AbortError') {
-        console.error('Webhook request timed out after 2.5 minutes');
-        toast({
-          title: "Score calculation timed out",
-          description: "The analysis is taking longer than expected. Please try again.",
-          variant: "destructive",
-        });
-      } else {
-        console.error('Error calling webhook:', error);
-        toast({
-          title: "Error calculating score",
-          description: "Please try again later.",
-          variant: "destructive",
-        });
-      }
+      console.error('Error fetching score data:', error);
+      toast({
+        title: "Error loading scores",
+        description: "Please refresh the page to try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsCalculatingScore(false);
     }
