@@ -173,10 +173,10 @@ const ProfilePage = () => {
     } finally {
       setIsCalculating(false);
     }
-  };
+  }, [editForm, session, toast]);
 
   // Delete profile
-  const deleteProfile = async (profileId) => {
+  const deleteProfile = useCallback(async (profileId) => {
     if (!window.confirm('Are you sure you want to delete this profile? This action cannot be undone.')) {
       return;
     }
