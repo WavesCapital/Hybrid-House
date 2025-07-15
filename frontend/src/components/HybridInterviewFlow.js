@@ -39,6 +39,11 @@ const HybridInterviewFlow = () => {
   // Trigger webhook for score calculation
   const triggerWebhookForScore = async (athleteProfileData, profileId) => {
     try {
+      console.log('triggerWebhookForScore called with:', {
+        athleteProfileData: athleteProfileData ? 'Present' : 'Missing',
+        profileId: profileId
+      });
+      
       setIsCalculatingScore(true);
       
       // Set up abort controller for timeout
@@ -73,6 +78,7 @@ const HybridInterviewFlow = () => {
       
       // Redirect to score results page using the profileId parameter
       if (profileId) {
+        console.log('Redirecting to /hybrid-score/' + profileId);
         navigate(`/hybrid-score/${profileId}`);
       } else {
         console.error('No profile ID available for redirect');
