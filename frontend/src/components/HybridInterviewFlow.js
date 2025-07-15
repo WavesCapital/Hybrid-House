@@ -36,6 +36,79 @@ const HybridInterviewFlow = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Trigger webhook for score calculation
+  const triggerWebhookForScore = async (athleteProfileData) => {
+    try {
+      const response = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          athleteProfile: athleteProfileData,
+          deliverable: 'hybrid-score'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Webhook request failed');
+      }
+
+      const data = await response.json();
+      setScoreData(data);
+      
+      // Animate scores
+      animateScores(data);
+      
+    } catch (error) {
+      console.error('Error calling webhook:', error);
+      toast({
+        title: "Error calculating score",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Animate score numbers
+  const animateScores = (data) => {
+    const scoresToAnimate = [
+      { key: 'hybrid', value: data.hybridScore },
+      { key: 'strength', value: data.strengthScore },
+      { key: 'speed', value: data.speedScore },
+      { key: 'vo2', value: data.vo2Score },
+      { key: 'distance', value: data.distanceScore },
+      { key: 'volume', value: data.volumeScore },
+      { key: 'endurance', value: data.enduranceScore },
+      { key: 'recovery', value: data.recoveryScore }
+    ];
+
+    scoresToAnimate.forEach(({ key, value }) => {
+      if (value) {
+        const targetValue = parseFloat(value);
+        const duration = 2000; // 2 seconds
+        const startTime = Date.now();
+        
+        const animate = () => {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const currentValue = targetValue * progress;
+          
+          setAnimatedScores(prev => ({
+            ...prev,
+            [key]: currentValue
+          }));
+          
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          }
+        };
+        
+        animate();
+      }
+    });
+  };
+
   // Confetti animation function
   const triggerConfetti = () => {
     confetti({
