@@ -240,11 +240,11 @@ frontend:
 
   - task: "Hybrid Interview Frontend Component (11 questions)"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/HybridInterviewFlow.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -252,6 +252,9 @@ frontend:
       - working: "NA"
         agent: "main"
         comment: "✅ HYBRID INTERVIEW FRONTEND IMPLEMENTED: Created HybridInterviewFlow component adapted for 11 essential questions. Updates: 1) Set TOTAL_QUESTIONS to 11, 2) Updated section progress for 4 sections (Basic Info, Body Metrics, Running Performance, Strength Performance), 3) API calls to /api/hybrid-interview/start and /api/hybrid-interview/chat endpoints, 4) Updated header to 'Hybrid Score - Essential Questions', 5) Maintained all existing functionality (confetti, streak tracking, filtering, completion handling). Ready for backend testing."
+      - working: true
+        agent: "main"
+        comment: "✅ AUTO-START FUNCTIONALITY FIXED: Fixed the issue where hybrid interview wasn't automatically showing first question. Added automatic 'Let's get started' message sent after session creation to kick off the conversation. Created separate sendFirstMessage function to handle the initial auto-start message. UI now shows 'Hybrid Score - Essential Questions' with proper progress tracking (0 of 11 questions) and auto-starts conversation after user login."
 
   - task: "Route Updates for Interview Flow"
     implemented: true
