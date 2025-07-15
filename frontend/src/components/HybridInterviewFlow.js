@@ -88,6 +88,8 @@ const HybridInterviewFlow = () => {
           variant: "destructive",
         });
       }
+    } finally {
+      setIsCalculatingScore(false);
     }
   };
 
