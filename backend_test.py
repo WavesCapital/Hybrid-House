@@ -1197,6 +1197,10 @@ class BackendTester:
             ("Hybrid Interview Database Operations", self.test_hybrid_interview_database_operations),
             ("11 Essential Questions Coverage", self.test_11_essential_questions_coverage),
             
+            # SPECIAL WEBHOOK DEBUGGING TESTS
+            ("Hybrid Interview Completion Flow", self.test_hybrid_interview_completion_flow),
+            ("Webhook Data Format Analysis", self.test_webhook_data_format_analysis),
+            
             # Supporting System Tests
             ("Unprotected Endpoints", self.test_unprotected_endpoints),
             ("Protected Endpoints (No Token)", self.test_protected_endpoints_without_token),
