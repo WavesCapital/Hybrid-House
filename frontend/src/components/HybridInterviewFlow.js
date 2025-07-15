@@ -467,6 +467,16 @@ const HybridInterviewFlow = () => {
                 <h1 className="text-2xl font-bold neo-primary">Hybrid Score - Essential Questions</h1>
                 <p className="neo-text-secondary">Quick assessment for your hybrid athlete score</p>
               </div>
+              <div className="flex space-x-3">
+                <Button
+                  onClick={() => navigate('/profile')}
+                  className="neo-btn-secondary"
+                  size="sm"
+                >
+                  <User className="h-4 w-4 mr-1" />
+                  Profile
+                </Button>
+              </div>
             </div>
 
             {/* Sticky Progress Bar */}
