@@ -341,9 +341,44 @@ const HybridInterviewFlow = () => {
       </style>
 
       <div className="container mx-auto px-6 py-8 max-w-4xl">
-        <Card className="neo-card">
-          <div className="p-8">
-            
+        {!sessionId ? (
+          <div className="gradient-border max-w-2xl mx-auto">
+            <div className="gradient-border-inner p-12 text-center">
+              <h2 className="text-4xl font-bold neo-primary mb-6">
+                Ready for Your Hybrid Score?
+              </h2>
+              <p className="neo-text-secondary mb-8 text-lg leading-relaxed">
+                I'm your high-energy Hybrid House Coach! I'll ask you just 11 essential questions to 
+                calculate your Hybrid Score quickly. This focused assessment covers the core metrics 
+                that matter most. Takes about 3 minutes. Let's get your score! 🏃‍♂️💪
+              </p>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center space-x-3 neo-text-secondary">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <span>11 essential questions only</span>
+                </div>
+                <div className="flex items-center space-x-3 neo-text-secondary">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <span>Auto-save your progress</span>
+                </div>
+                <div className="flex items-center space-x-3 neo-text-secondary">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <span>Skip any question anytime</span>
+                </div>
+              </div>
+              
+              <Button
+                onClick={startInterview}
+                disabled={isLoading}
+                className="neo-btn-primary w-full max-w-xs h-14 text-lg font-semibold"
+              >
+                {isLoading ? 'Starting...' : 'Start Hybrid Interview 🚀'}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div>
