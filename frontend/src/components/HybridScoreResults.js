@@ -23,7 +23,23 @@ const HybridScoreResults = () => {
   const navigate = useNavigate();
   const canvasRef = useRef(null);
 
-  // Generate share image (same as AthleteProfile)
+  // Memoize score array to prevent recreation on every render
+  const scoreBreakdown = useMemo(() => [
+    { key: 'strength', label: 'Strength', value: scoreData?.strengthScore, comment: scoreData?.strengthComment, color: '#79CFF7', icon: Dumbbell },
+    { key: 'speed', label: 'Speed', value: scoreData?.speedScore, comment: scoreData?.speedComment, color: '#85E26E', icon: Zap },
+    { key: 'vo2', label: 'VO₂ Max', value: scoreData?.vo2Score, comment: scoreData?.vo2Comment, color: '#8D5CFF', icon: Heart },
+    { key: 'distance', label: 'Distance', value: scoreData?.distanceScore, comment: scoreData?.distanceComment, color: '#79CFF7', icon: MapPin },
+    { key: 'volume', label: 'Volume', value: scoreData?.volumeScore, comment: scoreData?.volumeComment, color: '#85E26E', icon: BarChart3 },
+    { key: 'endurance', label: 'Endurance', value: scoreData?.enduranceScore, comment: scoreData?.enduranceComment, color: '#8D5CFF', icon: Activity },
+    { key: 'recovery', label: 'Recovery', value: scoreData?.recoveryScore, comment: scoreData?.recoveryComment, color: '#79CFF7', icon: Moon }
+  ], [scoreData]);
+
+  // Memoize hybrid score calculation
+  const hybridScoreValue = useMemo(() => {
+    return scoreData ? Math.round(parseFloat(scoreData.hybridScore)) : 0;
+  }, [scoreData]);
+
+  // Generate share image (memoized)
   const generateShareImage = async () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
