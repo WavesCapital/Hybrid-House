@@ -602,9 +602,6 @@ const HybridInterviewFlow = () => {
                       <div className="text-base leading-relaxed whitespace-pre-wrap">
                         {message.content}
                       </div>
-                      <div className="text-xs opacity-60 mt-3">
-                        {new Date(message.timestamp).toLocaleTimeString()}
-                      </div>
                     </div>
                   </div>
                 ));
