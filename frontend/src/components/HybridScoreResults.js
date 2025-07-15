@@ -146,7 +146,7 @@ const HybridScoreResults = () => {
     } catch (error) {
       console.error('Error sharing:', error);
       // Fallback to simple text share
-      const shareText = `🏆 My Hybrid Athlete Score: ${Math.round(parseFloat(scoreData.hybridScore))}/100 - Get yours at HybridHouse.ai`;
+      const shareText = `🏆 My Hybrid Athlete Score: ${hybridScoreValue}/100 - Get yours at HybridHouse.ai`;
       if (navigator.share) {
         navigator.share({
           title: 'My Hybrid Athlete Score',
