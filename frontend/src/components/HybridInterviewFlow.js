@@ -299,35 +299,10 @@ const HybridInterviewFlow = () => {
       setMessages(prev => [...prev, assistantMessage]);
       setCurrentIndex(response.data.current_index || currentIndex + 1);
 
-      // Handle confetti milestones
-      if (response.data.milestone_detected) {
-        setTimeout(() => {
-          triggerConfetti();
-          toast({
-            title: "Milestone Reached! 🎉",
-            description: `Great progress! You're ${Math.round((response.data.current_index / TOTAL_QUESTIONS) * 100)}% done!`,
-          });
-        }, 1000);
-      }
+      // Handle confetti milestones - REMOVED
+      // Handle streak detection - REMOVED
 
-      // Handle streak detection
-      if (response.data.streak_detected) {
-        setStreakCount(prev => prev + 1);
-        setTimeout(() => {
-          triggerStreakAnimation();
-          toast({
-            title: "Streak Bonus! 🔥",
-            description: "You're on fire! Keep the momentum going!",
-          });
-        }, 1000);
-      }
-
-      // Update streak count based on user message
-      if (content.toLowerCase() !== 'skip') {
-        setStreakCount(prev => prev + 1);
-      } else {
-        setStreakCount(0);
-      }
+      // Update streak count based on user message - REMOVED
 
       if (response.data.completed) {
         setIsCompleted(true);
