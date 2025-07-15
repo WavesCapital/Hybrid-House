@@ -46,7 +46,7 @@ const HybridInterviewFlow = () => {
         },
         body: JSON.stringify({
           athleteProfile: athleteProfileData,
-          deliverable: 'hybrid-score'
+          deliverable: 'score'
         })
       });
 
