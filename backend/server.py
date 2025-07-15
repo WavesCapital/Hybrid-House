@@ -752,7 +752,8 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                     return {
                         "response": f"Thanks, {profile_json.get('first_name', 'there')}! Your hybrid score essentials are complete. Your Hybrid Score will hit your inbox in minutes! 🚀",
                         "completed": True,
-                        "profile_id": profile_data["id"]
+                        "profile_id": profile_data["id"],
+                        "profile_data": profile_json
                     }
                     
                 except Exception as e:
