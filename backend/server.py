@@ -254,6 +254,97 @@ async def get_athlete_profiles(user: dict = Depends(verify_jwt)):
             detail="Error retrieving athlete profiles"
         )
 
+@api_router.get("/user-profile")
+async def get_user_profile(user: dict = Depends(verify_jwt)):
+    """Get user profile information"""
+    try:
+        user_id = user['sub']
+        user_email = user.get('email', 'Not provided')
+        user_name = user.get('name', user.get('given_name', 'User'))
+        
+        # Get user profile from database
+        user_profile_result = supabase.table('user_profiles').select('*').eq('id', user_id).execute()
+        
+        user_profile = None
+        if user_profile_result.data:
+            user_profile = user_profile_result.data[0]
+        
+        return {
+            "user_id": user_id,
+            "email": user_email,
+            "name": user_name,
+            "profile": user_profile,
+            "created_at": user_profile.get('created_at') if user_profile else None
+        }
+        
+    except Exception as e:
+        print(f"Error fetching user profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching user profile: {str(e)}"
+        )
+
+@api_router.get("/all-interviews")
+async def get_all_user_interviews(user: dict = Depends(verify_jwt)):
+    """Get all interview sessions for the authenticated user (both hybrid and full)"""
+    try:
+        user_id = user['sub']
+        
+        # Get all interview sessions for this user
+        sessions_result = supabase.table('interview_sessions').select('*').eq('user_id', user_id).order('created_at', desc=True).execute()
+        
+        # Get all athlete profiles for this user
+        profiles_result = supabase.table('athlete_profiles').select('*').eq('user_id', user_id).order('created_at', desc=True).execute()
+        
+        # Combine and format the data
+        all_interviews = []
+        
+        # Add completed interviews with scores
+        for profile in profiles_result.data:
+            interview_data = {
+                "id": profile['id'],
+                "type": "hybrid",  # All current profiles are hybrid
+                "status": "completed",
+                "profile_json": profile.get('profile_json', {}),
+                "score_data": profile.get('score_data', None),
+                "completed_at": profile.get('completed_at'),
+                "created_at": profile.get('created_at'),
+                "updated_at": profile.get('updated_at')
+            }
+            all_interviews.append(interview_data)
+        
+        # Add incomplete sessions
+        for session in sessions_result.data:
+            if session['status'] != 'complete':
+                interview_data = {
+                    "id": session['id'],
+                    "type": session.get('interview_type', 'hybrid'),
+                    "status": session['status'],
+                    "profile_json": None,
+                    "score_data": None,
+                    "completed_at": None,
+                    "created_at": session.get('created_at'),
+                    "updated_at": session.get('updated_at')
+                }
+                all_interviews.append(interview_data)
+        
+        # Sort by created_at
+        all_interviews.sort(key=lambda x: x['created_at'], reverse=True)
+        
+        return {
+            "interviews": all_interviews,
+            "total": len(all_interviews),
+            "completed": len([i for i in all_interviews if i['status'] == 'completed']),
+            "in_progress": len([i for i in all_interviews if i['status'] == 'in_progress'])
+        }
+        
+    except Exception as e:
+        print(f"Error fetching all interviews: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching all interviews: {str(e)}"
+        )
+
 @api_router.get("/athlete-profiles")
 async def get_user_athlete_profiles(user: dict = Depends(verify_jwt)):
     """Get all athlete profiles for the authenticated user"""
