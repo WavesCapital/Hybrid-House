@@ -632,7 +632,7 @@ async def start_hybrid_interview(user: dict = Depends(verify_jwt)):
 async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = Depends(verify_jwt)):
     """Send message to hybrid interview session"""
     try:
-        user_id = user['id']
+        user_id = user['sub']
         session_id = user_message.session_id
         
         # Get current session
