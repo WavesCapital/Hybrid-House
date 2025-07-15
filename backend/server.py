@@ -764,6 +764,7 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                 response_text = ""
                 
             print(f"Hybrid interview - Using FIRST output message only: {response_text[:100]}...")
+            print(f"Full response text length: {len(response_text)}")
             
             if not response_text:
                 raise Exception("No response text generated")
