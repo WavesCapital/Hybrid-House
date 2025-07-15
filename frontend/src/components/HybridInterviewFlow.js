@@ -165,29 +165,7 @@ const HybridInterviewFlow = () => {
     }
   };
 
-  // Confetti animation function
-  const triggerConfetti = () => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#79CFF7', '#4FC3F7', '#D9D9D9', '#9FA1A3']
-    });
-  };
-
-  // Streak animation function
-  const triggerStreakAnimation = () => {
-    setShowStreakBadge(true);
-    setTimeout(() => setShowStreakBadge(false), 3000);
-    
-    // Fire streak confetti
-    confetti({
-      particleCount: 50,
-      spread: 60,
-      origin: { y: 0.4 },
-      colors: ['#FF6B6B', '#FFE66D', '#4ECDC4', '#45B7D1']
-    });
-  };
+  // Confetti and streak functions removed to clean up UI
 
   // Generate progress bar with filled and empty blocks
   const generateProgressBar = (current, total) => {
