@@ -516,12 +516,6 @@ const HybridInterviewFlow = () => {
                 <span className="text-sm font-semibold neo-primary min-w-[40px]">
                   {Math.round(progress)}%
                 </span>
-                {streakCount >= 3 && (
-                  <div className="flex items-center space-x-1 text-xs neo-text-secondary">
-                    <span>🔥</span>
-                    <span>{streakCount}</span>
-                  </div>
-                )}
               </div>
             </div>
 
