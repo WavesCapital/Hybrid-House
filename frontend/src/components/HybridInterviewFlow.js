@@ -39,6 +39,10 @@ const HybridInterviewFlow = () => {
   // Trigger webhook for score calculation
   const triggerWebhookForScore = async (athleteProfileData) => {
     try {
+      // Set up abort controller for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 150000); // 2 minutes 30 seconds
+
       const response = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
         method: 'POST',
         headers: {
@@ -47,26 +51,42 @@ const HybridInterviewFlow = () => {
         body: JSON.stringify({
           athleteProfile: athleteProfileData,
           deliverable: 'score'
-        })
+        }),
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        throw new Error('Webhook request failed');
+        throw new Error(`Webhook request failed with status: ${response.status}`);
       }
 
       const data = await response.json();
-      setScoreData(data);
+      
+      // Handle the response - it's an array with the score data
+      const scoreData = Array.isArray(data) ? data[0] : data;
+      
+      setScoreData(scoreData);
       
       // Animate scores
-      animateScores(data);
+      animateScores(scoreData);
       
     } catch (error) {
-      console.error('Error calling webhook:', error);
-      toast({
-        title: "Error calculating score",
-        description: "Please try again later.",
-        variant: "destructive",
-      });
+      if (error.name === 'AbortError') {
+        console.error('Webhook request timed out after 2.5 minutes');
+        toast({
+          title: "Score calculation timed out",
+          description: "The analysis is taking longer than expected. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        console.error('Error calling webhook:', error);
+        toast({
+          title: "Error calculating score",
+          description: "Please try again later.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
