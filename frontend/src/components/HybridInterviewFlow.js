@@ -639,23 +639,6 @@ const HybridInterviewFlow = () => {
                       Thanks for completing the essential questions! We're now computing your Hybrid Athlete Score and will redirect you to your results.
                     </p>
                     
-                    {/* Progress Bar */}
-                    <div className="mb-6">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm neo-text-secondary">Analysis Progress</span>
-                        <span className="text-sm neo-primary font-semibold">{Math.round(calculationProgress)}%</span>
-                      </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div 
-                          className="h-2 rounded-full transition-all duration-300 ease-out"
-                          style={{ 
-                            width: `${calculationProgress}%`,
-                            background: 'linear-gradient(90deg, #79CFF7 0%, #4FC3F7 100%)'
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                    
                     <div className="flex items-center justify-center space-x-3">
                       <Loader2 className="h-6 w-6 neo-cyan animate-spin" />
                       <span className="text-sm neo-text-muted">Coach is thinking...</span>
