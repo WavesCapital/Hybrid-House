@@ -299,9 +299,9 @@ const HybridInterviewFlow = () => {
       if (response.data.completed) {
         setIsCompleted(true);
         
-        // Call webhook immediately with the athlete profile data
-        if (!isCalculatingScore) {
-          triggerWebhookForScore(response.data.response);
+        // Call webhook with the actual athlete profile JSON data
+        if (!isCalculatingScore && response.data.profile_data) {
+          triggerWebhookForScore(response.data.profile_data);
         }
       }
 
