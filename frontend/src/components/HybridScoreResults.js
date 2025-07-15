@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
 import { 
   Trophy, Target, AlertCircle, Dumbbell, Zap, Heart, MapPin, 
-  BarChart3, Activity, Moon, ArrowLeft, Share2, Download
+  BarChart3, Activity, Moon, Share2
 } from 'lucide-react';
 import axios from 'axios';
 
@@ -21,6 +21,204 @@ const HybridScoreResults = () => {
   const { user, session } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const canvasRef = useRef(null);
+
+  // Generate share image (same as AthleteProfile)
+  const generateShareImage = async () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas size
+    canvas.width = 1200;
+    canvas.height = 600;
+    
+    // Create gradient background matching Neo design
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    gradient.addColorStop(0, '#0A0B0C');
+    gradient.addColorStop(0.5, '#111314');
+    gradient.addColorStop(1, '#0A0B0C');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Add subtle texture
+    for (let i = 0; i < 800; i++) {
+      ctx.fillStyle = `rgba(121, 207, 247, ${Math.random() * 0.02})`;
+      ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 1, 1);
+    }
+    
+    // Title
+    ctx.fillStyle = '#D9D9D9';
+    ctx.font = 'bold 48px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('My Hybrid Athlete Score', canvas.width / 2, 80);
+    
+    // Main score with Neo blue
+    const hybridScore = Math.round(parseFloat(scoreData.hybridScore));
+    ctx.fillStyle = '#79CFF7';
+    ctx.font = 'bold 120px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.fillText(hybridScore.toString(), canvas.width / 2, 220);
+    
+    // Subtitle
+    ctx.fillStyle = '#9FA1A3';
+    ctx.font = '24px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.fillText('Overall hybrid-fitness score', canvas.width / 2, 260);
+    
+    // Component scores
+    const scores = [
+      { label: 'Strength', value: Math.round(parseFloat(scoreData.strengthScore)), color: '#79CFF7' },
+      { label: 'Speed', value: Math.round(parseFloat(scoreData.speedScore)), color: '#85E26E' },
+      { label: 'VO₂', value: Math.round(parseFloat(scoreData.vo2Score)), color: '#8D5CFF' },
+      { label: 'Endurance', value: Math.round(parseFloat(scoreData.enduranceScore)), color: '#79CFF7' }
+    ];
+    
+    const startX = 150;
+    const scoreWidth = (canvas.width - 300) / 4;
+    
+    scores.forEach((score, index) => {
+      const x = startX + (index * scoreWidth) + (scoreWidth / 2);
+      const y = 380;
+      
+      // Score circle background
+      ctx.beginPath();
+      ctx.arc(x, y, 60, 0, 2 * Math.PI);
+      ctx.fillStyle = '#111314';
+      ctx.fill();
+      
+      // Score value
+      ctx.fillStyle = score.color;
+      ctx.font = 'bold 36px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(score.value.toString(), x, y + 12);
+      
+      // Score label
+      ctx.fillStyle = '#9FA1A3';
+      ctx.font = '18px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.fillText(score.label, x, y + 90);
+    });
+    
+    // Branding
+    ctx.fillStyle = '#6B6E71';
+    ctx.font = '20px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Get your score at HybridHouse.ai', canvas.width / 2, canvas.height - 30);
+    
+    return canvas.toDataURL('image/png', 0.9);
+  };
+
+  // Handle share functionality (same as AthleteProfile)
+  const handleShare = async () => {
+    try {
+      const imageDataUrl = await generateShareImage();
+      
+      // Convert data URL to blob
+      const response = await fetch(imageDataUrl);
+      const blob = await response.blob();
+      
+      const shareText = `🏆 My Hybrid Athlete Score: ${Math.round(parseFloat(scoreData.hybridScore))}/100\n\nStrength: ${Math.round(parseFloat(scoreData.strengthScore))} | Speed: ${Math.round(parseFloat(scoreData.speedScore))} | VO₂: ${Math.round(parseFloat(scoreData.vo2Score))} | Endurance: ${Math.round(parseFloat(scoreData.enduranceScore))}\n\nGet your score at HybridHouse.ai`;
+      
+      // Check if native sharing is available
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'hybrid-score.png', { type: 'image/png' })] })) {
+        await navigator.share({
+          title: 'My Hybrid Athlete Score',
+          text: shareText,
+          files: [new File([blob], 'hybrid-score.png', { type: 'image/png' })]
+        });
+      } else {
+        // Fallback: Show share options
+        showShareOptions(imageDataUrl, shareText);
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      // Fallback to simple text share
+      const shareText = `🏆 My Hybrid Athlete Score: ${Math.round(parseFloat(scoreData.hybridScore))}/100 - Get yours at HybridHouse.ai`;
+      if (navigator.share) {
+        navigator.share({
+          title: 'My Hybrid Athlete Score',
+          text: shareText
+        });
+      }
+    }
+  };
+
+  // Show share options modal (same as AthleteProfile)
+  const showShareOptions = (imageDataUrl, shareText) => {
+    // Create a temporary modal with share options using Neo design
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    `;
+    
+    const content = document.createElement('div');
+    content.style.cssText = `
+      background: #111314;
+      padding: 32px;
+      border-radius: 16px;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+      border: 1px solid #1A1C1D;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.8);
+    `;
+    
+    const encodedText = encodeURIComponent(shareText);
+    const encodedUrl = encodeURIComponent('https://HybridHouse.ai');
+    
+    // Function to copy image to clipboard
+    const copyImageToClipboard = async () => {
+      try {
+        const response = await fetch(imageDataUrl);
+        const blob = await response.blob();
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'image/png': blob
+          })
+        ]);
+        alert('Image copied to clipboard!');
+      } catch (err) {
+        console.error('Failed to copy image: ', err);
+        alert('Failed to copy image to clipboard');
+      }
+    };
+    
+    content.innerHTML = `
+      <h3 style="color: #D9D9D9; margin-bottom: 24px; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 24px; font-weight: 600;">Share Your Hybrid Score</h3>
+      <div style="margin-bottom: 24px;">
+        <img src="${imageDataUrl}" style="max-width: 100%; height: auto; border-radius: 12px; border: 1px solid #1A1C1D;" alt="Hybrid Score" />
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 12px; margin-bottom: 24px;">
+        <a href="https://twitter.com/intent/tweet?text=${encodedText}" target="_blank" style="background: #79CFF7; color: #0A0B0C; padding: 12px 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Twitter</a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}" target="_blank" style="background: #8D5CFF; color: #D9D9D9; padding: 12px 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Facebook</a>
+        <a href="instagram://library?AssetPath=${encodeURIComponent(imageDataUrl)}" style="background: #85E26E; color: #0A0B0C; padding: 12px 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Instagram</a>
+        <button id="copyImageBtn" style="background: #1A1C1D; color: #9FA1A3; padding: 12px 8px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Copy Image</button>
+        <button onclick="navigator.clipboard.writeText('${shareText.replace(/'/g, "\\'")}'); alert('Text copied to clipboard!')" style="background: #1A1C1D; color: #9FA1A3; padding: 12px 8px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Copy Text</button>
+        <a href="${imageDataUrl}" download="hybrid-score.png" style="background: #85E26E; color: #0A0B0C; padding: 12px 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Download</a>
+      </div>
+      <button onclick="this.parentElement.parentElement.remove()" style="background: transparent; color: #6B6E71; padding: 8px 16px; border-radius: 8px; border: 2px solid #6B6E71; cursor: pointer; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Close</button>
+    `;
+    
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+    
+    // Add event listener for copy image button
+    const copyImageBtn = content.querySelector('#copyImageBtn');
+    copyImageBtn.addEventListener('click', copyImageToClipboard);
+    
+    // Close on click outside
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.remove();
+      }
+    });
+  };
 
   // Animate score numbers
   const animateScores = (data) => {
