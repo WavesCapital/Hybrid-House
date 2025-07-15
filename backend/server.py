@@ -967,8 +967,8 @@ async def chat_interview(
             
             profile_result = supabase.table('athlete_profiles').insert(profile_data).execute()
             
-            # Trigger score computation
-            await trigger_score_computation(profile_data["id"], profile_json)
+            # Note: For hybrid interviews, webhook is called by frontend to display results immediately
+            # Backend doesn't trigger webhook to avoid duplicate calls
             
             # Update session status
             supabase.table('interview_sessions').update({
