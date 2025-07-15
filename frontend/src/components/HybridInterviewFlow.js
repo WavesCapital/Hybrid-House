@@ -101,6 +101,11 @@ const HybridInterviewFlow = () => {
         description: "Your answers will be auto-saved as we go.",
       });
 
+      // Automatically send the first user message to kick off the conversation
+      setTimeout(() => {
+        sendMessage("Let's get started");
+      }, 1000);
+
     } catch (error) {
       console.error('Error starting interview:', error);
       toast({
