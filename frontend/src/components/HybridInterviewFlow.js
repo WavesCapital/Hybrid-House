@@ -661,16 +661,36 @@ const HybridInterviewFlow = () => {
                 <div className="gradient-border max-w-md w-full mx-6">
                   <div className="gradient-border-inner p-12 text-center">
                     <h2 className="text-3xl font-bold neo-primary mb-6">
-                      Calculating Your Hybrid Score! 🎉
+                      {redirectFailed ? 'Score Ready!' : 'Calculating Your Hybrid Score!'} 🎉
                     </h2>
                     <p className="neo-text-secondary mb-8 leading-relaxed">
-                      Thanks for completing the essential questions! We're now computing your Hybrid Athlete Score and will redirect you to your results.
+                      {redirectFailed 
+                        ? 'Your hybrid score has been calculated and saved! Click below to view your results.'
+                        : 'Thanks for completing the essential questions! We\'re now computing your Hybrid Athlete Score and will redirect you to your results.'
+                      }
                     </p>
                     
-                    <div className="flex items-center justify-center space-x-3">
-                      <Loader2 className="h-6 w-6 neo-cyan animate-spin" />
-                      <span className="text-sm neo-text-muted">Coach is thinking...</span>
-                    </div>
+                    {redirectFailed && completedProfileId ? (
+                      <Button
+                        onClick={() => {
+                          navigate(`/hybrid-score/${completedProfileId}`);
+                          // Also try direct navigation as backup
+                          setTimeout(() => {
+                            if (window.location.pathname !== `/hybrid-score/${completedProfileId}`) {
+                              window.location.href = `/hybrid-score/${completedProfileId}`;
+                            }
+                          }, 100);
+                        }}
+                        className="neo-btn-primary mb-6"
+                      >
+                        View Your Score
+                      </Button>
+                    ) : (
+                      <div className="flex items-center justify-center space-x-3">
+                        <Loader2 className="h-6 w-6 neo-cyan animate-spin" />
+                        <span className="text-sm neo-text-muted">Coach is thinking...</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
