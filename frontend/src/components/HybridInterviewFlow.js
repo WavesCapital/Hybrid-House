@@ -109,65 +109,24 @@ const HybridInterviewFlow = () => {
     }
   };
 
-  // Send the initial message to start the conversation
-  const sendFirstMessage = async (sessionId) => {
-    const userMessage = {
-      role: 'user',
-      content: "Let's get started",
-      timestamp: new Date().toISOString(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setIsLoading(true);
-
-    try {
-      const response = await axios.post(
-        `${BACKEND_URL}/api/hybrid-interview/chat`,
-        {
-          messages: [userMessage],
-          session_id: sessionId,
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      const assistantMessage = {
-        role: 'assistant',
-        content: response.data.response,
-        timestamp: new Date().toISOString(),
-      };
-
-      setMessages(prev => [...prev, assistantMessage]);
-      setCurrentIndex(response.data.current_index || 1);
-
-    } catch (error) {
-      console.error('Error sending first message:', error);
-      toast({
-        title: "Error starting conversation",
-        description: "Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Send message
   const sendMessage = async (messageContent = null) => {
     const content = messageContent || currentMessage.trim();
-    
-    if (!content || isLoading) return;
+    if (!content || !sessionId || isLoading) return;
 
-    // Debounce requests to prevent spam
+    // Prevent rapid successive requests (debounce)
     const now = Date.now();
     if (now - lastRequestTime < 1000) {
+      console.log('Request too soon, ignoring...');
       return;
     }
     setLastRequestTime(now);
+
+    // Prevent multiple simultaneous requests
+    if (isLoading) {
+      console.log('Already processing a request, ignoring...');
+      return;
+    }
 
     const userMessage = {
       role: 'user',
