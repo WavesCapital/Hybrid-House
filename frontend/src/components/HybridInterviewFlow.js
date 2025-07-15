@@ -525,14 +525,6 @@ const HybridInterviewFlow = () => {
                 <h1 className="text-2xl font-bold neo-primary">Hybrid Score - Essential Questions</h1>
                 <p className="neo-text-secondary">Quick assessment for your hybrid athlete score</p>
               </div>
-              <div className="text-right">
-                <div className="text-sm neo-text-secondary mb-1">
-                  {sectionInfo.section} • {currentIndex} of {TOTAL_QUESTIONS}
-                </div>
-                <div className="text-xs neo-text-muted">
-                  Section {sectionInfo.sectionProgress}/{sectionInfo.sectionTotal}
-                </div>
-              </div>
             </div>
 
             {/* Progress Bar */}
