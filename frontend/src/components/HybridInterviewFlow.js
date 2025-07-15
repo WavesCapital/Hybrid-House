@@ -311,7 +311,8 @@ const HybridInterviewFlow = () => {
         console.log('Completion response received:', {
           completed: response.data.completed,
           profile_id: profileId,
-          profile_data: response.data.profile_data ? 'Present' : 'Missing'
+          profile_data: response.data.profile_data ? 'Present' : 'Missing',
+          full_response: response.data
         });
         
         if (profileId) {
@@ -319,6 +320,17 @@ const HybridInterviewFlow = () => {
           console.log('Set currentProfileId to:', profileId);
         } else {
           console.error('No profile_id in completion response!', response.data);
+          // Fallback: Try to manually trigger completion and get profile ID
+          toast({
+            title: "Processing...",
+            description: "Finalizing your profile data...",
+          });
+          
+          // Wait a moment and try to force completion
+          setTimeout(() => {
+            sendMessage('FORCE_COMPLETE');
+          }, 1000);
+          return;
         }
         
         // Call webhook with the actual athlete profile JSON data
