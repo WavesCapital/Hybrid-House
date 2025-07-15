@@ -21,8 +21,6 @@ const HybridInterviewFlow = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [scoreData, setScoreData] = useState(null);
-  const [animatedScores, setAnimatedScores] = useState({});
   const [isCalculatingScore, setIsCalculatingScore] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastRequestTime, setLastRequestTime] = useState(0);
