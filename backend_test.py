@@ -113,7 +113,9 @@ class BackendTester:
                         })
                     elif endpoint == "/interview/start":
                         response = self.session.post(f"{API_BASE_URL}{endpoint}", json={})
-                    elif endpoint == "/interview/chat":
+                    elif endpoint == "/hybrid-interview/start":
+                        response = self.session.post(f"{API_BASE_URL}{endpoint}", json={})
+                    elif endpoint == "/hybrid-interview/chat":
                         response = self.session.post(f"{API_BASE_URL}{endpoint}", json={
                             "messages": [{"role": "user", "content": "Hello"}],
                             "session_id": "test-session-id"
