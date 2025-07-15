@@ -295,8 +295,11 @@ const HybridInterviewFlow = () => {
       if (response.data.completed) {
         setIsCompleted(true);
         
-        // Trigger webhook to get score data
-        triggerWebhookForScore(response.data.response);
+        // Only trigger webhook if not already calculating
+        if (!isCalculatingScore) {
+          setIsCalculatingScore(true);
+          triggerWebhookForScore(response.data.response);
+        }
       }
 
     } catch (error) {
