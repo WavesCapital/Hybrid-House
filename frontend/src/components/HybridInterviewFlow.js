@@ -126,45 +126,6 @@ const HybridInterviewFlow = () => {
     }
   };
 
-  // Animate score numbers
-  const animateScores = (data) => {
-    const scoresToAnimate = [
-      { key: 'hybrid', value: data.hybridScore },
-      { key: 'strength', value: data.strengthScore },
-      { key: 'speed', value: data.speedScore },
-      { key: 'vo2', value: data.vo2Score },
-      { key: 'distance', value: data.distanceScore },
-      { key: 'volume', value: data.volumeScore },
-      { key: 'endurance', value: data.enduranceScore },
-      { key: 'recovery', value: data.recoveryScore }
-    ];
-
-    scoresToAnimate.forEach(({ key, value }) => {
-      if (value) {
-        const targetValue = parseFloat(value);
-        const duration = 2000; // 2 seconds
-        const startTime = Date.now();
-        
-        const animate = () => {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const currentValue = targetValue * progress;
-          
-          setAnimatedScores(prev => ({
-            ...prev,
-            [key]: currentValue
-          }));
-          
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          }
-        };
-        
-        animate();
-      }
-    });
-  };
-
   // Confetti animation function
   const triggerConfetti = () => {
     confetti({
