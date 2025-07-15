@@ -91,7 +91,7 @@ const HybridInterviewFlow = () => {
       
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.error('Webhook request timed out after 2.5 minutes');
+        console.error('Webhook request timed out after 4 minutes');
         toast({
           title: "Score calculation timed out",
           description: "The analysis is taking longer than expected. Please try again.",
