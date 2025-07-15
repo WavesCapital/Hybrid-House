@@ -112,7 +112,7 @@ const HybridInterviewFlow = () => {
     try {
       if (!profileId) {
         console.error('No profile ID available to store score data');
-        return;
+        throw new Error('No profile ID available');
       }
 
       const response = await axios.post(
@@ -127,6 +127,7 @@ const HybridInterviewFlow = () => {
       );
 
       console.log('Score data stored successfully:', response.data);
+      return true;
       
     } catch (error) {
       console.error('Error storing score data in Supabase:', error);
@@ -135,6 +136,7 @@ const HybridInterviewFlow = () => {
         description: "Score calculated but may not be saved. Please contact support if this persists.",
         variant: "destructive",
       });
+      return false;
     }
   };
 
