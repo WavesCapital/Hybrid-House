@@ -517,7 +517,9 @@ const HybridInterviewFlow = () => {
                   className="neo-btn-secondary"
                   size="sm"
                 >
-                  <User className="h-4 w-4 mr-1" />
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center mr-2">
+                    <User className="h-3 w-3 text-white" />
+                  </div>
                   Profile
                 </Button>
               </div>
