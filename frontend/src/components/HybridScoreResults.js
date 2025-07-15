@@ -237,7 +237,7 @@ const HybridScoreResults = () => {
   };
 
   // Animate score numbers
-  const animateScores = (data) => {
+  const animateScores = useCallback((data) => {
     const scoresToAnimate = [
       { key: 'hybrid', value: data.hybridScore },
       { key: 'strength', value: data.strengthScore },
