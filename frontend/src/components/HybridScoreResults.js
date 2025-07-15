@@ -539,6 +539,9 @@ const HybridScoreResults = () => {
           </section>
         </div>
       </div>
+      
+      {/* Hidden canvas for share image generation */}
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
     </div>
   );
 };
