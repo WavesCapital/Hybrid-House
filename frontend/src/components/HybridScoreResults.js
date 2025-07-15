@@ -273,7 +273,7 @@ const HybridScoreResults = () => {
         animate();
       }
     });
-  };
+  }, []);
 
   // Fetch score data from Supabase
   useEffect(() => {
