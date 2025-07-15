@@ -302,7 +302,7 @@ const HybridInterviewFlow = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentMessage, isLoading, lastRequestTime, sessionId, session, isCalculatingScore, toast, triggerWebhookForScore]);
 
   const skipQuestion = () => {
     if (isLoading) return;
