@@ -571,237 +571,254 @@ const ProfilePage = () => {
 
         {/* Manage Profiles Tab */}
         {activeTab === 'manage' && (
-              <div key={profile.id} className="neo-card rounded-xl p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 rounded-full bg-blue-500 bg-opacity-20 flex items-center justify-center">
-                      <User className="h-6 w-6 neo-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold neo-text-primary">
-                        {profile.profile_json.first_name || 'Unnamed Profile'}
-                      </h3>
-                      <div className="flex items-center space-x-4 text-sm neo-text-secondary">
-                        <span className="flex items-center">
-                          <Calendar className="h-4 w-4 mr-1" />
-                          {formatDate(profile.created_at)}
-                        </span>
-                        {profile.score_data && (
+          <div className="space-y-6">
+            {profiles.length === 0 ? (
+              <div className="neo-card rounded-xl p-12 text-center">
+                <Trophy className="h-16 w-16 neo-primary mx-auto mb-4 opacity-50" />
+                <h3 className="text-xl font-semibold neo-text-primary mb-2">No profiles yet</h3>
+                <p className="neo-text-secondary mb-6">Take your first hybrid assessment to get started!</p>
+                <Button 
+                  onClick={() => navigate('/')}
+                  className="neo-btn-primary"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Take Assessment
+                </Button>
+              </div>
+            ) : (
+              profiles.map((profile) => (
+                <div key={profile.id} className="neo-card rounded-xl p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 rounded-full bg-blue-500 bg-opacity-20 flex items-center justify-center">
+                        <User className="h-6 w-6 neo-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold neo-text-primary">
+                          {profile.profile_json.first_name || 'Unnamed Profile'}
+                        </h3>
+                        <div className="flex items-center space-x-4 text-sm neo-text-secondary">
                           <span className="flex items-center">
-                            <Trophy className="h-4 w-4 mr-1" />
-                            Score: {Math.round(parseFloat(profile.score_data.hybridScore))}
+                            <Calendar className="h-4 w-4 mr-1" />
+                            {formatDate(profile.created_at)}
                           </span>
-                        )}
+                          {profile.score_data && (
+                            <span className="flex items-center">
+                              <Trophy className="h-4 w-4 mr-1" />
+                              Score: {Math.round(parseFloat(profile.score_data.hybridScore))}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex space-x-2">
-                    {profile.score_data && (
+                    
+                    <div className="flex space-x-2">
+                      {profile.score_data && (
+                        <Button
+                          onClick={() => navigate(`/hybrid-score/${profile.id}`)}
+                          className="neo-btn-secondary"
+                          size="sm"
+                        >
+                          <BarChart3 className="h-4 w-4" />
+                        </Button>
+                      )}
                       <Button
-                        onClick={() => navigate(`/hybrid-score/${profile.id}`)}
+                        onClick={() => startEditing(profile)}
                         className="neo-btn-secondary"
                         size="sm"
+                        disabled={editingProfile === profile.id}
                       >
-                        <BarChart3 className="h-4 w-4" />
+                        <Edit3 className="h-4 w-4" />
                       </Button>
-                    )}
-                    <Button
-                      onClick={() => startEditing(profile)}
-                      className="neo-btn-secondary"
-                      size="sm"
-                      disabled={editingProfile === profile.id}
-                    >
-                      <Edit3 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      onClick={() => deleteProfile(profile.id)}
-                      className="neo-btn-secondary hover:bg-red-500 hover:bg-opacity-20"
-                      size="sm"
-                      disabled={editingProfile === profile.id}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                      <Button
+                        onClick={() => deleteProfile(profile.id)}
+                        className="neo-btn-secondary hover:bg-red-500 hover:bg-opacity-20"
+                        size="sm"
+                        disabled={editingProfile === profile.id}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
 
-                {editingProfile === profile.id ? (
-                  <div className="space-y-4 border-t border-gray-700 pt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium neo-text-secondary mb-1">
-                          First Name
-                        </label>
-                        <input
-                          type="text"
-                          value={editForm.first_name}
-                          onChange={(e) => setEditForm({...editForm, first_name: e.target.value})}
-                          className="neo-input w-full"
-                        />
+                  {editingProfile === profile.id ? (
+                    <div className="space-y-4 border-t border-gray-700 pt-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium neo-text-secondary mb-1">
+                            First Name
+                          </label>
+                          <input
+                            type="text"
+                            value={editForm.first_name}
+                            onChange={(e) => setEditForm({...editForm, first_name: e.target.value})}
+                            className="neo-input w-full"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium neo-text-secondary mb-1">
+                            Sex
+                          </label>
+                          <select
+                            value={editForm.sex}
+                            onChange={(e) => setEditForm({...editForm, sex: e.target.value})}
+                            className="neo-input w-full"
+                          >
+                            <option value="">Select...</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium neo-text-secondary mb-1">
+                            Body Metrics
+                          </label>
+                          <input
+                            type="text"
+                            value={editForm.body_metrics}
+                            onChange={(e) => setEditForm({...editForm, body_metrics: e.target.value})}
+                            className="neo-input w-full"
+                            placeholder="e.g., 163 lbs, VO2 max 54, resting HR 42"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium neo-text-secondary mb-1">
+                            Mile PR
+                          </label>
+                          <input
+                            type="text"
+                            value={editForm.pb_mile}
+                            onChange={(e) => setEditForm({...editForm, pb_mile: e.target.value})}
+                            className="neo-input w-full"
+                            placeholder="e.g., 7:43"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium neo-text-secondary mb-1">
+                            Weekly Miles
+                          </label>
+                          <input
+                            type="number"
+                            value={editForm.weekly_miles}
+                            onChange={(e) => setEditForm({...editForm, weekly_miles: parseInt(e.target.value) || ''})}
+                            className="neo-input w-full"
+                            placeholder="e.g., 15"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium neo-text-secondary mb-1">
+                            Long Run
+                          </label>
+                          <input
+                            type="number"
+                            value={editForm.long_run}
+                            onChange={(e) => setEditForm({...editForm, long_run: parseInt(e.target.value) || ''})}
+                            className="neo-input w-full"
+                            placeholder="e.g., 7"
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium neo-text-secondary mb-1">
-                          Sex
-                        </label>
-                        <select
-                          value={editForm.sex}
-                          onChange={(e) => setEditForm({...editForm, sex: e.target.value})}
-                          className="neo-input w-full"
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium neo-text-secondary mb-1">
+                            Bench Press 1RM
+                          </label>
+                          <input
+                            type="text"
+                            value={editForm.pb_bench_1rm}
+                            onChange={(e) => setEditForm({...editForm, pb_bench_1rm: e.target.value})}
+                            className="neo-input w-full"
+                            placeholder="e.g., 225 lbs x 3 reps"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium neo-text-secondary mb-1">
+                            Squat 1RM
+                          </label>
+                          <input
+                            type="text"
+                            value={editForm.pb_squat_1rm}
+                            onChange={(e) => setEditForm({...editForm, pb_squat_1rm: e.target.value})}
+                            className="neo-input w-full"
+                            placeholder="e.g., 315 lbs"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium neo-text-secondary mb-1">
+                            Deadlift 1RM
+                          </label>
+                          <input
+                            type="text"
+                            value={editForm.pb_deadlift_1rm}
+                            onChange={(e) => setEditForm({...editForm, pb_deadlift_1rm: e.target.value})}
+                            className="neo-input w-full"
+                            placeholder="e.g., 405 lbs"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="flex space-x-3 pt-4">
+                        <Button
+                          onClick={() => saveProfile(profile.id)}
+                          className="neo-btn-primary"
+                          disabled={isCalculating}
                         >
-                          <option value="">Select...</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                        </select>
+                          {isCalculating ? (
+                            <>
+                              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                              Recalculating...
+                            </>
+                          ) : (
+                            <>
+                              <Save className="h-4 w-4 mr-2" />
+                              Save & Recalculate
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          onClick={cancelEditing}
+                          className="neo-btn-secondary"
+                          disabled={isCalculating}
+                        >
+                          <X className="h-4 w-4 mr-2" />
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <span className="neo-text-secondary">Sex:</span>
+                        <span className="neo-text-primary ml-2">{profile.profile_json.sex || 'Not specified'}</span>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium neo-text-secondary mb-1">
-                          Body Metrics
-                        </label>
-                        <input
-                          type="text"
-                          value={editForm.body_metrics}
-                          onChange={(e) => setEditForm({...editForm, body_metrics: e.target.value})}
-                          className="neo-input w-full"
-                          placeholder="e.g., 163 lbs, VO2 max 54, resting HR 42"
-                        />
+                        <span className="neo-text-secondary">Mile PR:</span>
+                        <span className="neo-text-primary ml-2">{profile.profile_json.pb_mile || 'Not specified'}</span>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium neo-text-secondary mb-1">
-                          Mile PR
-                        </label>
-                        <input
-                          type="text"
-                          value={editForm.pb_mile}
-                          onChange={(e) => setEditForm({...editForm, pb_mile: e.target.value})}
-                          className="neo-input w-full"
-                          placeholder="e.g., 7:43"
-                        />
+                        <span className="neo-text-secondary">Weekly Miles:</span>
+                        <span className="neo-text-primary ml-2">{profile.profile_json.weekly_miles || 'Not specified'}</span>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium neo-text-secondary mb-1">
-                          Weekly Miles
-                        </label>
-                        <input
-                          type="number"
-                          value={editForm.weekly_miles}
-                          onChange={(e) => setEditForm({...editForm, weekly_miles: parseInt(e.target.value) || ''})}
-                          className="neo-input w-full"
-                          placeholder="e.g., 15"
-                        />
+                        <span className="neo-text-secondary">Long Run:</span>
+                        <span className="neo-text-primary ml-2">{profile.profile_json.long_run || 'Not specified'}</span>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium neo-text-secondary mb-1">
-                          Long Run
-                        </label>
-                        <input
-                          type="number"
-                          value={editForm.long_run}
-                          onChange={(e) => setEditForm({...editForm, long_run: parseInt(e.target.value) || ''})}
-                          className="neo-input w-full"
-                          placeholder="e.g., 7"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium neo-text-secondary mb-1">
-                          Bench Press 1RM
-                        </label>
-                        <input
-                          type="text"
-                          value={editForm.pb_bench_1rm}
-                          onChange={(e) => setEditForm({...editForm, pb_bench_1rm: e.target.value})}
-                          className="neo-input w-full"
-                          placeholder="e.g., 225 lbs x 3 reps"
-                        />
+                        <span className="neo-text-secondary">Bench Press:</span>
+                        <span className="neo-text-primary ml-2">{profile.profile_json.pb_bench_1rm || 'Not specified'}</span>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium neo-text-secondary mb-1">
-                          Squat 1RM
-                        </label>
-                        <input
-                          type="text"
-                          value={editForm.pb_squat_1rm}
-                          onChange={(e) => setEditForm({...editForm, pb_squat_1rm: e.target.value})}
-                          className="neo-input w-full"
-                          placeholder="e.g., 315 lbs"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium neo-text-secondary mb-1">
-                          Deadlift 1RM
-                        </label>
-                        <input
-                          type="text"
-                          value={editForm.pb_deadlift_1rm}
-                          onChange={(e) => setEditForm({...editForm, pb_deadlift_1rm: e.target.value})}
-                          className="neo-input w-full"
-                          placeholder="e.g., 405 lbs"
-                        />
+                        <span className="neo-text-secondary">Updated:</span>
+                        <span className="neo-text-primary ml-2">{formatDate(profile.updated_at)}</span>
                       </div>
                     </div>
-                    
-                    <div className="flex space-x-3 pt-4">
-                      <Button
-                        onClick={() => saveProfile(profile.id)}
-                        className="neo-btn-primary"
-                        disabled={isCalculating}
-                      >
-                        {isCalculating ? (
-                          <>
-                            <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                            Recalculating...
-                          </>
-                        ) : (
-                          <>
-                            <Save className="h-4 w-4 mr-2" />
-                            Save & Recalculate
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        onClick={cancelEditing}
-                        className="neo-btn-secondary"
-                        disabled={isCalculating}
-                      >
-                        <X className="h-4 w-4 mr-2" />
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <span className="neo-text-secondary">Sex:</span>
-                      <span className="neo-text-primary ml-2">{profile.profile_json.sex || 'Not specified'}</span>
-                    </div>
-                    <div>
-                      <span className="neo-text-secondary">Mile PR:</span>
-                      <span className="neo-text-primary ml-2">{profile.profile_json.pb_mile || 'Not specified'}</span>
-                    </div>
-                    <div>
-                      <span className="neo-text-secondary">Weekly Miles:</span>
-                      <span className="neo-text-primary ml-2">{profile.profile_json.weekly_miles || 'Not specified'}</span>
-                    </div>
-                    <div>
-                      <span className="neo-text-secondary">Long Run:</span>
-                      <span className="neo-text-primary ml-2">{profile.profile_json.long_run || 'Not specified'}</span>
-                    </div>
-                    <div>
-                      <span className="neo-text-secondary">Bench Press:</span>
-                      <span className="neo-text-primary ml-2">{profile.profile_json.pb_bench_1rm || 'Not specified'}</span>
-                    </div>
-                    <div>
-                      <span className="neo-text-secondary">Updated:</span>
-                      <span className="neo-text-primary ml-2">{formatDate(profile.updated_at)}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
