@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AuthForm from './components/AuthForm';
 import AthleteProfile from './components/AthleteProfile';
 import InterviewFlow from './components/InterviewFlow';
+import HybridInterviewFlow from './components/HybridInterviewFlow';
 import './App.css';
 
 // Protected Route Wrapper
