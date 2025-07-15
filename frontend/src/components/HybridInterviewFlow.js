@@ -70,10 +70,10 @@ const HybridInterviewFlow = () => {
       // Handle the response - it's an array with the score data
       const scoreData = Array.isArray(data) ? data[0] : data;
       
-      // Store score data in Supabase
+      // Store score data in Supabase FIRST
       await storeScoreDataInSupabase(scoreData, profileId);
       
-      // Redirect to score results page using the profileId parameter
+      // Then redirect to score results page using the profileId parameter
       if (profileId) {
         console.log('Redirecting to /hybrid-score/' + profileId);
         navigate(`/hybrid-score/${profileId}`);
