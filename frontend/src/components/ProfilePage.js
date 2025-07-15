@@ -318,7 +318,7 @@ const ProfilePage = () => {
                 <Trophy className="h-6 w-6 neo-primary" />
               </div>
               <div>
-                <div className="text-2xl font-bold neo-text-primary">{profiles.length}</div>
+                <div className="text-2xl font-bold neo-text-primary">{profileStats.totalProfiles}</div>
                 <div className="text-sm neo-text-secondary">Total Assessments</div>
               </div>
             </div>
@@ -330,9 +330,7 @@ const ProfilePage = () => {
                 <BarChart3 className="h-6 w-6" style={{ color: '#85E26E' }} />
               </div>
               <div>
-                <div className="text-2xl font-bold neo-text-primary">
-                  {profiles.length > 0 && profiles[0].score_data ? Math.round(parseFloat(profiles[0].score_data.hybridScore)) : '-'}
-                </div>
+                <div className="text-2xl font-bold neo-text-primary">{profileStats.latestScore}</div>
                 <div className="text-sm neo-text-secondary">Latest Score</div>
               </div>
             </div>
@@ -344,9 +342,7 @@ const ProfilePage = () => {
                 <TrendingUp className="h-6 w-6" style={{ color: '#8D5CFF' }} />
               </div>
               <div>
-                <div className="text-2xl font-bold neo-text-primary">
-                  {profiles.filter(p => p.score_data).length}
-                </div>
+                <div className="text-2xl font-bold neo-text-primary">{profileStats.scoredProfiles}</div>
                 <div className="text-sm neo-text-secondary">Scored Profiles</div>
               </div>
             </div>
