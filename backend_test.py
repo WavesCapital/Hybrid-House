@@ -94,7 +94,10 @@ class BackendTester:
             # Interview Flow endpoints
             ("/interview/start", "POST"),
             ("/interview/chat", "POST"),
-            ("/interview/session/test-session-id", "GET")
+            ("/interview/session/test-session-id", "GET"),
+            # Hybrid Interview Flow endpoints
+            ("/hybrid-interview/start", "POST"),
+            ("/hybrid-interview/chat", "POST")
         ]
         
         all_passed = True
