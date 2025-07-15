@@ -197,8 +197,8 @@ const HybridInterviewFlow = () => {
     }
   };
 
-  // Send message
-  const sendMessage = async (messageContent = null) => {
+  // Memoize sendMessage function to prevent unnecessary re-renders
+  const sendMessage = useCallback(async (messageContent = null) => {
     const content = messageContent || currentMessage.trim();
     if (!content || !sessionId || isLoading) return;
 
