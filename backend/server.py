@@ -979,7 +979,8 @@ async def chat_interview(
             return {
                 "response": f"Thanks, {profile_json.get('first_name', 'there')}! I've created your profile with the information provided. Your Hybrid Score will be ready shortly! 🚀",
                 "completed": True,
-                "profile_id": profile_data["id"]
+                "profile_id": profile_data["id"],
+                "profile_data": profile_json
             }
         
         messages.append({
