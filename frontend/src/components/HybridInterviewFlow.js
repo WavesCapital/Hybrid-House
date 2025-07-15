@@ -37,7 +37,7 @@ const HybridInterviewFlow = () => {
   };
 
   // Trigger webhook for score calculation
-  const triggerWebhookForScore = async (athleteProfileData) => {
+  const triggerWebhookForScore = async (athleteProfileData, profileId) => {
     try {
       setIsCalculatingScore(true);
       
@@ -69,10 +69,19 @@ const HybridInterviewFlow = () => {
       const scoreData = Array.isArray(data) ? data[0] : data;
       
       // Store score data in Supabase
-      await storeScoreDataInSupabase(scoreData);
+      await storeScoreDataInSupabase(scoreData, profileId);
       
-      // Redirect to score results page
-      navigate(`/hybrid-score/${currentProfileId}`);
+      // Redirect to score results page using the profileId parameter
+      if (profileId) {
+        navigate(`/hybrid-score/${profileId}`);
+      } else {
+        console.error('No profile ID available for redirect');
+        toast({
+          title: "Error",
+          description: "Unable to redirect to score results. Profile ID missing.",
+          variant: "destructive",
+        });
+      }
       
     } catch (error) {
       if (error.name === 'AbortError') {
@@ -96,15 +105,15 @@ const HybridInterviewFlow = () => {
   };
 
   // Store score data in Supabase
-  const storeScoreDataInSupabase = async (scoreData) => {
+  const storeScoreDataInSupabase = async (scoreData, profileId) => {
     try {
-      if (!currentProfileId) {
+      if (!profileId) {
         console.error('No profile ID available to store score data');
         return;
       }
 
       const response = await axios.post(
-        `${BACKEND_URL}/api/athlete-profile/${currentProfileId}/score`,
+        `${BACKEND_URL}/api/athlete-profile/${profileId}/score`,
         scoreData,
         {
           headers: {
