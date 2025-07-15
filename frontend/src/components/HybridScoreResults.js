@@ -544,8 +544,14 @@ const HybridScoreResults = () => {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/profile')}
                 className="neo-btn-primary px-8 py-3"
+              >
+                View All Scores
+              </Button>
+              <Button
+                onClick={() => navigate('/')}
+                className="neo-btn-secondary px-8 py-3"
               >
                 Take Another Assessment
               </Button>
