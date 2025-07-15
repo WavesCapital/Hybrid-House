@@ -1220,7 +1220,7 @@ async def trigger_score_computation(profile_id: str, profile_json: dict):
             WEBHOOK_URL,
             json=webhook_data,
             headers={"Content-Type": "application/json"},
-            timeout=60  # Increased timeout for score computation
+            timeout=150  # 2.5 minutes timeout
         )
         
         if response.status_code == 200:
