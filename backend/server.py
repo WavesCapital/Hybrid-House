@@ -492,16 +492,14 @@ async def get_athlete_profile(profile_id: str):
         )
 
 @api_router.post("/athlete-profile/{profile_id}/score")
-async def update_athlete_profile_score(profile_id: str, score_data: dict, user: dict = Depends(verify_jwt)):
+async def update_athlete_profile_score(profile_id: str, score_data: dict):
     """Update athlete profile with score data from webhook"""
     try:
-        user_id = user['sub']
-        
-        # Update athlete profile with score data
+        # Update athlete profile with score data (no user filtering)
         update_result = supabase.table('athlete_profiles').update({
             "score_data": score_data,
             "updated_at": datetime.utcnow().isoformat()
-        }).eq('id', profile_id).eq('user_id', user_id).execute()
+        }).eq('id', profile_id).execute()
         
         if not update_result.data:
             raise HTTPException(
