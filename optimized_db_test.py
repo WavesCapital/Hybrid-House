@@ -342,22 +342,33 @@ class OptimizedDBTester:
             
             response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=profile_data)
             
-            if response.status_code == 201:
-                profile = response.json()['profile']
+            if response.status_code == 200:
+                extracted_fields = response.json()
                 
-                # Check if time conversion worked (we can't directly see the individual fields
-                # but we can verify the profile was created successfully)
-                if profile.get('profile_json', {}).get('pb_mile') == "6:30":
+                # Check time conversions
+                expected_conversions = {
+                    "pb_mile_seconds": 390,    # 6:30
+                    "pb_5k_seconds": 1335,     # 22:15  
+                    "pb_10k_seconds": 2730     # 45:30
+                }
+                
+                correct_conversions = 0
+                for field, expected_seconds in expected_conversions.items():
+                    if field in extracted_fields and extracted_fields[field] == expected_seconds:
+                        correct_conversions += 1
+                
+                if correct_conversions == len(expected_conversions):
                     self.log_test("Time Conversion Functionality", True, 
-                                "Time strings properly processed in profile creation")
+                                f"All time conversions working correctly ({correct_conversions}/{len(expected_conversions)})")
                     return True
                 else:
                     self.log_test("Time Conversion Functionality", False, 
-                                "Time conversion may have failed", profile)
+                                f"Time conversion issues ({correct_conversions}/{len(expected_conversions)} correct)", 
+                                extracted_fields)
                     return False
             else:
                 self.log_test("Time Conversion Functionality", False, 
-                            f"Profile creation failed: HTTP {response.status_code}", response.text)
+                            f"Request failed: HTTP {response.status_code}", response.text)
                 return False
                 
         except Exception as e:
