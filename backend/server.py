@@ -459,13 +459,11 @@ async def delete_athlete_profile(profile_id: str, user: dict = Depends(verify_jw
         )
 
 @api_router.get("/athlete-profile/{profile_id}")
-async def get_athlete_profile(profile_id: str, user: dict = Depends(verify_jwt)):
+async def get_athlete_profile(profile_id: str):
     """Get athlete profile and score data by profile ID"""
     try:
-        user_id = user['sub']
-        
-        # Get athlete profile
-        profile_result = supabase.table('athlete_profiles').select('*').eq('id', profile_id).eq('user_id', user_id).execute()
+        # Get athlete profile (no user filtering)
+        profile_result = supabase.table('athlete_profiles').select('*').eq('id', profile_id).execute()
         
         if not profile_result.data:
             raise HTTPException(
