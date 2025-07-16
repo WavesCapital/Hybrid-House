@@ -567,7 +567,7 @@ const ProfilePage = () => {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold neo-primary flex items-center">
                   <Settings className="h-6 w-6 mr-3" />
-                  Your Profile {!user && <span className="text-sm text-yellow-400 ml-2">(Sign in to save changes)</span>}
+                  Your Profile
                 </h2>
                 {!isEditingProfile ? (
                   <Button onClick={() => setIsEditingProfile(true)} className="neo-btn-secondary">
