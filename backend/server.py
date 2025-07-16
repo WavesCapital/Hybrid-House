@@ -795,7 +795,7 @@ async def start_hybrid_interview(user: dict = Depends(verify_jwt)):
             response = openai_client.responses.create(
                 model="gpt-4.1",
                 input=[{"role": "user", "content": "start"}],  # Minimal input to trigger first message
-                instructions=HYBRID_INTERVIEW_SYSTEM_MESSAGE,
+                prompt={"id": "pmpt_6877b2c356e881949e5f4575482b0e1a04e796de3893b2a5"},
                 store=True,  # Store the initial message
                 temperature=0.7
             )
