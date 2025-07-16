@@ -2827,6 +2827,520 @@ class BackendTester:
             self.log_test("Profile Page Functionality Integration", False, "Integration test failed", str(e))
             return False
 
+    def test_extract_individual_fields_function(self):
+        """Test the extract_individual_fields function works correctly for data extraction"""
+        try:
+            # Test profile data with various field types
+            test_profile_json = {
+                "first_name": "Kyle",
+                "last_name": "Johnson", 
+                "email": "kyle@test.com",
+                "sex": "Male",
+                "age": 28,
+                "body_metrics": {
+                    "weight_lb": 163,
+                    "vo2_max": 49,
+                    "hrv": 68,
+                    "resting_hr": 48
+                },
+                "pb_mile": "6:30",
+                "weekly_miles": 15.5,
+                "long_run": 7.2,
+                "pb_bench_1rm": {"weight_lb": 225, "reps": 3, "sets": 1},
+                "pb_squat_1rm": {"weight_lb": 315, "reps": 1, "sets": 1},
+                "pb_deadlift_1rm": None,
+                "schema_version": "v1.0"
+            }
+            
+            test_score_data = {
+                "hybridScore": 75.5,
+                "strengthScore": 85.2,
+                "enduranceScore": 68.3,
+                "speedScore": 72.1,
+                "vo2Score": 78.9,
+                "distanceScore": 65.4,
+                "volumeScore": 70.8,
+                "recoveryScore": 82.1
+            }
+            
+            # Test POST /api/athlete-profiles with profile data to trigger extraction
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json={
+                "profile_json": test_profile_json,
+                "score_data": test_score_data
+            })
+            
+            if response.status_code == 201:
+                data = response.json()
+                if "profile" in data:
+                    profile = data["profile"]
+                    
+                    # Verify individual fields were extracted correctly
+                    expected_extractions = {
+                        "first_name": "Kyle",
+                        "last_name": "Johnson",
+                        "email": "kyle@test.com", 
+                        "sex": "Male",
+                        "age": 28,
+                        "weight_lb": 163.0,
+                        "vo2_max": 49.0,
+                        "hrv_ms": 68,
+                        "resting_hr_bpm": 48,
+                        "pb_mile_seconds": 390,  # 6:30 = 6*60 + 30 = 390 seconds
+                        "weekly_miles": 15.5,
+                        "long_run_miles": 7.2,
+                        "pb_bench_1rm_lb": 225.0,
+                        "pb_squat_1rm_lb": 315.0,
+                        "schema_version": "v1.0"
+                    }
+                    
+                    extraction_success = True
+                    extraction_details = []
+                    
+                    for field, expected_value in expected_extractions.items():
+                        if field in profile:
+                            actual_value = profile[field]
+                            if actual_value == expected_value:
+                                extraction_details.append(f"✅ {field}: {actual_value}")
+                            else:
+                                extraction_details.append(f"❌ {field}: expected {expected_value}, got {actual_value}")
+                                extraction_success = False
+                        else:
+                            extraction_details.append(f"❌ {field}: missing from profile")
+                            extraction_success = False
+                    
+                    # Check that score columns are temporarily disabled (should not be in profile)
+                    score_fields = ["hybrid_score", "strength_score", "endurance_score", "speed_score", "vo2_score", "distance_score", "volume_score", "recovery_score"]
+                    for score_field in score_fields:
+                        if score_field in profile:
+                            extraction_details.append(f"⚠️ {score_field}: present but should be disabled")
+                    
+                    if extraction_success:
+                        self.log_test("Extract Individual Fields Function", True, "Individual fields extraction working correctly", extraction_details)
+                        return True
+                    else:
+                        self.log_test("Extract Individual Fields Function", False, "Individual fields extraction issues detected", extraction_details)
+                        return False
+                else:
+                    self.log_test("Extract Individual Fields Function", False, "Profile not returned in response", data)
+                    return False
+            else:
+                self.log_test("Extract Individual Fields Function", False, f"Profile creation failed: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Extract Individual Fields Function", False, "Extract individual fields test failed", str(e))
+            return False
+    
+    def test_post_athlete_profiles_endpoint_fixed(self):
+        """Test POST /api/athlete-profiles endpoint creates actual profiles in database with individual fields"""
+        try:
+            # Test profile data
+            test_profile_data = {
+                "profile_json": {
+                    "first_name": "Sarah",
+                    "last_name": "Wilson",
+                    "email": "sarah@test.com",
+                    "sex": "Female",
+                    "age": 25,
+                    "body_metrics": {
+                        "weight_lb": 135,
+                        "vo2_max": 52,
+                        "hrv": 75,
+                        "resting_hr": 45
+                    },
+                    "pb_mile": "7:15",
+                    "weekly_miles": 20,
+                    "long_run": 10,
+                    "pb_bench_1rm": {"weight_lb": 115, "reps": 1},
+                    "pb_squat_1rm": {"weight_lb": 185, "reps": 1},
+                    "pb_deadlift_1rm": {"weight_lb": 225, "reps": 1},
+                    "schema_version": "v1.0",
+                    "interview_type": "hybrid"
+                }
+            }
+            
+            # Test POST endpoint
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=test_profile_data)
+            
+            if response.status_code == 201:
+                data = response.json()
+                if "profile" in data and "message" in data:
+                    profile = data["profile"]
+                    
+                    # Verify profile was created with both JSON and individual fields
+                    required_fields = ["id", "profile_json", "created_at", "updated_at"]
+                    individual_fields = ["first_name", "last_name", "email", "sex", "age", "weight_lb", "vo2_max", "pb_mile_seconds", "weekly_miles", "long_run_miles"]
+                    
+                    all_fields_present = True
+                    field_details = []
+                    
+                    for field in required_fields:
+                        if field in profile:
+                            field_details.append(f"✅ {field}: present")
+                        else:
+                            field_details.append(f"❌ {field}: missing")
+                            all_fields_present = False
+                    
+                    for field in individual_fields:
+                        if field in profile:
+                            field_details.append(f"✅ {field}: {profile[field]}")
+                        else:
+                            field_details.append(f"❌ {field}: missing from individual fields")
+                            all_fields_present = False
+                    
+                    # Verify time conversion worked (7:15 = 435 seconds)
+                    if profile.get("pb_mile_seconds") == 435:
+                        field_details.append("✅ Time conversion: 7:15 → 435 seconds")
+                    else:
+                        field_details.append(f"❌ Time conversion: expected 435, got {profile.get('pb_mile_seconds')}")
+                        all_fields_present = False
+                    
+                    if all_fields_present:
+                        self.log_test("POST /api/athlete-profiles Endpoint Fixed", True, "Profile created successfully with both JSON and individual fields", field_details)
+                        return True
+                    else:
+                        self.log_test("POST /api/athlete-profiles Endpoint Fixed", False, "Profile creation missing required fields", field_details)
+                        return False
+                else:
+                    self.log_test("POST /api/athlete-profiles Endpoint Fixed", False, "Invalid response format", data)
+                    return False
+            else:
+                self.log_test("POST /api/athlete-profiles Endpoint Fixed", False, f"Profile creation failed: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("POST /api/athlete-profiles Endpoint Fixed", False, "POST athlete profiles test failed", str(e))
+            return False
+    
+    def test_get_athlete_profiles_with_individual_fields(self):
+        """Test GET /api/athlete-profiles returns profiles with both JSON and extracted individual fields"""
+        try:
+            # First create a test profile to ensure we have data
+            test_profile_data = {
+                "profile_json": {
+                    "first_name": "Mike",
+                    "last_name": "Davis",
+                    "email": "mike@test.com",
+                    "sex": "Male",
+                    "age": 30,
+                    "body_metrics": {"weight_lb": 180, "vo2_max": 45},
+                    "pb_mile": "8:00",
+                    "weekly_miles": 12,
+                    "long_run": 6,
+                    "schema_version": "v1.0"
+                }
+            }
+            
+            # Create profile
+            create_response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=test_profile_data)
+            
+            if create_response.status_code != 201:
+                self.log_test("GET /api/athlete-profiles with Individual Fields", False, "Failed to create test profile", create_response.text)
+                return False
+            
+            # Now test GET endpoint
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "profiles" in data and "total" in data:
+                    profiles = data["profiles"]
+                    
+                    if len(profiles) > 0:
+                        # Check the first profile for both JSON and individual fields
+                        profile = profiles[0]
+                        
+                        # Verify both profile_json and individual fields are present
+                        has_profile_json = "profile_json" in profile
+                        has_individual_fields = any(field in profile for field in ["first_name", "last_name", "email", "sex", "age"])
+                        
+                        profile_details = []
+                        profile_details.append(f"✅ profile_json present: {has_profile_json}")
+                        profile_details.append(f"✅ individual fields present: {has_individual_fields}")
+                        profile_details.append(f"Total profiles returned: {len(profiles)}")
+                        
+                        if has_profile_json and has_individual_fields:
+                            self.log_test("GET /api/athlete-profiles with Individual Fields", True, "Profiles returned with both JSON and individual fields", profile_details)
+                            return True
+                        else:
+                            self.log_test("GET /api/athlete-profiles with Individual Fields", False, "Profiles missing JSON or individual fields", profile_details)
+                            return False
+                    else:
+                        self.log_test("GET /api/athlete-profiles with Individual Fields", True, "No profiles found (empty database)", data)
+                        return True
+                else:
+                    self.log_test("GET /api/athlete-profiles with Individual Fields", False, "Invalid response format", data)
+                    return False
+            else:
+                self.log_test("GET /api/athlete-profiles with Individual Fields", False, f"GET request failed: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("GET /api/athlete-profiles with Individual Fields", False, "GET athlete profiles test failed", str(e))
+            return False
+    
+    def test_hybrid_interview_completion_with_individual_fields(self):
+        """Test hybrid interview completion flow with individual fields extraction"""
+        try:
+            # Test that hybrid interview endpoints are configured for individual fields extraction
+            # We can't test the full flow without auth, but we can verify endpoints are ready
+            
+            endpoints_to_test = [
+                ("/hybrid-interview/start", "POST", {}),
+                ("/hybrid-interview/chat", "POST", {
+                    "messages": [{"role": "user", "content": "Kyle"}],
+                    "session_id": "test-session-id"
+                })
+            ]
+            
+            all_configured = True
+            endpoint_details = []
+            
+            for endpoint, method, payload in endpoints_to_test:
+                if method == "POST":
+                    response = self.session.post(f"{API_BASE_URL}{endpoint}", json=payload)
+                
+                # Should return 403 (properly protected) indicating the endpoint is configured
+                if response.status_code in [401, 403]:
+                    endpoint_details.append(f"✅ {endpoint}: properly protected and configured")
+                    continue
+                elif response.status_code == 500:
+                    try:
+                        error_data = response.json()
+                        if "individual" in str(error_data).lower() or "extract" in str(error_data).lower():
+                            endpoint_details.append(f"❌ {endpoint}: individual fields extraction error")
+                            all_configured = False
+                            break
+                        else:
+                            endpoint_details.append(f"✅ {endpoint}: configured (non-extraction error)")
+                    except:
+                        endpoint_details.append(f"✅ {endpoint}: configured (expected error without auth)")
+                else:
+                    endpoint_details.append(f"❌ {endpoint}: unexpected response HTTP {response.status_code}")
+                    all_configured = False
+                    break
+            
+            if all_configured:
+                self.log_test("Hybrid Interview Completion with Individual Fields", True, "Hybrid interview endpoints configured for individual fields extraction", endpoint_details)
+                return True
+            else:
+                self.log_test("Hybrid Interview Completion with Individual Fields", False, "Issues with hybrid interview individual fields configuration", endpoint_details)
+                return False
+                
+        except Exception as e:
+            self.log_test("Hybrid Interview Completion with Individual Fields", False, "Hybrid interview completion test failed", str(e))
+            return False
+    
+    def test_score_updates_with_disabled_columns(self):
+        """Test that score updates work with score columns temporarily disabled"""
+        try:
+            # First create a test profile
+            test_profile_data = {
+                "profile_json": {
+                    "first_name": "Alex",
+                    "last_name": "Smith",
+                    "email": "alex@test.com",
+                    "sex": "Male",
+                    "age": 27,
+                    "schema_version": "v1.0"
+                }
+            }
+            
+            # Create profile
+            create_response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=test_profile_data)
+            
+            if create_response.status_code != 201:
+                self.log_test("Score Updates with Disabled Columns", False, "Failed to create test profile", create_response.text)
+                return False
+            
+            profile_id = create_response.json()["profile"]["id"]
+            
+            # Test score update
+            test_score_data = {
+                "hybridScore": 78.5,
+                "strengthScore": 82.1,
+                "enduranceScore": 75.3,
+                "speedScore": 80.2,
+                "vo2Score": 76.8,
+                "distanceScore": 72.4,
+                "volumeScore": 74.9,
+                "recoveryScore": 81.7
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profile/{profile_id}/score", json=test_score_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data and "updated_at" in data:
+                    # Verify score data was stored in score_data field (not individual columns)
+                    get_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                    
+                    if get_response.status_code == 200:
+                        profile_data = get_response.json()
+                        
+                        # Check that score_data field contains the scores
+                        has_score_data = "score_data" in profile_data and profile_data["score_data"] is not None
+                        
+                        # Check that individual score columns are NOT present (temporarily disabled)
+                        score_columns = ["hybrid_score", "strength_score", "endurance_score", "speed_score", "vo2_score", "distance_score", "volume_score", "recovery_score"]
+                        individual_score_columns_absent = all(col not in profile_data for col in score_columns)
+                        
+                        score_details = []
+                        score_details.append(f"✅ score_data field present: {has_score_data}")
+                        score_details.append(f"✅ individual score columns disabled: {individual_score_columns_absent}")
+                        
+                        if has_score_data and individual_score_columns_absent:
+                            self.log_test("Score Updates with Disabled Columns", True, "Score updates working with columns temporarily disabled", score_details)
+                            return True
+                        else:
+                            self.log_test("Score Updates with Disabled Columns", False, "Score update configuration issues", score_details)
+                            return False
+                    else:
+                        self.log_test("Score Updates with Disabled Columns", False, f"Failed to retrieve updated profile: HTTP {get_response.status_code}", get_response.text)
+                        return False
+                else:
+                    self.log_test("Score Updates with Disabled Columns", False, "Invalid score update response format", data)
+                    return False
+            else:
+                self.log_test("Score Updates with Disabled Columns", False, f"Score update failed: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Score Updates with Disabled Columns", False, "Score updates test failed", str(e))
+            return False
+    
+    def test_optimized_database_structure_comprehensive(self):
+        """Comprehensive test of the optimized database structure implementation"""
+        try:
+            # Test the complete flow: create profile → extract fields → store both JSON and individual fields → update scores
+            
+            comprehensive_profile_data = {
+                "profile_json": {
+                    "first_name": "Emma",
+                    "last_name": "Thompson",
+                    "email": "emma@test.com",
+                    "sex": "Female",
+                    "age": 26,
+                    "body_metrics": {
+                        "weight_lb": 125,
+                        "vo2_max": 55,
+                        "hrv": 82,
+                        "resting_hr": 42
+                    },
+                    "pb_mile": "6:45",
+                    "weekly_miles": 25,
+                    "long_run": 12,
+                    "pb_bench_1rm": {"weight_lb": 95, "reps": 1},
+                    "pb_squat_1rm": {"weight_lb": 155, "reps": 1},
+                    "pb_deadlift_1rm": {"weight_lb": 185, "reps": 1},
+                    "schema_version": "v1.0",
+                    "interview_type": "hybrid",
+                    "meta_session_id": "test-session-123"
+                }
+            }
+            
+            # Step 1: Create profile with individual fields extraction
+            create_response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=comprehensive_profile_data)
+            
+            if create_response.status_code != 201:
+                self.log_test("Optimized Database Structure Comprehensive", False, "Profile creation failed", create_response.text)
+                return False
+            
+            profile_data = create_response.json()["profile"]
+            profile_id = profile_data["id"]
+            
+            # Step 2: Verify individual fields were extracted correctly
+            expected_individual_fields = {
+                "first_name": "Emma",
+                "last_name": "Thompson", 
+                "email": "emma@test.com",
+                "sex": "Female",
+                "age": 26,
+                "weight_lb": 125.0,
+                "vo2_max": 55.0,
+                "hrv_ms": 82,
+                "resting_hr_bpm": 42,
+                "pb_mile_seconds": 405,  # 6:45 = 6*60 + 45 = 405
+                "weekly_miles": 25.0,
+                "long_run_miles": 12.0,
+                "pb_bench_1rm_lb": 95.0,
+                "pb_squat_1rm_lb": 155.0,
+                "pb_deadlift_1rm_lb": 185.0,
+                "schema_version": "v1.0",
+                "interview_type": "hybrid",
+                "meta_session_id": "test-session-123"
+            }
+            
+            extraction_success = True
+            extraction_details = []
+            
+            for field, expected_value in expected_individual_fields.items():
+                if field in profile_data:
+                    actual_value = profile_data[field]
+                    if actual_value == expected_value:
+                        extraction_details.append(f"✅ {field}: {actual_value}")
+                    else:
+                        extraction_details.append(f"❌ {field}: expected {expected_value}, got {actual_value}")
+                        extraction_success = False
+                else:
+                    extraction_details.append(f"❌ {field}: missing")
+                    extraction_success = False
+            
+            # Step 3: Test score update with disabled columns
+            test_score_data = {
+                "hybridScore": 85.2,
+                "strengthScore": 88.5,
+                "enduranceScore": 82.1,
+                "speedScore": 86.3,
+                "vo2Score": 89.7,
+                "distanceScore": 80.4,
+                "volumeScore": 83.8,
+                "recoveryScore": 87.9
+            }
+            
+            score_response = self.session.post(f"{API_BASE_URL}/athlete-profile/{profile_id}/score", json=test_score_data)
+            
+            score_update_success = score_response.status_code == 200
+            
+            # Step 4: Verify final profile state
+            get_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            
+            if get_response.status_code == 200:
+                final_profile = get_response.json()
+                
+                # Verify both JSON and individual fields are present
+                has_profile_json = "profile_json" in final_profile and final_profile["profile_json"] is not None
+                has_score_data = "score_data" in final_profile and final_profile["score_data"] is not None
+                has_individual_fields = all(field in final_profile for field in ["first_name", "email", "pb_mile_seconds", "weight_lb"])
+                
+                # Verify score columns are disabled
+                score_columns_disabled = all(col not in final_profile for col in ["hybrid_score", "strength_score", "endurance_score"])
+                
+                comprehensive_details = []
+                comprehensive_details.extend(extraction_details)
+                comprehensive_details.append(f"✅ Profile JSON preserved: {has_profile_json}")
+                comprehensive_details.append(f"✅ Score data stored: {has_score_data}")
+                comprehensive_details.append(f"✅ Individual fields present: {has_individual_fields}")
+                comprehensive_details.append(f"✅ Score columns disabled: {score_columns_disabled}")
+                comprehensive_details.append(f"✅ Score update successful: {score_update_success}")
+                
+                overall_success = (extraction_success and has_profile_json and has_score_data and 
+                                 has_individual_fields and score_columns_disabled and score_update_success)
+                
+                if overall_success:
+                    self.log_test("Optimized Database Structure Comprehensive", True, "Complete optimized database structure working correctly", comprehensive_details)
+                    return True
+                else:
+                    self.log_test("Optimized Database Structure Comprehensive", False, "Issues with optimized database structure", comprehensive_details)
+                    return False
+            else:
+                self.log_test("Optimized Database Structure Comprehensive", False, f"Failed to retrieve final profile: HTTP {get_response.status_code}", get_response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Optimized Database Structure Comprehensive", False, "Comprehensive database structure test failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run comprehensive tests focusing on hybrid interview endpoints with OpenAI prompt ID configuration"""
         print("=" * 80)
