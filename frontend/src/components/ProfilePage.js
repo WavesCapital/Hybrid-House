@@ -405,10 +405,8 @@ const ProfilePage = () => {
     // Reset form to original values
     if (userProfile) {
       setProfileForm({
-        first_name: userProfile.first_name || '',
-        last_name: userProfile.last_name || '',
+        name: userProfile.name || '',
         display_name: userProfile.display_name || '',
-        bio: userProfile.bio || '',
         location: userProfile.location || '',
         website: userProfile.website || '',
         gender: userProfile.gender || '',
