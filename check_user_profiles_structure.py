@@ -20,7 +20,7 @@ def check_user_profiles_structure():
     try:
         # Try to insert a minimal record to see what columns are expected
         test_data = {
-            "user_id": "test-user-id",
+            "user_id": "6f14acc7-b2b2-494d-8a38-7e868337a25f",  # Use valid UUID
             "email": "test@example.com"
         }
         
@@ -32,7 +32,7 @@ def check_user_profiles_structure():
             print(f"  - email: {result.data[0]['email']}")
             
             # Clean up test record
-            supabase.table('user_profiles').delete().eq('user_id', 'test-user-id').execute()
+            supabase.table('user_profiles').delete().eq('user_id', '6f14acc7-b2b2-494d-8a38-7e868337a25f').execute()
             
             return True
         else:
