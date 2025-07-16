@@ -265,6 +265,138 @@ const ProfilePage = () => {
     }
   }, [inputForm, navigate, toast, user, session]);
 
+  // User Profile Management Functions
+  const handleUpdateProfile = useCallback(async () => {
+    if (!user || !session) {
+      toast({
+        title: "Error",
+        description: "Please sign in to update your profile",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoadingProfiles(true);
+      const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, profileForm, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      setUserProfile(response.data.profile);
+      setIsEditingProfile(false);
+      toast({
+        title: "Success",
+        description: "Profile updated successfully",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update profile",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingProfiles(false);
+    }
+  }, [profileForm, user, session, toast]);
+
+  const handleAvatarChange = useCallback((e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          title: "Error",
+          description: "File size must be less than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Error",
+          description: "Please select an image file",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setAvatarFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setAvatarPreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  }, [toast]);
+
+  const handleAvatarUpload = useCallback(async () => {
+    if (!avatarFile || !user || !session) return;
+
+    try {
+      setIsLoadingProfiles(true);
+      const formData = new FormData();
+      formData.append('file', avatarFile);
+
+      const response = await axios.post(`${BACKEND_URL}/api/user-profile/me/avatar`, formData, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      setUserProfile(prev => ({
+        ...prev,
+        avatar_url: response.data.avatar_url
+      }));
+      
+      setAvatarFile(null);
+      setAvatarPreview(null);
+      
+      toast({
+        title: "Success",
+        description: "Avatar updated successfully",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload avatar",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingProfiles(false);
+    }
+  }, [avatarFile, user, session, toast]);
+
+  const handleCancelProfileEdit = useCallback(() => {
+    setIsEditingProfile(false);
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    // Reset form to original values
+    if (userProfile) {
+      setProfileForm({
+        first_name: userProfile.first_name || '',
+        last_name: userProfile.last_name || '',
+        display_name: userProfile.display_name || '',
+        bio: userProfile.bio || '',
+        location: userProfile.location || '',
+        website: userProfile.website || '',
+        phone: userProfile.phone || '',
+        gender: userProfile.gender || '',
+        units_preference: userProfile.units_preference || 'imperial',
+        privacy_level: userProfile.privacy_level || 'private'
+      });
+    }
+  }, [userProfile]);
+
   // Format date
   const formatDate = useCallback((dateString) => {
     if (!dateString) return 'Unknown';
