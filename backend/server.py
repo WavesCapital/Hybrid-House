@@ -657,8 +657,87 @@ async def link_athlete_profile(athlete_profile_id: str, user: dict = Depends(ver
 
 # Enhanced Athlete Profile Creation with User Linking
 @api_router.post("/athlete-profiles")
-async def create_athlete_profile(profile_data: dict):
-    """Create a new athlete profile with optimized individual fields"""
+async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify_jwt)):
+    """Create a new athlete profile with optimized individual fields and automatic user linking"""
+    try:
+        user_id = user.get('sub')
+        
+        # Get or create user profile
+        user_profile_result = supabase.table('user_profiles').select('id').eq('user_id', user_id).execute()
+        
+        user_profile_id = None
+        if user_profile_result.data:
+            user_profile_id = user_profile_result.data[0]['id']
+        else:
+            # Create user profile if it doesn't exist
+            default_profile = {
+                "user_id": user_id,
+                "email": user.get('email', ''),
+                "first_name": user.get('user_metadata', {}).get('first_name', ''),
+                "display_name": user.get('user_metadata', {}).get('display_name', user.get('email', '')),
+                "created_at": datetime.utcnow().isoformat(),
+                "updated_at": datetime.utcnow().isoformat()
+            }
+            
+            create_result = supabase.table('user_profiles').insert(default_profile).execute()
+            if create_result.data:
+                user_profile_id = create_result.data[0]['id']
+        
+        # Extract individual fields from profile_json
+        individual_fields = extract_individual_fields(profile_data.get('profile_json', {}))
+        
+        # Create profile with automatic user linking
+        new_profile = {
+            **profile_data,
+            **individual_fields,  # Add extracted individual fields
+            "user_id": user_id,  # Link to authenticated user
+            "user_profile_id": user_profile_id,  # Link to user profile
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat()
+        }
+        
+        # Insert into database with error handling for missing columns
+        try:
+            result = supabase.table('athlete_profiles').insert(new_profile).execute()
+        except Exception as db_error:
+            # If individual columns don't exist yet, fall back to just JSON storage
+            if "does not exist" in str(db_error).lower() or "column" in str(db_error).lower():
+                print(f"⚠️  Individual columns not yet added to database, using JSON-only storage")
+                fallback_profile = {
+                    **profile_data,
+                    "user_id": user_id,
+                    "user_profile_id": user_profile_id,
+                    "created_at": datetime.utcnow().isoformat(),
+                    "updated_at": datetime.utcnow().isoformat()
+                }
+                result = supabase.table('athlete_profiles').insert(fallback_profile).execute()
+            else:
+                raise db_error
+        
+        if not result.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to create profile"
+            )
+        
+        return {
+            "message": "Profile created successfully and linked to user",
+            "profile": result.data[0]
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error creating athlete profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error creating athlete profile: {str(e)}"
+        )
+
+# Create unauthenticated athlete profile (for public access)
+@api_router.post("/athlete-profiles/public")
+async def create_public_athlete_profile(profile_data: dict):
+    """Create a new athlete profile without authentication (for public access)"""
     try:
         # Extract individual fields from profile_json
         individual_fields = extract_individual_fields(profile_data.get('profile_json', {}))
