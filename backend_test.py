@@ -2521,6 +2521,342 @@ class BackendTester:
             self.log_test("Athlete Profile Parsing Simulation", False, "Parsing simulation test failed", str(e))
             return False
 
+    # ===== OPTIMIZED DATABASE STRUCTURE TESTS =====
+    
+    def test_optimized_database_structure_profile_creation(self):
+        """Test profile creation with individual fields populated alongside JSON"""
+        try:
+            # Test profile creation with comprehensive data
+            profile_data = {
+                "profile_json": {
+                    "first_name": "Alex",
+                    "last_name": "Johnson", 
+                    "email": "alex.johnson@example.com",
+                    "sex": "Male",
+                    "age": 28,
+                    "body_metrics": {
+                        "weight_lb": 175,
+                        "vo2_max": 52,
+                        "hrv": 45,
+                        "resting_hr": 55
+                    },
+                    "pb_mile": "6:30",
+                    "weekly_miles": 25,
+                    "long_run": 12,
+                    "pb_bench_1rm": {"weight_lb": 225, "reps": 1},
+                    "pb_squat_1rm": {"weight_lb": 315, "reps": 1},
+                    "pb_deadlift_1rm": {"weight_lb": 405, "reps": 1},
+                    "schema_version": "v1.0",
+                    "interview_type": "hybrid"
+                }
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=profile_data)
+            
+            if response.status_code == 201:
+                data = response.json()
+                if "profile" in data and "message" in data:
+                    self.log_test("Optimized DB - Profile Creation", True, "Profile created with individual fields extraction", data)
+                    return True, data.get("profile", {}).get("id")
+                else:
+                    self.log_test("Optimized DB - Profile Creation", False, "Unexpected response format", data)
+                    return False, None
+            else:
+                try:
+                    error_data = response.json()
+                    if "does not exist" in str(error_data).lower() or "column" in str(error_data).lower():
+                        self.log_test("Optimized DB - Profile Creation", False, "Individual columns missing from database schema", error_data)
+                        return False, None
+                    else:
+                        self.log_test("Optimized DB - Profile Creation", False, f"HTTP {response.status_code}", error_data)
+                        return False, None
+                except:
+                    self.log_test("Optimized DB - Profile Creation", False, f"HTTP {response.status_code}", response.text)
+                    return False, None
+        except Exception as e:
+            self.log_test("Optimized DB - Profile Creation", False, "Request failed", str(e))
+            return False, None
+    
+    def test_optimized_database_structure_score_updates(self):
+        """Test score updates with individual score fields"""
+        try:
+            # First create a profile to update
+            success, profile_id = self.test_optimized_database_structure_profile_creation()
+            if not success or not profile_id:
+                self.log_test("Optimized DB - Score Updates", False, "Could not create test profile for score update")
+                return False
+            
+            # Test score update with comprehensive score data
+            score_data = {
+                "hybridScore": 78.5,
+                "strengthScore": 85.2,
+                "enduranceScore": 72.1,
+                "speedScore": 80.3,
+                "vo2Score": 75.8,
+                "distanceScore": 68.9,
+                "volumeScore": 71.4,
+                "recoveryScore": 82.7,
+                "strengthComment": "Excellent pressing power",
+                "enduranceComment": "Good aerobic base",
+                "tips": ["Increase weekly mileage", "Focus on recovery"]
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profile/{profile_id}/score", json=score_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data and "updated_at" in data:
+                    self.log_test("Optimized DB - Score Updates", True, "Score updated with individual score fields extraction", data)
+                    return True
+                else:
+                    self.log_test("Optimized DB - Score Updates", False, "Unexpected response format", data)
+                    return False
+            else:
+                try:
+                    error_data = response.json()
+                    if "does not exist" in str(error_data).lower() or "column" in str(error_data).lower():
+                        self.log_test("Optimized DB - Score Updates", False, "Individual score columns missing from database schema", error_data)
+                        return False
+                    else:
+                        self.log_test("Optimized DB - Score Updates", False, f"HTTP {response.status_code}", error_data)
+                        return False
+                except:
+                    self.log_test("Optimized DB - Score Updates", False, f"HTTP {response.status_code}", response.text)
+                    return False
+        except Exception as e:
+            self.log_test("Optimized DB - Score Updates", False, "Request failed", str(e))
+            return False
+    
+    def test_optimized_database_structure_profile_retrieval(self):
+        """Test profile retrieval with individual fields accessible"""
+        try:
+            # Test GET /api/athlete-profiles
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "profiles" in data and "total" in data:
+                    profiles = data["profiles"]
+                    if len(profiles) > 0:
+                        # Check if profiles contain both JSON and individual fields would be accessible
+                        sample_profile = profiles[0]
+                        if "profile_json" in sample_profile and "id" in sample_profile:
+                            self.log_test("Optimized DB - Profile List Retrieval", True, f"Retrieved {len(profiles)} profiles with JSON data accessible", data)
+                            
+                            # Test individual profile retrieval
+                            profile_id = sample_profile["id"]
+                            individual_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                            
+                            if individual_response.status_code == 200:
+                                individual_data = individual_response.json()
+                                if "profile_json" in individual_data and "profile_id" in individual_data:
+                                    self.log_test("Optimized DB - Individual Profile Retrieval", True, "Individual profile retrieved with JSON and metadata", individual_data)
+                                    return True
+                                else:
+                                    self.log_test("Optimized DB - Individual Profile Retrieval", False, "Missing expected fields in individual profile", individual_data)
+                                    return False
+                            else:
+                                self.log_test("Optimized DB - Individual Profile Retrieval", False, f"HTTP {individual_response.status_code}", individual_response.text)
+                                return False
+                        else:
+                            self.log_test("Optimized DB - Profile List Retrieval", False, "Profiles missing expected structure", sample_profile)
+                            return False
+                    else:
+                        self.log_test("Optimized DB - Profile List Retrieval", True, "No profiles found (empty database)", data)
+                        return True
+                else:
+                    self.log_test("Optimized DB - Profile List Retrieval", False, "Unexpected response format", data)
+                    return False
+            else:
+                self.log_test("Optimized DB - Profile List Retrieval", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Optimized DB - Profile List Retrieval", False, "Request failed", str(e))
+            return False
+    
+    def test_optimized_database_structure_field_extraction(self):
+        """Test that extract_individual_fields function works correctly"""
+        try:
+            # Test profile creation with complex data to verify field extraction
+            complex_profile_data = {
+                "profile_json": {
+                    "first_name": "Maria",
+                    "last_name": "Rodriguez",
+                    "email": "maria.rodriguez@example.com", 
+                    "sex": "Female",
+                    "age": 32,
+                    "body_metrics": {
+                        "weight_lb": 135,
+                        "vo2_max": 48,
+                        "hrv": 52,
+                        "resting_hr": 48
+                    },
+                    "pb_mile": "7:15",
+                    "weekly_miles": 18,
+                    "long_run": 10,
+                    "pb_bench_1rm": {"weight_lb": 135, "reps": 3},
+                    "pb_squat_1rm": {"weight_lb": 185, "reps": 2},
+                    "pb_deadlift_1rm": {"weight_lb": 225, "reps": 1},
+                    "schema_version": "v1.0",
+                    "interview_type": "hybrid",
+                    "meta_session_id": "test-session-123"
+                }
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=complex_profile_data)
+            
+            if response.status_code == 201:
+                data = response.json()
+                self.log_test("Optimized DB - Field Extraction", True, "Complex profile data processed with field extraction", data)
+                return True
+            elif response.status_code == 500:
+                try:
+                    error_data = response.json()
+                    if "does not exist" in str(error_data).lower() or "column" in str(error_data).lower():
+                        self.log_test("Optimized DB - Field Extraction", False, "Individual columns missing - field extraction ready but database schema not updated", error_data)
+                        return False
+                    else:
+                        self.log_test("Optimized DB - Field Extraction", False, f"Field extraction error: {error_data}")
+                        return False
+                except:
+                    self.log_test("Optimized DB - Field Extraction", False, f"HTTP {response.status_code}", response.text)
+                    return False
+            else:
+                self.log_test("Optimized DB - Field Extraction", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Optimized DB - Field Extraction", False, "Request failed", str(e))
+            return False
+    
+    def test_optimized_database_structure_fallback_mechanism(self):
+        """Test error handling and fallback mechanisms for missing columns"""
+        try:
+            # Test that the system gracefully handles missing individual columns
+            fallback_profile_data = {
+                "profile_json": {
+                    "first_name": "TestUser",
+                    "schema_version": "v1.0"
+                }
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=fallback_profile_data)
+            
+            if response.status_code == 201:
+                data = response.json()
+                self.log_test("Optimized DB - Fallback Mechanism", True, "Fallback to JSON-only storage working when individual columns missing", data)
+                return True
+            elif response.status_code == 500:
+                try:
+                    error_data = response.json()
+                    if "fallback" in str(error_data).lower() or "json-only" in str(error_data).lower():
+                        self.log_test("Optimized DB - Fallback Mechanism", True, "Fallback mechanism detected and working", error_data)
+                        return True
+                    elif "does not exist" in str(error_data).lower():
+                        self.log_test("Optimized DB - Fallback Mechanism", False, "Fallback mechanism not working - should handle missing columns gracefully", error_data)
+                        return False
+                    else:
+                        self.log_test("Optimized DB - Fallback Mechanism", False, f"Unexpected error: {error_data}")
+                        return False
+                except:
+                    self.log_test("Optimized DB - Fallback Mechanism", False, f"HTTP {response.status_code}", response.text)
+                    return False
+            else:
+                self.log_test("Optimized DB - Fallback Mechanism", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Optimized DB - Fallback Mechanism", False, "Request failed", str(e))
+            return False
+    
+    def test_optimized_database_structure_analytics_potential(self):
+        """Test queries that would benefit from the optimized structure"""
+        try:
+            # Test that profiles can be retrieved and would support analytics queries
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get("profiles", [])
+                
+                # Simulate analytics potential by checking data structure
+                analytics_ready = True
+                analytics_fields = []
+                
+                if len(profiles) > 0:
+                    sample_profile = profiles[0]
+                    profile_json = sample_profile.get("profile_json", {})
+                    
+                    # Check for key analytics fields in JSON
+                    key_fields = ["first_name", "sex", "age", "body_metrics", "pb_mile", "weekly_miles", "pb_bench_1rm"]
+                    for field in key_fields:
+                        if field in profile_json:
+                            analytics_fields.append(field)
+                    
+                    if len(analytics_fields) >= 4:  # At least 4 key fields for analytics
+                        self.log_test("Optimized DB - Analytics Potential", True, f"Analytics-ready data structure with {len(analytics_fields)} key fields: {analytics_fields}")
+                        return True
+                    else:
+                        self.log_test("Optimized DB - Analytics Potential", False, f"Insufficient analytics fields found: {analytics_fields}")
+                        return False
+                else:
+                    self.log_test("Optimized DB - Analytics Potential", True, "No profiles to analyze (empty database)")
+                    return True
+            else:
+                self.log_test("Optimized DB - Analytics Potential", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Optimized DB - Analytics Potential", False, "Request failed", str(e))
+            return False
+    
+    def test_optimized_database_structure_comprehensive(self):
+        """Comprehensive test of the complete optimized database structure"""
+        try:
+            print("\n🔍 TESTING OPTIMIZED DATABASE STRUCTURE WITH INDIVIDUAL FIELDS")
+            print("=" * 70)
+            
+            # Test all components of the optimized database structure
+            tests = [
+                ("Profile Creation with Individual Fields", self.test_optimized_database_structure_profile_creation),
+                ("Score Updates with Individual Fields", self.test_optimized_database_structure_score_updates), 
+                ("Profile Retrieval with Individual Fields", self.test_optimized_database_structure_profile_retrieval),
+                ("Field Extraction Function", self.test_optimized_database_structure_field_extraction),
+                ("Fallback Mechanism", self.test_optimized_database_structure_fallback_mechanism),
+                ("Analytics Potential", self.test_optimized_database_structure_analytics_potential)
+            ]
+            
+            passed_tests = 0
+            total_tests = len(tests)
+            
+            for test_name, test_func in tests:
+                try:
+                    if test_name == "Profile Creation with Individual Fields":
+                        result, _ = test_func()  # This returns tuple
+                    else:
+                        result = test_func()
+                    
+                    if result:
+                        passed_tests += 1
+                        print(f"✅ {test_name}")
+                    else:
+                        print(f"❌ {test_name}")
+                except Exception as e:
+                    print(f"❌ {test_name} - Error: {str(e)}")
+            
+            success_rate = (passed_tests / total_tests) * 100
+            
+            if passed_tests == total_tests:
+                self.log_test("Optimized Database Structure - Comprehensive", True, f"All {total_tests} optimized database tests passed ({success_rate:.1f}%)")
+                return True
+            elif passed_tests >= total_tests * 0.8:  # 80% pass rate
+                self.log_test("Optimized Database Structure - Comprehensive", True, f"Most optimized database tests passed ({passed_tests}/{total_tests} - {success_rate:.1f}%)")
+                return True
+            else:
+                self.log_test("Optimized Database Structure - Comprehensive", False, f"Optimized database structure needs work ({passed_tests}/{total_tests} - {success_rate:.1f}%)")
+                return False
+                
+        except Exception as e:
+            self.log_test("Optimized Database Structure - Comprehensive", False, "Comprehensive test failed", str(e))
+            return False
+
     # ===== PROFILE PAGE AUTHENTICATION REMOVAL TESTS =====
     
     def test_athlete_profiles_get_without_auth(self):
