@@ -428,8 +428,21 @@ async def create_athlete_profile(profile_data: dict):
             "updated_at": datetime.utcnow().isoformat()
         }
         
-        # Insert into database
-        result = supabase.table('athlete_profiles').insert(new_profile).execute()
+        # Insert into database with error handling for missing columns
+        try:
+            result = supabase.table('athlete_profiles').insert(new_profile).execute()
+        except Exception as db_error:
+            # If individual columns don't exist yet, fall back to just JSON storage
+            if "does not exist" in str(db_error).lower() or "column" in str(db_error).lower():
+                print(f"⚠️  Individual columns not yet added to database, using JSON-only storage")
+                fallback_profile = {
+                    **profile_data,
+                    "created_at": datetime.utcnow().isoformat(),
+                    "updated_at": datetime.utcnow().isoformat()
+                }
+                result = supabase.table('athlete_profiles').insert(fallback_profile).execute()
+            else:
+                raise db_error
         
         if not result.data:
             raise HTTPException(
