@@ -35,28 +35,12 @@ const ProfilePage = () => {
   // Load profiles and populate form with most recent data
   useEffect(() => {
     const fetchProfiles = async () => {
-      if (!session) {
-        console.log('No session available, skipping profile fetch');
-        return;
-      }
-
       try {
         setIsLoading(true);
         
-        console.log('Fetching profiles with session:', {
-          access_token: session.access_token ? 'Present' : 'Missing',
-          user: user ? 'Present' : 'Missing'
-        });
+        console.log('Fetching profiles without authentication...');
         
-        const response = await axios.get(
-          `${BACKEND_URL}/api/athlete-profiles`,
-          {
-            headers: {
-              'Authorization': `Bearer ${session.access_token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        const response = await axios.get(`${BACKEND_URL}/api/athlete-profiles`);
 
         console.log('Profile response received:', response.data);
         const profilesData = response.data.profiles || [];
@@ -83,26 +67,18 @@ const ProfilePage = () => {
         console.error('Error response:', error.response?.data);
         console.error('Error status:', error.response?.status);
         
-        if (error.response?.status === 401) {
-          toast({
-            title: "Authentication Error",
-            description: "Your session has expired. Please log in again.",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Error loading profiles",
-            description: "Failed to load your athlete profiles. Please try again.",
-            variant: "destructive",
-          });
-        }
+        toast({
+          title: "Error loading profiles",
+          description: "Failed to load athlete profiles. Please try again.",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchProfiles();
-  }, [session, user, toast]);
+  }, [toast]);
 
   // Generate new athlete profile
   const generateNewProfile = useCallback(async () => {
