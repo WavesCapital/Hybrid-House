@@ -431,11 +431,62 @@ class UserProfileUpdate(BaseModel):
     units_preference: Optional[str] = None
     privacy_level: Optional[str] = None
 
+@api_router.post("/auth/signup")
+async def handle_signup(signup_data: dict):
+    """Handle user signup and auto-create user profile"""
+    try:
+        # This endpoint would be called by a webhook or trigger when user signs up
+        # For now, we'll handle it manually in the user profile endpoints
+        
+        user_id = signup_data.get('user_id')
+        email = signup_data.get('email')
+        
+        if not user_id or not email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="user_id and email are required"
+            )
+        
+        # Check if user profile already exists
+        existing = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
+        
+        if existing.data:
+            return {"message": "User profile already exists", "profile": existing.data[0]}
+        
+        # Create user profile
+        user_profile = {
+            "user_id": user_id,
+            "email": email,
+            "display_name": email.split('@')[0],  # Use email prefix as default display name
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat()
+        }
+        
+        result = supabase.table('user_profiles').insert(user_profile).execute()
+        
+        if result.data:
+            return {"message": "User profile created successfully", "profile": result.data[0]}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to create user profile"
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error in handle_signup: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error creating user profile: {str(e)}"
+        )
+
 @api_router.get("/user-profile/me")
 async def get_my_user_profile(user: dict = Depends(verify_jwt)):
     """Get current user's profile information"""
     try:
         user_id = user.get('sub')
+        user_email = user.get('email', '')
         
         # Get user profile from database
         result = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
@@ -445,12 +496,13 @@ async def get_my_user_profile(user: dict = Depends(verify_jwt)):
                 "profile": result.data[0]
             }
         else:
-            # Create default profile if it doesn't exist
+            # Auto-create profile if it doesn't exist
+            print(f"🔄 Auto-creating user profile for {user_email}")
+            
             default_profile = {
                 "user_id": user_id,
-                "email": user.get('email', ''),
-                "first_name": user.get('user_metadata', {}).get('first_name', ''),
-                "display_name": user.get('user_metadata', {}).get('display_name', user.get('email', '')),
+                "email": user_email,
+                "display_name": user_email.split('@')[0],  # Use email prefix as default
                 "created_at": datetime.utcnow().isoformat(),
                 "updated_at": datetime.utcnow().isoformat()
             }
