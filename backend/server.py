@@ -86,8 +86,21 @@ class UserMessageRequest(BaseModel):
 
 # JWT verification
 async def verify_jwt(credentials: HTTPBearer = Depends(security)):
+    """Verify JWT token"""
     try:
         token = credentials.credentials
+        
+        # Debug: Check token format
+        print(f"Received token: {token[:50]}..." if len(token) > 50 else f"Received token: {token}")
+        print(f"Token segments: {len(token.split('.'))}")
+        
+        if len(token.split('.')) != 3:
+            print(f"Invalid JWT format: expected 3 segments, got {len(token.split('.'))}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token format"
+            )
+        
         payload = jwt.decode(
             token, 
             SUPABASE_JWT_SECRET,
