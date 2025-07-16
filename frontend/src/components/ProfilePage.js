@@ -47,10 +47,25 @@ const ProfilePage = () => {
         // Populate form with most recent profile data
         if (profilesData.length > 0) {
           const mostRecent = profilesData[0];
+          
+          // Convert body_metrics object to string if it's an object
+          let bodyMetricsStr = '';
+          if (mostRecent.profile_json.body_metrics) {
+            if (typeof mostRecent.profile_json.body_metrics === 'object') {
+              // Convert object to readable string
+              const metrics = mostRecent.profile_json.body_metrics;
+              bodyMetricsStr = Object.entries(metrics)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join(', ');
+            } else {
+              bodyMetricsStr = mostRecent.profile_json.body_metrics;
+            }
+          }
+          
           setInputForm({
             first_name: mostRecent.profile_json.first_name || '',
             sex: mostRecent.profile_json.sex || '',
-            body_metrics: mostRecent.profile_json.body_metrics || '',
+            body_metrics: bodyMetricsStr,
             pb_mile: mostRecent.profile_json.pb_mile || '',
             weekly_miles: mostRecent.profile_json.weekly_miles || '',
             long_run: mostRecent.profile_json.long_run || '',
