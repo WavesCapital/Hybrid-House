@@ -2840,10 +2840,10 @@ class BackendTester:
         print(f"Tests Passed: {passed_tests}/{total_tests}")
         
         if passed_tests == total_tests:
-            print("🎉 ALL TESTS PASSED - New Athlete Profile Endpoints & Hybrid Interview Flow working correctly!")
+            print("🎉 ALL TESTS PASSED - Profile Page Authentication Removal & Backend Systems working correctly!")
             return True
         else:
-            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in backend implementation")
+            print(f"⚠️  {total_tests - passed_tests} TESTS FAILED - Issues found in Profile Page authentication removal or backend implementation")
             return False
 
 if __name__ == "__main__":
