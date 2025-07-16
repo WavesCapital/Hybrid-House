@@ -27,7 +27,6 @@ const ProfilePage = () => {
     pb_squat_1rm: '',
     pb_deadlift_1rm: ''
   });
-  const { user, session } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
