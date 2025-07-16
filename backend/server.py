@@ -395,23 +395,20 @@ def extract_individual_fields(profile_json: dict, score_data: dict = None) -> di
     
     individual_fields.update(performance_fields)
     
-    # Score data (temporarily disabled until database columns are added)
-    # Note: Score columns need to be added to database schema first
+    # Score data (enabled now that database schema should be updated)
     if score_data and isinstance(score_data, dict):
-        print(f"🚨 Score data received but score columns not yet added to database schema")
-        print(f"Score data: {score_data}")
-        # TODO: Uncomment when score columns are added to database
-        # score_fields = {
-        #     'hybrid_score': safe_decimal(score_data.get('hybridScore')),
-        #     'strength_score': safe_decimal(score_data.get('strengthScore')),
-        #     'endurance_score': safe_decimal(score_data.get('enduranceScore')),
-        #     'speed_score': safe_decimal(score_data.get('speedScore')),
-        #     'vo2_score': safe_decimal(score_data.get('vo2Score')),
-        #     'distance_score': safe_decimal(score_data.get('distanceScore')),
-        #     'volume_score': safe_decimal(score_data.get('volumeScore')),
-        #     'recovery_score': safe_decimal(score_data.get('recoveryScore'))
-        # }
-        # individual_fields.update(score_fields)
+        print(f"✅ Processing score data: {score_data}")
+        score_fields = {
+            'hybrid_score': safe_decimal(score_data.get('hybridScore')),
+            'strength_score': safe_decimal(score_data.get('strengthScore')),
+            'endurance_score': safe_decimal(score_data.get('enduranceScore')),
+            'speed_score': safe_decimal(score_data.get('speedScore')),
+            'vo2_score': safe_decimal(score_data.get('vo2Score')),
+            'distance_score': safe_decimal(score_data.get('distanceScore')),
+            'volume_score': safe_decimal(score_data.get('volumeScore')),
+            'recovery_score': safe_decimal(score_data.get('recoveryScore'))
+        }
+        individual_fields.update(score_fields)
     
     # Remove None values
     return {k: v for k, v in individual_fields.items() if v is not None}
