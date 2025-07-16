@@ -39,7 +39,7 @@ const ProfilePage = () => {
   
   // Athlete Profile Management States
   const [profiles, setProfiles] = useState([]);
-  const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
+  const [isLoadingProfiles, setIsLoadingProfiles] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [inputForm, setInputForm] = useState({
     first_name: '',
