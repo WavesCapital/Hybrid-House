@@ -14,6 +14,12 @@ import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
+  // Debug logging
+  console.log('ProfilePage rendering, user:', user);
+  console.log('ProfilePage rendering, session:', session);
+  console.log('ProfilePage rendering, userProfile:', userProfile);
+  console.log('ProfilePage rendering, isEditingProfile:', isEditingProfile);
+
 const ProfilePage = () => {
   const { user, session } = useAuth();
   const { toast } = useToast();
