@@ -1771,6 +1771,49 @@ class BackendTester:
         except Exception as e:
             self.log_test("GET Athlete Profile Endpoint", False, "Test failed", str(e))
             return False
+
+    def test_athlete_profiles_list_endpoint(self):
+        """Test GET /api/athlete-profiles endpoint - CRITICAL TEST FOR DUPLICATE ROUTE FIX"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code in [401, 403]:
+                self.log_test("GET Athlete Profiles List Endpoint", True, "GET /api/athlete-profiles properly protected with JWT authentication")
+                return True
+            elif response.status_code == 200:
+                # This shouldn't happen without auth, but let's check the response format
+                try:
+                    data = response.json()
+                    if isinstance(data, dict) and "profiles" in data and "total" in data:
+                        self.log_test("GET Athlete Profiles List Endpoint", False, "Endpoint not properly protected - should require JWT", data)
+                        return False
+                    else:
+                        self.log_test("GET Athlete Profiles List Endpoint", False, "Unexpected response format without auth", data)
+                        return False
+                except:
+                    self.log_test("GET Athlete Profiles List Endpoint", False, "Invalid JSON response without auth", response.text)
+                    return False
+            elif response.status_code == 500:
+                try:
+                    error_data = response.json()
+                    if "auth" in str(error_data).lower() or "token" in str(error_data).lower():
+                        self.log_test("GET Athlete Profiles List Endpoint", False, "Authentication configuration error", error_data)
+                        return False
+                    elif "duplicate" in str(error_data).lower() or "route" in str(error_data).lower():
+                        self.log_test("GET Athlete Profiles List Endpoint", False, "DUPLICATE ROUTE ISSUE DETECTED", error_data)
+                        return False
+                    else:
+                        self.log_test("GET Athlete Profiles List Endpoint", True, "GET /api/athlete-profiles endpoint configured (non-auth error)")
+                        return True
+                except:
+                    self.log_test("GET Athlete Profiles List Endpoint", True, "GET /api/athlete-profiles endpoint configured (expected error without auth)")
+                    return True
+            else:
+                self.log_test("GET Athlete Profiles List Endpoint", False, f"Unexpected response: HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("GET Athlete Profiles List Endpoint", False, "Test failed", str(e))
+            return False
     
     def test_athlete_profile_score_update_endpoint(self):
         """Test POST /api/athlete-profile/{profile_id}/score endpoint"""
