@@ -326,7 +326,15 @@ const ProfilePage = () => {
       });
       
       // Refresh user profile data
-      await fetchUserProfile();
+      // fetchUserProfile() is already defined in useEffect, so we'll trigger a re-fetch
+      if (user && session) {
+        const response = await axios.get(`${BACKEND_URL}/api/user-profile/me`, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+        setUserProfile(response.data.profile);
+      }
       
     } catch (error) {
       console.error('❌ Error updating profile:', error);
