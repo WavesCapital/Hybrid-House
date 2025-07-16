@@ -191,12 +191,13 @@ const ProfilePage = () => {
     });
   }, []);
 
-  // Get profile score color
-  const getScoreColor = useCallback((score) => {
-    if (score >= 80) return '#85E26E'; // Green
-    if (score >= 60) return '#79CFF7'; // Blue
-    if (score >= 40) return '#FFD700'; // Yellow
-    return '#FF6B6B'; // Red
+  // Helper function to render profile fields safely
+  const renderProfileField = useCallback((value) => {
+    if (!value) return 'Not specified';
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    }
+    return value.toString();
   }, []);
 
   if (isLoading) {
