@@ -450,8 +450,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Profile Page Authentication Removal"
-  stuck_tasks: []
+    - "Optimized Database Structure with Individual Fields"
+  stuck_tasks:
+    - "Optimized Database Structure with Individual Fields"
   test_all: false
   test_priority: "high_first"
 
