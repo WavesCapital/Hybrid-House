@@ -271,7 +271,11 @@ const ProfilePage = () => {
 
   // User Profile Management Functions
   const handleUpdateProfile = useCallback(async () => {
+    console.log('🔄 handleUpdateProfile called');
+    console.log('User check:', { user: !!user, session: !!session });
+    
     if (!user || !session) {
+      console.error('❌ No user or session found');
       toast({
         title: "Error",
         description: "Please sign in to update your profile",
@@ -282,9 +286,9 @@ const ProfilePage = () => {
 
     try {
       setIsLoadingProfiles(true);
-      
-      console.log('Updating profile with data:', profileForm);
-      console.log('Using token:', session.access_token);
+      console.log('📝 Updating profile with data:', profileForm);
+      console.log('🔑 Using token:', session.access_token ? 'Token present' : 'No token');
+      console.log('🌐 API URL:', `${BACKEND_URL}/api/user-profile/me`);
       
       const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, profileForm, {
         headers: {
@@ -293,7 +297,8 @@ const ProfilePage = () => {
         }
       });
 
-      console.log('Profile update response:', response.data);
+      console.log('✅ Profile update response:', response.data);
+      console.log('📊 Response status:', response.status);
 
       setUserProfile(response.data.profile);
       setIsEditingProfile(false);
@@ -303,8 +308,9 @@ const ProfilePage = () => {
         variant: "default",
       });
     } catch (error) {
-      console.error('Error updating profile:', error);
-      console.error('Error response:', error.response?.data);
+      console.error('❌ Error updating profile:', error);
+      console.error('📍 Error details:', error.response?.data);
+      console.error('🔢 Error status:', error.response?.status);
       
       let errorMessage = "Failed to update profile";
       if (error.response?.data?.detail) {
