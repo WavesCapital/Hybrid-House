@@ -57,7 +57,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        setIsLoading(true);
+        setIsLoadingProfiles(true);
         
         console.log('Fetching profiles without authentication...');
         
