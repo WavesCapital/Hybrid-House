@@ -72,6 +72,14 @@ function AppContent() {
             element={<ProfilePage />} 
           />
           <Route 
+            path="/settings" 
+            element={
+              <ProtectedRoute>
+                <UserProfileSettings />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
             path="/hybrid-score/:profileId" 
             element={<HybridScoreResults />} 
           />
