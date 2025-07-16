@@ -561,14 +561,14 @@ const ProfilePage = () => {
           </Button>
         </div>
 
-        {/* User Profile Section */}
-        {user && (
+        {/* User Profile Section - Show for authenticated users or when editing */}
+        {(user || isEditingProfile) && (
           <div className="mb-8">
             <div className="neo-card rounded-xl p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold neo-primary flex items-center">
                   <Settings className="h-6 w-6 mr-3" />
-                  Your Profile
+                  Your Profile {!user && <span className="text-sm text-yellow-400 ml-2">(Sign in to save changes)</span>}
                 </h2>
                 {!isEditingProfile ? (
                   <Button onClick={() => setIsEditingProfile(true)} className="neo-btn-secondary">
@@ -581,7 +581,7 @@ const ProfilePage = () => {
                       <Save className="w-4 h-4 mr-2" />
                       Save Changes
                     </Button>
-                    <Button onClick={handleCancelProfileEdit} className="neo-btn-secondary">
+                    <Button onClick={() => setIsEditingProfile(false)} className="neo-btn-secondary">
                       Cancel
                     </Button>
                   </div>
