@@ -425,6 +425,24 @@ infrastructure:
         agent: "testing"
         comment: "✅ OPENAI PROMPT ID MIGRATION TESTING COMPLETE: Comprehensive testing confirms successful migration from instructions parameter to OpenAI prompt ID. VERIFIED: ✅ Prompt ID pmpt_6877b2c356e881949e5f4575482b0e1a04e796de3893b2a5 correctly configured in both hybrid interview endpoints ✅ Successfully migrated from deprecated instructions parameter to new prompt ID parameter ✅ All hybrid interview functionality working correctly with new prompt ID configuration ✅ OpenAI API integration working properly ✅ Stateful conversations maintained ✅ Gamification features (🎉🔥) working ✅ Completion triggers functional ✅ End-to-end hybrid interview flow operational. Migration is complete and production-ready."
 
+  - task: "Optimized Database Structure with Individual Fields"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 2
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "User reported critical issues with optimized database structure: 1) POST /api/athlete-profiles endpoint decorator incorrectly placed on extract_individual_fields() function instead of create_athlete_profile() function, 2) Score column handling needed to be temporarily disabled until database schema is updated"
+      - working: false
+        agent: "main"
+        comment: "✅ FIXED POST /api/athlete-profiles ENDPOINT: Moved the decorator from extract_individual_fields() to create_athlete_profile() function. ✅ FIXED SCORE COLUMN HANDLING: Temporarily disabled score column insertion until database schema is updated. Backend code now correctly implements optimized database structure with individual fields extraction."
+      - working: false
+        agent: "testing"
+        comment: "🚨 DATABASE SCHEMA MISSING INDIVIDUAL COLUMNS: Comprehensive testing (39/45 tests passed) reveals the root cause of the optimized database structure failure. CRITICAL FINDINGS: ✅ POST /api/athlete-profiles endpoint decorator is correctly placed on create_athlete_profile() function (line 419) - this was fixed ✅ extract_individual_fields() function works correctly for data extraction (time conversion, weight extraction, null handling) ✅ Score columns are properly disabled temporarily as intended ✅ Hybrid interview endpoints configured for individual fields extraction ❌ CRITICAL ISSUE: Database schema is missing individual columns that the optimized structure tries to insert. Errors show missing columns: 'age', 'interview_type', 'first_name', 'last_name', 'email', 'sex', 'weight_lb', 'vo2_max', 'hrv_ms', 'resting_hr_bpm', 'pb_mile_seconds', 'weekly_miles', 'long_run_miles', 'pb_bench_1rm_lb', 'pb_squat_1rm_lb', 'pb_deadlift_1rm_lb', 'schema_version', 'meta_session_id'. SOLUTION NEEDED: Database schema must be updated to include all individual columns that extract_individual_fields() function extracts before the optimized database structure can work."
+
 metadata:
   created_by: "main_agent"
   version: "1.1"
