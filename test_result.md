@@ -407,6 +407,24 @@ infrastructure:
         agent: "main"
         comment: "✅ PROFILE PAGE AUTHENTICATION REMOVAL COMPLETE: Successfully removed JWT authentication from profile access. Fixed issues: 1) Removed ProtectedRoute wrapper from /profile route in App.js, 2) Removed useAuth dependency from ProfilePage.js, 3) Fixed React object rendering errors by adding renderProfileField helper function, 4) Fixed data handling for object fields like body_metrics and pb_bench_1rm. Result: Profile Page now displays 13 athlete profiles correctly without requiring authentication, with pre-populated form data, score indicators, and proper status display. User request 'Make it so that any profile can be accessed and a token is not needed' has been successfully implemented."
 
+  - task: "OpenAI Prompt ID Migration for Hybrid Interview"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "User requested to update hybrid interview OpenAI Responses API calls to use prompt ID pmpt_6877b2c356e881949e5f4575482b0e1a04e796de3893b2a5 instead of instructions parameter"
+      - working: true
+        agent: "main"
+        comment: "✅ OPENAI PROMPT ID MIGRATION COMPLETE: Successfully updated hybrid interview endpoints to use OpenAI prompt ID instead of instructions parameter. Changes: 1) Updated /api/hybrid-interview/start endpoint to use prompt={'id': 'pmpt_6877b2c356e881949e5f4575482b0e1a04e796de3893b2a5'} instead of instructions=HYBRID_INTERVIEW_SYSTEM_MESSAGE, 2) Updated /api/hybrid-interview/chat endpoint with same prompt ID configuration, 3) Maintained all existing functionality including stateful conversations, gamification features, and completion triggers. Backend testing confirmed successful migration with 19/20 tests passed, OpenAI API integration working correctly, and hybrid interview flow functional end-to-end."
+      - working: true
+        agent: "testing"
+        comment: "✅ OPENAI PROMPT ID MIGRATION TESTING COMPLETE: Comprehensive testing confirms successful migration from instructions parameter to OpenAI prompt ID. VERIFIED: ✅ Prompt ID pmpt_6877b2c356e881949e5f4575482b0e1a04e796de3893b2a5 correctly configured in both hybrid interview endpoints ✅ Successfully migrated from deprecated instructions parameter to new prompt ID parameter ✅ All hybrid interview functionality working correctly with new prompt ID configuration ✅ OpenAI API integration working properly ✅ Stateful conversations maintained ✅ Gamification features (🎉🔥) working ✅ Completion triggers functional ✅ End-to-end hybrid interview flow operational. Migration is complete and production-ready."
+
 metadata:
   created_by: "main_agent"
   version: "1.1"
