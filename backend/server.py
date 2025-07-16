@@ -427,7 +427,6 @@ class UserProfileUpdate(BaseModel):
     website: Optional[str] = None
     date_of_birth: Optional[str] = None
     gender: Optional[str] = None
-    phone: Optional[str] = None
     timezone: Optional[str] = None
     units_preference: Optional[str] = None
     privacy_level: Optional[str] = None
