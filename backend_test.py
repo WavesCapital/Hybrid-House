@@ -2750,7 +2750,7 @@ class BackendTester:
     def run_all_tests(self):
         """Run all backend tests with focus on Hybrid Interview Flow and New Athlete Profile Endpoints"""
         print("=" * 80)
-        print("HYBRID INTERVIEW FLOW & NEW ATHLETE PROFILE ENDPOINTS TESTING")
+        print("🚀 PROFILE PAGE AUTHENTICATION REMOVAL & BACKEND TESTING")
         print("=" * 80)
         
         tests = [
@@ -2759,23 +2759,32 @@ class BackendTester:
             ("System Health Comprehensive", self.test_system_health_comprehensive),
             ("Database Table Accessibility", self.test_database_table_accessibility),
             
-            # 🎯 DEBUG TESTS FOR PROFILE_ID ISSUE (PRIMARY FOCUS)
+            # 🎯 PRIMARY FOCUS: PROFILE PAGE AUTHENTICATION REMOVAL TESTS
+            ("🎯 GET /api/athlete-profiles (No Auth)", self.test_athlete_profiles_get_without_auth),
+            ("🎯 GET /api/athlete-profile/{id} (No Auth)", self.test_athlete_profile_get_by_id_without_auth),
+            ("🎯 POST /api/athlete-profiles (No Auth)", self.test_athlete_profiles_post_without_auth),
+            ("🎯 POST /api/athlete-profile/{id}/score (No Auth)", self.test_athlete_profile_score_post_without_auth),
+            ("🎯 Profile Page Data Format", self.test_profile_page_data_format),
+            ("🎯 No Duplicate Routes Conflict", self.test_no_duplicate_routes_conflict),
+            ("🎯 Profile Page Functionality Integration", self.test_profile_page_functionality_integration),
+            
+            # 🔍 DEBUG TESTS FOR PROFILE_ID ISSUE (SECONDARY FOCUS)
             ("🔍 Hybrid Interview Completion Flow Debug", self.test_hybrid_interview_completion_flow_debug),
             ("🔍 Athlete Profile Creation Logic", self.test_athlete_profile_creation_logic),
             ("🔍 JSON Parsing Robustness", self.test_json_parsing_robustness),
             ("🔍 Athlete Profile Parsing Simulation", self.test_athlete_profile_parsing_simulation),
             
-            # 🎯 PRIMARY TESTS: NEW ATHLETE PROFILE ENDPOINTS (as requested in review)
-            ("🎯 GET Athlete Profiles List Endpoint (DUPLICATE ROUTE FIX)", self.test_athlete_profiles_list_endpoint),
-            ("🎯 Athlete Profiles with Valid JWT", self.test_athlete_profiles_with_valid_jwt),
-            ("🎯 Supabase Athlete Profiles Table Direct", self.test_supabase_athlete_profiles_table_direct),
-            ("🎯 GET Athlete Profile Endpoint", self.test_athlete_profile_get_endpoint),
-            ("🎯 POST Athlete Profile Score Endpoint", self.test_athlete_profile_score_update_endpoint),
-            ("🎯 New Athlete Profile Endpoints Integration", self.test_new_athlete_profile_endpoints_integration),
-            ("🎯 Hybrid Score Redirect Flow Backend Support", self.test_hybrid_score_redirect_flow_backend_support),
+            # NEW ATHLETE PROFILE ENDPOINTS TESTS (SUPPORTING)
+            ("GET Athlete Profiles List Endpoint (DUPLICATE ROUTE FIX)", self.test_athlete_profiles_list_endpoint),
+            ("Athlete Profiles with Valid JWT", self.test_athlete_profiles_with_valid_jwt),
+            ("Supabase Athlete Profiles Table Direct", self.test_supabase_athlete_profiles_table_direct),
+            ("GET Athlete Profile Endpoint", self.test_athlete_profile_get_endpoint),
+            ("POST Athlete Profile Score Endpoint", self.test_athlete_profile_score_update_endpoint),
+            ("New Athlete Profile Endpoints Integration", self.test_new_athlete_profile_endpoints_integration),
+            ("Hybrid Score Redirect Flow Backend Support", self.test_hybrid_score_redirect_flow_backend_support),
             
-            # 🎯 SECONDARY TEST: COMPREHENSIVE E2E HYBRID INTERVIEW COMPLETION FLOW
-            ("🎯 Hybrid Interview Completion Flow E2E", self.test_hybrid_interview_completion_flow_e2e),
+            # COMPREHENSIVE E2E HYBRID INTERVIEW COMPLETION FLOW
+            ("Hybrid Interview Completion Flow E2E", self.test_hybrid_interview_completion_flow_e2e),
             
             # Hybrid Interview Flow Tests (Supporting)
             ("Hybrid Interview Start Endpoint", self.test_hybrid_interview_start_endpoint),
