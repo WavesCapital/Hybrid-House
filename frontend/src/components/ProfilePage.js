@@ -157,7 +157,6 @@ const ProfilePage = () => {
           bio: profile.bio || '',
           location: profile.location || '',
           website: profile.website || '',
-          phone: profile.phone || '',
           gender: profile.gender || '',
           units_preference: profile.units_preference || 'imperial',
           privacy_level: profile.privacy_level || 'private'
