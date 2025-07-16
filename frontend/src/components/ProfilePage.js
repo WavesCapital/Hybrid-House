@@ -649,25 +649,13 @@ const ProfilePage = () => {
                 {/* Profile Information */}
                 <div className="lg:col-span-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                    <div className="md:col-span-2">
                       <label className="block text-sm font-medium neo-text-secondary mb-1">
-                        First Name
+                        Name
                       </label>
                       <Input
-                        value={profileForm.first_name}
-                        onChange={(e) => setProfileForm({...profileForm, first_name: e.target.value})}
-                        disabled={!isEditingProfile}
-                        className="bg-gray-900 border-gray-700 text-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-1">
-                        Last Name
-                      </label>
-                      <Input
-                        value={profileForm.last_name}
-                        onChange={(e) => setProfileForm({...profileForm, last_name: e.target.value})}
+                        value={profileForm.name}
+                        onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
                         disabled={!isEditingProfile}
                         className="bg-gray-900 border-gray-700 text-white"
                       />
@@ -682,20 +670,6 @@ const ProfilePage = () => {
                         onChange={(e) => setProfileForm({...profileForm, display_name: e.target.value})}
                         disabled={!isEditingProfile}
                         className="bg-gray-900 border-gray-700 text-white"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium neo-text-secondary mb-1">
-                        Bio
-                      </label>
-                      <textarea
-                        value={profileForm.bio}
-                        onChange={(e) => setProfileForm({...profileForm, bio: e.target.value})}
-                        disabled={!isEditingProfile}
-                        rows={2}
-                        className="w-full px-3 py-2 border rounded-md bg-gray-900 border-gray-700 text-white resize-none"
-                        placeholder="Tell us about yourself..."
                       />
                     </div>
 
