@@ -310,15 +310,12 @@ async def get_all_user_interviews(user: dict = Depends(verify_jwt)):
         )
 
 @api_router.post("/athlete-profiles")
-async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify_jwt)):
+async def create_athlete_profile(profile_data: dict):
     """Create a new athlete profile"""
     try:
-        user_id = user['sub']
-        
-        # Create profile
+        # Create profile (no user_id required)
         new_profile = {
             **profile_data,
-            "user_id": user_id,
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat()
         }
