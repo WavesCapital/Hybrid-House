@@ -72,11 +72,7 @@ function AppContent() {
           />
           <Route 
             path="/hybrid-score/:profileId" 
-            element={
-              <ProtectedRoute>
-                <HybridScoreResults />
-              </ProtectedRoute>
-            } 
+            element={<HybridScoreResults />} 
           />
           <Route 
             path="/interview" 
