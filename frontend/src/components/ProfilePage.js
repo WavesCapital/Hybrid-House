@@ -3,65 +3,44 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
 import { 
-  User, Edit3, Save, X, Plus, Calendar, Trophy, 
-  BarChart3, Trash2, RefreshCw, TrendingUp, Mail, 
-  Clock, CheckCircle, XCircle, Play, Award, Target
+  User, Calendar, Trophy, BarChart3, Plus, Target, 
+  Zap, RefreshCw, ArrowRight, Award, TrendingUp
 } from 'lucide-react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const ProfilePage = () => {
-  const [userProfile, setUserProfile] = useState(null);
-  const [allInterviews, setAllInterviews] = useState([]);
   const [profiles, setProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [editingProfile, setEditingProfile] = useState(null);
-  const [editForm, setEditForm] = useState({});
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [inputForm, setInputForm] = useState({
+    first_name: '',
+    sex: '',
+    body_metrics: '',
+    pb_mile: '',
+    weekly_miles: '',
+    long_run: '',
+    pb_bench_1rm: '',
+    pb_squat_1rm: '',
+    pb_deadlift_1rm: ''
+  });
   const { user, session } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Load user profile and all interviews
+  // Load profiles and populate form with most recent data
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchProfiles = async () => {
       if (!session) return;
 
       try {
         setIsLoading(true);
         
-        // Fetch user profile
-        const userProfileResponse = await axios.get(
-          `${BACKEND_URL}/api/user-profile`,
-          {
-            headers: {
-              'Authorization': `Bearer ${session.access_token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        setUserProfile(userProfileResponse.data);
-
-        // Fetch all interviews
-        const interviewsResponse = await axios.get(
-          `${BACKEND_URL}/api/all-interviews`,
-          {
-            headers: {
-              'Authorization': `Bearer ${session.access_token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        setAllInterviews(interviewsResponse.data.interviews || []);
-
-        // Fetch athlete profiles for editing
-        const profilesResponse = await axios.get(
+        const response = await axios.get(
           `${BACKEND_URL}/api/athlete-profiles`,
           {
             headers: {
@@ -70,13 +49,31 @@ const ProfilePage = () => {
             },
           }
         );
-        setProfiles(profilesResponse.data.profiles || []);
+
+        const profilesData = response.data.profiles || [];
+        setProfiles(profilesData);
+        
+        // Populate form with most recent profile data
+        if (profilesData.length > 0) {
+          const mostRecent = profilesData[0];
+          setInputForm({
+            first_name: mostRecent.profile_json.first_name || '',
+            sex: mostRecent.profile_json.sex || '',
+            body_metrics: mostRecent.profile_json.body_metrics || '',
+            pb_mile: mostRecent.profile_json.pb_mile || '',
+            weekly_miles: mostRecent.profile_json.weekly_miles || '',
+            long_run: mostRecent.profile_json.long_run || '',
+            pb_bench_1rm: mostRecent.profile_json.pb_bench_1rm || '',
+            pb_squat_1rm: mostRecent.profile_json.pb_squat_1rm || '',
+            pb_deadlift_1rm: mostRecent.profile_json.pb_deadlift_1rm || ''
+          });
+        }
         
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching profiles:', error);
         toast({
-          title: "Error loading profile",
-          description: "Failed to load your profile data. Please try again.",
+          title: "Error loading profiles",
+          description: "Failed to load your athlete profiles. Please try again.",
           variant: "destructive",
         });
       } finally {
@@ -84,160 +81,67 @@ const ProfilePage = () => {
       }
     };
 
-    fetchData();
+    fetchProfiles();
   }, [session, toast]);
 
-  // Memoize statistics to prevent recalculation on every render
-  const profileStats = useMemo(() => {
-    const totalInterviews = allInterviews.length;
-    const completedInterviews = allInterviews.filter(i => i.status === 'completed').length;
-    const inProgressInterviews = allInterviews.filter(i => i.status === 'in_progress').length;
-    const latestScore = completedInterviews > 0 && allInterviews[0].score_data 
-      ? Math.round(parseFloat(allInterviews[0].score_data.hybridScore)) 
-      : null;
-    
-    return { totalInterviews, completedInterviews, inProgressInterviews, latestScore };
-  }, [allInterviews]);
-
-  // Memoize format date function
-  const formatDate = useCallback((dateString) => {
-    if (!dateString) return 'Not available';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }, []);
-
-  // Get status icon and color
-  const getStatusInfo = useCallback((status) => {
-    switch (status) {
-      case 'completed':
-        return { icon: CheckCircle, color: '#85E26E', text: 'Completed' };
-      case 'in_progress':
-        return { icon: Play, color: '#79CFF7', text: 'In Progress' };
-      default:
-        return { icon: XCircle, color: '#FF4B4B', text: 'Failed' };
-    }
-  }, []);
-
-  // Get interview type display
-  const getInterviewTypeInfo = useCallback((type) => {
-    switch (type) {
-      case 'hybrid':
-        return { label: 'Hybrid Interview', description: '11 essential questions' };
-      case 'full':
-        return { label: 'Full Interview', description: '55 comprehensive questions' };
-      default:
-        return { label: 'Interview', description: 'Assessment' };
-    }
-  }, []);
-
-  // Memoize functions to prevent unnecessary re-renders
-  const startEditing = useCallback((profile) => {
-    setEditingProfile(profile.id);
-    setEditForm({
-      first_name: profile.profile_json.first_name || '',
-      sex: profile.profile_json.sex || '',
-      body_metrics: profile.profile_json.body_metrics || '',
-      pb_mile: profile.profile_json.pb_mile || '',
-      weekly_miles: profile.profile_json.weekly_miles || '',
-      long_run: profile.profile_json.long_run || '',
-      pb_bench_1rm: profile.profile_json.pb_bench_1rm || '',
-      pb_squat_1rm: profile.profile_json.pb_squat_1rm || '',
-      pb_deadlift_1rm: profile.profile_json.pb_deadlift_1rm || ''
-    });
-  }, []);
-
-  const cancelEditing = useCallback(() => {
-    setEditingProfile(null);
-    setEditForm({});
-  }, []);
-
-  // Save profile changes
-  const saveProfile = useCallback(async (profileId) => {
+  // Generate new athlete profile
+  const generateNewProfile = useCallback(async () => {
     try {
-      setIsCalculating(true);
+      setIsGenerating(true);
       
-      // Update profile
-      await axios.put(
-        `${BACKEND_URL}/api/athlete-profile/${profileId}`,
-        {
-          ...editForm,
-          schema_version: "v1.0",
-          updated_at: new Date().toISOString()
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      // Validate required fields
+      if (!inputForm.first_name.trim()) {
+        toast({
+          title: "Name Required",
+          description: "Please enter your first name.",
+          variant: "destructive",
+        });
+        return;
+      }
 
-      // Trigger webhook for new score calculation
-      const response = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
+      // Prepare profile data
+      const profileData = {
+        ...inputForm,
+        schema_version: "v1.0",
+        meta_session_id: `manual-${Date.now()}`,
+        weekly_miles: parseInt(inputForm.weekly_miles) || 0,
+        long_run: parseInt(inputForm.long_run) || 0
+      };
+
+      // Call webhook to generate score
+      const webhookResponse = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          athleteProfile: editForm,
+          athleteProfile: profileData,
           deliverable: 'score'
         })
       });
 
-      if (response.ok) {
-        const scoreData = await response.json();
-        const finalScoreData = Array.isArray(scoreData) ? scoreData[0] : scoreData;
-        
-        // Update profile with new score
-        await axios.post(
-          `${BACKEND_URL}/api/athlete-profile/${profileId}/score`,
-          finalScoreData,
-          {
-            headers: {
-              'Authorization': `Bearer ${session.access_token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        // Refresh data
-        window.location.reload();
-        
-        toast({
-          title: "Profile Updated!",
-          description: "Your profile has been updated and score recalculated.",
-        });
+      if (!webhookResponse.ok) {
+        throw new Error(`Webhook request failed with status: ${webhookResponse.status}`);
       }
-      
-      setEditingProfile(null);
-      setEditForm({});
-      
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      toast({
-        title: "Error updating profile",
-        description: "Failed to update your profile. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsCalculating(false);
-    }
-  }, [editForm, session, toast]);
 
-  // Delete profile
-  const deleteProfile = useCallback(async (profileId) => {
-    if (!window.confirm('Are you sure you want to delete this profile? This action cannot be undone.')) {
-      return;
-    }
+      const scoreData = await webhookResponse.json();
+      const finalScoreData = Array.isArray(scoreData) ? scoreData[0] : scoreData;
 
-    try {
-      await axios.delete(
-        `${BACKEND_URL}/api/athlete-profile/${profileId}`,
+      // Create new profile in database
+      const profileId = `manual-${Date.now()}`;
+      const newProfile = {
+        id: profileId,
+        user_id: user.sub,
+        profile_json: profileData,
+        completed_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      // Store profile in database
+      await axios.post(
+        `${BACKEND_URL}/api/athlete-profiles`,
+        newProfile,
         {
           headers: {
             'Authorization': `Bearer ${session.access_token}`,
@@ -246,29 +150,61 @@ const ProfilePage = () => {
         }
       );
 
-      setProfiles(profiles.filter(p => p.id !== profileId));
-      setAllInterviews(allInterviews.filter(i => i.id !== profileId));
-      
+      // Store score data
+      await axios.post(
+        `${BACKEND_URL}/api/athlete-profile/${profileId}/score`,
+        finalScoreData,
+        {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
       toast({
-        title: "Profile Deleted",
-        description: "Your profile has been deleted successfully.",
+        title: "Profile Generated! 🎉",
+        description: "Your new athlete profile has been created successfully.",
       });
+
+      // Navigate to the new score page
+      navigate(`/hybrid-score/${profileId}`);
       
     } catch (error) {
-      console.error('Error deleting profile:', error);
+      console.error('Error generating profile:', error);
       toast({
-        title: "Error deleting profile",
-        description: "Failed to delete your profile. Please try again.",
+        title: "Error generating profile",
+        description: "Failed to generate your athlete profile. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsGenerating(false);
     }
-  }, [profiles, allInterviews, session, toast]);
+  }, [inputForm, user, session, navigate, toast]);
+
+  // Format date
+  const formatDate = useCallback((dateString) => {
+    if (!dateString) return 'Unknown';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }, []);
+
+  // Get profile score color
+  const getScoreColor = useCallback((score) => {
+    if (score >= 80) return '#85E26E'; // Green
+    if (score >= 60) return '#79CFF7'; // Blue
+    if (score >= 40) return '#FFD700'; // Yellow
+    return '#FF6B6B'; // Red
+  }, []);
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#0A0B0C' }}>
         <div className="text-center">
-          <div className="neo-primary text-xl mb-4">Loading your profile...</div>
+          <div className="neo-primary text-xl mb-4">Loading your profiles...</div>
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
         </div>
       </div>
@@ -320,33 +256,23 @@ const ProfilePage = () => {
           border: 1px solid rgba(159, 161, 163, 0.3);
           color: #D9D9D9;
           border-radius: 8px;
-          padding: 8px 12px;
+          padding: 12px 16px;
+          font-size: 14px;
         }
         .neo-input:focus {
           outline: none;
           border-color: #79CFF7;
+          box-shadow: 0 0 0 3px rgba(121, 207, 247, 0.1);
         }
-        .neo-tab {
-          background: rgba(159, 161, 163, 0.1);
-          color: #9FA1A3;
-          border: 1px solid rgba(159, 161, 163, 0.3);
-          padding: 8px 16px;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: all 0.2s;
+        .neo-input::placeholder {
+          color: #6B7280;
         }
-        .neo-tab.active {
-          background: linear-gradient(135deg, #79CFF7 0%, #4FC3F7 100%);
-          color: #0A0B0C;
-          border-color: #79CFF7;
+        .profile-card {
+          transition: all 0.3s ease;
         }
-        .neo-tab:hover {
-          background: rgba(159, 161, 163, 0.2);
-          color: #D9D9D9;
-        }
-        .neo-tab.active:hover {
-          background: linear-gradient(135deg, #4FC3F7 0%, #79CFF7 100%);
-          color: #0A0B0C;
+        .profile-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         
         /* Mobile optimizations */
@@ -355,7 +281,6 @@ const ProfilePage = () => {
             padding-left: 1rem;
             padding-right: 1rem;
           }
-          
           .grid {
             grid-template-columns: 1fr;
           }
@@ -371,454 +296,295 @@ const ProfilePage = () => {
               <User className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold neo-primary">
-                {userProfile?.name || 'Your Profile'}
-              </h1>
-              <p className="neo-text-secondary flex items-center">
-                <Mail className="h-4 w-4 mr-2" />
-                {userProfile?.email || 'No email available'}
+              <h1 className="text-3xl font-bold neo-primary">Athlete Profiles</h1>
+              <p className="neo-text-secondary">
+                View your past scores and create new athlete profiles
               </p>
             </div>
           </div>
           
           <Button 
             onClick={() => navigate('/')}
-            className="neo-btn-primary"
+            className="neo-btn-secondary"
           >
-            <Plus className="h-4 w-4 mr-2" />
-            New Assessment
+            Back to Interview
           </Button>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex space-x-2 mb-8">
-          <button
-            className={`neo-tab ${activeTab === 'overview' ? 'active' : ''}`}
-            onClick={() => setActiveTab('overview')}
-          >
-            Overview
-          </button>
-          <button
-            className={`neo-tab ${activeTab === 'interviews' ? 'active' : ''}`}
-            onClick={() => setActiveTab('interviews')}
-          >
-            All Interviews
-          </button>
-          <button
-            className={`neo-tab ${activeTab === 'manage' ? 'active' : ''}`}
-            onClick={() => setActiveTab('manage')}
-          >
-            Manage Profiles
-          </button>
-        </div>
-
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div className="space-y-8">
-            {/* Statistics */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="neo-card rounded-xl p-6">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-blue-500 bg-opacity-20 flex items-center justify-center">
-                    <BarChart3 className="h-6 w-6 neo-primary" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold neo-text-primary">{profileStats.totalInterviews}</div>
-                    <div className="text-sm neo-text-secondary">Total Interviews</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="neo-card rounded-xl p-6">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-green-500 bg-opacity-20 flex items-center justify-center">
-                    <CheckCircle className="h-6 w-6" style={{ color: '#85E26E' }} />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold neo-text-primary">{profileStats.completedInterviews}</div>
-                    <div className="text-sm neo-text-secondary">Completed</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="neo-card rounded-xl p-6">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-yellow-500 bg-opacity-20 flex items-center justify-center">
-                    <Clock className="h-6 w-6" style={{ color: '#FFD700' }} />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold neo-text-primary">{profileStats.inProgressInterviews}</div>
-                    <div className="text-sm neo-text-secondary">In Progress</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="neo-card rounded-xl p-6">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-purple-500 bg-opacity-20 flex items-center justify-center">
-                    <Trophy className="h-6 w-6" style={{ color: '#8D5CFF' }} />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold neo-text-primary">{profileStats.latestScore || '-'}</div>
-                    <div className="text-sm neo-text-secondary">Latest Score</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Account Information */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          {/* Manual Input Form */}
+          <div className="space-y-6">
             <div className="neo-card rounded-xl p-6">
-              <h3 className="text-xl font-semibold neo-text-primary mb-4 flex items-center">
-                <User className="h-6 w-6 mr-2" />
-                Account Information
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <span className="neo-text-secondary">User ID:</span>
-                  <span className="neo-text-primary ml-2 font-mono text-sm">{userProfile?.user_id || 'Not available'}</span>
+              <h2 className="text-2xl font-bold neo-primary mb-6 flex items-center">
+                <Target className="h-6 w-6 mr-3" />
+                Generate New Profile
+              </h2>
+              
+              <div className="space-y-4">
+                {/* Basic Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium neo-text-secondary mb-2">
+                      First Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={inputForm.first_name}
+                      onChange={(e) => setInputForm({...inputForm, first_name: e.target.value})}
+                      className="neo-input w-full"
+                      placeholder="Enter your first name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium neo-text-secondary mb-2">
+                      Sex
+                    </label>
+                    <select
+                      value={inputForm.sex}
+                      onChange={(e) => setInputForm({...inputForm, sex: e.target.value})}
+                      className="neo-input w-full"
+                    >
+                      <option value="">Select...</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
                 </div>
+
+                {/* Body Metrics */}
                 <div>
-                  <span className="neo-text-secondary">Member Since:</span>
-                  <span className="neo-text-primary ml-2">{formatDate(userProfile?.created_at)}</span>
+                  <label className="block text-sm font-medium neo-text-secondary mb-2">
+                    Body Metrics
+                  </label>
+                  <input
+                    type="text"
+                    value={inputForm.body_metrics}
+                    onChange={(e) => setInputForm({...inputForm, body_metrics: e.target.value})}
+                    className="neo-input w-full"
+                    placeholder="e.g., 163 lbs, VO2 max 54, resting HR 42, HRV 64"
+                  />
+                </div>
+
+                {/* Running Performance */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium neo-text-secondary mb-2">
+                      Mile PR
+                    </label>
+                    <input
+                      type="text"
+                      value={inputForm.pb_mile}
+                      onChange={(e) => setInputForm({...inputForm, pb_mile: e.target.value})}
+                      className="neo-input w-full"
+                      placeholder="e.g., 7:43"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium neo-text-secondary mb-2">
+                      Weekly Miles
+                    </label>
+                    <input
+                      type="number"
+                      value={inputForm.weekly_miles}
+                      onChange={(e) => setInputForm({...inputForm, weekly_miles: e.target.value})}
+                      className="neo-input w-full"
+                      placeholder="e.g., 15"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium neo-text-secondary mb-2">
+                      Long Run (miles)
+                    </label>
+                    <input
+                      type="number"
+                      value={inputForm.long_run}
+                      onChange={(e) => setInputForm({...inputForm, long_run: e.target.value})}
+                      className="neo-input w-full"
+                      placeholder="e.g., 7"
+                    />
+                  </div>
+                </div>
+
+                {/* Strength Performance */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium neo-text-secondary mb-2">
+                      Bench Press 1RM
+                    </label>
+                    <input
+                      type="text"
+                      value={inputForm.pb_bench_1rm}
+                      onChange={(e) => setInputForm({...inputForm, pb_bench_1rm: e.target.value})}
+                      className="neo-input w-full"
+                      placeholder="e.g., 225 lbs x 3 reps"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium neo-text-secondary mb-2">
+                      Squat 1RM
+                    </label>
+                    <input
+                      type="text"
+                      value={inputForm.pb_squat_1rm}
+                      onChange={(e) => setInputForm({...inputForm, pb_squat_1rm: e.target.value})}
+                      className="neo-input w-full"
+                      placeholder="e.g., 315 lbs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium neo-text-secondary mb-2">
+                      Deadlift 1RM
+                    </label>
+                    <input
+                      type="text"
+                      value={inputForm.pb_deadlift_1rm}
+                      onChange={(e) => setInputForm({...inputForm, pb_deadlift_1rm: e.target.value})}
+                      className="neo-input w-full"
+                      placeholder="e.g., 405 lbs"
+                    />
+                  </div>
+                </div>
+
+                {/* Generate Button */}
+                <div className="pt-4">
+                  <Button
+                    onClick={generateNewProfile}
+                    className="neo-btn-primary w-full py-4 text-lg"
+                    disabled={isGenerating}
+                  >
+                    {isGenerating ? (
+                      <>
+                        <RefreshCw className="h-5 w-5 mr-3 animate-spin" />
+                        Generating Profile...
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="h-5 w-5 mr-3" />
+                        Generate Hybrid Score
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
             </div>
           </div>
-        )}
 
-        {/* All Interviews Tab */}
-        {activeTab === 'interviews' && (
+          {/* Past Profiles */}
           <div className="space-y-6">
-            {allInterviews.length === 0 ? (
-              <div className="neo-card rounded-xl p-12 text-center">
-                <Trophy className="h-16 w-16 neo-primary mx-auto mb-4 opacity-50" />
-                <h3 className="text-xl font-semibold neo-text-primary mb-2">No interviews yet</h3>
-                <p className="neo-text-secondary mb-6">Take your first assessment to get started!</p>
-                <Button 
-                  onClick={() => navigate('/')}
-                  className="neo-btn-primary"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Take Assessment
-                </Button>
-              </div>
-            ) : (
-              allInterviews.map((interview) => {
-                const statusInfo = getStatusInfo(interview.status);
-                const typeInfo = getInterviewTypeInfo(interview.type);
-                const StatusIcon = statusInfo.icon;
-                
-                return (
-                  <div key={interview.id} className="neo-card rounded-xl p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 rounded-full bg-blue-500 bg-opacity-20 flex items-center justify-center">
-                          <StatusIcon className="h-6 w-6" style={{ color: statusInfo.color }} />
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-semibold neo-text-primary">
-                            {typeInfo.label}
-                          </h3>
-                          <p className="text-sm neo-text-secondary">{typeInfo.description}</p>
-                          <div className="flex items-center space-x-4 text-sm neo-text-muted mt-1">
-                            <span className="flex items-center">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold neo-primary flex items-center">
+                <Trophy className="h-6 w-6 mr-3" />
+                Past Profiles
+              </h2>
+              <span className="text-sm neo-text-secondary">
+                {profiles.length} profile{profiles.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+
+            <div className="space-y-4 max-h-[800px] overflow-y-auto">
+              {profiles.length === 0 ? (
+                <div className="neo-card rounded-xl p-8 text-center">
+                  <Award className="h-12 w-12 neo-primary mx-auto mb-4 opacity-50" />
+                  <h3 className="text-lg font-semibold neo-text-primary mb-2">No profiles yet</h3>
+                  <p className="neo-text-secondary">Create your first profile using the form on the left!</p>
+                </div>
+              ) : (
+                profiles.map((profile) => {
+                  const score = profile.score_data ? Math.round(parseFloat(profile.score_data.hybridScore)) : null;
+                  const scoreColor = score ? getScoreColor(score) : '#6B7280';
+                  
+                  return (
+                    <div key={profile.id} className="neo-card rounded-xl p-6 profile-card">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center">
+                            <User className="h-6 w-6 text-white" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold neo-text-primary">
+                              {profile.profile_json.first_name || 'Unnamed Profile'}
+                            </h3>
+                            <p className="text-sm neo-text-secondary flex items-center">
                               <Calendar className="h-4 w-4 mr-1" />
-                              {formatDate(interview.created_at)}
-                            </span>
-                            <span className="flex items-center">
-                              <span className="w-2 h-2 rounded-full mr-1" style={{ backgroundColor: statusInfo.color }}></span>
-                              {statusInfo.text}
-                            </span>
-                            {interview.score_data && (
-                              <span className="flex items-center">
-                                <Trophy className="h-4 w-4 mr-1" />
-                                Score: {Math.round(parseFloat(interview.score_data.hybridScore))}
-                              </span>
-                            )}
+                              {formatDate(profile.created_at)}
+                            </p>
                           </div>
                         </div>
-                      </div>
-                      
-                      <div className="flex space-x-2">
-                        {interview.status === 'completed' && interview.score_data && (
+                        
+                        <div className="flex items-center space-x-4">
+                          {score && (
+                            <div className="text-right">
+                              <div className="text-2xl font-bold" style={{ color: scoreColor }}>
+                                {score}
+                              </div>
+                              <div className="text-xs neo-text-secondary">Hybrid Score</div>
+                            </div>
+                          )}
+                          
                           <Button
-                            onClick={() => navigate(`/hybrid-score/${interview.id}`)}
+                            onClick={() => {
+                              if (score) {
+                                navigate(`/hybrid-score/${profile.id}`);
+                              } else {
+                                toast({
+                                  title: "No Score Available",
+                                  description: "This profile doesn't have a calculated score yet.",
+                                  variant: "destructive",
+                                });
+                              }
+                            }}
                             className="neo-btn-secondary"
                             size="sm"
                           >
-                            <Award className="h-4 w-4 mr-1" />
-                            View Score
+                            {score ? (
+                              <>
+                                <BarChart3 className="h-4 w-4 mr-2" />
+                                View Score
+                              </>
+                            ) : (
+                              <>
+                                <TrendingUp className="h-4 w-4 mr-2" />
+                                No Score
+                              </>
+                            )}
                           </Button>
-                        )}
-                        {interview.status === 'in_progress' && (
-                          <Button
-                            onClick={() => navigate('/')}
-                            className="neo-btn-primary"
-                            size="sm"
-                          >
-                            <Play className="h-4 w-4 mr-1" />
-                            Resume
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        )}
-
-        {/* Manage Profiles Tab */}
-        {activeTab === 'manage' && (
-          <div className="space-y-6">
-            {profiles.length === 0 ? (
-              <div className="neo-card rounded-xl p-12 text-center">
-                <Trophy className="h-16 w-16 neo-primary mx-auto mb-4 opacity-50" />
-                <h3 className="text-xl font-semibold neo-text-primary mb-2">No profiles yet</h3>
-                <p className="neo-text-secondary mb-6">Take your first hybrid assessment to get started!</p>
-                <Button 
-                  onClick={() => navigate('/')}
-                  className="neo-btn-primary"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Take Assessment
-                </Button>
-              </div>
-            ) : (
-              profiles.map((profile) => (
-                <div key={profile.id} className="neo-card rounded-xl p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 rounded-full bg-blue-500 bg-opacity-20 flex items-center justify-center">
-                        <User className="h-6 w-6 neo-primary" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold neo-text-primary">
-                          {profile.profile_json.first_name || 'Unnamed Profile'}
-                        </h3>
-                        <div className="flex items-center space-x-4 text-sm neo-text-secondary">
-                          <span className="flex items-center">
-                            <Calendar className="h-4 w-4 mr-1" />
-                            {formatDate(profile.created_at)}
-                          </span>
-                          {profile.score_data && (
-                            <span className="flex items-center">
-                              <Trophy className="h-4 w-4 mr-1" />
-                              Score: {Math.round(parseFloat(profile.score_data.hybridScore))}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex space-x-2">
-                      {profile.score_data && (
-                        <Button
-                          onClick={() => navigate(`/hybrid-score/${profile.id}`)}
-                          className="neo-btn-secondary"
-                          size="sm"
-                        >
-                          <BarChart3 className="h-4 w-4" />
-                        </Button>
-                      )}
-                      <Button
-                        onClick={() => startEditing(profile)}
-                        className="neo-btn-secondary"
-                        size="sm"
-                        disabled={editingProfile === profile.id}
-                      >
-                        <Edit3 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        onClick={() => deleteProfile(profile.id)}
-                        className="neo-btn-secondary hover:bg-red-500 hover:bg-opacity-20"
-                        size="sm"
-                        disabled={editingProfile === profile.id}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {editingProfile === profile.id ? (
-                    <div className="space-y-4 border-t border-gray-700 pt-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium neo-text-secondary mb-1">
-                            First Name
-                          </label>
-                          <input
-                            type="text"
-                            value={editForm.first_name}
-                            onChange={(e) => setEditForm({...editForm, first_name: e.target.value})}
-                            className="neo-input w-full"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium neo-text-secondary mb-1">
-                            Sex
-                          </label>
-                          <select
-                            value={editForm.sex}
-                            onChange={(e) => setEditForm({...editForm, sex: e.target.value})}
-                            className="neo-input w-full"
-                          >
-                            <option value="">Select...</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium neo-text-secondary mb-1">
-                            Body Metrics
-                          </label>
-                          <input
-                            type="text"
-                            value={editForm.body_metrics}
-                            onChange={(e) => setEditForm({...editForm, body_metrics: e.target.value})}
-                            className="neo-input w-full"
-                            placeholder="e.g., 163 lbs, VO2 max 54, resting HR 42"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium neo-text-secondary mb-1">
-                            Mile PR
-                          </label>
-                          <input
-                            type="text"
-                            value={editForm.pb_mile}
-                            onChange={(e) => setEditForm({...editForm, pb_mile: e.target.value})}
-                            className="neo-input w-full"
-                            placeholder="e.g., 7:43"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium neo-text-secondary mb-1">
-                            Weekly Miles
-                          </label>
-                          <input
-                            type="number"
-                            value={editForm.weekly_miles}
-                            onChange={(e) => setEditForm({...editForm, weekly_miles: parseInt(e.target.value) || ''})}
-                            className="neo-input w-full"
-                            placeholder="e.g., 15"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium neo-text-secondary mb-1">
-                            Long Run
-                          </label>
-                          <input
-                            type="number"
-                            value={editForm.long_run}
-                            onChange={(e) => setEditForm({...editForm, long_run: parseInt(e.target.value) || ''})}
-                            className="neo-input w-full"
-                            placeholder="e.g., 7"
-                          />
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* Profile Data Preview */}
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
                         <div>
-                          <label className="block text-sm font-medium neo-text-secondary mb-1">
-                            Bench Press 1RM
-                          </label>
-                          <input
-                            type="text"
-                            value={editForm.pb_bench_1rm}
-                            onChange={(e) => setEditForm({...editForm, pb_bench_1rm: e.target.value})}
-                            className="neo-input w-full"
-                            placeholder="e.g., 225 lbs x 3 reps"
-                          />
+                          <span className="neo-text-secondary">Sex:</span>
+                          <span className="neo-text-primary ml-2">{profile.profile_json.sex || 'Not specified'}</span>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium neo-text-secondary mb-1">
-                            Squat 1RM
-                          </label>
-                          <input
-                            type="text"
-                            value={editForm.pb_squat_1rm}
-                            onChange={(e) => setEditForm({...editForm, pb_squat_1rm: e.target.value})}
-                            className="neo-input w-full"
-                            placeholder="e.g., 315 lbs"
-                          />
+                          <span className="neo-text-secondary">Mile PR:</span>
+                          <span className="neo-text-primary ml-2">{profile.profile_json.pb_mile || 'Not specified'}</span>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium neo-text-secondary mb-1">
-                            Deadlift 1RM
-                          </label>
-                          <input
-                            type="text"
-                            value={editForm.pb_deadlift_1rm}
-                            onChange={(e) => setEditForm({...editForm, pb_deadlift_1rm: e.target.value})}
-                            className="neo-input w-full"
-                            placeholder="e.g., 405 lbs"
-                          />
+                          <span className="neo-text-secondary">Weekly Miles:</span>
+                          <span className="neo-text-primary ml-2">{profile.profile_json.weekly_miles || 'Not specified'}</span>
                         </div>
-                      </div>
-                      
-                      <div className="flex space-x-3 pt-4">
-                        <Button
-                          onClick={() => saveProfile(profile.id)}
-                          className="neo-btn-primary"
-                          disabled={isCalculating}
-                        >
-                          {isCalculating ? (
-                            <>
-                              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                              Recalculating...
-                            </>
-                          ) : (
-                            <>
-                              <Save className="h-4 w-4 mr-2" />
-                              Save & Recalculate
-                            </>
-                          )}
-                        </Button>
-                        <Button
-                          onClick={cancelEditing}
-                          className="neo-btn-secondary"
-                          disabled={isCalculating}
-                        >
-                          <X className="h-4 w-4 mr-2" />
-                          Cancel
-                        </Button>
+                        <div>
+                          <span className="neo-text-secondary">Long Run:</span>
+                          <span className="neo-text-primary ml-2">{profile.profile_json.long_run || 'Not specified'}</span>
+                        </div>
+                        <div>
+                          <span className="neo-text-secondary">Bench:</span>
+                          <span className="neo-text-primary ml-2">{profile.profile_json.pb_bench_1rm || 'Not specified'}</span>
+                        </div>
+                        <div>
+                          <span className="neo-text-secondary">Status:</span>
+                          <span className="neo-text-primary ml-2">{score ? 'Scored' : 'Pending'}</span>
+                        </div>
                       </div>
                     </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <span className="neo-text-secondary">Sex:</span>
-                        <span className="neo-text-primary ml-2">{profile.profile_json.sex || 'Not specified'}</span>
-                      </div>
-                      <div>
-                        <span className="neo-text-secondary">Mile PR:</span>
-                        <span className="neo-text-primary ml-2">{profile.profile_json.pb_mile || 'Not specified'}</span>
-                      </div>
-                      <div>
-                        <span className="neo-text-secondary">Weekly Miles:</span>
-                        <span className="neo-text-primary ml-2">{profile.profile_json.weekly_miles || 'Not specified'}</span>
-                      </div>
-                      <div>
-                        <span className="neo-text-secondary">Long Run:</span>
-                        <span className="neo-text-primary ml-2">{profile.profile_json.long_run || 'Not specified'}</span>
-                      </div>
-                      <div>
-                        <span className="neo-text-secondary">Bench Press:</span>
-                        <span className="neo-text-primary ml-2">{profile.profile_json.pb_bench_1rm || 'Not specified'}</span>
-                      </div>
-                      <div>
-                        <span className="neo-text-secondary">Updated:</span>
-                        <span className="neo-text-primary ml-2">{formatDate(profile.updated_at)}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))
-            )}
+                  );
+                })
+              )}
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
