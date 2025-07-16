@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Input } from './ui/input';
 import { useToast } from '../hooks/use-toast';
 import { 
   User, Calendar, Trophy, BarChart3, Plus, Target, 
-  Zap, RefreshCw, ArrowRight, Award, TrendingUp
+  Zap, RefreshCw, ArrowRight, Award, TrendingUp, Camera, 
+  Save, Edit, MapPin, Globe, Phone, Mail, Settings, Upload, X
 } from 'lucide-react';
 import axios from 'axios';
 
