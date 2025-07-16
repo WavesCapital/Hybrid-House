@@ -29,7 +29,6 @@ const ProfilePage = () => {
     bio: '',
     location: '',
     website: '',
-    phone: '',
     gender: '',
     units_preference: 'imperial',
     privacy_level: 'private'
