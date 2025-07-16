@@ -571,13 +571,7 @@ const ProfilePage = () => {
                   </Button>
                 ) : (
                   <div className="space-x-2">
-                    <Button onClick={() => {
-                      console.log('Save Changes button clicked!');
-                      console.log('User:', user);
-                      console.log('Session:', session);
-                      console.log('Profile form:', profileForm);
-                      handleUpdateProfile();
-                    }} disabled={isLoadingProfiles} className="neo-btn-primary">
+                    <Button onClick={handleUpdateProfile} disabled={isLoadingProfiles} className="neo-btn-primary">
                       <Save className="w-4 h-4 mr-2" />
                       Save Changes
                     </Button>
