@@ -464,25 +464,32 @@ class OptimizedDBTester:
     def test_backward_compatibility(self):
         """Test that the optimized structure maintains backward compatibility"""
         try:
-            # Test with old-style profile data (without individual fields)
+            # The current implementation requires profile_json field, so backward compatibility
+            # means it should give a clear error message for old format
             old_style_data = {
                 "profile_text": "Old style profile text",  # Legacy field
                 "score_data": {"test_score": 75}
             }
             
-            # This should still work or gracefully handle the old format
             response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=old_style_data)
             
-            # Should either work (201) or give a clear error about format
-            if response.status_code in [201, 400]:
-                if response.status_code == 201:
-                    self.log_test("Backward Compatibility", True, 
-                                "Old-style profile data handled successfully")
-                else:
-                    # 400 is acceptable if it gives clear error about format
-                    self.log_test("Backward Compatibility", True, 
-                                "Old-style data properly rejected with clear error")
-                return True
+            # Should give a clear error about missing profile_json
+            if response.status_code == 422:
+                try:
+                    error_data = response.json()
+                    if ("profile_json" in str(error_data) and 
+                        "required" in str(error_data).lower()):
+                        self.log_test("Backward Compatibility", True, 
+                                    "Old-style data properly rejected with clear error about required profile_json field")
+                        return True
+                    else:
+                        self.log_test("Backward Compatibility", False, 
+                                    "Error message not clear about profile_json requirement", error_data)
+                        return False
+                except:
+                    self.log_test("Backward Compatibility", False, 
+                                "Could not parse error response", response.text)
+                    return False
             else:
                 self.log_test("Backward Compatibility", False, 
                             f"Unexpected response to old-style data: HTTP {response.status_code}", 
