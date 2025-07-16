@@ -535,6 +535,237 @@ const ProfilePage = () => {
           </Button>
         </div>
 
+        {/* User Profile Section */}
+        {user && (
+          <div className="mb-8">
+            <div className="neo-card rounded-xl p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold neo-primary flex items-center">
+                  <Settings className="h-6 w-6 mr-3" />
+                  Your Profile
+                </h2>
+                {!isEditingProfile ? (
+                  <Button onClick={() => setIsEditingProfile(true)} className="neo-btn-secondary">
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Profile
+                  </Button>
+                ) : (
+                  <div className="space-x-2">
+                    <Button onClick={handleUpdateProfile} disabled={isLoadingProfiles} className="neo-btn-primary">
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Changes
+                    </Button>
+                    <Button onClick={handleCancelProfileEdit} className="neo-btn-secondary">
+                      Cancel
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                {/* Avatar Section */}
+                <div className="text-center">
+                  <div className="relative inline-block">
+                    <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
+                      {avatarPreview ? (
+                        <img src={avatarPreview} alt="Avatar preview" className="w-full h-full object-cover" />
+                      ) : userProfile?.avatar_url ? (
+                        <img src={userProfile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        <User className="w-8 h-8 text-gray-500" />
+                      )}
+                    </div>
+                    
+                    {isEditingProfile && (
+                      <label className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-2 cursor-pointer hover:bg-blue-600 transition-colors">
+                        <Camera className="w-3 h-3 text-white" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleAvatarChange}
+                          className="hidden"
+                        />
+                      </label>
+                    )}
+                  </div>
+                  
+                  <div className="mt-3">
+                    <p className="text-sm font-medium neo-text-primary">
+                      {userProfile?.display_name || userProfile?.first_name || 'User'}
+                    </p>
+                    <p className="text-xs neo-text-secondary">
+                      {userProfile?.email}
+                    </p>
+                  </div>
+                  
+                  {avatarFile && (
+                    <div className="mt-2 space-y-1">
+                      <Button onClick={handleAvatarUpload} disabled={isLoadingProfiles} className="w-full text-xs">
+                        <Upload className="w-3 h-3 mr-1" />
+                        Upload
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => { setAvatarFile(null); setAvatarPreview(null); }} 
+                        className="w-full text-xs"
+                      >
+                        <X className="w-3 h-3 mr-1" />
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Profile Information */}
+                <div className="lg:col-span-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium neo-text-secondary mb-1">
+                        First Name
+                      </label>
+                      <Input
+                        value={profileForm.first_name}
+                        onChange={(e) => setProfileForm({...profileForm, first_name: e.target.value})}
+                        disabled={!isEditingProfile}
+                        className="bg-gray-900 border-gray-700 text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium neo-text-secondary mb-1">
+                        Last Name
+                      </label>
+                      <Input
+                        value={profileForm.last_name}
+                        onChange={(e) => setProfileForm({...profileForm, last_name: e.target.value})}
+                        disabled={!isEditingProfile}
+                        className="bg-gray-900 border-gray-700 text-white"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium neo-text-secondary mb-1">
+                        Display Name
+                      </label>
+                      <Input
+                        value={profileForm.display_name}
+                        onChange={(e) => setProfileForm({...profileForm, display_name: e.target.value})}
+                        disabled={!isEditingProfile}
+                        className="bg-gray-900 border-gray-700 text-white"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium neo-text-secondary mb-1">
+                        Bio
+                      </label>
+                      <textarea
+                        value={profileForm.bio}
+                        onChange={(e) => setProfileForm({...profileForm, bio: e.target.value})}
+                        disabled={!isEditingProfile}
+                        rows={2}
+                        className="w-full px-3 py-2 border rounded-md bg-gray-900 border-gray-700 text-white resize-none"
+                        placeholder="Tell us about yourself..."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium neo-text-secondary mb-1">
+                        <MapPin className="w-4 h-4 inline mr-1" />
+                        Location
+                      </label>
+                      <Input
+                        value={profileForm.location}
+                        onChange={(e) => setProfileForm({...profileForm, location: e.target.value})}
+                        disabled={!isEditingProfile}
+                        className="bg-gray-900 border-gray-700 text-white"
+                        placeholder="City, Country"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium neo-text-secondary mb-1">
+                        <Globe className="w-4 h-4 inline mr-1" />
+                        Website
+                      </label>
+                      <Input
+                        value={profileForm.website}
+                        onChange={(e) => setProfileForm({...profileForm, website: e.target.value})}
+                        disabled={!isEditingProfile}
+                        className="bg-gray-900 border-gray-700 text-white"
+                        placeholder="https://yourwebsite.com"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium neo-text-secondary mb-1">
+                        <Phone className="w-4 h-4 inline mr-1" />
+                        Phone
+                      </label>
+                      <Input
+                        value={profileForm.phone}
+                        onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})}
+                        disabled={!isEditingProfile}
+                        className="bg-gray-900 border-gray-700 text-white"
+                        placeholder="+1 (555) 123-4567"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium neo-text-secondary mb-1">
+                        Gender
+                      </label>
+                      <select
+                        value={profileForm.gender}
+                        onChange={(e) => setProfileForm({...profileForm, gender: e.target.value})}
+                        disabled={!isEditingProfile}
+                        className="w-full px-3 py-2 border rounded-md bg-gray-900 border-gray-700 text-white"
+                      >
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                        <option value="prefer-not-to-say">Prefer not to say</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium neo-text-secondary mb-1">
+                        Units Preference
+                      </label>
+                      <select
+                        value={profileForm.units_preference}
+                        onChange={(e) => setProfileForm({...profileForm, units_preference: e.target.value})}
+                        disabled={!isEditingProfile}
+                        className="w-full px-3 py-2 border rounded-md bg-gray-900 border-gray-700 text-white"
+                      >
+                        <option value="imperial">Imperial (lbs, miles, ft)</option>
+                        <option value="metric">Metric (kg, km, m)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium neo-text-secondary mb-1">
+                        Privacy Level
+                      </label>
+                      <select
+                        value={profileForm.privacy_level}
+                        onChange={(e) => setProfileForm({...profileForm, privacy_level: e.target.value})}
+                        disabled={!isEditingProfile}
+                        className="w-full px-3 py-2 border rounded-md bg-gray-900 border-gray-700 text-white"
+                      >
+                        <option value="private">Private</option>
+                        <option value="friends">Friends Only</option>
+                        <option value="public">Public</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Manual Input Form */}
           <div className="space-y-6">
