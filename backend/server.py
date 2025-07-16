@@ -205,39 +205,6 @@ async def get_user_profile(user: dict = Depends(verify_jwt)):
             detail="Error retrieving user profile"
         )
 
-@api_router.post("/athlete-profiles")
-async def save_athlete_profile(
-    profile_data: AthleteProfileData,
-    user: dict = Depends(verify_jwt)
-):
-    """Save an athlete profile for the authenticated user"""
-    user_id = user["sub"]
-    
-    try:
-        # Create profile document
-        profile_doc = {
-            "id": str(uuid.uuid4()),
-            "user_id": user_id,
-            "profile_text": profile_data.profile_text,
-            "score_data": profile_data.score_data,
-            "created_at": profile_data.created_at or datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat()
-        }
-        
-        result = supabase.table('athlete_profiles').insert(profile_doc).execute()
-        
-        return {
-            "id": profile_doc["id"],
-            "message": "Athlete profile saved successfully"
-        }
-        
-    except Exception as e:
-        print(f"Error saving athlete profile: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error saving athlete profile"
-        )
-
 @api_router.get("/user-profile")
 async def get_user_profile(user: dict = Depends(verify_jwt)):
     """Get user profile information"""
