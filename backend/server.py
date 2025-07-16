@@ -15,6 +15,9 @@ import json
 import asyncio
 from datetime import datetime
 import requests
+from PIL import Image
+import base64
+import io
 
 load_dotenv()
 
