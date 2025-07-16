@@ -7,6 +7,7 @@ import InterviewFlow from './components/InterviewFlow';
 import HybridInterviewFlow from './components/HybridInterviewFlow';
 import HybridScoreResults from './components/HybridScoreResults';
 import ProfilePage from './components/ProfilePage';
+import UserProfileSettings from './components/UserProfileSettings';
 import './App.css';
 
 // Protected Route Wrapper
