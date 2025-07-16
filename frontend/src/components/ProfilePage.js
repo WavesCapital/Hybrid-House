@@ -273,6 +273,18 @@ const ProfilePage = () => {
   const handleUpdateProfile = useCallback(async () => {
     console.log('🔄 handleUpdateProfile called');
     console.log('User check:', { user: !!user, session: !!session });
+    console.log('Loading state:', loading);
+    
+    // Check if authentication is still loading
+    if (loading) {
+      console.log('⏳ Authentication still loading, waiting...');
+      toast({
+        title: "Please wait",
+        description: "Authentication is still loading. Please try again in a moment.",
+        variant: "default",
+      });
+      return;
+    }
     
     if (!user || !session) {
       console.log('❌ No user or session found, redirecting to auth');
@@ -291,6 +303,8 @@ const ProfilePage = () => {
       setIsLoadingProfiles(true);
       console.log('📝 Updating profile with data:', profileForm);
       console.log('🔑 Using token:', session.access_token ? 'Token present' : 'No token');
+      console.log('👤 User ID:', user.id);
+      console.log('📧 User email:', user.email);
       console.log('🌐 API URL:', `${BACKEND_URL}/api/user-profile/me`);
       
       const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, profileForm, {
@@ -310,6 +324,10 @@ const ProfilePage = () => {
         description: response.data.message || "Profile updated successfully",
         variant: "default",
       });
+      
+      // Refresh user profile data
+      await fetchUserProfile();
+      
     } catch (error) {
       console.error('❌ Error updating profile:', error);
       console.error('📍 Error details:', error.response?.data);
@@ -336,7 +354,7 @@ const ProfilePage = () => {
     } finally {
       setIsLoadingProfiles(false);
     }
-  }, [profileForm, BACKEND_URL, user, session, toast]);
+  }, [profileForm, BACKEND_URL, user, session, loading, toast, fetchUserProfile]);
 
   const handleAvatarChange = useCallback((e) => {
     const file = e.target.files[0];
