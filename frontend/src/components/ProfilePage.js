@@ -278,7 +278,7 @@ const ProfilePage = () => {
 
     try {
       setIsLoadingProfiles(true);
-      const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, profileForm, {
+      const response = await axios.put(`${backendUrl}/api/user-profile/me`, profileForm, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json'
@@ -302,7 +302,7 @@ const ProfilePage = () => {
     } finally {
       setIsLoadingProfiles(false);
     }
-  }, [profileForm, user, session, toast]);
+  }, [profileForm, backendUrl, user, session, toast]);
 
   const handleAvatarChange = useCallback((e) => {
     const file = e.target.files[0];
