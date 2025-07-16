@@ -500,6 +500,7 @@ async def get_my_user_profile(user: dict = Depends(verify_jwt)):
             default_profile = {
                 "user_id": user_id,
                 "email": user_email,
+                "name": user_email.split('@')[0],  # Use email prefix as default name
                 "display_name": user_email.split('@')[0],  # Use email prefix as default
                 "created_at": datetime.utcnow().isoformat(),
                 "updated_at": datetime.utcnow().isoformat()
