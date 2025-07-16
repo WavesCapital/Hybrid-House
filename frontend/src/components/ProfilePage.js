@@ -48,17 +48,27 @@ const ProfilePage = () => {
         if (profilesData.length > 0) {
           const mostRecent = profilesData[0];
           
+          // Helper function to get field value from either individual column or JSON
+          const getFieldValue = (fieldName, jsonPath) => {
+            if (mostRecent[fieldName] !== undefined && mostRecent[fieldName] !== null) {
+              return mostRecent[fieldName];
+            }
+            if (mostRecent.profile_json && mostRecent.profile_json[jsonPath || fieldName]) {
+              return mostRecent.profile_json[jsonPath || fieldName];
+            }
+            return '';
+          };
+          
           // Convert body_metrics object to string if it's an object
           let bodyMetricsStr = '';
-          if (mostRecent.profile_json.body_metrics) {
-            if (typeof mostRecent.profile_json.body_metrics === 'object') {
-              // Convert object to readable string
-              const metrics = mostRecent.profile_json.body_metrics;
-              bodyMetricsStr = Object.entries(metrics)
+          const bodyMetrics = mostRecent.body_metrics || mostRecent.profile_json?.body_metrics;
+          if (bodyMetrics) {
+            if (typeof bodyMetrics === 'object') {
+              bodyMetricsStr = Object.entries(bodyMetrics)
                 .map(([key, value]) => `${key}: ${value}`)
                 .join(', ');
             } else {
-              bodyMetricsStr = mostRecent.profile_json.body_metrics;
+              bodyMetricsStr = bodyMetrics.toString();
             }
           }
           
@@ -72,15 +82,17 @@ const ProfilePage = () => {
           };
           
           setInputForm({
-            first_name: mostRecent.profile_json.first_name || '',
-            sex: mostRecent.profile_json.sex || '',
+            first_name: getFieldValue('first_name'),
+            sex: getFieldValue('sex'), 
             body_metrics: bodyMetricsStr,
-            pb_mile: convertToString(mostRecent.profile_json.pb_mile),
-            weekly_miles: convertToString(mostRecent.profile_json.weekly_miles),
-            long_run: convertToString(mostRecent.profile_json.long_run),
-            pb_bench_1rm: convertToString(mostRecent.profile_json.pb_bench_1rm),
-            pb_squat_1rm: convertToString(mostRecent.profile_json.pb_squat_1rm),
-            pb_deadlift_1rm: convertToString(mostRecent.profile_json.pb_deadlift_1rm)
+            pb_mile: convertToString(getFieldValue('pb_mile_seconds') ? 
+              `${Math.floor(getFieldValue('pb_mile_seconds') / 60)}:${String(getFieldValue('pb_mile_seconds') % 60).padStart(2, '0')}` : 
+              getFieldValue('pb_mile')),
+            weekly_miles: convertToString(getFieldValue('weekly_miles')),
+            long_run: convertToString(getFieldValue('long_run_miles') || getFieldValue('long_run')),
+            pb_bench_1rm: convertToString(getFieldValue('pb_bench_1rm_lb') || getFieldValue('pb_bench_1rm')),
+            pb_squat_1rm: convertToString(getFieldValue('pb_squat_1rm_lb') || getFieldValue('pb_squat_1rm')),
+            pb_deadlift_1rm: convertToString(getFieldValue('pb_deadlift_1rm_lb') || getFieldValue('pb_deadlift_1rm'))
           });
         }
         
