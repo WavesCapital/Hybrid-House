@@ -243,7 +243,7 @@ const ProfilePage = () => {
     return '#FF6B6B'; // Red
   }, []);
 
-  if (isLoading) {
+  if (isLoadingProfiles) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#0A0B0C' }}>
         <div className="text-center">
