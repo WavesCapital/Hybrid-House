@@ -238,22 +238,6 @@ async def save_athlete_profile(
             detail="Error saving athlete profile"
         )
 
-@api_router.get("/athlete-profiles")
-async def get_athlete_profiles(user: dict = Depends(verify_jwt)):
-    """Get all athlete profiles for the authenticated user"""
-    user_id = user["sub"]
-    
-    try:
-        result = supabase.table('athlete_profiles').select("*").eq('user_id', user_id).order('created_at', desc=True).execute()
-        return result.data
-        
-    except Exception as e:
-        print(f"Error getting athlete profiles: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error retrieving athlete profiles"
-        )
-
 @api_router.get("/user-profile")
 async def get_user_profile(user: dict = Depends(verify_jwt)):
     """Get user profile information"""
