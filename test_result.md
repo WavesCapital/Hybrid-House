@@ -453,9 +453,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Optimized Database Structure with Individual Fields"
-  stuck_tasks:
-    - "Optimized Database Structure with Individual Fields"
+    - "User Profile Upsert Functionality - Save Profile Button Fix"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
