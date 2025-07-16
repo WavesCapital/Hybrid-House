@@ -325,44 +325,10 @@ const ProfilePage = () => {
         variant: "default",
       });
       
-      // Refresh user profile data
-      // fetchUserProfile() is already defined in useEffect, so we'll trigger a re-fetch
-      if (user && session) {
-        const response = await axios.get(`${BACKEND_URL}/api/user-profile/me`, {
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`
-          }
-        });
-        setUserProfile(response.data.profile);
-      }
-      
-    } catch (error) {
-      console.error('❌ Error updating profile:', error);
-      console.error('📍 Error details:', error.response?.data);
-      console.error('🔢 Error status:', error.response?.status);
-      
-      let errorMessage = "Failed to update profile";
-      if (error.response?.data?.detail) {
-        errorMessage = error.response.data.detail;
-      } else if (error.response?.status === 401) {
-        errorMessage = "Authentication required. Please sign in again.";
-        // Redirect to auth page on 401
-        setTimeout(() => {
-          window.location.href = '/auth';
-        }, 2000);
-      } else if (error.response?.status === 403) {
-        errorMessage = "You don't have permission to update this profile.";
-      }
-      
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
     } finally {
       setIsLoadingProfiles(false);
     }
-  }, [profileForm, BACKEND_URL, user, session, loading, toast, fetchUserProfile]);
+  }, [profileForm, BACKEND_URL, user, session, loading, toast]);
 
   const handleAvatarChange = useCallback((e) => {
     const file = e.target.files[0];
