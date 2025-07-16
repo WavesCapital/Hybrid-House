@@ -383,6 +383,21 @@ infrastructure:
         agent: "main"
         comment: "✅ Removed all icons from buttons to eliminate spacing issues completely. Removed icons from: 'Get My Hybrid Score' (Zap), 'Share My Score' (Share2), header 'Training Plan' and 'Nutrition Plan' (Plus), 'Create Training Plan' and 'Create Nutrition Plan' (Plus), and loading state 'Analyzing Profile' (Loader2). Buttons now have clean text-only appearance with proper alignment."
 
+  - task: "Profile Page Authentication Removal"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py, /app/frontend/src/components/ProfilePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "User requested to remove JWT authentication from profile-related endpoints so Profile Page can display athlete profiles without token requirement"
+      - working: false
+        agent: "main"
+        comment: "✅ AUTHENTICATION REMOVAL ANALYSIS: Key endpoints already have JWT authentication removed: GET /api/athlete-profiles (line 347), GET /api/athlete-profile/{profile_id} (line 462), POST /api/athlete-profile/{profile_id}/score (line 495), POST /api/athlete-profiles (line 313). Frontend ProfilePage.js is making requests without auth headers. Previous testing agent fixed duplicate route definitions that were causing conflicts. Need to verify current functionality and ensure Profile Page displays athlete profiles correctly."
+
 metadata:
   created_by: "main_agent"
   version: "1.1"
