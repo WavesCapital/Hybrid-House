@@ -3401,7 +3401,7 @@ class BackendTester:
         self.test_hybrid_athlete_voice_configuration()
         self.test_hybrid_gamification_features()
         self.test_hybrid_completion_trigger_v10()
-        self.test_hybrid_database_operations()
+        self.test_hybrid_interview_database_operations()
         self.test_openai_prompt_id_configuration()
         self.test_prompt_id_vs_instructions_migration()
         
