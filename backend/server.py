@@ -564,6 +564,7 @@ async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict =
             create_data = {
                 "user_id": user_id,
                 "email": user_email,
+                "name": user_email.split('@')[0],  # Default name
                 "display_name": user_email.split('@')[0],  # Default display name
                 "created_at": datetime.utcnow().isoformat(),
                 "updated_at": datetime.utcnow().isoformat()
