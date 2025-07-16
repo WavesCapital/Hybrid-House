@@ -347,13 +347,11 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
         )
 
 @api_router.get("/athlete-profiles")
-async def get_user_athlete_profiles(user: dict = Depends(verify_jwt)):
-    """Get all athlete profiles for the authenticated user"""
+async def get_user_athlete_profiles():
+    """Get all athlete profiles"""
     try:
-        user_id = user['sub']
-        
-        # Get all athlete profiles for this user
-        profiles_result = supabase.table('athlete_profiles').select('*').eq('user_id', user_id).order('created_at', desc=True).execute()
+        # Get all athlete profiles (no user filtering)
+        profiles_result = supabase.table('athlete_profiles').select('*').order('created_at', desc=True).execute()
         
         if not profiles_result.data:
             return {
@@ -380,7 +378,7 @@ async def get_user_athlete_profiles(user: dict = Depends(verify_jwt)):
         }
         
     except Exception as e:
-        print(f"Error fetching user athlete profiles: {e}")
+        print(f"Error fetching athlete profiles: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error fetching athlete profiles: {str(e)}"
