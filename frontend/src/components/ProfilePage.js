@@ -19,12 +19,6 @@ const ProfilePage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  // Debug logging
-  console.log('ProfilePage rendering, user:', user);
-  console.log('ProfilePage rendering, session:', session);
-  console.log('ProfilePage rendering, userProfile:', userProfile);
-  console.log('ProfilePage rendering, isEditingProfile:', isEditingProfile);
-  
   // User Profile Management States
   const [userProfile, setUserProfile] = useState(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -57,6 +51,12 @@ const ProfilePage = () => {
     pb_squat_1rm: '',
     pb_deadlift_1rm: ''
   });
+
+  // Debug logging
+  console.log('ProfilePage rendering, user:', user);
+  console.log('ProfilePage rendering, session:', session);
+  console.log('ProfilePage rendering, userProfile:', userProfile);
+  console.log('ProfilePage rendering, isEditingProfile:', isEditingProfile);
 
   // Load profiles and user profile data
   useEffect(() => {
