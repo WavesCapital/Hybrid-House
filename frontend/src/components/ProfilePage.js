@@ -15,7 +15,7 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const ProfilePage = () => {
-  const { user, session } = useAuth();
+  const { user, session, loading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   
