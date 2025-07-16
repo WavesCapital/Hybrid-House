@@ -400,6 +400,7 @@ def extract_individual_fields(profile_json: dict, score_data: dict = None) -> di
     # Remove None values
     return {k: v for k, v in individual_fields.items() if v is not None}
 
+@api_router.post("/athlete-profiles")
 async def create_athlete_profile(profile_data: dict):
     """Create a new athlete profile with optimized individual fields"""
     try:
