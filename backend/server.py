@@ -419,10 +419,8 @@ def extract_individual_fields(profile_json: dict, score_data: dict = None) -> di
 # User Profile Management Endpoints
 
 class UserProfileUpdate(BaseModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    name: Optional[str] = None  # Changed from first_name/last_name to name
     display_name: Optional[str] = None
-    bio: Optional[str] = None
     location: Optional[str] = None
     website: Optional[str] = None
     date_of_birth: Optional[str] = None
