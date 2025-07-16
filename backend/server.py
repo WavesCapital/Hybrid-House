@@ -420,11 +420,11 @@ async def create_athlete_profile(profile_data: dict):
         # Extract individual fields from profile_json
         individual_fields = extract_individual_fields(profile_data.get('profile_json', {}))
         
-        # Create profile (user_id is optional for now)
+        # Create profile (provide default user_id if not specified)
         new_profile = {
             **profile_data,
             **individual_fields,  # Add extracted individual fields
-            "user_id": profile_data.get("user_id", None),  # Make user_id optional
+            "user_id": profile_data.get("user_id", str(uuid.uuid4())),  # Generate default user_id
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat()
         }
