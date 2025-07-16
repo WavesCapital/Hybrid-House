@@ -276,6 +276,10 @@ const ProfilePage = () => {
 
     try {
       setIsLoadingProfiles(true);
+      
+      console.log('Updating profile with data:', profileForm);
+      console.log('Using token:', session.access_token);
+      
       const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, profileForm, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
@@ -283,18 +287,31 @@ const ProfilePage = () => {
         }
       });
 
+      console.log('Profile update response:', response.data);
+
       setUserProfile(response.data.profile);
       setIsEditingProfile(false);
       toast({
         title: "Success",
-        description: "Profile updated successfully",
+        description: response.data.message || "Profile updated successfully",
         variant: "default",
       });
     } catch (error) {
       console.error('Error updating profile:', error);
+      console.error('Error response:', error.response?.data);
+      
+      let errorMessage = "Failed to update profile";
+      if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.response?.status === 401) {
+        errorMessage = "Authentication required. Please sign in again.";
+      } else if (error.response?.status === 403) {
+        errorMessage = "You don't have permission to update this profile.";
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to update profile",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
