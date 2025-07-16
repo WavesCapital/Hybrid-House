@@ -4226,8 +4226,10 @@ class BackendTester:
 
     def run_all_tests(self):
         """Run all backend tests with focus on new user profile management system"""
+    def run_all_tests(self):
+        """Run all backend tests with focus on enhanced ProfilePage system"""
         print("=" * 80)
-        print("🚀 TESTING NEW USER PROFILE MANAGEMENT SYSTEM")
+        print("🚀 TESTING ENHANCED PROFILEPAGE SYSTEM WITH USER PROFILE MANAGEMENT")
         print("=" * 80)
         
         # Core connectivity tests
@@ -4240,9 +4242,26 @@ class BackendTester:
         self.test_protected_endpoints_without_token()
         self.test_protected_endpoints_with_invalid_token()
         
-        # ===== NEW USER PROFILE MANAGEMENT SYSTEM TESTS (PRIMARY FOCUS) =====
+        # ===== ENHANCED PROFILEPAGE SYSTEM TESTS (PRIMARY FOCUS) =====
         print("\n" + "=" * 60)
-        print("🎯 NEW USER PROFILE MANAGEMENT SYSTEM TESTS")
+        print("🎯 ENHANCED PROFILEPAGE SYSTEM TESTS")
+        print("=" * 60)
+        
+        self.test_enhanced_profile_page_user_profile_get()
+        self.test_enhanced_profile_page_user_profile_update()
+        self.test_enhanced_profile_page_avatar_upload()
+        self.test_enhanced_profile_page_athlete_profiles_list()
+        self.test_enhanced_profile_page_athlete_profile_linking()
+        self.test_enhanced_athlete_profile_creation_with_auto_linking()
+        self.test_public_athlete_profile_creation_endpoint()
+        self.test_enhanced_profile_page_database_schema()
+        self.test_enhanced_profile_page_athlete_profile_relationships()
+        self.test_enhanced_profile_page_individual_columns_optimization()
+        self.test_enhanced_profile_page_comprehensive_system()
+        
+        # ===== EXISTING USER PROFILE MANAGEMENT SYSTEM TESTS =====
+        print("\n" + "=" * 60)
+        print("🔐 EXISTING USER PROFILE MANAGEMENT SYSTEM TESTS")
         print("=" * 60)
         
         self.test_user_profile_get_endpoint()
@@ -4259,7 +4278,7 @@ class BackendTester:
         
         # ===== OPTIMIZED DATABASE STRUCTURE TESTS =====
         print("\n" + "=" * 60)
-        print("🎯 OPTIMIZED DATABASE STRUCTURE TESTS")
+        print("🗄️ OPTIMIZED DATABASE STRUCTURE TESTS")
         print("=" * 60)
         
         self.test_extract_individual_fields_function()
@@ -4310,7 +4329,7 @@ class BackendTester:
         
         # Summary
         print("\n" + "=" * 80)
-        print("📊 TEST SUMMARY")
+        print("📊 ENHANCED PROFILEPAGE SYSTEM TEST SUMMARY")
         print("=" * 80)
         
         passed = sum(1 for result in self.test_results if result['success'])
@@ -4320,6 +4339,30 @@ class BackendTester:
         print(f"Passed: {passed}")
         print(f"Failed: {total - passed}")
         print(f"Success Rate: {(passed/total)*100:.1f}%")
+        
+        # Highlight enhanced ProfilePage system results
+        enhanced_profile_tests = [
+            "Enhanced ProfilePage - GET /user-profile/me",
+            "Enhanced ProfilePage - PUT /user-profile/me", 
+            "Enhanced ProfilePage - Avatar Upload",
+            "Enhanced ProfilePage - User Athlete Profiles List",
+            "Enhanced ProfilePage - Athlete Profile Linking",
+            "Enhanced Athlete Profile Creation with Auto-Linking",
+            "Public Athlete Profile Creation",
+            "Enhanced ProfilePage - Database Schema",
+            "Enhanced ProfilePage - Athlete Profile Relationships",
+            "Enhanced ProfilePage - Individual Columns Optimization",
+            "Enhanced ProfilePage - Comprehensive System"
+        ]
+        
+        enhanced_results = [r for r in self.test_results if r['test'] in enhanced_profile_tests]
+        enhanced_passed = sum(1 for r in enhanced_results if r['success'])
+        enhanced_total = len(enhanced_results)
+        
+        print(f"\n🎯 ENHANCED PROFILEPAGE SYSTEM RESULTS:")
+        print(f"Enhanced ProfilePage Tests: {enhanced_total}")
+        print(f"Enhanced ProfilePage Passed: {enhanced_passed}")
+        print(f"Enhanced ProfilePage Success Rate: {(enhanced_passed/enhanced_total)*100:.1f}%")
         
         # Highlight optimized database structure results
         db_structure_tests = [
@@ -4335,7 +4378,7 @@ class BackendTester:
         db_passed = sum(1 for r in db_structure_results if r['success'])
         db_total = len(db_structure_results)
         
-        print(f"\n🎯 OPTIMIZED DATABASE STRUCTURE RESULTS:")
+        print(f"\n🗄️ OPTIMIZED DATABASE STRUCTURE RESULTS:")
         print(f"Database Structure Tests: {db_total}")
         print(f"Database Structure Passed: {db_passed}")
         print(f"Database Structure Success Rate: {(db_passed/db_total)*100:.1f}%")
