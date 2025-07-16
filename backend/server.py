@@ -757,8 +757,8 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
             default_profile = {
                 "user_id": user_id,
                 "email": user.get('email', ''),
-                "first_name": user.get('user_metadata', {}).get('first_name', ''),
-                "display_name": user.get('user_metadata', {}).get('display_name', user.get('email', '')),
+                "name": user.get('user_metadata', {}).get('name', user.get('email', '').split('@')[0]),
+                "display_name": user.get('user_metadata', {}).get('display_name', user.get('email', '').split('@')[0]),
                 "created_at": datetime.utcnow().isoformat(),
                 "updated_at": datetime.utcnow().isoformat()
             }
