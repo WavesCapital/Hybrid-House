@@ -402,11 +402,15 @@ def extract_individual_fields(profile_json: dict, score_data: dict = None) -> di
     return {k: v for k, v in individual_fields.items() if v is not None}
 
 async def create_athlete_profile(profile_data: dict):
-    """Create a new athlete profile"""
+    """Create a new athlete profile with optimized individual fields"""
     try:
+        # Extract individual fields from profile_json
+        individual_fields = extract_individual_fields(profile_data.get('profile_json', {}))
+        
         # Create profile (no user_id required)
         new_profile = {
             **profile_data,
+            **individual_fields,  # Add extracted individual fields
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat()
         }
