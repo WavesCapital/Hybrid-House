@@ -449,6 +449,17 @@ const ProfilePage = () => {
     return '#FF6B6B'; // Red
   }, []);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0A0B0C' }}>
+        <div className="text-center">
+          <div className="neo-primary text-xl mb-4">Loading authentication...</div>
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoadingProfiles) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#0A0B0C' }}>
