@@ -478,7 +478,7 @@ async def get_my_user_profile(user: dict = Depends(verify_jwt)):
 
 @api_router.put("/user-profile/me")
 async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict = Depends(verify_jwt)):
-    """Update current user's profile information"""
+    """Update current user's profile information (creates if doesn't exist)"""
     try:
         user_id = user.get('sub')
         
@@ -492,7 +492,7 @@ async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict =
             if value is not None:
                 update_data[field] = value
         
-        # Update user profile
+        # Try to update existing profile first
         result = supabase.table('user_profiles').update(update_data).eq('user_id', user_id).execute()
         
         if result.data:
@@ -501,15 +501,40 @@ async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict =
                 "profile": result.data[0]
             }
         else:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User profile not found"
-            )
+            # No profile exists, create a new one
+            print(f"No profile found for user {user_id}, creating new profile...")
+            
+            # Prepare create data with required fields
+            create_data = {
+                "user_id": user_id,
+                "email": user.get('email', ''),
+                "first_name": user.get('user_metadata', {}).get('first_name', ''),
+                "display_name": user.get('user_metadata', {}).get('display_name', user.get('email', '')),
+                "created_at": datetime.utcnow().isoformat(),
+                "updated_at": datetime.utcnow().isoformat()
+            }
+            
+            # Add the update fields to create data
+            create_data.update(update_data)
+            
+            # Create new profile
+            create_result = supabase.table('user_profiles').insert(create_data).execute()
+            
+            if create_result.data:
+                return {
+                    "message": "Profile created successfully",
+                    "profile": create_result.data[0]
+                }
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Failed to create user profile"
+                )
         
     except HTTPException:
         raise
     except Exception as e:
-        print(f"Error updating user profile: {e}")
+        print(f"Error updating/creating user profile: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error updating user profile: {str(e)}"
