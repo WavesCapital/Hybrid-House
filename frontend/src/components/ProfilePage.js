@@ -139,15 +139,20 @@ const ProfilePage = () => {
   // Load user profile data
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!user || !session) return;
+      if (!user || !session) {
+        console.log('No user or session found:', { user: !!user, session: !!session });
+        return;
+      }
       
       try {
+        console.log('Fetching user profile for user:', user.sub);
         const response = await axios.get(`${BACKEND_URL}/api/user-profile/me`, {
           headers: {
             'Authorization': `Bearer ${session.access_token}`
           }
         });
 
+        console.log('User profile fetched:', response.data);
         const profile = response.data.profile;
         setUserProfile(profile);
         setProfileForm({
@@ -163,6 +168,7 @@ const ProfilePage = () => {
         });
       } catch (error) {
         console.error('Error fetching user profile:', error);
+        console.log('User profile does not exist yet - will be created on first save');
         // User profile might not exist yet, which is fine
       }
     };
