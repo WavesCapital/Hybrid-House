@@ -563,23 +563,23 @@ const ProfilePage = () => {
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
                         <div>
                           <span className="neo-text-secondary">Sex:</span>
-                          <span className="neo-text-primary ml-2">{profile.profile_json.sex || 'Not specified'}</span>
+                          <span className="neo-text-primary ml-2">{renderProfileField(profile.profile_json.sex)}</span>
                         </div>
                         <div>
                           <span className="neo-text-secondary">Mile PR:</span>
-                          <span className="neo-text-primary ml-2">{profile.profile_json.pb_mile || 'Not specified'}</span>
+                          <span className="neo-text-primary ml-2">{renderProfileField(profile.profile_json.pb_mile)}</span>
                         </div>
                         <div>
                           <span className="neo-text-secondary">Weekly Miles:</span>
-                          <span className="neo-text-primary ml-2">{profile.profile_json.weekly_miles || 'Not specified'}</span>
+                          <span className="neo-text-primary ml-2">{renderProfileField(profile.profile_json.weekly_miles)}</span>
                         </div>
                         <div>
                           <span className="neo-text-secondary">Long Run:</span>
-                          <span className="neo-text-primary ml-2">{profile.profile_json.long_run || 'Not specified'}</span>
+                          <span className="neo-text-primary ml-2">{renderProfileField(profile.profile_json.long_run)}</span>
                         </div>
                         <div>
                           <span className="neo-text-secondary">Bench:</span>
-                          <span className="neo-text-primary ml-2">{profile.profile_json.pb_bench_1rm || 'Not specified'}</span>
+                          <span className="neo-text-primary ml-2">{renderProfileField(profile.profile_json.pb_bench_1rm)}</span>
                         </div>
                         <div>
                           <span className="neo-text-secondary">Status:</span>
