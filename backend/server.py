@@ -533,6 +533,10 @@ async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict =
     """Update current user's profile information (creates if doesn't exist)"""
     try:
         user_id = user.get('sub')
+        user_email = user.get('email', '')
+        
+        print(f"🔄 Updating profile for user {user_id}")
+        print(f"📝 Update data: {profile_update.dict(exclude_unset=True)}")
         
         # Prepare update data
         update_data = {
@@ -548,20 +552,20 @@ async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict =
         result = supabase.table('user_profiles').update(update_data).eq('user_id', user_id).execute()
         
         if result.data:
+            print(f"✅ Profile updated successfully: {result.data[0]['id']}")
             return {
                 "message": "Profile updated successfully",
                 "profile": result.data[0]
             }
         else:
-            # No profile exists, create a new one
-            print(f"No profile found for user {user_id}, creating new profile...")
+            # No profile exists, create a new one (upsert functionality)
+            print(f"🔄 No profile found for user {user_id}, creating new profile...")
             
             # Prepare create data with required fields
             create_data = {
                 "user_id": user_id,
-                "email": user.get('email', ''),
-                "first_name": user.get('user_metadata', {}).get('first_name', ''),
-                "display_name": user.get('user_metadata', {}).get('display_name', user.get('email', '')),
+                "email": user_email,
+                "display_name": user_email.split('@')[0],  # Default display name
                 "created_at": datetime.utcnow().isoformat(),
                 "updated_at": datetime.utcnow().isoformat()
             }
@@ -569,15 +573,19 @@ async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict =
             # Add the update fields to create data
             create_data.update(update_data)
             
+            print(f"📝 Creating profile with data: {create_data}")
+            
             # Create new profile
             create_result = supabase.table('user_profiles').insert(create_data).execute()
             
             if create_result.data:
+                print(f"✅ Profile created successfully: {create_result.data[0]['id']}")
                 return {
                     "message": "Profile created successfully",
                     "profile": create_result.data[0]
                 }
             else:
+                print(f"❌ Failed to create profile")
                 raise HTTPException(
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     detail="Failed to create user profile"
@@ -586,7 +594,7 @@ async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict =
     except HTTPException:
         raise
     except Exception as e:
-        print(f"Error updating/creating user profile: {e}")
+        print(f"❌ Error updating/creating user profile: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error updating user profile: {str(e)}"
