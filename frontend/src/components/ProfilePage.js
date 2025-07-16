@@ -23,10 +23,8 @@ const ProfilePage = () => {
   const [userProfile, setUserProfile] = useState(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState({
-    first_name: '',
-    last_name: '',
+    name: '',
     display_name: '',
-    bio: '',
     location: '',
     website: '',
     gender: '',
