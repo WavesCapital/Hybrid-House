@@ -510,7 +510,7 @@ const ProfilePage = () => {
                           </div>
                           <div>
                             <h3 className="text-lg font-semibold neo-text-primary">
-                              {profile.profile_json.first_name || 'Unnamed Profile'}
+                              {profile.profile_json?.first_name || profile.first_name || 'Unnamed Profile'}
                             </h3>
                             <p className="text-sm neo-text-secondary flex items-center">
                               <Calendar className="h-4 w-4 mr-1" />
