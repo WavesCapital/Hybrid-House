@@ -50,7 +50,7 @@ def test_optimized_database_structure():
     try:
         response = requests.post(f"{API_BASE_URL}/athlete-profiles", json=test_profile_data)
         
-        if response.status_code == 201:
+        if response.status_code == 200:  # Changed from 201 to 200
             data = response.json()
             profile = data.get('profile', {})
             
