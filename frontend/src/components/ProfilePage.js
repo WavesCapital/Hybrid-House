@@ -130,7 +130,7 @@ const ProfilePage = () => {
           variant: "destructive",
         });
       } finally {
-        setIsLoading(false);
+        setIsLoadingProfiles(false);
       }
     };
 
