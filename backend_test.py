@@ -4659,7 +4659,20 @@ class BackendTester:
         self.test_protected_endpoints_without_token()
         self.test_protected_endpoints_with_invalid_token()
         
-        # ===== ENHANCED PROFILEPAGE SYSTEM TESTS (PRIMARY FOCUS) =====
+        # ===== USER PROFILE UPSERT FUNCTIONALITY TESTS (PRIMARY FOCUS) =====
+        print("\n" + "=" * 60)
+        print("🔧 USER PROFILE UPSERT FUNCTIONALITY TESTS")
+        print("=" * 60)
+        
+        self.test_user_profile_upsert_endpoint_exists()
+        self.test_user_profile_upsert_authentication_enforcement()
+        self.test_user_profile_upsert_functionality_no_existing_profile()
+        self.test_user_profile_upsert_functionality_existing_profile()
+        self.test_user_profile_upsert_error_handling()
+        self.test_user_profile_upsert_response_format()
+        self.test_user_profile_upsert_comprehensive_functionality()
+        
+        # ===== ENHANCED PROFILEPAGE SYSTEM TESTS =====
         print("\n" + "=" * 60)
         print("🎯 ENHANCED PROFILEPAGE SYSTEM TESTS")
         print("=" * 60)
