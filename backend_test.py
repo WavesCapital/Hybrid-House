@@ -2352,6 +2352,7 @@ class BackendTester:
             ("🔍 Athlete Profile Parsing Simulation", self.test_athlete_profile_parsing_simulation),
             
             # 🎯 PRIMARY TESTS: NEW ATHLETE PROFILE ENDPOINTS (as requested in review)
+            ("🎯 GET Athlete Profiles List Endpoint (DUPLICATE ROUTE FIX)", self.test_athlete_profiles_list_endpoint),
             ("🎯 GET Athlete Profile Endpoint", self.test_athlete_profile_get_endpoint),
             ("🎯 POST Athlete Profile Score Endpoint", self.test_athlete_profile_score_update_endpoint),
             ("🎯 New Athlete Profile Endpoints Integration", self.test_new_athlete_profile_endpoints_integration),
