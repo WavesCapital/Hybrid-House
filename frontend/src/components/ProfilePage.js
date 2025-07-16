@@ -621,7 +621,7 @@ const ProfilePage = () => {
                   
                   <div className="mt-3">
                     <p className="text-sm font-medium neo-text-primary">
-                      {userProfile?.display_name || userProfile?.first_name || 'User'}
+                      {userProfile?.display_name || userProfile?.name || 'User'}
                     </p>
                     <p className="text-xs neo-text-secondary">
                       {userProfile?.email}
