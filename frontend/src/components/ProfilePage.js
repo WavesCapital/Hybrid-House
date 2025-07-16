@@ -696,20 +696,6 @@ const ProfilePage = () => {
 
                     <div>
                       <label className="block text-sm font-medium neo-text-secondary mb-1">
-                        <Phone className="w-4 h-4 inline mr-1" />
-                        Phone
-                      </label>
-                      <Input
-                        value={profileForm.phone}
-                        onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})}
-                        disabled={!isEditingProfile}
-                        className="bg-gray-900 border-gray-700 text-white"
-                        placeholder="+1 (555) 123-4567"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-1">
                         Gender
                       </label>
                       <select
