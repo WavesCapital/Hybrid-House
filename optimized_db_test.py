@@ -389,26 +389,33 @@ class OptimizedDBTester:
             
             response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=profile_data)
             
-            if response.status_code == 201:
-                profile = response.json()['profile']
+            if response.status_code == 200:
+                extracted_fields = response.json()
                 
-                # Verify the profile was created with the weight data
-                profile_json = profile.get('profile_json', {})
-                has_bench = 'pb_bench_1rm' in profile_json
-                has_squat = 'pb_squat_1rm' in profile_json
-                has_deadlift = 'pb_deadlift_1rm' in profile_json
+                # Check weight extractions
+                expected_weights = {
+                    "pb_bench_1rm_lb": 225.0,   # From object with weight_lb
+                    "pb_squat_1rm_lb": 315.0,   # From object with weight
+                    "pb_deadlift_1rm_lb": 405.0 # Direct number
+                }
                 
-                if has_bench and has_squat and has_deadlift:
+                correct_extractions = 0
+                for field, expected_weight in expected_weights.items():
+                    if field in extracted_fields and extracted_fields[field] == expected_weight:
+                        correct_extractions += 1
+                
+                if correct_extractions == len(expected_weights):
                     self.log_test("Weight Extraction from Objects", True, 
-                                "Weight values properly extracted from various object formats")
+                                f"All weight extractions working correctly ({correct_extractions}/{len(expected_weights)})")
                     return True
                 else:
                     self.log_test("Weight Extraction from Objects", False, 
-                                "Weight extraction may have failed", profile_json)
+                                f"Weight extraction issues ({correct_extractions}/{len(expected_weights)} correct)", 
+                                extracted_fields)
                     return False
             else:
                 self.log_test("Weight Extraction from Objects", False, 
-                            f"Profile creation failed: HTTP {response.status_code}", response.text)
+                            f"Request failed: HTTP {response.status_code}", response.text)
                 return False
                 
         except Exception as e:
