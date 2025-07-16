@@ -53,7 +53,7 @@ const ProfilePage = () => {
     pb_deadlift_1rm: ''
   });
 
-  // Load profiles and populate form with most recent data
+  // Load profiles and user profile data
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
@@ -136,6 +136,41 @@ const ProfilePage = () => {
 
     fetchProfiles();
   }, [toast]);
+
+  // Load user profile data
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user || !session) return;
+      
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/user-profile/me`, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+
+        const profile = response.data.profile;
+        setUserProfile(profile);
+        setProfileForm({
+          first_name: profile.first_name || '',
+          last_name: profile.last_name || '',
+          display_name: profile.display_name || '',
+          bio: profile.bio || '',
+          location: profile.location || '',
+          website: profile.website || '',
+          phone: profile.phone || '',
+          gender: profile.gender || '',
+          units_preference: profile.units_preference || 'imperial',
+          privacy_level: profile.privacy_level || 'private'
+        });
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        // User profile might not exist yet, which is fine
+      }
+    };
+
+    fetchUserProfile();
+  }, [user, session]);
 
   // Generate new athlete profile
   const generateNewProfile = useCallback(async () => {
