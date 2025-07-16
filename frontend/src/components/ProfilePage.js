@@ -225,16 +225,30 @@ const ProfilePage = () => {
         updated_at: new Date().toISOString()
       };
 
-      // Store profile in database
-      await axios.post(`${BACKEND_URL}/api/athlete-profiles`, newProfile);
+      // Store profile in database - use authenticated endpoint if user is signed in
+      if (user && session) {
+        await axios.post(`${BACKEND_URL}/api/athlete-profiles`, newProfile, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        toast({
+          title: "Profile Generated! 🎉",
+          description: "Your new athlete profile has been created and linked to your account.",
+        });
+      } else {
+        await axios.post(`${BACKEND_URL}/api/athlete-profiles/public`, newProfile);
+        
+        toast({
+          title: "Profile Generated! 🎉",
+          description: "Your new athlete profile has been created successfully.",
+        });
+      }
 
       // Store score data
       await axios.post(`${BACKEND_URL}/api/athlete-profile/${profileId}/score`, finalScoreData);
-
-      toast({
-        title: "Profile Generated! 🎉",
-        description: "Your new athlete profile has been created successfully.",
-      });
 
       // Navigate to the new score page
       navigate(`/hybrid-score/${profileId}`);
@@ -249,7 +263,7 @@ const ProfilePage = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [inputForm, navigate, toast]);
+  }, [inputForm, navigate, toast, user, session]);
 
   // Format date
   const formatDate = useCallback((dateString) => {
