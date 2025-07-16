@@ -499,22 +499,38 @@ class OptimizedDBTester:
             
             response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=minimal_data)
             
-            if response.status_code == 201:
-                profile = response.json()['profile']
+            if response.status_code == 200:
+                extracted_fields = response.json()
                 
-                # Should have the provided fields
-                if (profile.get('profile_json', {}).get('first_name') == "MinimalUser" and
-                    profile.get('profile_json', {}).get('sex') == "Female"):
+                # Should have the provided fields and defaults
+                expected_fields = {
+                    "first_name": "MinimalUser",
+                    "sex": "Female",
+                    "schema_version": "v1.0",
+                    "interview_type": "hybrid"
+                }
+                
+                correct_fields = 0
+                for field, expected_value in expected_fields.items():
+                    if field in extracted_fields and extracted_fields[field] == expected_value:
+                        correct_fields += 1
+                
+                # Should not have fields that weren't provided (null handling)
+                should_not_have = ["age", "weight_lb", "vo2_max", "weekly_miles"]
+                missing_count = sum(1 for field in should_not_have if field not in extracted_fields)
+                
+                if correct_fields == len(expected_fields) and missing_count == len(should_not_have):
                     self.log_test("Null Value Handling", True, 
-                                "Minimal profile data handled correctly with null values")
+                                f"Null values handled correctly - has required fields, excludes null fields")
                     return True
                 else:
                     self.log_test("Null Value Handling", False, 
-                                "Minimal profile data not handled correctly", profile)
+                                f"Null handling issues - {correct_fields}/{len(expected_fields)} required, {missing_count}/{len(should_not_have)} properly excluded", 
+                                extracted_fields)
                     return False
             else:
                 self.log_test("Null Value Handling", False, 
-                            f"Minimal profile creation failed: HTTP {response.status_code}", response.text)
+                            f"Request failed: HTTP {response.status_code}", response.text)
                 return False
                 
         except Exception as e:
