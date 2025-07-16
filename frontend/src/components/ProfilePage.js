@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Input } from './ui/input';
-import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
 import { 
   User, Calendar, Trophy, BarChart3, Plus, Target, 
