@@ -590,11 +590,31 @@ async def get_athlete_profile(profile_id: str):
 async def update_athlete_profile_score(profile_id: str, score_data: dict):
     """Update athlete profile with score data from webhook"""
     try:
-        # Update athlete profile with score data (no user filtering)
-        update_result = supabase.table('athlete_profiles').update({
+        # Get current profile to extract individual fields from score data
+        current_profile_result = supabase.table('athlete_profiles').select('*').eq('id', profile_id).execute()
+        
+        if not current_profile_result.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Profile not found"
+            )
+        
+        current_profile = current_profile_result.data[0]
+        
+        # Extract individual score fields
+        individual_score_fields = extract_individual_fields(
+            current_profile.get('profile_json', {}), 
+            score_data
+        )
+        
+        # Update athlete profile with score data and individual fields
+        update_data = {
             "score_data": score_data,
-            "updated_at": datetime.utcnow().isoformat()
-        }).eq('id', profile_id).execute()
+            "updated_at": datetime.utcnow().isoformat(),
+            **individual_score_fields  # Include extracted score fields
+        }
+        
+        update_result = supabase.table('athlete_profiles').update(update_data).eq('id', profile_id).execute()
         
         if not update_result.data:
             raise HTTPException(
