@@ -420,10 +420,11 @@ async def create_athlete_profile(profile_data: dict):
         # Extract individual fields from profile_json
         individual_fields = extract_individual_fields(profile_data.get('profile_json', {}))
         
-        # Create profile (no user_id required)
+        # Create profile (user_id is optional for now)
         new_profile = {
             **profile_data,
             **individual_fields,  # Add extracted individual fields
+            "user_id": profile_data.get("user_id", None),  # Make user_id optional
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat()
         }
@@ -437,6 +438,7 @@ async def create_athlete_profile(profile_data: dict):
                 print(f"⚠️  Individual columns not yet added to database, using JSON-only storage")
                 fallback_profile = {
                     **profile_data,
+                    "user_id": profile_data.get("user_id", None),
                     "created_at": datetime.utcnow().isoformat(),
                     "updated_at": datetime.utcnow().isoformat()
                 }
