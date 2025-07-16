@@ -2461,6 +2461,8 @@ class BackendTester:
             
             # 🎯 PRIMARY TESTS: NEW ATHLETE PROFILE ENDPOINTS (as requested in review)
             ("🎯 GET Athlete Profiles List Endpoint (DUPLICATE ROUTE FIX)", self.test_athlete_profiles_list_endpoint),
+            ("🎯 Athlete Profiles with Valid JWT", self.test_athlete_profiles_with_valid_jwt),
+            ("🎯 Supabase Athlete Profiles Table Direct", self.test_supabase_athlete_profiles_table_direct),
             ("🎯 GET Athlete Profile Endpoint", self.test_athlete_profile_get_endpoint),
             ("🎯 POST Athlete Profile Score Endpoint", self.test_athlete_profile_score_update_endpoint),
             ("🎯 New Athlete Profile Endpoints Integration", self.test_new_athlete_profile_endpoints_integration),
