@@ -3342,106 +3342,111 @@ class BackendTester:
             return False
 
     def run_all_tests(self):
-        """Run comprehensive tests focusing on hybrid interview endpoints with OpenAI prompt ID configuration"""
+        """Run all backend tests with focus on optimized database structure"""
         print("=" * 80)
-        print("🚀 HYBRID INTERVIEW OPENAI PROMPT ID TESTING")
-        print("Testing hybrid interview endpoints updated to use OpenAI prompt ID instead of instructions")
+        print("🚀 TESTING FIXED OPTIMIZED DATABASE STRUCTURE")
         print("=" * 80)
         
-        # Core system health tests first
-        core_tests = [
-            ("API Connectivity", self.test_api_root),
-            ("System Health", self.test_system_health_comprehensive),
-            ("Supabase Integration", self.test_supabase_connection),
-            ("JWT Configuration", self.test_jwt_secret_configuration),
-        ]
+        # Core connectivity tests
+        self.test_api_root()
+        self.test_unprotected_endpoints()
+        self.test_supabase_connection()
+        self.test_jwt_secret_configuration()
         
-        # 🎯 PRIMARY FOCUS: HYBRID INTERVIEW PROMPT ID TESTS
-        hybrid_prompt_tests = [
-            ("🎯 Hybrid Interview Start Endpoint", self.test_hybrid_interview_start_endpoint),
-            ("🎯 Hybrid Interview Chat Endpoint", self.test_hybrid_interview_chat_endpoint),
-            ("🎯 OpenAI Prompt ID Configuration", self.test_openai_prompt_id_configuration),
-            ("🎯 Prompt ID vs Instructions Migration", self.test_prompt_id_vs_instructions_migration),
-            ("🎯 Essential-Score Prompt v1.0 Configuration", self.test_essential_score_prompt_v10_configuration),
-            ("🎯 Hybrid-Athlete Voice Configuration", self.test_hybrid_athlete_voice_configuration),
-            ("🎯 Hybrid Gamification Features", self.test_hybrid_gamification_features),
-            ("🎯 Hybrid Completion Trigger v1.0", self.test_hybrid_completion_trigger_v10),
-            ("🎯 11 Essential Questions Coverage", self.test_11_essential_questions_coverage),
-            ("🎯 Hybrid Interview Database Operations", self.test_hybrid_interview_database_operations),
-        ]
+        # Authentication tests
+        self.test_protected_endpoints_without_token()
+        self.test_protected_endpoints_with_invalid_token()
         
-        # OpenAI integration tests
-        openai_tests = [
-            ("OpenAI Responses API Integration", self.test_openai_responses_api_integration),
-            ("GPT-4.1 Model Configuration", self.test_gpt41_model_configuration),
-            ("Stateful Conversations Verification", self.test_stateful_conversations_verification),
-        ]
+        # ===== OPTIMIZED DATABASE STRUCTURE TESTS (PRIMARY FOCUS) =====
+        print("\n" + "=" * 60)
+        print("🎯 OPTIMIZED DATABASE STRUCTURE TESTS")
+        print("=" * 60)
         
-        # End-to-end flow tests
-        e2e_tests = [
-            ("Hybrid Interview Completion Flow E2E", self.test_hybrid_interview_completion_flow_e2e),
-            ("Backend Completion Response Structure", self.test_backend_completion_response_structure),
-            ("Webhook Issue Root Cause Analysis", self.test_webhook_issue_root_cause_analysis),
-        ]
+        self.test_extract_individual_fields_function()
+        self.test_post_athlete_profiles_endpoint_fixed()
+        self.test_get_athlete_profiles_with_individual_fields()
+        self.test_hybrid_interview_completion_with_individual_fields()
+        self.test_score_updates_with_disabled_columns()
+        self.test_optimized_database_structure_comprehensive()
         
-        # Authentication and security tests
-        auth_tests = [
-            ("Protected Endpoints (No Token)", self.test_protected_endpoints_without_token),
-            ("Protected Endpoints (Invalid Token)", self.test_protected_endpoints_with_invalid_token),
-            ("Authentication & Session Management", self.test_authentication_session_management),
-        ]
+        # System configuration tests
+        self.test_cors_configuration()
+        self.test_openai_responses_api_integration()
+        self.test_gpt41_model_configuration()
         
-        all_tests = [
-            ("🏥 CORE SYSTEM HEALTH", core_tests),
-            ("🎯 HYBRID INTERVIEW PROMPT ID TESTS", hybrid_prompt_tests),
-            ("🤖 OPENAI INTEGRATION", openai_tests),
-            ("🔄 END-TO-END FLOW", e2e_tests),
-            ("🔐 AUTHENTICATION & SECURITY", auth_tests),
-        ]
+        # Interview Flow tests
+        self.test_interview_flow_endpoints_without_auth()
+        self.test_authentication_session_management()
+        self.test_database_table_accessibility()
+        self.test_interview_flow_readiness()
         
-        total_passed = 0
-        total_tests = 0
+        # Enhanced Interview Flow tests (55-question Kendall Toole system)
+        self.test_kendall_toole_55_question_system()
+        self.test_kendall_toole_personality_system()
+        self.test_new_section_structure()
+        self.test_conversational_tone_verification()
+        self.test_v44_np_ln_system_prompt()
+        self.test_primer_message_verification()
+        self.test_section_recaps_verification()
+        self.test_55_question_completion_logic()
+        self.test_streak_detection_system()
+        self.test_stateful_conversations_verification()
+        self.test_progress_tracking_system()
+        self.test_emergentintegrations_removal()
         
-        for section_name, tests in all_tests:
-            print(f"\n{section_name}")
-            print("-" * 60)
-            
-            section_passed = 0
-            section_total = len(tests)
-            total_tests += section_total
-            
-            for test_name, test_func in tests:
-                try:
-                    if test_func():
-                        section_passed += 1
-                        total_passed += 1
-                except Exception as e:
-                    print(f"❌ FAIL: {test_name} - Unexpected error: {str(e)}")
-            
-            print(f"Section Results: {section_passed}/{section_total} passed")
+        # Hybrid Interview Flow tests (Essential Questions)
+        self.test_hybrid_interview_start_endpoint()
+        self.test_hybrid_interview_chat_endpoint()
+        self.test_essential_score_prompt_v10_configuration()
+        self.test_hybrid_athlete_voice_configuration()
+        self.test_hybrid_gamification_features()
+        self.test_hybrid_completion_trigger_v10()
+        self.test_hybrid_database_operations()
+        self.test_openai_prompt_id_configuration()
+        self.test_prompt_id_vs_instructions_migration()
         
+        # System health check
+        self.test_system_health_comprehensive()
+        
+        # Summary
         print("\n" + "=" * 80)
-        print("🎉 HYBRID INTERVIEW PROMPT ID TEST SUMMARY")
+        print("📊 TEST SUMMARY")
         print("=" * 80)
-        print(f"Overall Results: {total_passed}/{total_tests} tests passed")
         
-        # Specific findings for the review request
-        print("\n📋 KEY FINDINGS FOR REVIEW REQUEST:")
-        print("✅ Hybrid interview endpoints are properly configured")
-        print("✅ OpenAI prompt ID pmpt_6877b2c356e881949e5f4575482b0e1a04e796de3893b2a5 is being used")
-        print("✅ Migration from instructions parameter to prompt ID parameter completed")
-        print("✅ Both /api/hybrid-interview/start and /api/hybrid-interview/chat endpoints updated")
-        print("✅ JWT authentication properly implemented on both endpoints")
-        print("✅ Essential questions system (11 questions) configured correctly")
-        print("✅ OpenAI API integration working with new prompt ID configuration")
-        print("✅ End-to-end hybrid interview flow functional")
+        passed = sum(1 for result in self.test_results if result['success'])
+        total = len(self.test_results)
         
-        if total_passed == total_tests:
-            print("\n🎯 CONCLUSION: Hybrid interview endpoints with OpenAI prompt ID are working correctly!")
-            return True
-        else:
-            print(f"\n⚠️  CONCLUSION: {total_tests - total_passed} tests failed - Review issues above")
-            return False
+        print(f"Total Tests: {total}")
+        print(f"Passed: {passed}")
+        print(f"Failed: {total - passed}")
+        print(f"Success Rate: {(passed/total)*100:.1f}%")
+        
+        # Highlight optimized database structure results
+        db_structure_tests = [
+            "Extract Individual Fields Function",
+            "POST /api/athlete-profiles Endpoint Fixed", 
+            "GET /api/athlete-profiles with Individual Fields",
+            "Hybrid Interview Completion with Individual Fields",
+            "Score Updates with Disabled Columns",
+            "Optimized Database Structure Comprehensive"
+        ]
+        
+        db_structure_results = [r for r in self.test_results if r['test'] in db_structure_tests]
+        db_passed = sum(1 for r in db_structure_results if r['success'])
+        db_total = len(db_structure_results)
+        
+        print(f"\n🎯 OPTIMIZED DATABASE STRUCTURE RESULTS:")
+        print(f"Database Structure Tests: {db_total}")
+        print(f"Database Structure Passed: {db_passed}")
+        print(f"Database Structure Success Rate: {(db_passed/db_total)*100:.1f}%")
+        
+        if total - passed > 0:
+            print("\n❌ FAILED TESTS:")
+            for result in self.test_results:
+                if not result['success']:
+                    print(f"  • {result['test']}: {result['message']}")
+        
+        return passed == total
 
 if __name__ == "__main__":
     tester = BackendTester()
