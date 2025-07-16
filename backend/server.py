@@ -309,7 +309,6 @@ async def get_all_user_interviews(user: dict = Depends(verify_jwt)):
             detail=f"Error fetching all interviews: {str(e)}"
         )
 
-@api_router.post("/athlete-profiles")
 def extract_individual_fields(profile_json: dict, score_data: dict = None) -> dict:
     """Extract individual fields from profile JSON for optimized database storage"""
     
