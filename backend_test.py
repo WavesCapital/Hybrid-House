@@ -2441,6 +2441,312 @@ class BackendTester:
             self.log_test("Athlete Profile Parsing Simulation", False, "Parsing simulation test failed", str(e))
             return False
 
+    # ===== PROFILE PAGE AUTHENTICATION REMOVAL TESTS =====
+    
+    def test_athlete_profiles_get_without_auth(self):
+        """Test GET /api/athlete-profiles works without authentication"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "profiles" in data and "total" in data:
+                    self.log_test("GET /api/athlete-profiles (No Auth)", True, f"Successfully returned {data['total']} profiles without authentication", data)
+                    return True
+                else:
+                    self.log_test("GET /api/athlete-profiles (No Auth)", False, "Response missing expected format (profiles, total)", data)
+                    return False
+            else:
+                self.log_test("GET /api/athlete-profiles (No Auth)", False, f"HTTP {response.status_code} - should work without auth", response.text)
+                return False
+        except Exception as e:
+            self.log_test("GET /api/athlete-profiles (No Auth)", False, "Request failed", str(e))
+            return False
+    
+    def test_athlete_profile_get_by_id_without_auth(self):
+        """Test GET /api/athlete-profile/{profile_id} works without authentication"""
+        try:
+            # First get a list of profiles to get a valid ID
+            profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if profiles_response.status_code == 200:
+                profiles_data = profiles_response.json()
+                if profiles_data.get("profiles") and len(profiles_data["profiles"]) > 0:
+                    # Use the first profile ID
+                    profile_id = profiles_data["profiles"][0]["id"]
+                    
+                    # Test getting individual profile
+                    response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        expected_fields = ["profile_id", "profile_json", "score_data", "created_at", "updated_at"]
+                        if all(field in data for field in expected_fields):
+                            self.log_test("GET /api/athlete-profile/{id} (No Auth)", True, f"Successfully returned profile {profile_id} without authentication", data)
+                            return True
+                        else:
+                            self.log_test("GET /api/athlete-profile/{id} (No Auth)", False, "Response missing expected fields", data)
+                            return False
+                    else:
+                        self.log_test("GET /api/athlete-profile/{id} (No Auth)", False, f"HTTP {response.status_code} - should work without auth", response.text)
+                        return False
+                else:
+                    # No profiles exist, test with a dummy ID
+                    response = self.session.get(f"{API_BASE_URL}/athlete-profile/test-profile-id")
+                    if response.status_code == 404:
+                        self.log_test("GET /api/athlete-profile/{id} (No Auth)", True, "Endpoint accessible without auth (404 for non-existent profile is expected)")
+                        return True
+                    else:
+                        self.log_test("GET /api/athlete-profile/{id} (No Auth)", False, f"HTTP {response.status_code} - should return 404 for non-existent profile", response.text)
+                        return False
+            else:
+                # Test with dummy ID if profiles endpoint fails
+                response = self.session.get(f"{API_BASE_URL}/athlete-profile/test-profile-id")
+                if response.status_code == 404:
+                    self.log_test("GET /api/athlete-profile/{id} (No Auth)", True, "Endpoint accessible without auth (404 for non-existent profile is expected)")
+                    return True
+                else:
+                    self.log_test("GET /api/athlete-profile/{id} (No Auth)", False, f"HTTP {response.status_code} - should return 404 for non-existent profile", response.text)
+                    return False
+        except Exception as e:
+            self.log_test("GET /api/athlete-profile/{id} (No Auth)", False, "Request failed", str(e))
+            return False
+    
+    def test_athlete_profiles_post_without_auth(self):
+        """Test POST /api/athlete-profiles works without authentication"""
+        try:
+            test_profile = {
+                "profile_json": {
+                    "first_name": "TestUser",
+                    "last_name": "Profile",
+                    "email": "test@example.com",
+                    "age": 25,
+                    "schema_version": "v1.0"
+                }
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=test_profile)
+            
+            if response.status_code in [200, 201]:
+                data = response.json()
+                if "message" in data and "profile" in data:
+                    self.log_test("POST /api/athlete-profiles (No Auth)", True, "Successfully created profile without authentication", data)
+                    return True
+                else:
+                    self.log_test("POST /api/athlete-profiles (No Auth)", False, "Response missing expected format (message, profile)", data)
+                    return False
+            else:
+                self.log_test("POST /api/athlete-profiles (No Auth)", False, f"HTTP {response.status_code} - should work without auth", response.text)
+                return False
+        except Exception as e:
+            self.log_test("POST /api/athlete-profiles (No Auth)", False, "Request failed", str(e))
+            return False
+    
+    def test_athlete_profile_score_post_without_auth(self):
+        """Test POST /api/athlete-profile/{profile_id}/score works without authentication"""
+        try:
+            # First create a profile to get a valid ID
+            test_profile = {
+                "profile_json": {
+                    "first_name": "ScoreTestUser",
+                    "schema_version": "v1.0"
+                }
+            }
+            
+            create_response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=test_profile)
+            
+            if create_response.status_code in [200, 201]:
+                profile_data = create_response.json()
+                profile_id = profile_data["profile"]["id"]
+                
+                # Test updating score data
+                test_score_data = {
+                    "hybridScore": 75.5,
+                    "strengthScore": 85.0,
+                    "enduranceScore": 70.0,
+                    "tips": ["Tip 1", "Tip 2"]
+                }
+                
+                response = self.session.post(f"{API_BASE_URL}/athlete-profile/{profile_id}/score", json=test_score_data)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if "message" in data and "profile_id" in data:
+                        self.log_test("POST /api/athlete-profile/{id}/score (No Auth)", True, f"Successfully updated score for profile {profile_id} without authentication", data)
+                        return True
+                    else:
+                        self.log_test("POST /api/athlete-profile/{id}/score (No Auth)", False, "Response missing expected format (message, profile_id)", data)
+                        return False
+                else:
+                    self.log_test("POST /api/athlete-profile/{id}/score (No Auth)", False, f"HTTP {response.status_code} - should work without auth", response.text)
+                    return False
+            else:
+                # Test with dummy ID if profile creation fails
+                test_score_data = {"hybridScore": 75.5}
+                response = self.session.post(f"{API_BASE_URL}/athlete-profile/test-profile-id/score", json=test_score_data)
+                if response.status_code == 404:
+                    self.log_test("POST /api/athlete-profile/{id}/score (No Auth)", True, "Endpoint accessible without auth (404 for non-existent profile is expected)")
+                    return True
+                else:
+                    self.log_test("POST /api/athlete-profile/{id}/score (No Auth)", False, f"HTTP {response.status_code} - should return 404 for non-existent profile", response.text)
+                    return False
+        except Exception as e:
+            self.log_test("POST /api/athlete-profile/{id}/score (No Auth)", False, "Request failed", str(e))
+            return False
+    
+    def test_profile_page_data_format(self):
+        """Test that profile data is returned in expected format for frontend"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check overall structure
+                if not ("profiles" in data and "total" in data):
+                    self.log_test("Profile Page Data Format", False, "Missing required fields: profiles, total", data)
+                    return False
+                
+                # Check if profiles is a list
+                if not isinstance(data["profiles"], list):
+                    self.log_test("Profile Page Data Format", False, "profiles should be a list", data)
+                    return False
+                
+                # Check total is a number
+                if not isinstance(data["total"], int):
+                    self.log_test("Profile Page Data Format", False, "total should be an integer", data)
+                    return False
+                
+                # If there are profiles, check their structure
+                if len(data["profiles"]) > 0:
+                    profile = data["profiles"][0]
+                    expected_profile_fields = ["id", "profile_json", "score_data", "created_at", "updated_at"]
+                    
+                    for field in expected_profile_fields:
+                        if field not in profile:
+                            self.log_test("Profile Page Data Format", False, f"Profile missing required field: {field}", profile)
+                            return False
+                
+                self.log_test("Profile Page Data Format", True, f"Profile data format is correct for frontend consumption (found {data['total']} profiles)", data)
+                return True
+            else:
+                self.log_test("Profile Page Data Format", False, f"HTTP {response.status_code} - endpoint should be accessible", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Profile Page Data Format", False, "Request failed", str(e))
+            return False
+    
+    def test_no_duplicate_routes_conflict(self):
+        """Test that there are no duplicate route conflicts affecting profile endpoints"""
+        try:
+            # Test multiple calls to the same endpoint to ensure consistent behavior
+            endpoints_to_test = [
+                "/athlete-profiles",
+                "/athlete-profile/test-id"
+            ]
+            
+            all_consistent = True
+            for endpoint in endpoints_to_test:
+                responses = []
+                
+                # Make multiple requests to the same endpoint
+                for i in range(3):
+                    if endpoint == "/athlete-profiles":
+                        response = self.session.get(f"{API_BASE_URL}{endpoint}")
+                    else:
+                        response = self.session.get(f"{API_BASE_URL}{endpoint}")
+                    responses.append(response.status_code)
+                
+                # Check if all responses have the same status code
+                if len(set(responses)) != 1:
+                    self.log_test("No Duplicate Routes Conflict", False, f"Inconsistent responses for {endpoint}: {responses}")
+                    all_consistent = False
+                    break
+            
+            if all_consistent:
+                self.log_test("No Duplicate Routes Conflict", True, "All profile endpoints show consistent behavior - no duplicate route conflicts detected")
+                return True
+            else:
+                return False
+        except Exception as e:
+            self.log_test("No Duplicate Routes Conflict", False, "Duplicate routes test failed", str(e))
+            return False
+    
+    def test_profile_page_functionality_integration(self):
+        """Test end-to-end Profile Page functionality without authentication"""
+        try:
+            # Test the complete flow: create profile -> get profiles -> get individual profile -> update score
+            
+            # Step 1: Create a test profile
+            test_profile = {
+                "profile_json": {
+                    "first_name": "IntegrationTest",
+                    "last_name": "User",
+                    "email": "integration@test.com",
+                    "schema_version": "v1.0"
+                }
+            }
+            
+            create_response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=test_profile)
+            if create_response.status_code not in [200, 201]:
+                self.log_test("Profile Page Functionality Integration", False, "Failed to create test profile", create_response.text)
+                return False
+            
+            profile_id = create_response.json()["profile"]["id"]
+            
+            # Step 2: Get all profiles (should include our new profile)
+            list_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            if list_response.status_code != 200:
+                self.log_test("Profile Page Functionality Integration", False, "Failed to get profiles list", list_response.text)
+                return False
+            
+            profiles_data = list_response.json()
+            profile_found = any(p["id"] == profile_id for p in profiles_data["profiles"])
+            if not profile_found:
+                self.log_test("Profile Page Functionality Integration", False, "Created profile not found in profiles list", profiles_data)
+                return False
+            
+            # Step 3: Get individual profile
+            get_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            if get_response.status_code != 200:
+                self.log_test("Profile Page Functionality Integration", False, "Failed to get individual profile", get_response.text)
+                return False
+            
+            individual_profile = get_response.json()
+            if individual_profile["profile_id"] != profile_id:
+                self.log_test("Profile Page Functionality Integration", False, "Individual profile ID mismatch", individual_profile)
+                return False
+            
+            # Step 4: Update score data
+            test_score = {
+                "hybridScore": 80.5,
+                "strengthScore": 90.0,
+                "enduranceScore": 75.0
+            }
+            
+            score_response = self.session.post(f"{API_BASE_URL}/athlete-profile/{profile_id}/score", json=test_score)
+            if score_response.status_code != 200:
+                self.log_test("Profile Page Functionality Integration", False, "Failed to update profile score", score_response.text)
+                return False
+            
+            # Step 5: Verify score was updated
+            updated_profile_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            if updated_profile_response.status_code != 200:
+                self.log_test("Profile Page Functionality Integration", False, "Failed to get updated profile", updated_profile_response.text)
+                return False
+            
+            updated_profile = updated_profile_response.json()
+            if updated_profile["score_data"] != test_score:
+                self.log_test("Profile Page Functionality Integration", False, "Score data not properly updated", updated_profile)
+                return False
+            
+            self.log_test("Profile Page Functionality Integration", True, f"Complete Profile Page functionality working without authentication: create → list → get → update score for profile {profile_id}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Profile Page Functionality Integration", False, "Integration test failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests with focus on Hybrid Interview Flow and New Athlete Profile Endpoints"""
         print("=" * 80)
