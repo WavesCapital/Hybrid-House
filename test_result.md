@@ -427,7 +427,7 @@ infrastructure:
 
   - task: "Optimized Database Structure with Individual Fields"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 2
     priority: "high"
@@ -442,6 +442,9 @@ infrastructure:
       - working: false
         agent: "testing"
         comment: "🚨 DATABASE SCHEMA MISSING INDIVIDUAL COLUMNS: Comprehensive testing (39/45 tests passed) reveals the root cause of the optimized database structure failure. CRITICAL FINDINGS: ✅ POST /api/athlete-profiles endpoint decorator is correctly placed on create_athlete_profile() function (line 419) - this was fixed ✅ extract_individual_fields() function works correctly for data extraction (time conversion, weight extraction, null handling) ✅ Score columns are properly disabled temporarily as intended ✅ Hybrid interview endpoints configured for individual fields extraction ❌ CRITICAL ISSUE: Database schema is missing individual columns that the optimized structure tries to insert. Errors show missing columns: 'age', 'interview_type', 'first_name', 'last_name', 'email', 'sex', 'weight_lb', 'vo2_max', 'hrv_ms', 'resting_hr_bpm', 'pb_mile_seconds', 'weekly_miles', 'long_run_miles', 'pb_bench_1rm_lb', 'pb_squat_1rm_lb', 'pb_deadlift_1rm_lb', 'schema_version', 'meta_session_id'. SOLUTION NEEDED: Database schema must be updated to include all individual columns that extract_individual_fields() function extracts before the optimized database structure can work."
+      - working: true
+        agent: "testing"
+        comment: "🎉 OPTIMIZED DATABASE STRUCTURE FULLY OPERATIONAL: Comprehensive testing confirms the database schema has been successfully updated with individual columns and the optimized structure is working correctly. CRITICAL SUCCESS: ✅ Individual columns have been added to athlete_profiles table - all 18 profile fields working (first_name, last_name, email, sex, age, weight_lb, vo2_max, hrv_ms, resting_hr_bpm, pb_mile_seconds, weekly_miles, long_run_miles, pb_bench_1rm_lb, pb_squat_1rm_lb, pb_deadlift_1rm_lb, schema_version, meta_session_id, interview_type) ✅ Score columns temporarily disabled as intended (hybrid_score, strength_score, endurance_score, speed_score, vo2_score, distance_score, volume_score, recovery_score all set to null) ✅ extract_individual_fields() function working perfectly - time conversion (6:30 → 390 seconds), weight extraction from objects, null handling ✅ Profile creation with individual fields extraction working ✅ Score updates storing in score_data JSON field (not individual columns) ✅ Profile retrieval returning both JSON and individual fields ✅ Fallback mechanism working for missing columns ✅ Analytics potential verified with structured data ✅ Complete flow: profile creation → individual field extraction → JSON + individual storage → score updates → retrieval working end-to-end. The optimized database structure is production-ready and fully functional."
 
 metadata:
   created_by: "main_agent"
