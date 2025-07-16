@@ -518,33 +518,6 @@ async def update_athlete_profile_score(profile_id: str, score_data: dict, user: 
             detail=f"Error updating athlete profile score: {str(e)}"
         )
 
-@api_router.get("/athlete-profiles/{profile_id}")
-async def get_athlete_profile_legacy(
-    profile_id: str,
-    user: dict = Depends(verify_jwt)
-):
-    """Get a specific athlete profile for the authenticated user (legacy endpoint)"""
-    user_id = user["sub"]
-    
-    try:
-        result = supabase.table('athlete_profiles').select("*").eq('id', profile_id).eq('user_id', user_id).execute()
-        
-        if not result.data:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Profile not found"
-            )
-        
-        return result.data[0]
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        print(f"Error getting athlete profile: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error retrieving athlete profile"
-        )
 
 @api_router.get("/status", response_model=List[StatusCheck])
 async def get_status():
