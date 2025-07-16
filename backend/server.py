@@ -355,47 +355,63 @@ def extract_individual_fields(profile_json: dict, score_data: dict = None) -> di
     
     individual_fields = {}
     
-    # Basic info
-    individual_fields['first_name'] = profile_json.get('first_name')
-    individual_fields['last_name'] = profile_json.get('last_name')
-    individual_fields['email'] = profile_json.get('email')
-    individual_fields['sex'] = profile_json.get('sex')
-    individual_fields['age'] = safe_int(profile_json.get('age'))
-    individual_fields['schema_version'] = profile_json.get('schema_version', 'v1.0')
-    individual_fields['meta_session_id'] = profile_json.get('meta_session_id')
-    individual_fields['interview_type'] = profile_json.get('interview_type', 'hybrid')
+    # Basic info fields (these should exist in database)
+    basic_fields = {
+        'first_name': profile_json.get('first_name'),
+        'last_name': profile_json.get('last_name'),
+        'email': profile_json.get('email'),
+        'sex': profile_json.get('sex'),
+        'age': safe_int(profile_json.get('age')),
+        'schema_version': profile_json.get('schema_version', 'v1.0'),
+        'meta_session_id': profile_json.get('meta_session_id'),
+        'interview_type': profile_json.get('interview_type', 'hybrid')
+    }
     
-    # Body metrics
+    individual_fields.update(basic_fields)
+    
+    # Body metrics (if columns exist)
     body_metrics = profile_json.get('body_metrics', {})
     if isinstance(body_metrics, dict):
-        individual_fields['weight_lb'] = safe_decimal(body_metrics.get('weight_lb') or body_metrics.get('weight'))
-        individual_fields['vo2_max'] = safe_decimal(body_metrics.get('vo2_max') or body_metrics.get('vo2max'))
-        individual_fields['hrv_ms'] = safe_int(body_metrics.get('hrv') or body_metrics.get('hrv_ms'))
-        individual_fields['resting_hr_bpm'] = safe_int(body_metrics.get('resting_hr') or body_metrics.get('resting_hr_bpm'))
+        body_metric_fields = {
+            'weight_lb': safe_decimal(body_metrics.get('weight_lb') or body_metrics.get('weight')),
+            'vo2_max': safe_decimal(body_metrics.get('vo2_max') or body_metrics.get('vo2max')),
+            'hrv_ms': safe_int(body_metrics.get('hrv') or body_metrics.get('hrv_ms')),
+            'resting_hr_bpm': safe_int(body_metrics.get('resting_hr') or body_metrics.get('resting_hr_bpm'))
+        }
+        individual_fields.update(body_metric_fields)
     
-    # Running performance
-    individual_fields['weekly_miles'] = safe_decimal(profile_json.get('weekly_miles'))
-    individual_fields['long_run_miles'] = safe_decimal(profile_json.get('long_run'))
-    individual_fields['pb_mile_seconds'] = convert_time_to_seconds(profile_json.get('pb_mile'))
-    individual_fields['pb_5k_seconds'] = convert_time_to_seconds(profile_json.get('pb_5k'))
-    individual_fields['pb_10k_seconds'] = convert_time_to_seconds(profile_json.get('pb_10k'))
-    individual_fields['pb_half_marathon_seconds'] = convert_time_to_seconds(profile_json.get('pb_half_marathon'))
+    # Performance fields (if columns exist)
+    performance_fields = {
+        'weekly_miles': safe_decimal(profile_json.get('weekly_miles')),
+        'long_run_miles': safe_decimal(profile_json.get('long_run')),
+        'pb_mile_seconds': convert_time_to_seconds(profile_json.get('pb_mile')),
+        'pb_5k_seconds': convert_time_to_seconds(profile_json.get('pb_5k')),
+        'pb_10k_seconds': convert_time_to_seconds(profile_json.get('pb_10k')),
+        'pb_half_marathon_seconds': convert_time_to_seconds(profile_json.get('pb_half_marathon')),
+        'pb_bench_1rm_lb': extract_weight_from_object(profile_json.get('pb_bench_1rm')),
+        'pb_squat_1rm_lb': extract_weight_from_object(profile_json.get('pb_squat_1rm')),
+        'pb_deadlift_1rm_lb': extract_weight_from_object(profile_json.get('pb_deadlift_1rm'))
+    }
     
-    # Strength performance
-    individual_fields['pb_bench_1rm_lb'] = extract_weight_from_object(profile_json.get('pb_bench_1rm'))
-    individual_fields['pb_squat_1rm_lb'] = extract_weight_from_object(profile_json.get('pb_squat_1rm'))
-    individual_fields['pb_deadlift_1rm_lb'] = extract_weight_from_object(profile_json.get('pb_deadlift_1rm'))
+    individual_fields.update(performance_fields)
     
-    # Score data if provided
+    # Score data (temporarily disabled until database columns are added)
+    # Note: Score columns need to be added to database schema first
     if score_data and isinstance(score_data, dict):
-        individual_fields['hybrid_score'] = safe_decimal(score_data.get('hybridScore'))
-        individual_fields['strength_score'] = safe_decimal(score_data.get('strengthScore'))
-        individual_fields['endurance_score'] = safe_decimal(score_data.get('enduranceScore'))
-        individual_fields['speed_score'] = safe_decimal(score_data.get('speedScore'))
-        individual_fields['vo2_score'] = safe_decimal(score_data.get('vo2Score'))
-        individual_fields['distance_score'] = safe_decimal(score_data.get('distanceScore'))
-        individual_fields['volume_score'] = safe_decimal(score_data.get('volumeScore'))
-        individual_fields['recovery_score'] = safe_decimal(score_data.get('recoveryScore'))
+        print(f"🚨 Score data received but score columns not yet added to database schema")
+        print(f"Score data: {score_data}")
+        # TODO: Uncomment when score columns are added to database
+        # score_fields = {
+        #     'hybrid_score': safe_decimal(score_data.get('hybridScore')),
+        #     'strength_score': safe_decimal(score_data.get('strengthScore')),
+        #     'endurance_score': safe_decimal(score_data.get('enduranceScore')),
+        #     'speed_score': safe_decimal(score_data.get('speedScore')),
+        #     'vo2_score': safe_decimal(score_data.get('vo2Score')),
+        #     'distance_score': safe_decimal(score_data.get('distanceScore')),
+        #     'volume_score': safe_decimal(score_data.get('volumeScore')),
+        #     'recovery_score': safe_decimal(score_data.get('recoveryScore'))
+        # }
+        # individual_fields.update(score_fields)
     
     # Remove None values
     return {k: v for k, v in individual_fields.items() if v is not None}
