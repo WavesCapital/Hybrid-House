@@ -345,6 +345,43 @@ async def get_all_user_interviews(user: dict = Depends(verify_jwt)):
             detail=f"Error fetching all interviews: {str(e)}"
         )
 
+@api_router.post("/athlete-profiles")
+async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify_jwt)):
+    """Create a new athlete profile"""
+    try:
+        user_id = user['sub']
+        
+        # Create profile
+        new_profile = {
+            **profile_data,
+            "user_id": user_id,
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat()
+        }
+        
+        # Insert into database
+        result = supabase.table('athlete_profiles').insert(new_profile).execute()
+        
+        if not result.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to create profile"
+            )
+        
+        return {
+            "message": "Profile created successfully",
+            "profile": result.data[0]
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error creating athlete profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error creating athlete profile: {str(e)}"
+        )
+
 @api_router.get("/athlete-profiles")
 async def get_user_athlete_profiles(user: dict = Depends(verify_jwt)):
     """Get all athlete profiles for the authenticated user"""
