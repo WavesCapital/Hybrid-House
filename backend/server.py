@@ -416,6 +416,246 @@ def extract_individual_fields(profile_json: dict, score_data: dict = None) -> di
     # Remove None values
     return {k: v for k, v in individual_fields.items() if v is not None}
 
+# User Profile Management Endpoints
+
+class UserProfileUpdate(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    display_name: Optional[str] = None
+    bio: Optional[str] = None
+    location: Optional[str] = None
+    website: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    gender: Optional[str] = None
+    phone: Optional[str] = None
+    timezone: Optional[str] = None
+    units_preference: Optional[str] = None
+    privacy_level: Optional[str] = None
+
+@api_router.get("/user-profile/me")
+async def get_my_user_profile(user: dict = Depends(verify_jwt)):
+    """Get current user's profile information"""
+    try:
+        user_id = user.get('sub')
+        
+        # Get user profile from database
+        result = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
+        
+        if result.data:
+            return {
+                "profile": result.data[0]
+            }
+        else:
+            # Create default profile if it doesn't exist
+            default_profile = {
+                "user_id": user_id,
+                "email": user.get('email', ''),
+                "first_name": user.get('user_metadata', {}).get('first_name', ''),
+                "display_name": user.get('user_metadata', {}).get('display_name', user.get('email', '')),
+                "created_at": datetime.utcnow().isoformat(),
+                "updated_at": datetime.utcnow().isoformat()
+            }
+            
+            create_result = supabase.table('user_profiles').insert(default_profile).execute()
+            
+            if create_result.data:
+                return {
+                    "profile": create_result.data[0]
+                }
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Failed to create user profile"
+                )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error fetching user profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching user profile: {str(e)}"
+        )
+
+@api_router.put("/user-profile/me")
+async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict = Depends(verify_jwt)):
+    """Update current user's profile information"""
+    try:
+        user_id = user.get('sub')
+        
+        # Prepare update data
+        update_data = {
+            "updated_at": datetime.utcnow().isoformat()
+        }
+        
+        # Add only non-None fields to update
+        for field, value in profile_update.dict(exclude_unset=True).items():
+            if value is not None:
+                update_data[field] = value
+        
+        # Update user profile
+        result = supabase.table('user_profiles').update(update_data).eq('user_id', user_id).execute()
+        
+        if result.data:
+            return {
+                "message": "Profile updated successfully",
+                "profile": result.data[0]
+            }
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User profile not found"
+            )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error updating user profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error updating user profile: {str(e)}"
+        )
+
+@api_router.post("/user-profile/me/avatar")
+async def upload_avatar(file: UploadFile = File(...), user: dict = Depends(verify_jwt)):
+    """Upload and update user avatar"""
+    try:
+        user_id = user.get('sub')
+        
+        # Validate file type
+        if not file.content_type.startswith('image/'):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="File must be an image"
+            )
+        
+        # Read and process image
+        image_data = await file.read()
+        
+        # Resize image to standard size
+        image = Image.open(io.BytesIO(image_data))
+        
+        # Resize to 400x400 maintaining aspect ratio
+        image.thumbnail((400, 400), Image.Resampling.LANCZOS)
+        
+        # Convert to RGB if necessary
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+        
+        # Save as JPEG to base64
+        img_buffer = io.BytesIO()
+        image.save(img_buffer, format='JPEG', quality=85)
+        img_buffer.seek(0)
+        
+        # Encode to base64
+        avatar_base64 = base64.b64encode(img_buffer.getvalue()).decode('utf-8')
+        avatar_url = f"data:image/jpeg;base64,{avatar_base64}"
+        
+        # Update user profile with avatar
+        result = supabase.table('user_profiles').update({
+            "avatar_url": avatar_url,
+            "updated_at": datetime.utcnow().isoformat()
+        }).eq('user_id', user_id).execute()
+        
+        if result.data:
+            return {
+                "message": "Avatar updated successfully",
+                "avatar_url": avatar_url
+            }
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User profile not found"
+            )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error uploading avatar: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error uploading avatar: {str(e)}"
+        )
+
+@api_router.get("/user-profile/me/athlete-profiles")
+async def get_my_athlete_profiles(user: dict = Depends(verify_jwt)):
+    """Get all athlete profiles for the current user"""
+    try:
+        user_id = user.get('sub')
+        
+        # Get user profile first
+        user_profile_result = supabase.table('user_profiles').select('id').eq('user_id', user_id).execute()
+        
+        if not user_profile_result.data:
+            return {
+                "profiles": [],
+                "total": 0
+            }
+        
+        user_profile_id = user_profile_result.data[0]['id']
+        
+        # Get athlete profiles linked to this user
+        profiles_result = supabase.table('athlete_profiles').select('*').eq('user_profile_id', user_profile_id).order('created_at', desc=True).execute()
+        
+        return {
+            "profiles": profiles_result.data,
+            "total": len(profiles_result.data)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error fetching user athlete profiles: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching user athlete profiles: {str(e)}"
+        )
+
+@api_router.post("/user-profile/me/link-athlete-profile/{athlete_profile_id}")
+async def link_athlete_profile(athlete_profile_id: str, user: dict = Depends(verify_jwt)):
+    """Link an athlete profile to the current user"""
+    try:
+        user_id = user.get('sub')
+        
+        # Get user profile
+        user_profile_result = supabase.table('user_profiles').select('id').eq('user_id', user_id).execute()
+        
+        if not user_profile_result.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User profile not found"
+            )
+        
+        user_profile_id = user_profile_result.data[0]['id']
+        
+        # Link athlete profile to user
+        result = supabase.table('athlete_profiles').update({
+            "user_profile_id": user_profile_id,
+            "user_id": user_id,
+            "updated_at": datetime.utcnow().isoformat()
+        }).eq('id', athlete_profile_id).execute()
+        
+        if result.data:
+            return {
+                "message": "Athlete profile linked successfully",
+                "athlete_profile_id": athlete_profile_id
+            }
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Athlete profile not found"
+            )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error linking athlete profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error linking athlete profile: {str(e)}"
+        )
+
+# Enhanced Athlete Profile Creation with User Linking
 @api_router.post("/athlete-profiles")
 async def create_athlete_profile(profile_data: dict):
     """Create a new athlete profile with optimized individual fields"""
