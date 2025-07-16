@@ -1154,12 +1154,17 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                     # Add session metadata
                     profile_json["meta_session_id"] = session_id
                     profile_json["schema_version"] = "v1.0"
+                    profile_json["interview_type"] = "hybrid"
                     
-                    # Save athlete profile
+                    # Extract individual fields for optimized storage
+                    individual_fields = extract_individual_fields(profile_json)
+                    
+                    # Save athlete profile with both JSON and individual fields
                     profile_data = {
                         "id": str(uuid.uuid4()),
                         "user_id": user_id,
                         "profile_json": profile_json,
+                        **individual_fields,  # Add extracted individual fields
                         "completed_at": datetime.utcnow().isoformat(),
                         "created_at": datetime.utcnow().isoformat(),
                         "updated_at": datetime.utcnow().isoformat()
