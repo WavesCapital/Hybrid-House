@@ -385,11 +385,11 @@ infrastructure:
 
   - task: "Profile Page Authentication Removal"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/server.py, /app/frontend/src/components/ProfilePage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -397,6 +397,9 @@ infrastructure:
       - working: false
         agent: "main"
         comment: "✅ AUTHENTICATION REMOVAL ANALYSIS: Key endpoints already have JWT authentication removed: GET /api/athlete-profiles (line 347), GET /api/athlete-profile/{profile_id} (line 462), POST /api/athlete-profile/{profile_id}/score (line 495), POST /api/athlete-profiles (line 313). Frontend ProfilePage.js is making requests without auth headers. Previous testing agent fixed duplicate route definitions that were causing conflicts. Need to verify current functionality and ensure Profile Page displays athlete profiles correctly."
+      - working: true
+        agent: "testing"
+        comment: "✅ PROFILE PAGE AUTHENTICATION REMOVAL TESTING COMPLETE: Comprehensive testing confirms all profile-related endpoints are working correctly WITHOUT authentication as requested. CRITICAL SUCCESS: ✅ GET /api/athlete-profiles returns 13 profiles without authentication (HTTP 200) ✅ GET /api/athlete-profile/{profile_id} returns individual profile data without authentication (HTTP 200) ✅ POST /api/athlete-profiles creates new profiles without authentication (HTTP 201) ✅ POST /api/athlete-profile/{profile_id}/score updates score data without authentication (HTTP 200) ✅ Profile data returned in expected format for frontend consumption ✅ No duplicate route conflicts detected ✅ Complete end-to-end Profile Page functionality working: create → list → get → update score ✅ All endpoints accessible without JWT tokens as requested by user. The Profile Page can now display athlete profiles correctly without requiring authentication. Authentication removal is fully operational and production-ready."
 
 metadata:
   created_by: "main_agent"
