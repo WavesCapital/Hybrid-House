@@ -275,12 +275,15 @@ const ProfilePage = () => {
     console.log('User check:', { user: !!user, session: !!session });
     
     if (!user || !session) {
-      console.error('❌ No user or session found');
+      console.log('❌ No user or session found, redirecting to auth');
       toast({
-        title: "Error",
-        description: "Please sign in to update your profile",
+        title: "Authentication Required",
+        description: "Please sign in to save your profile changes",
         variant: "destructive",
       });
+      
+      // Redirect to auth page
+      window.location.href = '/auth';
       return;
     }
 
@@ -317,6 +320,10 @@ const ProfilePage = () => {
         errorMessage = error.response.data.detail;
       } else if (error.response?.status === 401) {
         errorMessage = "Authentication required. Please sign in again.";
+        // Redirect to auth page on 401
+        setTimeout(() => {
+          window.location.href = '/auth';
+        }, 2000);
       } else if (error.response?.status === 403) {
         errorMessage = "You don't have permission to update this profile.";
       }
