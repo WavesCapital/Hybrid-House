@@ -156,10 +156,8 @@ const ProfilePage = () => {
         const profile = response.data.profile;
         setUserProfile(profile);
         setProfileForm({
-          first_name: profile.first_name || '',
-          last_name: profile.last_name || '',
+          name: profile.name || '',
           display_name: profile.display_name || '',
-          bio: profile.bio || '',
           location: profile.location || '',
           website: profile.website || '',
           gender: profile.gender || '',
