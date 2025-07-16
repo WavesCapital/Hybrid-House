@@ -52,12 +52,6 @@ const ProfilePage = () => {
     pb_deadlift_1rm: ''
   });
 
-  // Debug logging
-  console.log('ProfilePage rendering, user:', user);
-  console.log('ProfilePage rendering, session:', session);
-  console.log('ProfilePage rendering, userProfile:', userProfile);
-  console.log('ProfilePage rendering, isEditingProfile:', isEditingProfile);
-
   // Load profiles and user profile data
   useEffect(() => {
     const fetchProfiles = async () => {
