@@ -200,6 +200,14 @@ const ProfilePage = () => {
     return value.toString();
   }, []);
 
+  // Get profile score color
+  const getScoreColor = useCallback((score) => {
+    if (score >= 80) return '#85E26E'; // Green
+    if (score >= 60) return '#79CFF7'; // Blue
+    if (score >= 40) return '#FFD700'; // Yellow
+    return '#FF6B6B'; // Red
+  }, []);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#0A0B0C' }}>
