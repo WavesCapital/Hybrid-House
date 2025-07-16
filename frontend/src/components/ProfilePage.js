@@ -15,8 +15,31 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const ProfilePage = () => {
+  const { user, session } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  
+  // User Profile Management States
+  const [userProfile, setUserProfile] = useState(null);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    first_name: '',
+    last_name: '',
+    display_name: '',
+    bio: '',
+    location: '',
+    website: '',
+    phone: '',
+    gender: '',
+    units_preference: 'imperial',
+    privacy_level: 'private'
+  });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  
+  // Athlete Profile Management States
   const [profiles, setProfiles] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [inputForm, setInputForm] = useState({
     first_name: '',
@@ -29,8 +52,6 @@ const ProfilePage = () => {
     pb_squat_1rm: '',
     pb_deadlift_1rm: ''
   });
-  const { toast } = useToast();
-  const navigate = useNavigate();
 
   // Load profiles and populate form with most recent data
   useEffect(() => {
