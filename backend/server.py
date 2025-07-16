@@ -915,7 +915,7 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                 "input": conversation_input,
                 "store": True,
                 "temperature": 0.7,
-                "instructions": HYBRID_INTERVIEW_SYSTEM_MESSAGE
+                "prompt": {"id": "pmpt_6877b2c356e881949e5f4575482b0e1a04e796de3893b2a5"}
             }
             
             # Re-enable previous_response_id for proper stateful conversations
