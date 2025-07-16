@@ -560,8 +560,8 @@ const ProfilePage = () => {
           </Button>
         </div>
 
-        {/* User Profile Section - Show for authenticated users or when editing */}
-        {(user || isEditingProfile) && (
+        {/* User Profile Section - Show for authenticated users (but not during loading) */}
+        {(!loading && user) && (
           <div className="mb-8">
             <div className="neo-card rounded-xl p-6">
               <div className="flex items-center justify-between mb-6">
