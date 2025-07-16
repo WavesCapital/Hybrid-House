@@ -3917,9 +3917,9 @@ class BackendTester:
             return False
 
     def run_all_tests(self):
-        """Run all backend tests with focus on optimized database structure"""
+        """Run all backend tests with focus on new user profile management system"""
         print("=" * 80)
-        print("🚀 TESTING FIXED OPTIMIZED DATABASE STRUCTURE")
+        print("🚀 TESTING NEW USER PROFILE MANAGEMENT SYSTEM")
         print("=" * 80)
         
         # Core connectivity tests
@@ -3932,7 +3932,24 @@ class BackendTester:
         self.test_protected_endpoints_without_token()
         self.test_protected_endpoints_with_invalid_token()
         
-        # ===== OPTIMIZED DATABASE STRUCTURE TESTS (PRIMARY FOCUS) =====
+        # ===== NEW USER PROFILE MANAGEMENT SYSTEM TESTS (PRIMARY FOCUS) =====
+        print("\n" + "=" * 60)
+        print("🎯 NEW USER PROFILE MANAGEMENT SYSTEM TESTS")
+        print("=" * 60)
+        
+        self.test_user_profile_get_endpoint()
+        self.test_user_profile_update_endpoint()
+        self.test_user_profile_avatar_upload_endpoint()
+        self.test_user_profile_athlete_profiles_endpoint()
+        self.test_user_profile_link_athlete_profile_endpoint()
+        self.test_enhanced_athlete_profile_creation_with_jwt()
+        self.test_public_athlete_profile_creation()
+        self.test_user_profile_auto_creation()
+        self.test_athlete_profile_auto_linking()
+        self.test_user_profile_system_error_handling()
+        self.test_user_profile_database_relationships()
+        
+        # ===== OPTIMIZED DATABASE STRUCTURE TESTS =====
         print("\n" + "=" * 60)
         print("🎯 OPTIMIZED DATABASE STRUCTURE TESTS")
         print("=" * 60)
