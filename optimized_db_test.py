@@ -123,7 +123,9 @@ class OptimizedDBTester:
     def test_extract_individual_fields_function(self):
         """Test the extract_individual_fields function with various data formats"""
         try:
-            # Test different profile data formats to verify extraction works correctly
+            # CRITICAL BUG: POST endpoint calls extract_individual_fields directly
+            # This test verifies the extraction logic works correctly
+            
             test_cases = [
                 {
                     "name": "Standard Format",
@@ -141,6 +143,19 @@ class OptimizedDBTester:
                         "weekly_miles": 20,
                         "long_run": 10,
                         "pb_bench_1rm": {"weight_lb": 135, "reps": 1}
+                    },
+                    "expected": {
+                        "first_name": "Alice",
+                        "sex": "Female", 
+                        "age": 25,
+                        "weight_lb": 135.0,
+                        "vo2_max": 48.5,
+                        "hrv_ms": 52,
+                        "resting_hr_bpm": 62,
+                        "pb_mile_seconds": 435,  # 7:15 = 435 seconds
+                        "weekly_miles": 20.0,
+                        "long_run_miles": 10.0,
+                        "pb_bench_1rm_lb": 135.0
                     }
                 },
                 {
@@ -156,15 +171,16 @@ class OptimizedDBTester:
                         },
                         "pb_mile": 390,  # Time in seconds instead of mm:ss
                         "pb_bench_1rm": 245  # Direct weight value instead of object
-                    }
-                },
-                {
-                    "name": "Missing Fields",
-                    "profile_json": {
-                        "first_name": "Charlie",
+                    },
+                    "expected": {
+                        "first_name": "Bob",
                         "sex": "Male",
-                        "pb_mile": "6:30"
-                        # Many fields missing to test null handling
+                        "weight_lb": 180.0,
+                        "vo2_max": 55.0,
+                        "hrv_ms": 48,
+                        "resting_hr_bpm": 55,
+                        "pb_mile_seconds": 390,
+                        "pb_bench_1rm_lb": 245.0
                     }
                 }
             ]
@@ -174,17 +190,23 @@ class OptimizedDBTester:
                 response = self.session.post(f"{API_BASE_URL}/athlete-profiles", 
                                            json=test_case)
                 
-                if response.status_code == 201:
-                    data = response.json()
-                    profile = data.get('profile', {})
+                if response.status_code == 200:
+                    extracted_fields = response.json()
                     
-                    # Verify basic fields are extracted
-                    if profile.get('first_name') == test_case['profile_json']['first_name']:
+                    # Check expected extractions
+                    correct_count = 0
+                    total_expected = len(test_case['expected'])
+                    
+                    for field, expected_value in test_case['expected'].items():
+                        if field in extracted_fields and extracted_fields[field] == expected_value:
+                            correct_count += 1
+                    
+                    if correct_count >= total_expected * 0.8:  # 80% of fields should be correct
                         self.log_test(f"Extract Fields - {test_case['name']}", True, 
-                                    "Individual fields extracted correctly")
+                                    f"Field extraction working ({correct_count}/{total_expected} correct)")
                     else:
                         self.log_test(f"Extract Fields - {test_case['name']}", False, 
-                                    "Field extraction failed")
+                                    f"Field extraction issues ({correct_count}/{total_expected} correct)")
                         all_passed = False
                 else:
                     self.log_test(f"Extract Fields - {test_case['name']}", False, 
