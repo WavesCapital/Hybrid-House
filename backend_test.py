@@ -4672,6 +4672,18 @@ class BackendTester:
         self.test_user_profile_upsert_response_format()
         self.test_user_profile_upsert_comprehensive_functionality()
         
+        # ===== REVIEW REQUEST: USER PROFILE SYSTEM TESTS =====
+        print("\n" + "=" * 60)
+        print("📋 REVIEW REQUEST: USER PROFILE SYSTEM TESTS")
+        print("=" * 60)
+        
+        self.test_user_profile_upsert_put_endpoint()
+        self.test_user_profile_auto_creation_get_endpoint()
+        self.test_user_profile_updates_functionality()
+        self.test_user_profile_authentication_requirements()
+        self.test_kyle_user_profile_verification()
+        self.test_athlete_profile_linking_to_users()
+        
         # ===== ENHANCED PROFILEPAGE SYSTEM TESTS =====
         print("\n" + "=" * 60)
         print("🎯 ENHANCED PROFILEPAGE SYSTEM TESTS")
