@@ -62,16 +62,25 @@ const ProfilePage = () => {
             }
           }
           
+          // Helper function to convert object to string
+          const convertToString = (value) => {
+            if (!value) return '';
+            if (typeof value === 'object') {
+              return JSON.stringify(value);
+            }
+            return value.toString();
+          };
+          
           setInputForm({
             first_name: mostRecent.profile_json.first_name || '',
             sex: mostRecent.profile_json.sex || '',
             body_metrics: bodyMetricsStr,
-            pb_mile: mostRecent.profile_json.pb_mile || '',
-            weekly_miles: mostRecent.profile_json.weekly_miles || '',
-            long_run: mostRecent.profile_json.long_run || '',
-            pb_bench_1rm: mostRecent.profile_json.pb_bench_1rm || '',
-            pb_squat_1rm: mostRecent.profile_json.pb_squat_1rm || '',
-            pb_deadlift_1rm: mostRecent.profile_json.pb_deadlift_1rm || ''
+            pb_mile: convertToString(mostRecent.profile_json.pb_mile),
+            weekly_miles: convertToString(mostRecent.profile_json.weekly_miles),
+            long_run: convertToString(mostRecent.profile_json.long_run),
+            pb_bench_1rm: convertToString(mostRecent.profile_json.pb_bench_1rm),
+            pb_squat_1rm: convertToString(mostRecent.profile_json.pb_squat_1rm),
+            pb_deadlift_1rm: convertToString(mostRecent.profile_json.pb_deadlift_1rm)
           });
         }
         
