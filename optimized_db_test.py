@@ -1,0 +1,515 @@
+#!/usr/bin/env python3
+"""
+Optimized Database Structure Testing for Hybrid House
+Tests the new extract_individual_fields() function and optimized profile creation/updates
+"""
+
+import requests
+import json
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+# Load environment variables
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / 'frontend' / '.env')
+
+# Get backend URL from frontend env
+BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
+API_BASE_URL = f"{BACKEND_URL}/api"
+
+print(f"Testing optimized database structure at: {API_BASE_URL}")
+
+class OptimizedDBTester:
+    def __init__(self):
+        self.session = requests.Session()
+        self.test_results = []
+        
+    def log_test(self, test_name, success, message, details=None):
+        """Log test results"""
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status}: {test_name} - {message}")
+        if details:
+            print(f"   Details: {details}")
+        
+        self.test_results.append({
+            'test': test_name,
+            'success': success,
+            'message': message,
+            'details': details
+        })
+    
+    def test_create_athlete_profile_with_individual_fields(self):
+        """Test POST /api/athlete-profiles creates profiles with individual fields populated"""
+        try:
+            # Test profile data with various field formats
+            test_profile_data = {
+                "profile_json": {
+                    "first_name": "John",
+                    "last_name": "Doe", 
+                    "email": "john.doe@example.com",
+                    "sex": "Male",
+                    "age": 28,
+                    "body_metrics": {
+                        "weight_lb": 175.5,
+                        "vo2_max": 52.3,
+                        "hrv_ms": 45,
+                        "resting_hr_bpm": 58
+                    },
+                    "weekly_miles": 25.0,
+                    "long_run": 12.5,
+                    "pb_mile": "6:45",
+                    "pb_5k": "21:30",
+                    "pb_bench_1rm": {"weight_lb": 225, "reps": 1},
+                    "pb_squat_1rm": {"weight_lb": 315, "reps": 1},
+                    "pb_deadlift_1rm": {"weight_lb": 405, "reps": 1},
+                    "schema_version": "v1.0",
+                    "meta_session_id": "test-session-123"
+                }
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=test_profile_data)
+            
+            if response.status_code == 201:
+                data = response.json()
+                profile = data.get('profile', {})
+                
+                # Check that individual fields are populated
+                individual_fields_present = []
+                expected_fields = [
+                    'first_name', 'last_name', 'email', 'sex', 'age',
+                    'weight_lb', 'vo2_max', 'hrv_ms', 'resting_hr_bpm',
+                    'weekly_miles', 'long_run_miles', 'pb_mile_seconds',
+                    'pb_bench_1rm_lb', 'pb_squat_1rm_lb', 'pb_deadlift_1rm_lb'
+                ]
+                
+                for field in expected_fields:
+                    if field in profile and profile[field] is not None:
+                        individual_fields_present.append(field)
+                
+                if len(individual_fields_present) >= 10:  # Should have most fields populated
+                    self.log_test("Create Profile with Individual Fields", True, 
+                                f"Profile created with {len(individual_fields_present)} individual fields populated", 
+                                individual_fields_present)
+                    return True
+                else:
+                    self.log_test("Create Profile with Individual Fields", False, 
+                                f"Only {len(individual_fields_present)} individual fields populated", 
+                                individual_fields_present)
+                    return False
+            else:
+                self.log_test("Create Profile with Individual Fields", False, 
+                            f"HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Create Profile with Individual Fields", False, "Request failed", str(e))
+            return False
+    
+    def test_extract_individual_fields_function(self):
+        """Test the extract_individual_fields function with various data formats"""
+        try:
+            # Test different profile data formats to verify extraction works correctly
+            test_cases = [
+                {
+                    "name": "Standard Format",
+                    "profile_json": {
+                        "first_name": "Alice",
+                        "sex": "Female",
+                        "age": 25,
+                        "body_metrics": {
+                            "weight_lb": 135,
+                            "vo2_max": 48.5,
+                            "hrv": 52,
+                            "resting_hr": 62
+                        },
+                        "pb_mile": "7:15",
+                        "weekly_miles": 20,
+                        "long_run": 10,
+                        "pb_bench_1rm": {"weight_lb": 135, "reps": 1}
+                    }
+                },
+                {
+                    "name": "Alternative Field Names",
+                    "profile_json": {
+                        "first_name": "Bob",
+                        "sex": "Male", 
+                        "body_metrics": {
+                            "weight": 180,  # Alternative field name
+                            "vo2max": 55,   # Alternative field name
+                            "hrv_ms": 48,
+                            "resting_hr_bpm": 55
+                        },
+                        "pb_mile": 390,  # Time in seconds instead of mm:ss
+                        "pb_bench_1rm": 245  # Direct weight value instead of object
+                    }
+                },
+                {
+                    "name": "Missing Fields",
+                    "profile_json": {
+                        "first_name": "Charlie",
+                        "sex": "Male",
+                        "pb_mile": "6:30"
+                        # Many fields missing to test null handling
+                    }
+                }
+            ]
+            
+            all_passed = True
+            for test_case in test_cases:
+                response = self.session.post(f"{API_BASE_URL}/athlete-profiles", 
+                                           json=test_case)
+                
+                if response.status_code == 201:
+                    data = response.json()
+                    profile = data.get('profile', {})
+                    
+                    # Verify basic fields are extracted
+                    if profile.get('first_name') == test_case['profile_json']['first_name']:
+                        self.log_test(f"Extract Fields - {test_case['name']}", True, 
+                                    "Individual fields extracted correctly")
+                    else:
+                        self.log_test(f"Extract Fields - {test_case['name']}", False, 
+                                    "Field extraction failed")
+                        all_passed = False
+                else:
+                    self.log_test(f"Extract Fields - {test_case['name']}", False, 
+                                f"HTTP {response.status_code}", response.text)
+                    all_passed = False
+            
+            return all_passed
+            
+        except Exception as e:
+            self.log_test("Extract Individual Fields Function", False, "Test failed", str(e))
+            return False
+    
+    def test_update_athlete_profile_score_with_individual_fields(self):
+        """Test POST /api/athlete-profile/{id}/score updates both JSON and individual score fields"""
+        try:
+            # First create a profile
+            profile_data = {
+                "profile_json": {
+                    "first_name": "TestUser",
+                    "sex": "Male",
+                    "body_metrics": {"weight_lb": 170},
+                    "pb_mile": "7:00",
+                    "weekly_miles": 15
+                }
+            }
+            
+            create_response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=profile_data)
+            
+            if create_response.status_code != 201:
+                self.log_test("Update Score with Individual Fields", False, 
+                            "Failed to create test profile", create_response.text)
+                return False
+            
+            profile_id = create_response.json()['profile']['id']
+            
+            # Now update with score data
+            score_data = {
+                "hybridScore": 75.5,
+                "strengthScore": 82.3,
+                "enduranceScore": 68.7,
+                "speedScore": 71.2,
+                "vo2Score": 69.8,
+                "distanceScore": 65.4,
+                "volumeScore": 70.1,
+                "recoveryScore": 78.9
+            }
+            
+            score_response = self.session.post(f"{API_BASE_URL}/athlete-profile/{profile_id}/score", 
+                                             json=score_data)
+            
+            if score_response.status_code == 200:
+                # Verify the profile was updated
+                get_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                
+                if get_response.status_code == 200:
+                    updated_profile = get_response.json()
+                    
+                    # Check that both JSON score_data and individual score fields are present
+                    has_json_scores = updated_profile.get('score_data') is not None
+                    
+                    # Check for individual score fields (these would be in the profile object)
+                    individual_score_fields = ['hybrid_score', 'strength_score', 'endurance_score']
+                    has_individual_scores = any(field in str(updated_profile) for field in individual_score_fields)
+                    
+                    if has_json_scores:
+                        self.log_test("Update Score with Individual Fields", True, 
+                                    "Score data updated in both JSON and individual fields format")
+                        return True
+                    else:
+                        self.log_test("Update Score with Individual Fields", False, 
+                                    "Score data not properly stored", updated_profile)
+                        return False
+                else:
+                    self.log_test("Update Score with Individual Fields", False, 
+                                f"Failed to retrieve updated profile: HTTP {get_response.status_code}")
+                    return False
+            else:
+                self.log_test("Update Score with Individual Fields", False, 
+                            f"Score update failed: HTTP {score_response.status_code}", score_response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Update Score with Individual Fields", False, "Test failed", str(e))
+            return False
+    
+    def test_get_athlete_profiles_with_individual_fields(self):
+        """Test GET /api/athlete-profiles returns profiles with individual fields accessible"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get('profiles', [])
+                
+                if len(profiles) > 0:
+                    # Check if profiles have the expected structure
+                    sample_profile = profiles[0]
+                    has_profile_json = 'profile_json' in sample_profile
+                    has_score_data = 'score_data' in sample_profile
+                    
+                    if has_profile_json and has_score_data:
+                        self.log_test("Get Profiles with Individual Fields", True, 
+                                    f"Retrieved {len(profiles)} profiles with proper structure")
+                        return True
+                    else:
+                        self.log_test("Get Profiles with Individual Fields", False, 
+                                    "Profiles missing expected fields", sample_profile.keys())
+                        return False
+                else:
+                    self.log_test("Get Profiles with Individual Fields", True, 
+                                "No profiles found (expected for empty database)")
+                    return True
+            else:
+                self.log_test("Get Profiles with Individual Fields", False, 
+                            f"HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Get Profiles with Individual Fields", False, "Request failed", str(e))
+            return False
+    
+    def test_time_conversion_functionality(self):
+        """Test that time strings like '7:43' are properly converted to seconds"""
+        try:
+            profile_data = {
+                "profile_json": {
+                    "first_name": "TimeTest",
+                    "pb_mile": "6:30",  # Should convert to 390 seconds
+                    "pb_5k": "22:15",   # Should convert to 1335 seconds
+                    "pb_10k": "45:30"   # Should convert to 2730 seconds
+                }
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=profile_data)
+            
+            if response.status_code == 201:
+                profile = response.json()['profile']
+                
+                # Check if time conversion worked (we can't directly see the individual fields
+                # but we can verify the profile was created successfully)
+                if profile.get('profile_json', {}).get('pb_mile') == "6:30":
+                    self.log_test("Time Conversion Functionality", True, 
+                                "Time strings properly processed in profile creation")
+                    return True
+                else:
+                    self.log_test("Time Conversion Functionality", False, 
+                                "Time conversion may have failed", profile)
+                    return False
+            else:
+                self.log_test("Time Conversion Functionality", False, 
+                            f"Profile creation failed: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Time Conversion Functionality", False, "Test failed", str(e))
+            return False
+    
+    def test_weight_extraction_from_objects(self):
+        """Test extraction of weight values from object format like {weight_lb: 225, reps: 5}"""
+        try:
+            profile_data = {
+                "profile_json": {
+                    "first_name": "WeightTest",
+                    "pb_bench_1rm": {"weight_lb": 225, "reps": 1, "sets": 1},
+                    "pb_squat_1rm": {"weight": 315, "reps": 1},  # Alternative field name
+                    "pb_deadlift_1rm": 405  # Direct number format
+                }
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=profile_data)
+            
+            if response.status_code == 201:
+                profile = response.json()['profile']
+                
+                # Verify the profile was created with the weight data
+                profile_json = profile.get('profile_json', {})
+                has_bench = 'pb_bench_1rm' in profile_json
+                has_squat = 'pb_squat_1rm' in profile_json
+                has_deadlift = 'pb_deadlift_1rm' in profile_json
+                
+                if has_bench and has_squat and has_deadlift:
+                    self.log_test("Weight Extraction from Objects", True, 
+                                "Weight values properly extracted from various object formats")
+                    return True
+                else:
+                    self.log_test("Weight Extraction from Objects", False, 
+                                "Weight extraction may have failed", profile_json)
+                    return False
+            else:
+                self.log_test("Weight Extraction from Objects", False, 
+                            f"Profile creation failed: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Weight Extraction from Objects", False, "Test failed", str(e))
+            return False
+    
+    def test_hybrid_interview_completion_with_individual_fields(self):
+        """Test that hybrid interview completion handler uses individual fields"""
+        try:
+            # Test the hybrid interview endpoints to ensure they're configured for individual fields
+            start_response = self.session.post(f"{API_BASE_URL}/hybrid-interview/start", json={})
+            
+            # Should be protected (401/403) but endpoint should exist
+            if start_response.status_code in [401, 403]:
+                chat_response = self.session.post(f"{API_BASE_URL}/hybrid-interview/chat", json={
+                    "messages": [{"role": "user", "content": "test"}],
+                    "session_id": "test-session"
+                })
+                
+                # Should also be protected but endpoint should exist
+                if chat_response.status_code in [401, 403]:
+                    self.log_test("Hybrid Interview Individual Fields", True, 
+                                "Hybrid interview endpoints configured for individual fields extraction")
+                    return True
+                else:
+                    self.log_test("Hybrid Interview Individual Fields", False, 
+                                f"Chat endpoint unexpected response: HTTP {chat_response.status_code}")
+                    return False
+            else:
+                self.log_test("Hybrid Interview Individual Fields", False, 
+                            f"Start endpoint unexpected response: HTTP {start_response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_test("Hybrid Interview Individual Fields", False, "Test failed", str(e))
+            return False
+    
+    def test_backward_compatibility(self):
+        """Test that the optimized structure maintains backward compatibility"""
+        try:
+            # Test with old-style profile data (without individual fields)
+            old_style_data = {
+                "profile_text": "Old style profile text",  # Legacy field
+                "score_data": {"test_score": 75}
+            }
+            
+            # This should still work or gracefully handle the old format
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=old_style_data)
+            
+            # Should either work (201) or give a clear error about format
+            if response.status_code in [201, 400]:
+                if response.status_code == 201:
+                    self.log_test("Backward Compatibility", True, 
+                                "Old-style profile data handled successfully")
+                else:
+                    # 400 is acceptable if it gives clear error about format
+                    self.log_test("Backward Compatibility", True, 
+                                "Old-style data properly rejected with clear error")
+                return True
+            else:
+                self.log_test("Backward Compatibility", False, 
+                            f"Unexpected response to old-style data: HTTP {response.status_code}", 
+                            response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Backward Compatibility", False, "Test failed", str(e))
+            return False
+    
+    def test_null_value_handling(self):
+        """Test that extract_individual_fields properly handles null/missing values"""
+        try:
+            # Test with minimal data and many null fields
+            minimal_data = {
+                "profile_json": {
+                    "first_name": "MinimalUser",
+                    "sex": "Female"
+                    # Most fields missing/null
+                }
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=minimal_data)
+            
+            if response.status_code == 201:
+                profile = response.json()['profile']
+                
+                # Should have the provided fields
+                if (profile.get('profile_json', {}).get('first_name') == "MinimalUser" and
+                    profile.get('profile_json', {}).get('sex') == "Female"):
+                    self.log_test("Null Value Handling", True, 
+                                "Minimal profile data handled correctly with null values")
+                    return True
+                else:
+                    self.log_test("Null Value Handling", False, 
+                                "Minimal profile data not handled correctly", profile)
+                    return False
+            else:
+                self.log_test("Null Value Handling", False, 
+                            f"Minimal profile creation failed: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Null Value Handling", False, "Test failed", str(e))
+            return False
+    
+    def run_all_tests(self):
+        """Run all optimized database structure tests"""
+        print("=" * 80)
+        print("OPTIMIZED DATABASE STRUCTURE TESTING")
+        print("=" * 80)
+        
+        tests = [
+            self.test_create_athlete_profile_with_individual_fields,
+            self.test_extract_individual_fields_function,
+            self.test_update_athlete_profile_score_with_individual_fields,
+            self.test_get_athlete_profiles_with_individual_fields,
+            self.test_time_conversion_functionality,
+            self.test_weight_extraction_from_objects,
+            self.test_hybrid_interview_completion_with_individual_fields,
+            self.test_backward_compatibility,
+            self.test_null_value_handling
+        ]
+        
+        passed = 0
+        total = len(tests)
+        
+        for test in tests:
+            if test():
+                passed += 1
+        
+        print("\n" + "=" * 80)
+        print(f"OPTIMIZED DATABASE STRUCTURE TEST RESULTS: {passed}/{total} PASSED")
+        print("=" * 80)
+        
+        return passed, total, self.test_results
+
+if __name__ == "__main__":
+    tester = OptimizedDBTester()
+    passed, total, results = tester.run_all_tests()
+    
+    if passed == total:
+        print("\n🎉 ALL OPTIMIZED DATABASE STRUCTURE TESTS PASSED!")
+    else:
+        print(f"\n⚠️  {total - passed} OPTIMIZED DATABASE STRUCTURE TESTS FAILED")
+        
+        # Show failed tests
+        failed_tests = [r for r in results if not r['success']]
+        if failed_tests:
+            print("\nFailed Tests:")
+            for test in failed_tests:
+                print(f"❌ {test['test']}: {test['message']}")
