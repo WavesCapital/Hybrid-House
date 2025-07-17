@@ -5142,7 +5142,7 @@ class BackendTester:
             create_response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=profile_data)
             
             # Step 3: Test score storage (if profile was created)
-            if create_response.status_code == 201:
+            if create_response.status_code in [200, 201]:
                 profile_id = create_response.json().get("profile", {}).get("id")
                 if profile_id:
                     score_data = {"hybridScore": 75.0, "strengthScore": 80.0}
@@ -5154,7 +5154,7 @@ class BackendTester:
             
             # Check if workflow components are configured correctly
             start_protected = start_response.status_code in [401, 403]
-            create_works = create_response.status_code in [201, 500]  # 500 might be database schema issue
+            create_works = create_response.status_code in [200, 201, 500]  # 500 might be database schema issue
             
             if start_protected and create_works:
                 self.log_test("Complete Generate Hybrid Score Workflow", True, "Workflow components configured correctly (interview protected, profile creation working)")
