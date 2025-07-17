@@ -1817,12 +1817,6 @@ const ProfilePage = () => {
                             {scoreData.recoveryScore ? Math.round(scoreData.recoveryScore) : <span className="em-dash">—</span>}
                           </td>
                           <td className="p-3 text-xs text-secondary">
-                            {formatValue(profile.hrv_ms || profile.hrv || bodyMetrics.hrv || bodyMetrics.hrv_ms)}
-                          </td>
-                          <td className="p-3 text-xs text-secondary">
-                            {formatValue(profile.resting_hr_bpm || profile.resting_hr || bodyMetrics.resting_hr || bodyMetrics.resting_hr_bpm)}
-                          </td>
-                          <td className="p-3 text-xs text-secondary">
                             {formatValue(profile.weight_lb || bodyMetrics.weight_lb || bodyMetrics.weight)}
                           </td>
                           <td className="p-3 text-xs text-secondary">
@@ -1839,10 +1833,10 @@ const ProfilePage = () => {
                             {formatValue(profile.weekly_miles || profileJson.weekly_miles)}
                           </td>
                           <td className="p-3 text-xs text-secondary">
-                            {formatValue(profile.hrv || bodyMetrics.hrv || bodyMetrics.hrv_ms)}
+                            {formatValue(profile.hrv_ms || profile.hrv || bodyMetrics.hrv || bodyMetrics.hrv_ms)}
                           </td>
                           <td className="p-3 text-xs text-secondary">
-                            {formatValue(profile.resting_hr || bodyMetrics.resting_hr || bodyMetrics.resting_hr_bpm)}
+                            {formatValue(profile.resting_hr_bpm || profile.resting_hr || bodyMetrics.resting_hr || bodyMetrics.resting_hr_bpm)}
                           </td>
                           <td className="p-3 text-xs text-secondary">
                             {formatValue(profile.pb_bench_1rm_lb || profileJson.pb_bench_1rm)}
