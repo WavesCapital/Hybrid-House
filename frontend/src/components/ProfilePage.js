@@ -1774,9 +1774,20 @@ const ProfilePage = () => {
                       const profileJson = profile?.profile_json || {};
                       const bodyMetrics = profileJson?.body_metrics || {};
                       
-                      // Helper function to format values
+                      // Helper function to format values safely
                       const formatValue = (value) => {
                         if (value === null || value === undefined || value === 0 || value === '') {
+                          return <span className="em-dash">—</span>;
+                        }
+                        // Handle objects by extracting meaningful values
+                        if (typeof value === 'object') {
+                          if (value.weight_lb || value.weight) {
+                            return value.weight_lb || value.weight;
+                          }
+                          if (value.vo2_max || value.vo2max) {
+                            return value.vo2_max || value.vo2max;
+                          }
+                          // For other objects, return em-dash
                           return <span className="em-dash">—</span>;
                         }
                         return value;
@@ -1788,6 +1799,17 @@ const ProfilePage = () => {
                         const minutes = Math.floor(seconds / 60);
                         const remainingSeconds = seconds % 60;
                         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+                      };
+                      
+                      // Safe profile field renderer
+                      const safeRenderField = (value) => {
+                        if (value === null || value === undefined || value === 0 || value === '') {
+                          return <span className="em-dash">—</span>;
+                        }
+                        if (typeof value === 'object') {
+                          return <span className="em-dash">—</span>;
+                        }
+                        return value.toString();
                       };
                       
                       return (
