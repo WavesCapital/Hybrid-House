@@ -848,6 +848,32 @@ const ProfilePage = () => {
           </Button>
         </div>
 
+        {/* Full-screen Score Calculation Loading (like interview) */}
+        {isCalculatingScore && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm" style={{ 
+            background: 'rgba(10, 11, 12, 0.8)' 
+          }}>
+            <div className="gradient-border max-w-md w-full mx-6">
+              <div className="gradient-border-inner p-12 text-center">
+                <h2 className="text-3xl font-bold neo-primary mb-6">
+                  Calculating Your Hybrid Score! 🎉
+                </h2>
+                <p className="neo-text-secondary mb-8 leading-relaxed">
+                  We're analyzing your athlete profile to generate your personalized hybrid score and recommendations.
+                </p>
+                <div className="flex justify-center items-center space-x-2 mb-4">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
+                  <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                </div>
+                <p className="text-sm neo-text-muted">
+                  This may take up to 2 minutes...
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* User Profile Section - Inline Editing */}
         {(!loading && user) && (
           <div className="mb-8">
