@@ -1374,22 +1374,45 @@ const ProfilePage = () => {
 
               <div className="flex items-center justify-center mb-3 pt-8">
                 {profiles.length > 0 && profiles[0]?.score_data?.hybridScore ? (
-                  <div className="w-full max-w-md">
-                    {/* Centered Score Number */}
-                    <div className="text-center mb-6">
-                      <div className="text-6xl font-bold accent-gradient-text"
-                        aria-label={`Hybrid Score ${Math.round(profiles[0].score_data.hybridScore)}. Sub-scores: ${profiles[0].score_data.strengthScore ? `Strength ${Math.round(profiles[0].score_data.strengthScore)}, ` : ''}${profiles[0].score_data.speedScore ? `Speed ${Math.round(profiles[0].score_data.speedScore)}, ` : ''}${profiles[0].score_data.vo2Score ? `VO₂ ${Math.round(profiles[0].score_data.vo2Score)}, ` : ''}${profiles[0].score_data.distanceScore ? `Distance ${Math.round(profiles[0].score_data.distanceScore)}, ` : ''}${profiles[0].score_data.volumeScore ? `Volume ${Math.round(profiles[0].score_data.volumeScore)}, ` : ''}${profiles[0].score_data.recoveryScore ? `Recovery ${Math.round(profiles[0].score_data.recoveryScore)}` : ''}`}
-                      >
-                        {Math.round(profiles[0].score_data.hybridScore)}
+                  <div className="text-center">
+                    {/* Main Score with Circular Progress */}
+                    <div className="relative inline-block mb-6">
+                      <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                        <defs>
+                          <linearGradient id="mainScoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#1B6DFF" />
+                            <stop offset="100%" stopColor="#D64EF9" />
+                          </linearGradient>
+                        </defs>
+                        {/* Track */}
+                        <circle
+                          cx="60"
+                          cy="60"
+                          r="50"
+                          stroke="rgba(255, 255, 255, 0.1)"
+                          strokeWidth="8"
+                          fill="none"
+                        />
+                        {/* Progress */}
+                        <circle
+                          cx="60"
+                          cy="60"
+                          r="50"
+                          stroke="url(#mainScoreGradient)"
+                          strokeWidth="8"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeDasharray={`${(Math.round(profiles[0].score_data.hybridScore) / 100) * 314.16} 314.16`}
+                          style={{ transition: 'stroke-dasharray 1s ease-out' }}
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-4xl font-bold accent-gradient-text"
+                          aria-label={`Hybrid Score ${Math.round(profiles[0].score_data.hybridScore)}. Sub-scores: ${profiles[0].score_data.strengthScore ? `Strength ${Math.round(profiles[0].score_data.strengthScore)}, ` : ''}${profiles[0].score_data.speedScore ? `Speed ${Math.round(profiles[0].score_data.speedScore)}, ` : ''}${profiles[0].score_data.vo2Score ? `VO₂ ${Math.round(profiles[0].score_data.vo2Score)}, ` : ''}${profiles[0].score_data.distanceScore ? `Distance ${Math.round(profiles[0].score_data.distanceScore)}, ` : ''}${profiles[0].score_data.volumeScore ? `Volume ${Math.round(profiles[0].score_data.volumeScore)}, ` : ''}${profiles[0].score_data.recoveryScore ? `Recovery ${Math.round(profiles[0].score_data.recoveryScore)}` : ''}`}
+                        >
+                          {Math.round(profiles[0].score_data.hybridScore)}
+                        </div>
                       </div>
-                    </div>
-                    
-                    {/* Full Width Progress Bar */}
-                    <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden mb-4">
-                      <div 
-                        className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-1000 ease-out"
-                        style={{ width: `${Math.round(profiles[0].score_data.hybridScore)}%` }}
-                      />
                     </div>
                   </div>
                 ) : (
