@@ -257,24 +257,14 @@ const ProfilePage = () => {
 
   // Generate new athlete profile
   const generateNewProfile = useCallback(async () => {
-    // Check if user is authenticated for name and gender
-    if (!user || !userProfile) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to generate a profile with your information",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
       setIsGenerating(true);
 
-      // Create profile JSON using user profile data and form inputs
+      // Create profile JSON using form inputs (works with or without auth)
       const profileJson = {
-        // Use data from user profile
-        first_name: userProfile.name || userProfile.display_name || 'User',
-        sex: userProfile.gender || 'Not specified',
+        // Use data from user profile if available, otherwise use defaults
+        first_name: userProfile?.name || userProfile?.display_name || 'Anonymous User',
+        sex: userProfile?.gender || 'Not specified',
         
         // Body metrics from individual form fields
         body_metrics: {
@@ -309,7 +299,7 @@ const ProfilePage = () => {
         updated_at: new Date().toISOString()
       };
 
-      // Store profile in database - use authenticated endpoint if user is signed in
+      // Store profile in database - use public endpoint for non-authenticated users
       if (user && session) {
         await axios.post(`${BACKEND_URL}/api/athlete-profiles`, newProfile, {
           headers: {
