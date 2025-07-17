@@ -1343,8 +1343,8 @@ const ProfilePage = () => {
                 {profiles.length > 0 && profiles[0]?.score_data?.hybridScore ? (
                   <div className="text-center">
                     {/* Main Score with Circular Progress */}
-                    <div className="relative inline-block mb-6">
-                      <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                    <div className="relative inline-block mb-8">
+                      <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 160 160">
                         <defs>
                           <linearGradient id="mainScoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                             <stop offset="0%" stopColor="#1B6DFF" />
@@ -1353,31 +1353,34 @@ const ProfilePage = () => {
                         </defs>
                         {/* Track */}
                         <circle
-                          cx="60"
-                          cy="60"
-                          r="50"
+                          cx="80"
+                          cy="80"
+                          r="70"
                           stroke="rgba(255, 255, 255, 0.1)"
-                          strokeWidth="8"
+                          strokeWidth="10"
                           fill="none"
                         />
                         {/* Progress */}
                         <circle
-                          cx="60"
-                          cy="60"
-                          r="50"
+                          cx="80"
+                          cy="80"
+                          r="70"
                           stroke="url(#mainScoreGradient)"
-                          strokeWidth="8"
+                          strokeWidth="10"
                           fill="none"
                           strokeLinecap="round"
-                          strokeDasharray={`${(Math.round(profiles[0].score_data.hybridScore) / 100) * 314.16} 314.16`}
+                          strokeDasharray={`${(Math.round(profiles[0].score_data.hybridScore) / 100) * 439.82} 439.82`}
                           style={{ transition: 'stroke-dasharray 1s ease-out' }}
                         />
                       </svg>
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-4xl font-bold accent-gradient-text"
-                          aria-label={`Hybrid Score ${Math.round(profiles[0].score_data.hybridScore)}. Sub-scores: ${profiles[0].score_data.strengthScore ? `Strength ${Math.round(profiles[0].score_data.strengthScore)}, ` : ''}${profiles[0].score_data.speedScore ? `Speed ${Math.round(profiles[0].score_data.speedScore)}, ` : ''}${profiles[0].score_data.vo2Score ? `VO₂ ${Math.round(profiles[0].score_data.vo2Score)}, ` : ''}${profiles[0].score_data.distanceScore ? `Distance ${Math.round(profiles[0].score_data.distanceScore)}, ` : ''}${profiles[0].score_data.volumeScore ? `Volume ${Math.round(profiles[0].score_data.volumeScore)}, ` : ''}${profiles[0].score_data.recoveryScore ? `Recovery ${Math.round(profiles[0].score_data.recoveryScore)}` : ''}`}
-                        >
-                          {Math.round(profiles[0].score_data.hybridScore)}
+                        <div className="text-center">
+                          <div className="text-5xl font-bold accent-gradient-text mb-2"
+                            aria-label={`Hybrid Score ${Math.round(profiles[0].score_data.hybridScore)}. Sub-scores: ${profiles[0].score_data.strengthScore ? `Strength ${Math.round(profiles[0].score_data.strengthScore)}, ` : ''}${profiles[0].score_data.speedScore ? `Speed ${Math.round(profiles[0].score_data.speedScore)}, ` : ''}${profiles[0].score_data.vo2Score ? `VO₂ ${Math.round(profiles[0].score_data.vo2Score)}, ` : ''}${profiles[0].score_data.distanceScore ? `Distance ${Math.round(profiles[0].score_data.distanceScore)}, ` : ''}${profiles[0].score_data.volumeScore ? `Volume ${Math.round(profiles[0].score_data.volumeScore)}, ` : ''}${profiles[0].score_data.recoveryScore ? `Recovery ${Math.round(profiles[0].score_data.recoveryScore)}` : ''}`}
+                          >
+                            {Math.round(profiles[0].score_data.hybridScore)}
+                          </div>
+                          <div className="text-sm text-muted font-medium">Hybrid Score</div>
                         </div>
                       </div>
                     </div>
