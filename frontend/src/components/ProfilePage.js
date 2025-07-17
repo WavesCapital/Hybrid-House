@@ -812,6 +812,16 @@ const ProfilePage = () => {
           border-color: #79CFF7;
         }
         
+        .gradient-border {
+          padding: 2px;
+          background: linear-gradient(135deg, #79CFF7 0%, #4FC3F7 100%);
+          border-radius: 16px;
+        }
+        .gradient-border-inner {
+          background: #0A0B0C;
+          border-radius: 14px;
+        }
+        
         /* Mobile optimizations */
         @media (max-width: 768px) {
           .container {
