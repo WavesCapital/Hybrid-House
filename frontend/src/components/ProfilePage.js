@@ -931,25 +931,19 @@ const ProfilePage = () => {
           color: rgba(255, 255, 255, 0.4);
         }
         
-        /* Score Dial */
-        .score-dial {
-          position: relative;
-          width: 200px;
-          height: 200px;
+        /* Score Progress Bar */
+        .score-progress-bar {
+          background: linear-gradient(90deg, #1B6DFF 0%, #D64EF9 100%);
+          border-radius: 9999px;
+          height: 16px;
+          transition: width 1s ease-out;
         }
         
-        .score-dial-track {
-          stroke: rgba(255, 255, 255, 0.1);
-          stroke-width: 8;
-          fill: none;
-        }
-        
-        .score-dial-progress {
-          stroke: url(#scoreGradient);
-          stroke-width: 8;
-          fill: none;
-          stroke-linecap: round;
-          transition: stroke-dasharray 1s ease-out;
+        .score-progress-track {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 9999px;
+          height: 16px;
+          overflow: hidden;
         }
         
         /* Mini KPI Cards */
