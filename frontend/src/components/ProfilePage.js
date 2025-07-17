@@ -1636,26 +1636,41 @@ const ProfilePage = () => {
                       ))}
                     </g>
                     
-                    {/* Trend line */}
-                    <polyline
-                      fill="none"
-                      stroke="url(#trendGradient)"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      className="trend-line"
-                      points={profiles.slice(-10).map((profile, index, arr) => {
-                        const x = (index / Math.max(arr.length - 1, 1)) * 100;
-                        const hybridScore = profile?.score_data?.hybridScore || 0;
-                        const roundedScore = Math.round(hybridScore);
-                        const y = 100 - roundedScore; // Scale 0-100 to 0-100%
-                        return `${x},${y}`;
-                      }).join(' ')}
-                    />
+                    {/* Trend line - only plot profiles with hybridScore ≠ null */}
+                    {(() => {
+                      const scoredProfiles = profiles.slice(-10).filter(profile => 
+                        profile?.score_data?.hybridScore !== null && 
+                        profile?.score_data?.hybridScore !== undefined
+                      );
+                      
+                      if (scoredProfiles.length > 1) {
+                        return (
+                          <polyline
+                            fill="none"
+                            stroke="url(#trendGradient)"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            className="trend-line"
+                            points={scoredProfiles.map((profile, index, arr) => {
+                              const x = (index / Math.max(arr.length - 1, 1)) * 100;
+                              const hybridScore = profile.score_data.hybridScore;
+                              const roundedScore = Math.round(hybridScore);
+                              const y = 100 - roundedScore; // Scale 0-100 to 0-100%
+                              return `${x},${y}`;
+                            }).join(' ')}
+                          />
+                        );
+                      }
+                      return null;
+                    })()}
                     
-                    {/* Data points (6px glowing dots) */}
-                    {profiles.slice(-10).map((profile, index, arr) => {
+                    {/* Data points (6px glowing dots) - only for profiles with scores */}
+                    {profiles.slice(-10).filter(profile => 
+                      profile?.score_data?.hybridScore !== null && 
+                      profile?.score_data?.hybridScore !== undefined
+                    ).map((profile, index, arr) => {
                       const x = (index / Math.max(arr.length - 1, 1)) * 100;
-                      const hybridScore = profile?.score_data?.hybridScore || 0;
+                      const hybridScore = profile.score_data.hybridScore;
                       const roundedScore = Math.round(hybridScore);
                       const y = 100 - roundedScore;
                       const date = new Date(profile.created_at).toLocaleDateString('en-US', { 
@@ -1668,7 +1683,9 @@ const ProfilePage = () => {
                           key={profile.id}
                           cx={`${x}%`}
                           cy={`${y}%`}
-                          className="chart-point"
+                          r="6"
+                          fill="url(#trendGradient)"
+                          filter="drop-shadow(0 0 4px rgba(139, 92, 246, 0.5))"
                           title={`${date} • ${roundedScore}`}
                         />
                       );
