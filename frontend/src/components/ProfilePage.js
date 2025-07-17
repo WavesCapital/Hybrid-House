@@ -1845,32 +1845,32 @@ const ProfilePage = () => {
             </h3>
             
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full score-archive-table">
                 {/* Sticky header with accent gradient bottom border */}
-                <thead className="sticky top-0 bg-black/50 backdrop-blur-sm">
+                <thead>
                   <tr>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                    <th className="text-left p-4 text-sm font-semibold text-secondary">
                       Date
                     </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                    <th className="text-left p-4 text-sm font-semibold text-secondary">
                       Hybrid Score
                     </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                    <th className="text-left p-4 text-sm font-semibold text-secondary">
                       Mile PR
                     </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                    <th className="text-left p-4 text-sm font-semibold text-secondary">
                       Weekly Miles
                     </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                    <th className="text-left p-4 text-sm font-semibold text-secondary">
                       Bench 1RM
                     </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                    <th className="text-left p-4 text-sm font-semibold text-secondary">
                       Squat 1RM
                     </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                    <th className="text-left p-4 text-sm font-semibold text-secondary">
                       Deadlift 1RM
                     </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                    <th className="text-left p-4 text-sm font-semibold text-secondary">
                       Action
                     </th>
                   </tr>
