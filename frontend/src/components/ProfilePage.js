@@ -720,7 +720,7 @@ const ProfilePage = () => {
           </Button>
         </div>
 
-        {/* User Profile Section - Show for authenticated users (but not during loading) */}
+        {/* User Profile Section - Inline Editing */}
         {(!loading && user) && (
           <div className="mb-8">
             <div className="neo-card rounded-xl p-6">
@@ -729,22 +729,9 @@ const ProfilePage = () => {
                   <Settings className="h-6 w-6 mr-3" />
                   Your Profile
                 </h2>
-                {!isEditingProfile ? (
-                  <Button onClick={() => setIsEditingProfile(true)} className="neo-btn-secondary">
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit Profile
-                  </Button>
-                ) : (
-                  <div className="space-x-2">
-                    <Button onClick={handleUpdateProfile} disabled={isLoadingProfiles} className="neo-btn-primary">
-                      <Save className="w-4 h-4 mr-2" />
-                      Save Changes
-                    </Button>
-                    <Button onClick={() => setIsEditingProfile(false)} className="neo-btn-secondary">
-                      Cancel
-                    </Button>
-                  </div>
-                )}
+                <span className="text-sm neo-text-secondary">
+                  Click any field to edit
+                </span>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -761,17 +748,15 @@ const ProfilePage = () => {
                       )}
                     </div>
                     
-                    {isEditingProfile && (
-                      <label className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-2 cursor-pointer hover:bg-blue-600 transition-colors">
-                        <Camera className="w-3 h-3 text-white" />
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleAvatarChange}
-                          className="hidden"
-                        />
-                      </label>
-                    )}
+                    <label className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-2 cursor-pointer hover:bg-blue-600 transition-colors">
+                      <Camera className="w-3 h-3 text-white" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarChange}
+                        className="hidden"
+                      />
+                    </label>
                   </div>
                   
                   <div className="mt-3">
@@ -801,31 +786,37 @@ const ProfilePage = () => {
                   )}
                 </div>
 
-                {/* Profile Information */}
+                {/* Profile Information - Inline Editing */}
                 <div className="lg:col-span-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
+                    <div>
                       <label className="block text-sm font-medium neo-text-secondary mb-1">
                         Name
                       </label>
-                      <Input
-                        value={profileForm.name}
-                        onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
-                        disabled={!isEditingProfile}
-                        className="bg-gray-900 border-gray-700 text-white"
+                      <EditableField
+                        fieldName="name"
+                        label="Name"
+                        value={userProfile?.name}
+                        placeholder="Enter your name"
                       />
+                      {fieldErrors.name && (
+                        <p className="text-red-400 text-xs mt-1">{fieldErrors.name}</p>
+                      )}
                     </div>
 
-                    <div className="md:col-span-2">
+                    <div>
                       <label className="block text-sm font-medium neo-text-secondary mb-1">
                         Display Name
                       </label>
-                      <Input
-                        value={profileForm.display_name}
-                        onChange={(e) => setProfileForm({...profileForm, display_name: e.target.value})}
-                        disabled={!isEditingProfile}
-                        className="bg-gray-900 border-gray-700 text-white"
+                      <EditableField
+                        fieldName="display_name"
+                        label="Display Name"
+                        value={userProfile?.display_name}
+                        placeholder="Enter your display name"
                       />
+                      {fieldErrors.display_name && (
+                        <p className="text-red-400 text-xs mt-1">{fieldErrors.display_name}</p>
+                      )}
                     </div>
 
                     <div>
@@ -833,13 +824,15 @@ const ProfilePage = () => {
                         <MapPin className="w-4 h-4 inline mr-1" />
                         Location
                       </label>
-                      <Input
-                        value={profileForm.location}
-                        onChange={(e) => setProfileForm({...profileForm, location: e.target.value})}
-                        disabled={!isEditingProfile}
-                        className="bg-gray-900 border-gray-700 text-white"
+                      <EditableField
+                        fieldName="location"
+                        label="Location"
+                        value={userProfile?.location}
                         placeholder="City, Country"
                       />
+                      {fieldErrors.location && (
+                        <p className="text-red-400 text-xs mt-1">{fieldErrors.location}</p>
+                      )}
                     </div>
 
                     <div>
@@ -847,62 +840,77 @@ const ProfilePage = () => {
                         <Globe className="w-4 h-4 inline mr-1" />
                         Website
                       </label>
-                      <Input
-                        value={profileForm.website}
-                        onChange={(e) => setProfileForm({...profileForm, website: e.target.value})}
-                        disabled={!isEditingProfile}
-                        className="bg-gray-900 border-gray-700 text-white"
+                      <EditableField
+                        fieldName="website"
+                        label="Website"
+                        value={userProfile?.website}
                         placeholder="https://yourwebsite.com"
+                        type="url"
                       />
+                      {fieldErrors.website && (
+                        <p className="text-red-400 text-xs mt-1">{fieldErrors.website}</p>
+                      )}
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium neo-text-secondary mb-1">
                         Gender
                       </label>
-                      <select
-                        value={profileForm.gender}
-                        onChange={(e) => setProfileForm({...profileForm, gender: e.target.value})}
-                        disabled={!isEditingProfile}
-                        className="w-full px-3 py-2 border rounded-md bg-gray-900 border-gray-700 text-white"
-                      >
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                        <option value="prefer-not-to-say">Prefer not to say</option>
-                      </select>
+                      <EditableField
+                        fieldName="gender"
+                        label="Gender"
+                        value={userProfile?.gender}
+                        type="select"
+                        options={[
+                          { value: '', label: 'Select Gender' },
+                          { value: 'male', label: 'Male' },
+                          { value: 'female', label: 'Female' },
+                          { value: 'other', label: 'Other' },
+                          { value: 'prefer-not-to-say', label: 'Prefer not to say' }
+                        ]}
+                      />
+                      {fieldErrors.gender && (
+                        <p className="text-red-400 text-xs mt-1">{fieldErrors.gender}</p>
+                      )}
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium neo-text-secondary mb-1">
                         Units Preference
                       </label>
-                      <select
-                        value={profileForm.units_preference}
-                        onChange={(e) => setProfileForm({...profileForm, units_preference: e.target.value})}
-                        disabled={!isEditingProfile}
-                        className="w-full px-3 py-2 border rounded-md bg-gray-900 border-gray-700 text-white"
-                      >
-                        <option value="imperial">Imperial (lbs, miles, ft)</option>
-                        <option value="metric">Metric (kg, km, m)</option>
-                      </select>
+                      <EditableField
+                        fieldName="units_preference"
+                        label="Units Preference"
+                        value={userProfile?.units_preference}
+                        type="select"
+                        options={[
+                          { value: 'imperial', label: 'Imperial (lbs, miles, ft)' },
+                          { value: 'metric', label: 'Metric (kg, km, m)' }
+                        ]}
+                      />
+                      {fieldErrors.units_preference && (
+                        <p className="text-red-400 text-xs mt-1">{fieldErrors.units_preference}</p>
+                      )}
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium neo-text-secondary mb-1">
                         Privacy Level
                       </label>
-                      <select
-                        value={profileForm.privacy_level}
-                        onChange={(e) => setProfileForm({...profileForm, privacy_level: e.target.value})}
-                        disabled={!isEditingProfile}
-                        className="w-full px-3 py-2 border rounded-md bg-gray-900 border-gray-700 text-white"
-                      >
-                        <option value="private">Private</option>
-                        <option value="friends">Friends Only</option>
-                        <option value="public">Public</option>
-                      </select>
+                      <EditableField
+                        fieldName="privacy_level"
+                        label="Privacy Level"
+                        value={userProfile?.privacy_level}
+                        type="select"
+                        options={[
+                          { value: 'private', label: 'Private' },
+                          { value: 'friends', label: 'Friends Only' },
+                          { value: 'public', label: 'Public' }
+                        ]}
+                      />
+                      {fieldErrors.privacy_level && (
+                        <p className="text-red-400 text-xs mt-1">{fieldErrors.privacy_level}</p>
+                      )}
                     </div>
                   </div>
                 </div>
