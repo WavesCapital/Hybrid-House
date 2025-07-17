@@ -1361,7 +1361,7 @@ const ProfilePage = () => {
 
           {/* Hybrid Score Dial (70% width) */}
           <div className="flex-1">
-            <div className="glass-card p-8">
+            <div className="glass-card p-8 pt-8">
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h3 className="text-2xl font-bold text-primary mb-1">Latest Hybrid Score</h3>
@@ -1377,7 +1377,7 @@ const ProfilePage = () => {
                 )}
               </div>
 
-              <div className="flex items-center justify-center mb-3">
+              <div className="flex items-center justify-center mb-3 pt-8">
                 {profiles.length > 0 && profiles[0]?.score_data?.hybridScore ? (
                   <div className="relative">
                     <svg className="score-dial transform -rotate-90" viewBox="0 0 200 200">
