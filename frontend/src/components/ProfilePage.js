@@ -1791,6 +1791,7 @@ const ProfilePage = () => {
                       stroke="url(#trendGradient)"
                       strokeWidth="3"
                       strokeLinecap="round"
+                      className="trend-line"
                       points={profiles.slice(-10).map((profile, index, arr) => {
                         const x = (index / (arr.length - 1)) * 100;
                         const score = profile?.score_data?.hybridScore || 0;
