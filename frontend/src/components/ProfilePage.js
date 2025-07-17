@@ -971,10 +971,25 @@ const ProfilePage = () => {
           {/* Manual Input Form */}
           <div className="space-y-6">
             <div className="neo-card rounded-xl p-6">
-              <h2 className="text-2xl font-bold neo-primary mb-6 flex items-center">
-                <Target className="h-6 w-6 mr-3" />
-                Generate New Profile
-              </h2>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold neo-primary flex items-center">
+                    <Plus className="h-6 w-6 mr-3" />
+                    Generate New Profile
+                  </h2>
+                  {user && userProfile && (
+                    <p className="text-sm neo-text-secondary mt-1">
+                      Creating profile for: <span className="neo-text-primary">{userProfile.display_name || userProfile.name}</span> 
+                      ({userProfile.gender || 'Gender not specified'})
+                    </p>
+                  )}
+                  {(!user || !userProfile) && (
+                    <p className="text-sm text-yellow-400 mt-1">
+                      Sign in to create profiles linked to your account
+                    </p>
+                  )}
+                </div>
+              </div>
               
               <div className="space-y-4">
                 {/* Body Metrics - Individual Fields */}
