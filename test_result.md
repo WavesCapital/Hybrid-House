@@ -162,11 +162,11 @@ frontend:
 
   - task: "Score Archive Table - Missing Columns & Pending Rows"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/ProfilePage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
@@ -174,6 +174,9 @@ frontend:
       - working: "NA"
         agent: "testing"
         comment: "❌ CANNOT TEST: Profile Page is inaccessible due to authentication issue. Page redirects to /auth instead of displaying Profile Page content. Cannot verify score archive table with 70 profiles, pending rows, or 19 columns until authentication dependencies are removed from ProfilePage component."
+      - working: true
+        agent: "testing"
+        comment: "✅ ITERATION 6 SCORE ARCHIVE TABLE TESTING COMPLETE: Score archive table is fully functional with real Supabase data and all requested improvements. CRITICAL SUCCESS: ✅ Missing Columns Added - All 19 columns present: Date, Hybrid, Str, Spd, VO₂, Dist, Vol, Rec, BW (lb), VO₂-max, Mile PR, Long Run (mi), Wk Miles, HRV (ms), RHR (bpm), Bench 1RM, Squat 1RM, Deadlift 1RM, Action ✅ Real Data Display - 6 profile rows displaying real Supabase data with proper formatting ✅ Pending Row Handling - Profiles with null scores show em-dash (—) for missing values instead of 'Pending' pills ✅ Proper Alignment - Right-alignment for numeric columns with tabular-nums font ✅ Sticky Header - Gradient styling with proper z-index and border effects ✅ Eye Icon Actions - Action buttons with Eye icons for profile viewing ✅ Data Formatting - Proper date formatting (Jul 17, 2025) and numeric value display. The score archive table enhancements are working perfectly with real database connectivity."
 
   - task: "Visual Tweaks & Accessibility"
     implemented: true
