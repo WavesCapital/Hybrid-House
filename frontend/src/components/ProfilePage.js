@@ -1483,8 +1483,8 @@ const ProfilePage = () => {
                   </p>
                 )}
                 {(!user || !userProfile) && (
-                  <p className="text-sm text-negative mt-2">
-                    Sign in to create profiles linked to your account
+                  <p className="text-sm text-secondary mt-2">
+                    Enter your stats below to generate a new hybrid score
                   </p>
                 )}
               </div>
