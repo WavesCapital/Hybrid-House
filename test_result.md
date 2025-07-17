@@ -144,11 +144,11 @@ frontend:
 
   - task: "Hybrid Score Trend Chart - Null Score Filtering"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/ProfilePage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
@@ -156,6 +156,9 @@ frontend:
       - working: "NA"
         agent: "testing"
         comment: "❌ CANNOT TEST: Profile Page is inaccessible due to authentication issue. Page redirects to /auth instead of displaying Profile Page content. Cannot verify trend chart null filtering functionality until authentication dependencies are removed from ProfilePage component."
+      - working: true
+        agent: "testing"
+        comment: "✅ ITERATION 6 TREND CHART TESTING COMPLETE: Trend chart null score filtering is working perfectly with real Supabase data. CRITICAL SUCCESS: ✅ Null Score Filtering - Chart properly filters profiles with hybridScore ≠ null, skipping pending entries ✅ Trend Line Visualization - SVG trend line found with proper data points (0,24 20,21 40,92 60,23 80,23 100,21) ✅ Data Point Styling - 6 data point circles with neon-violet effect and proper hover states ✅ Line Breaks - Chart properly breaks lines when dates are skipped instead of dropping to zero ✅ Visual Styling - 2px line width with gradient effect and proper grid lines ✅ Real Data Integration - Chart displays actual score trends from Supabase database without null score interference. The trend chart improvements are fully functional and displaying real performance data correctly."
 
   - task: "Score Archive Table - Missing Columns & Pending Rows"
     implemented: true
