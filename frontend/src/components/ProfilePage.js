@@ -1038,6 +1038,230 @@ const ProfilePage = () => {
       </header>
 
       <div className="container mx-auto px-6 py-8 max-w-7xl space-y-8">
+        
+        {/* Hero Row - Profile Card + Hybrid Score Dial */}
+        <div className="hero-row flex gap-8">
+          
+          {/* Profile Card (30% width) - Inline Editing Preserved */}
+          {(!loading && user) && (
+            <div className="w-full lg:w-[30%]">
+              <div className="glass-card p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-primary flex items-center">
+                    <User className="h-5 w-5 mr-2" />
+                    Your Profile
+                  </h3>
+                  <span className="text-xs text-muted">
+                    Click any field to edit
+                  </span>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Avatar Section */}
+                  <div className="text-center">
+                    <div className="relative inline-block">
+                      <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
+                        {avatarPreview ? (
+                          <img src={avatarPreview} alt="Avatar preview" className="w-full h-full object-cover" />
+                        ) : userProfile?.avatar_url ? (
+                          <img src={userProfile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-8 h-8 text-gray-400" />
+                        )}
+                      </div>
+                      
+                      <label className="absolute bottom-0 right-0 accent-gradient rounded-full p-1.5 cursor-pointer hover:scale-110 transition-transform">
+                        <Camera className="w-3 h-3 text-white" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleAvatarChange}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                    
+                    <div className="mt-3">
+                      <p className="text-sm font-medium text-primary">
+                        {userProfile?.display_name || userProfile?.name || 'User'}
+                      </p>
+                      <p className="text-xs text-muted">
+                        {userProfile?.email}
+                      </p>
+                    </div>
+                    
+                    {avatarFile && (
+                      <div className="mt-3 space-y-2">
+                        <button onClick={handleAvatarUpload} disabled={isLoadingProfiles} className="neon-button text-xs px-3 py-1">
+                          <Upload className="w-3 h-3 mr-1" />
+                          Upload
+                        </button>
+                        <button 
+                          onClick={() => { setAvatarFile(null); setAvatarPreview(null); }} 
+                          className="block w-full text-xs text-muted hover:text-secondary transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Profile Fields - Inline Editing Preserved */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-medium text-muted mb-1">Name</label>
+                      <EditableField
+                        fieldName="name"
+                        label="Name"
+                        value={userProfile?.name}
+                        placeholder="Enter your name"
+                      />
+                      {fieldErrors.name && (
+                        <p className="text-negative text-xs mt-1">{fieldErrors.name}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-muted mb-1">Display Name</label>
+                      <EditableField
+                        fieldName="display_name"
+                        label="Display Name"
+                        value={userProfile?.display_name}
+                        placeholder="Enter your display name"
+                      />
+                      {fieldErrors.display_name && (
+                        <p className="text-negative text-xs mt-1">{fieldErrors.display_name}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-muted mb-1">
+                        <MapPin className="w-3 h-3 inline mr-1" />
+                        Location
+                      </label>
+                      <EditableField
+                        fieldName="location"
+                        label="Location"
+                        value={userProfile?.location}
+                        placeholder="City, Country"
+                      />
+                      {fieldErrors.location && (
+                        <p className="text-negative text-xs mt-1">{fieldErrors.location}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-muted mb-1">
+                        <Globe className="w-3 h-3 inline mr-1" />
+                        Website
+                      </label>
+                      <EditableField
+                        fieldName="website"
+                        label="Website"
+                        value={userProfile?.website}
+                        placeholder="https://yourwebsite.com"
+                        type="url"
+                      />
+                      {fieldErrors.website && (
+                        <p className="text-negative text-xs mt-1">{fieldErrors.website}</p>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-muted mb-1">Units</label>
+                        <EditableField
+                          fieldName="units_preference"
+                          label="Units"
+                          value={userProfile?.units_preference}
+                          type="select"
+                          options={[
+                            { value: 'imperial', label: 'Imperial' },
+                            { value: 'metric', label: 'Metric' }
+                          ]}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-muted mb-1">Privacy</label>
+                        <EditableField
+                          fieldName="privacy_level"
+                          label="Privacy"
+                          value={userProfile?.privacy_level}
+                          type="select"
+                          options={[
+                            { value: 'private', label: 'Private' },
+                            { value: 'friends', label: 'Friends' },
+                            { value: 'public', label: 'Public' }
+                          ]}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Hybrid Score Dial (70% width) */}
+          <div className="flex-1">
+            <div className="glass-card p-8">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-2xl font-bold text-primary mb-1">Latest Hybrid Score</h3>
+                  <p className="text-sm text-secondary">
+                    {profiles.length > 0 ? `Updated ${new Date(profiles[0]?.created_at).toLocaleDateString()}` : 'No scores yet'}
+                  </p>
+                </div>
+                {profiles.length > 0 && (
+                  <div className="text-right">
+                    <div className="text-xs text-muted">Trend</div>
+                    <div className="text-positive text-sm font-semibold">+2.4 ↗</div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-center">
+                {profiles.length > 0 && profiles[0]?.score_data?.hybridScore ? (
+                  <div className="relative">
+                    <svg className="score-dial transform -rotate-90" viewBox="0 0 200 200">
+                      <defs>
+                        <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stopColor="#1B6DFF" />
+                          <stop offset="100%" stopColor="#D64EF9" />
+                        </linearGradient>
+                      </defs>
+                      <circle cx="100" cy="100" r="80" className="score-dial-track" />
+                      <circle 
+                        cx="100" 
+                        cy="100" 
+                        r="80" 
+                        className="score-dial-progress"
+                        strokeDasharray={`${(profiles[0].score_data.hybridScore / 10) * 50.27} 50.27`}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-4xl font-bold accent-gradient-text">
+                          {profiles[0].score_data.hybridScore.toFixed(1)}
+                        </div>
+                        <div className="text-xs text-muted mt-1">/ 10.0</div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 accent-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Target className="w-8 h-8 text-white" />
+                    </div>
+                    <h4 className="text-lg font-semibold text-primary mb-2">No Scores Yet</h4>
+                    <p className="text-sm text-secondary">Generate your first hybrid score to see your performance analytics</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
