@@ -1456,7 +1456,7 @@ const ProfilePage = () => {
         </div>
 
         {/* Main Section - Stack with reduced spacing */}
-        <div className="space-y-12">{/* Changed from space-y-16 to space-y-12 */}
+        <div className="space-y-12">{/* Reduced spacing: 48px desktop, 24px mobile */}
           
           {/* A. Generate New Score - Full Width Card */}
           <div className="glass-card p-8">
