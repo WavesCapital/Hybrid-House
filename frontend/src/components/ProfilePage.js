@@ -908,13 +908,267 @@ const ProfilePage = () => {
           color: rgba(255, 255, 255, 0.4);
         }
         
-        /* Circular Progress Styles */
-        .circular-progress {
-          transition: stroke-dasharray 0.6s ease-out;
+        /* Radar Cluster - Iron-Man HUD Style */
+        .radar-cluster-container {
+          position: relative;
+          width: 100%;
+          padding: 60px 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
         
-        .main-circular-progress {
-          transition: stroke-dasharray 1s ease-out;
+        .cluster {
+          position: relative;
+          width: 540px;
+          height: 540px;
+          margin: 0;
+        }
+        
+        .cluster-vignette {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 400px;
+          height: 400px;
+          background: radial-gradient(circle, rgba(27, 109, 255, 0.067) 0%, transparent 70%);
+          border-radius: 50%;
+          z-index: 0;
+        }
+        
+        .dial {
+          position: absolute;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+          z-index: 1;
+        }
+        
+        .dial.big {
+          width: 220px;
+          height: 220px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+        
+        .dial.mini {
+          width: 96px;
+          height: 96px;
+        }
+        
+        /* Hexagon Positioning (160px radius from center) */
+        .dial.pos-1 { /* Top-center (0°) */
+          top: calc(50% - 160px);
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+        
+        .dial.pos-2 { /* Top-right (60°) */
+          top: calc(50% - 138px);
+          left: calc(50% + 80px);
+          transform: translate(-50%, -50%);
+        }
+        
+        .dial.pos-3 { /* Bottom-right (120°) */
+          top: calc(50% + 138px);
+          left: calc(50% + 80px);
+          transform: translate(-50%, -50%);
+        }
+        
+        .dial.pos-4 { /* Bottom-center (180°) */
+          top: calc(50% + 160px);
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+        
+        .dial.pos-5 { /* Bottom-left (240°) */
+          top: calc(50% + 138px);
+          left: calc(50% - 80px);
+          transform: translate(-50%, -50%);
+        }
+        
+        .dial.pos-6 { /* Top-left (300°) */
+          top: calc(50% - 138px);
+          left: calc(50% - 80px);
+          transform: translate(-50%, -50%);
+        }
+        
+        .dial-content {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .dial-svg {
+          width: 100%;
+          height: 100%;
+          transform: rotate(-90deg);
+        }
+        
+        .dial-value {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          color: white;
+          font-variant-numeric: tabular-nums;
+        }
+        
+        .dial.big .score-number {
+          font-size: 3rem;
+          font-weight: bold;
+          background: linear-gradient(45deg, #1B6DFF, #D64EF9);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          line-height: 1;
+          margin-bottom: 4px;
+        }
+        
+        .dial.big .score-label {
+          font-size: 0.875rem;
+          color: #C9CDD2;
+          font-weight: 500;
+        }
+        
+        .dial.mini .score-number {
+          font-size: 1.125rem;
+          font-weight: bold;
+          color: #1B6DFF;
+        }
+        
+        .dial-label {
+          margin-top: 8px;
+          font-size: 14px;
+          color: #C9CDD2;
+          font-family: 'Inter', sans-serif;
+          font-weight: 500;
+          text-align: center;
+        }
+        
+        /* Hover Interactions */
+        .dial.big:hover {
+          transform: translate(-50%, -50%) scale(1.05);
+        }
+        
+        .dial.big:hover ~ .dial.mini {
+          transform: translate(-50%, -50%) translateY(-4px);
+        }
+        
+        .dial.big:hover ~ .dial.pos-1 {
+          transform: translate(-50%, -50%) translateY(-4px);
+        }
+        
+        .dial.big:hover ~ .dial.pos-2 {
+          transform: translate(-50%, -50%) translate(4px, -2px);
+        }
+        
+        .dial.big:hover ~ .dial.pos-3 {
+          transform: translate(-50%, -50%) translate(4px, 2px);
+        }
+        
+        .dial.big:hover ~ .dial.pos-4 {
+          transform: translate(-50%, -50%) translateY(4px);
+        }
+        
+        .dial.big:hover ~ .dial.pos-5 {
+          transform: translate(-50%, -50%) translate(-4px, 2px);
+        }
+        
+        .dial.big:hover ~ .dial.pos-6 {
+          transform: translate(-50%, -50%) translate(-4px, -2px);
+        }
+        
+        .dial.mini:hover {
+          transform: translate(-50%, -50%) translateY(-3px);
+          filter: drop-shadow(0 0 12px rgba(27, 109, 255, 0.4));
+        }
+        
+        .cluster:hover .cluster-vignette {
+          background: radial-gradient(circle, rgba(27, 109, 255, 0.133) 0%, transparent 70%);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          .cluster {
+            width: 400px;
+            height: 400px;
+          }
+          
+          .dial.big {
+            width: 160px;
+            height: 160px;
+          }
+          
+          .dial.mini {
+            width: 72px;
+            height: 72px;
+          }
+          
+          .dial.big .score-number {
+            font-size: 2.25rem;
+          }
+          
+          .dial.mini .score-number {
+            font-size: 1rem;
+          }
+          
+          .dial-label {
+            font-size: 12px;
+          }
+          
+          /* Reduce hexagon radius to 110px */
+          .dial.pos-1 { top: calc(50% - 110px); }
+          .dial.pos-2 { top: calc(50% - 95px); left: calc(50% + 55px); }
+          .dial.pos-3 { top: calc(50% + 95px); left: calc(50% + 55px); }
+          .dial.pos-4 { top: calc(50% + 110px); }
+          .dial.pos-5 { top: calc(50% + 95px); left: calc(50% - 55px); }
+          .dial.pos-6 { top: calc(50% - 95px); left: calc(50% - 55px); }
+        }
+        
+        @media (max-width: 480px) {
+          .radar-cluster-container {
+            padding: 30px 0;
+          }
+          
+          .cluster {
+            width: 100%;
+            height: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+          }
+          
+          .dial {
+            position: relative;
+            top: auto;
+            left: auto;
+            transform: none;
+          }
+          
+          .dial.big {
+            grid-column: 1 / -1;
+            justify-self: center;
+            width: 180px;
+            height: 180px;
+          }
+          
+          .dial.mini {
+            width: 80px;
+            height: 80px;
+            justify-self: center;
+          }
+          
+          .cluster-vignette {
+            display: none;
+          }
         }
         
         /* Mini KPI Cards */
