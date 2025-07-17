@@ -684,6 +684,19 @@ const ProfilePage = () => {
           box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         
+        .editable-field {
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .editable-field:hover {
+          background-color: rgba(159, 161, 163, 0.1);
+          border-color: rgba(121, 207, 247, 0.3);
+        }
+        .editable-field.editing {
+          background-color: rgba(159, 161, 163, 0.1);
+          border-color: #79CFF7;
+        }
+        
         /* Mobile optimizations */
         @media (max-width: 768px) {
           .container {
