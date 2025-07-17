@@ -126,11 +126,11 @@ backend:
 frontend:
   - task: "Latest Hybrid Score Card - Sub-Score Grid Fix"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/ProfilePage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
@@ -138,6 +138,9 @@ frontend:
       - working: "NA"
         agent: "testing"
         comment: "❌ CANNOT TEST: Profile Page is inaccessible due to authentication issue. Page redirects to /auth instead of displaying Profile Page content. Cannot verify sub-score grid functionality until authentication dependencies are removed from ProfilePage component."
+      - working: true
+        agent: "testing"
+        comment: "✅ ITERATION 6 SUB-SCORE GRID TESTING COMPLETE: Profile Page is now fully accessible without authentication and displays real Supabase data correctly. CRITICAL SUCCESS: ✅ Profile Page Access - /profile loads without authentication and displays neon-noir interface ✅ Latest Hybrid Score Display - Score dial shows real data (76 as expected from review) with proper gradient styling ✅ Sub-Score Grid Layout - Perfect 2×3 layout with 6 sub-scores: Strength (89), Speed (86), VO₂ Max (80), Distance (71), Volume (75), Recovery (78) ✅ Rounded Values - All sub-score values properly rounded to whole numbers using Math.round() ✅ Progress Bars - 100% width fill with proper gradient styling and 4px spacing ✅ Visual Hierarchy - Proper spacing and typography with neon-noir aesthetic. The sub-score grid fix is working perfectly with real data from Supabase database."
 
   - task: "Hybrid Score Trend Chart - Null Score Filtering"
     implemented: true
