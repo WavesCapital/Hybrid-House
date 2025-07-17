@@ -499,23 +499,77 @@ const ProfilePage = () => {
     }
   }, [avatarFile, user, session, toast]);
 
-  const handleCancelProfileEdit = useCallback(() => {
-    setIsEditingProfile(false);
-    setAvatarFile(null);
-    setAvatarPreview(null);
-    // Reset form to original values
-    if (userProfile) {
-      setProfileForm({
-        name: userProfile.name || '',
-        display_name: userProfile.display_name || '',
-        location: userProfile.location || '',
-        website: userProfile.website || '',
-        gender: userProfile.gender || '',
-        units_preference: userProfile.units_preference || 'imperial',
-        privacy_level: userProfile.privacy_level || 'private'
-      });
+  // Create editable field component
+  const EditableField = useCallback(({ fieldName, label, value, type = 'text', options = null, placeholder = '' }) => {
+    const isEditing = editingFields[fieldName];
+    const isSaving = savingFields[fieldName];
+    const error = fieldErrors[fieldName];
+    const tempValue = tempFieldValues[fieldName] || value || '';
+
+    if (isEditing) {
+      if (type === 'select') {
+        return (
+          <div className="relative">
+            <select
+              value={tempValue}
+              onChange={(e) => handleFieldChange(fieldName, e.target.value)}
+              onBlur={() => handleFieldBlur(fieldName)}
+              onKeyDown={(e) => handleFieldKeyDown(e, fieldName)}
+              className="w-full px-3 py-2 border rounded-md bg-gray-900 border-gray-700 text-white focus:outline-none focus:border-blue-500"
+              autoFocus
+              disabled={isSaving}
+            >
+              {options?.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+            {isSaving && (
+              <div className="absolute right-2 top-2">
+                <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
+          </div>
+        );
+      } else {
+        return (
+          <div className="relative">
+            <input
+              type={type}
+              value={tempValue}
+              onChange={(e) => handleFieldChange(fieldName, e.target.value)}
+              onBlur={() => handleFieldBlur(fieldName)}
+              onKeyDown={(e) => handleFieldKeyDown(e, fieldName)}
+              className="w-full px-3 py-2 border rounded-md bg-gray-900 border-gray-700 text-white focus:outline-none focus:border-blue-500"
+              placeholder={placeholder}
+              autoFocus
+              disabled={isSaving}
+            />
+            {isSaving && (
+              <div className="absolute right-2 top-2">
+                <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
+          </div>
+        );
+      }
+    } else {
+      return (
+        <div 
+          onClick={() => startEditing(fieldName)}
+          className="w-full px-3 py-2 border rounded-md bg-gray-900 border-gray-700 text-white cursor-pointer hover:bg-gray-800 transition-colors min-h-[42px] flex items-center"
+        >
+          <span className={!value ? 'text-gray-400' : ''}>
+            {value || placeholder || 'Click to edit'}
+          </span>
+          {isSaving && (
+            <div className="ml-auto">
+              <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+        </div>
+      );
     }
-  }, [userProfile]);
+  }, [editingFields, savingFields, fieldErrors, tempFieldValues, handleFieldChange, handleFieldBlur, handleFieldKeyDown, startEditing]);
 
   // Format date
   const formatDate = useCallback((dateString) => {
