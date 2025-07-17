@@ -1634,100 +1634,92 @@ const ProfilePage = () => {
             </h3>
             
             <div className="relative h-64 mb-4">
-              {profiles.length > 1 ? (
-                <div className="w-full h-full relative">
-                  <svg className="w-full h-full" aria-label="Hybrid score trend">
-                    <defs>
-                      <linearGradient id="trendGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#8B5CF6" />
-                        <stop offset="100%" stopColor="#D64EF9" />
-                      </linearGradient>
-                    </defs>
-                    
-                    {/* Grid lines (0-100 in 10-pt steps) */}
-                    <g stroke="rgba(255,255,255,0.1)" strokeWidth="1">
-                      {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(y => (
-                        <line key={y} x1="0" y1={`${100 - y}%`} x2="100%" y2={`${100 - y}%`} />
-                      ))}
-                      {[0, 25, 50, 75, 100].map(x => (
-                        <line key={x} x1={`${x}%`} y1="0" x2={`${x}%`} y2="100%" />
-                      ))}
-                    </g>
-                    
-                    {/* Trend line - only plot profiles with hybridScore ≠ null */}
-                    {(() => {
-                      const scoredProfiles = profiles.slice(-10).filter(profile => 
-                        profile?.score_data?.hybridScore !== null && 
-                        profile?.score_data?.hybridScore !== undefined
-                      );
+              {(() => {
+                const scoredProfiles = profiles.filter(profile => 
+                  profile?.score_data?.hybridScore !== null && 
+                  profile?.score_data?.hybridScore !== undefined
+                );
+                
+                return scoredProfiles.length > 1 ? (
+                  <div className="w-full h-full relative">
+                    <svg className="w-full h-full" aria-label="Hybrid score trend">
+                      <defs>
+                        <linearGradient id="trendGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stopColor="#8B5CF6" />
+                          <stop offset="100%" stopColor="#D64EF9" />
+                        </linearGradient>
+                      </defs>
                       
-                      if (scoredProfiles.length > 1) {
+                      {/* Grid lines (0-100 in 10-pt steps) */}
+                      <g stroke="rgba(255,255,255,0.1)" strokeWidth="1">
+                        {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(y => (
+                          <line key={y} x1="0" y1={`${100 - y}%`} x2="100%" y2={`${100 - y}%`} />
+                        ))}
+                        {[0, 25, 50, 75, 100].map(x => (
+                          <line key={x} x1={`${x}%`} y1="0" x2={`${x}%`} y2="100%" />
+                        ))}
+                      </g>
+                      
+                      {/* Trend line - only scored profiles */}
+                      <polyline
+                        fill="none"
+                        stroke="url(#trendGradient)"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        className="trend-line"
+                        points={scoredProfiles.slice(-10).map((profile, index, arr) => {
+                          const x = (index / Math.max(arr.length - 1, 1)) * 100;
+                          const hybridScore = profile.score_data.hybridScore;
+                          const roundedScore = Math.round(hybridScore);
+                          const y = 100 - roundedScore; // Scale 0-100 to 0-100%
+                          return `${x},${y}`;
+                        }).join(' ')}
+                      />
+                      
+                      {/* Data points (6px glowing dots) - only for scored profiles */}
+                      {scoredProfiles.slice(-10).map((profile, index, arr) => {
+                        const x = (index / Math.max(arr.length - 1, 1)) * 100;
+                        const hybridScore = profile.score_data.hybridScore;
+                        const roundedScore = Math.round(hybridScore);
+                        const y = 100 - roundedScore;
+                        const date = new Date(profile.created_at).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric', 
+                          year: 'numeric' 
+                        });
                         return (
-                          <polyline
-                            fill="none"
-                            stroke="url(#trendGradient)"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            className="trend-line"
-                            points={scoredProfiles.map((profile, index, arr) => {
-                              const x = (index / Math.max(arr.length - 1, 1)) * 100;
-                              const hybridScore = profile.score_data.hybridScore;
-                              const roundedScore = Math.round(hybridScore);
-                              const y = 100 - roundedScore; // Scale 0-100 to 0-100%
-                              return `${x},${y}`;
-                            }).join(' ')}
+                          <circle
+                            key={profile.id}
+                            cx={`${x}%`}
+                            cy={`${y}%`}
+                            r="6"
+                            fill="url(#trendGradient)"
+                            filter="drop-shadow(0 0 4px rgba(139, 92, 246, 0.5))"
+                            title={`${date} • ${roundedScore}`}
                           />
                         );
-                      }
-                      return null;
-                    })()}
+                      })}
+                    </svg>
                     
-                    {/* Data points (6px glowing dots) - only for profiles with scores */}
-                    {profiles.slice(-10).filter(profile => 
-                      profile?.score_data?.hybridScore !== null && 
-                      profile?.score_data?.hybridScore !== undefined
-                    ).map((profile, index, arr) => {
-                      const x = (index / Math.max(arr.length - 1, 1)) * 100;
-                      const hybridScore = profile.score_data.hybridScore;
-                      const roundedScore = Math.round(hybridScore);
-                      const y = 100 - roundedScore;
-                      const date = new Date(profile.created_at).toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric', 
-                        year: 'numeric' 
-                      });
-                      return (
-                        <circle
-                          key={profile.id}
-                          cx={`${x}%`}
-                          cy={`${y}%`}
-                          r="6"
-                          fill="url(#trendGradient)"
-                          filter="drop-shadow(0 0 4px rgba(139, 92, 246, 0.5))"
-                          title={`${date} • ${roundedScore}`}
-                        />
-                      );
-                    })}
-                  </svg>
-                  
-                  {/* Y-axis labels (0-100) */}
-                  <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-muted -ml-8">
-                    <span>100</span>
-                    <span>80</span>
-                    <span>60</span>
-                    <span>40</span>
-                    <span>20</span>
-                    <span>0</span>
+                    {/* Y-axis labels (0-100) */}
+                    <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-muted -ml-8">
+                      <span>100</span>
+                      <span>80</span>
+                      <span>60</span>
+                      <span>40</span>
+                      <span>20</span>
+                      <span>0</span>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <TrendingUp className="w-12 h-12 text-muted mx-auto mb-4" />
-                    <p className="text-secondary">Need at least 2 scores to show trend</p>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center">
+                      <TrendingUp className="w-12 h-12 text-muted mx-auto mb-4" />
+                      <p className="text-secondary">Need at least 2 scored profiles to show trend</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           </div>
 
