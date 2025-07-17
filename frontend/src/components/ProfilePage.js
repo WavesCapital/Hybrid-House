@@ -18,6 +18,11 @@ const ProfilePage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   
+  // Authentication states (optional - set to null for public access)
+  const [user, setUser] = useState(null);
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(false);
+  
   // User Profile Management States (optional - only for authenticated users)
   const [userProfile, setUserProfile] = useState(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -37,11 +42,6 @@ const ProfilePage = () => {
   const [tempFieldValues, setTempFieldValues] = useState({});
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
-  
-  // Authentication states (optional)
-  const [user, setUser] = useState(null);
-  const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(false);
   
   // User Profile Management States
   const [userProfile, setUserProfile] = useState(null);
