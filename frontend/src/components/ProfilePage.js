@@ -1312,33 +1312,33 @@ const ProfilePage = () => {
 
         {/* User Profile Section - Inline Editing */}
         {(!loading && user) && (
-          <div className="mb-8">
-            <div className="neo-card rounded-xl p-6">
+          <div className="w-full lg:w-[30%]">
+            <div className="glass-card p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold neo-primary flex items-center">
-                  <Settings className="h-6 w-6 mr-3" />
+                <h3 className="text-lg font-semibold text-primary flex items-center">
+                  <User className="h-5 w-5 mr-2" />
                   Your Profile
-                </h2>
-                <span className="text-sm neo-text-secondary">
+                </h3>
+                <span className="text-xs text-muted">
                   Click any field to edit
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              <div className="space-y-6">
                 {/* Avatar Section */}
                 <div className="text-center">
                   <div className="relative inline-block">
-                    <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
+                    <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
                       {avatarPreview ? (
                         <img src={avatarPreview} alt="Avatar preview" className="w-full h-full object-cover" />
                       ) : userProfile?.avatar_url ? (
                         <img src={userProfile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
-                        <User className="w-8 h-8 text-gray-500" />
+                        <User className="w-8 h-8 text-gray-400" />
                       )}
                     </div>
                     
-                    <label className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-2 cursor-pointer hover:bg-blue-600 transition-colors">
+                    <label className="absolute bottom-0 right-0 accent-gradient rounded-full p-1.5 cursor-pointer hover:scale-110 transition-transform">
                       <Camera className="w-3 h-3 text-white" />
                       <input
                         type="file"
@@ -1350,157 +1350,119 @@ const ProfilePage = () => {
                   </div>
                   
                   <div className="mt-3">
-                    <p className="text-sm font-medium neo-text-primary">
+                    <p className="text-sm font-medium text-primary">
                       {userProfile?.display_name || userProfile?.name || 'User'}
                     </p>
-                    <p className="text-xs neo-text-secondary">
+                    <p className="text-xs text-muted">
                       {userProfile?.email}
                     </p>
                   </div>
                   
                   {avatarFile && (
-                    <div className="mt-2 space-y-1">
-                      <Button onClick={handleAvatarUpload} disabled={isLoadingProfiles} className="w-full text-xs">
+                    <div className="mt-3 space-y-2">
+                      <button onClick={handleAvatarUpload} disabled={isLoadingProfiles} className="neon-button text-xs px-3 py-1">
                         <Upload className="w-3 h-3 mr-1" />
                         Upload
-                      </Button>
-                      <Button 
-                        variant="outline" 
+                      </button>
+                      <button 
                         onClick={() => { setAvatarFile(null); setAvatarPreview(null); }} 
-                        className="w-full text-xs"
+                        className="block w-full text-xs text-muted hover:text-secondary transition-colors"
                       >
-                        <X className="w-3 h-3 mr-1" />
                         Cancel
-                      </Button>
+                      </button>
                     </div>
                   )}
                 </div>
 
-                {/* Profile Information - Inline Editing */}
-                <div className="lg:col-span-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-1">
-                        Name
-                      </label>
-                      <EditableField
-                        fieldName="name"
-                        label="Name"
-                        value={userProfile?.name}
-                        placeholder="Enter your name"
-                      />
-                      {fieldErrors.name && (
-                        <p className="text-red-400 text-xs mt-1">{fieldErrors.name}</p>
-                      )}
-                    </div>
+                {/* Profile Fields - Inline Editing Preserved */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-medium text-muted mb-1">Name</label>
+                    <EditableField
+                      fieldName="name"
+                      label="Name"
+                      value={userProfile?.name}
+                      placeholder="Enter your name"
+                    />
+                    {fieldErrors.name && (
+                      <p className="text-negative text-xs mt-1">{fieldErrors.name}</p>
+                    )}
+                  </div>
 
-                    <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-1">
-                        Display Name
-                      </label>
-                      <EditableField
-                        fieldName="display_name"
-                        label="Display Name"
-                        value={userProfile?.display_name}
-                        placeholder="Enter your display name"
-                      />
-                      {fieldErrors.display_name && (
-                        <p className="text-red-400 text-xs mt-1">{fieldErrors.display_name}</p>
-                      )}
-                    </div>
+                  <div>
+                    <label className="block text-xs font-medium text-muted mb-1">Display Name</label>
+                    <EditableField
+                      fieldName="display_name"
+                      label="Display Name"
+                      value={userProfile?.display_name}
+                      placeholder="Enter your display name"
+                    />
+                    {fieldErrors.display_name && (
+                      <p className="text-negative text-xs mt-1">{fieldErrors.display_name}</p>
+                    )}
+                  </div>
 
-                    <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-1">
-                        <MapPin className="w-4 h-4 inline mr-1" />
-                        Location
-                      </label>
-                      <EditableField
-                        fieldName="location"
-                        label="Location"
-                        value={userProfile?.location}
-                        placeholder="City, Country"
-                      />
-                      {fieldErrors.location && (
-                        <p className="text-red-400 text-xs mt-1">{fieldErrors.location}</p>
-                      )}
-                    </div>
+                  <div>
+                    <label className="block text-xs font-medium text-muted mb-1">
+                      <MapPin className="w-3 h-3 inline mr-1" />
+                      Location
+                    </label>
+                    <EditableField
+                      fieldName="location"
+                      label="Location"
+                      value={userProfile?.location}
+                      placeholder="City, Country"
+                    />
+                    {fieldErrors.location && (
+                      <p className="text-negative text-xs mt-1">{fieldErrors.location}</p>
+                    )}
+                  </div>
 
-                    <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-1">
-                        <Globe className="w-4 h-4 inline mr-1" />
-                        Website
-                      </label>
-                      <EditableField
-                        fieldName="website"
-                        label="Website"
-                        value={userProfile?.website}
-                        placeholder="https://yourwebsite.com"
-                        type="url"
-                      />
-                      {fieldErrors.website && (
-                        <p className="text-red-400 text-xs mt-1">{fieldErrors.website}</p>
-                      )}
-                    </div>
+                  <div>
+                    <label className="block text-xs font-medium text-muted mb-1">
+                      <Globe className="w-3 h-3 inline mr-1" />
+                      Website
+                    </label>
+                    <EditableField
+                      fieldName="website"
+                      label="Website"
+                      value={userProfile?.website}
+                      placeholder="https://yourwebsite.com"
+                      type="url"
+                    />
+                    {fieldErrors.website && (
+                      <p className="text-negative text-xs mt-1">{fieldErrors.website}</p>
+                    )}
+                  </div>
 
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-1">
-                        Gender
-                      </label>
-                      <EditableField
-                        fieldName="gender"
-                        label="Gender"
-                        value={userProfile?.gender}
-                        type="select"
-                        options={[
-                          { value: '', label: 'Select Gender' },
-                          { value: 'male', label: 'Male' },
-                          { value: 'female', label: 'Female' },
-                          { value: 'other', label: 'Other' },
-                          { value: 'prefer-not-to-say', label: 'Prefer not to say' }
-                        ]}
-                      />
-                      {fieldErrors.gender && (
-                        <p className="text-red-400 text-xs mt-1">{fieldErrors.gender}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-1">
-                        Units Preference
-                      </label>
+                      <label className="block text-xs font-medium text-muted mb-1">Units</label>
                       <EditableField
                         fieldName="units_preference"
-                        label="Units Preference"
+                        label="Units"
                         value={userProfile?.units_preference}
                         type="select"
                         options={[
-                          { value: 'imperial', label: 'Imperial (lbs, miles, ft)' },
-                          { value: 'metric', label: 'Metric (kg, km, m)' }
+                          { value: 'imperial', label: 'Imperial' },
+                          { value: 'metric', label: 'Metric' }
                         ]}
                       />
-                      {fieldErrors.units_preference && (
-                        <p className="text-red-400 text-xs mt-1">{fieldErrors.units_preference}</p>
-                      )}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-1">
-                        Privacy Level
-                      </label>
+                      <label className="block text-xs font-medium text-muted mb-1">Privacy</label>
                       <EditableField
                         fieldName="privacy_level"
-                        label="Privacy Level"
+                        label="Privacy"
                         value={userProfile?.privacy_level}
                         type="select"
                         options={[
                           { value: 'private', label: 'Private' },
-                          { value: 'friends', label: 'Friends Only' },
+                          { value: 'friends', label: 'Friends' },
                           { value: 'public', label: 'Public' }
                         ]}
                       />
-                      {fieldErrors.privacy_level && (
-                        <p className="text-red-400 text-xs mt-1">{fieldErrors.privacy_level}</p>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -1509,315 +1471,7 @@ const ProfilePage = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-          {/* Manual Input Form */}
-          <div className="space-y-6">
-            <div className="neo-card rounded-xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold neo-primary flex items-center">
-                    <Plus className="h-6 w-6 mr-3" />
-                    Generate New Profile
-                  </h2>
-                  {user && userProfile && (
-                    <p className="text-sm neo-text-secondary mt-1">
-                      Creating profile for: <span className="neo-text-primary">{userProfile.display_name || userProfile.name}</span> 
-                      ({userProfile.gender || 'Gender not specified'})
-                    </p>
-                  )}
-                  {(!user || !userProfile) && (
-                    <p className="text-sm text-yellow-400 mt-1">
-                      Sign in to create profiles linked to your account
-                    </p>
-                  )}
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                {/* Body Metrics - Individual Fields */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold neo-text-primary">Body Metrics</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-2">
-                        Weight (lbs)
-                      </label>
-                      <input
-                        type="number"
-                        value={inputForm.weight_lb}
-                        onChange={(e) => setInputForm({...inputForm, weight_lb: e.target.value})}
-                        className="neo-input w-full"
-                        placeholder="e.g., 163"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-2">
-                        VO2 Max
-                      </label>
-                      <input
-                        type="number"
-                        value={inputForm.vo2_max}
-                        onChange={(e) => setInputForm({...inputForm, vo2_max: e.target.value})}
-                        className="neo-input w-full"
-                        placeholder="e.g., 54"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-2">
-                        Resting HR (bpm)
-                      </label>
-                      <input
-                        type="number"
-                        value={inputForm.resting_hr}
-                        onChange={(e) => setInputForm({...inputForm, resting_hr: e.target.value})}
-                        className="neo-input w-full"
-                        placeholder="e.g., 42"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium neo-text-secondary mb-2">
-                        HRV (ms)
-                      </label>
-                      <input
-                        type="number"
-                        value={inputForm.hrv}
-                        onChange={(e) => setInputForm({...inputForm, hrv: e.target.value})}
-                        className="neo-input w-full"
-                        placeholder="e.g., 64"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Running Performance */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium neo-text-secondary mb-2">
-                      Mile PR
-                    </label>
-                    <input
-                      type="text"
-                      value={inputForm.pb_mile}
-                      onChange={(e) => setInputForm({...inputForm, pb_mile: e.target.value})}
-                      className="neo-input w-full"
-                      placeholder="e.g., 7:43"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium neo-text-secondary mb-2">
-                      Weekly Miles
-                    </label>
-                    <input
-                      type="number"
-                      value={inputForm.weekly_miles}
-                      onChange={(e) => setInputForm({...inputForm, weekly_miles: e.target.value})}
-                      className="neo-input w-full"
-                      placeholder="e.g., 15"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium neo-text-secondary mb-2">
-                      Long Run (miles)
-                    </label>
-                    <input
-                      type="number"
-                      value={inputForm.long_run}
-                      onChange={(e) => setInputForm({...inputForm, long_run: e.target.value})}
-                      className="neo-input w-full"
-                      placeholder="e.g., 7"
-                    />
-                  </div>
-                </div>
-
-                {/* Strength Performance */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium neo-text-secondary mb-2">
-                      Bench Press 1RM
-                    </label>
-                    <input
-                      type="text"
-                      value={inputForm.pb_bench_1rm}
-                      onChange={(e) => setInputForm({...inputForm, pb_bench_1rm: e.target.value})}
-                      className="neo-input w-full"
-                      placeholder="e.g., 225 lbs x 3 reps"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium neo-text-secondary mb-2">
-                      Squat 1RM
-                    </label>
-                    <input
-                      type="text"
-                      value={inputForm.pb_squat_1rm}
-                      onChange={(e) => setInputForm({...inputForm, pb_squat_1rm: e.target.value})}
-                      className="neo-input w-full"
-                      placeholder="e.g., 315 lbs"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium neo-text-secondary mb-2">
-                      Deadlift 1RM
-                    </label>
-                    <input
-                      type="text"
-                      value={inputForm.pb_deadlift_1rm}
-                      onChange={(e) => setInputForm({...inputForm, pb_deadlift_1rm: e.target.value})}
-                      className="neo-input w-full"
-                      placeholder="e.g., 405 lbs"
-                    />
-                  </div>
-                </div>
-
-                {/* Generate Button */}
-                <div className="pt-4">
-                  <Button
-                    onClick={generateNewProfile}
-                    className="neo-btn-primary w-full py-4 text-lg"
-                    disabled={isGenerating || isCalculatingScore}
-                  >
-                    {isGenerating ? (
-                      <>
-                        <RefreshCw className="h-5 w-5 mr-3 animate-spin" />
-                        Creating Profile...
-                      </>
-                    ) : isCalculatingScore ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
-                        Calculating Score...
-                      </>
-                    ) : (
-                      <>
-                        <Target className="h-5 w-5 mr-3" />
-                        Generate Hybrid Score
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Past Profiles */}
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold neo-primary flex items-center">
-                <Trophy className="h-6 w-6 mr-3" />
-                Past Profiles
-              </h2>
-              <span className="text-sm neo-text-secondary">
-                {profiles.length} profile{profiles.length !== 1 ? 's' : ''}
-              </span>
-            </div>
-
-            <div className="space-y-4 max-h-[800px] overflow-y-auto">
-              {profiles.length === 0 ? (
-                <div className="neo-card rounded-xl p-8 text-center">
-                  <Award className="h-12 w-12 neo-primary mx-auto mb-4 opacity-50" />
-                  <h3 className="text-lg font-semibold neo-text-primary mb-2">No profiles yet</h3>
-                  <p className="neo-text-secondary">Create your first profile using the form on the left!</p>
-                </div>
-              ) : (
-                profiles.map((profile) => {
-                  const score = profile.score_data ? Math.round(parseFloat(profile.score_data.hybridScore)) : null;
-                  const scoreColor = score ? getScoreColor(score) : '#6B7280';
-                  
-                  return (
-                    <div key={profile.id} className="neo-card rounded-xl p-6 profile-card">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center">
-                            <User className="h-6 w-6 text-white" />
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-semibold neo-text-primary">
-                              {profile.profile_json?.first_name || profile.first_name || 'Unnamed Profile'}
-                            </h3>
-                            <p className="text-sm neo-text-secondary flex items-center">
-                              <Calendar className="h-4 w-4 mr-1" />
-                              {formatDate(profile.created_at)}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center space-x-4">
-                          {score && (
-                            <div className="text-right">
-                              <div className="text-2xl font-bold" style={{ color: scoreColor }}>
-                                {score}
-                              </div>
-                              <div className="text-xs neo-text-secondary">Hybrid Score</div>
-                            </div>
-                          )}
-                          
-                          <Button
-                            onClick={() => {
-                              if (score) {
-                                navigate(`/hybrid-score/${profile.id}`);
-                              } else {
-                                toast({
-                                  title: "No Score Available",
-                                  description: "This profile doesn't have a calculated score yet.",
-                                  variant: "destructive",
-                                });
-                              }
-                            }}
-                            className="neo-btn-secondary"
-                            size="sm"
-                          >
-                            {score ? (
-                              <>
-                                <BarChart3 className="h-4 w-4 mr-2" />
-                                View Score
-                              </>
-                            ) : (
-                              <>
-                                <TrendingUp className="h-4 w-4 mr-2" />
-                                No Score
-                              </>
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      {/* Profile Data Preview */}
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-                        <div>
-                          <span className="neo-text-secondary">Sex:</span>
-                          <span className="neo-text-primary ml-2">{renderProfileField(profile.sex || profile.profile_json?.sex)}</span>
-                        </div>
-                        <div>
-                          <span className="neo-text-secondary">Mile PR:</span>
-                          <span className="neo-text-primary ml-2">{renderProfileField(
-                            profile.pb_mile_seconds ? 
-                              `${Math.floor(profile.pb_mile_seconds / 60)}:${String(profile.pb_mile_seconds % 60).padStart(2, '0')}` : 
-                              profile.profile_json?.pb_mile
-                          )}</span>
-                        </div>
-                        <div>
-                          <span className="neo-text-secondary">Weekly Miles:</span>
-                          <span className="neo-text-primary ml-2">{renderProfileField(profile.weekly_miles || profile.profile_json?.weekly_miles)}</span>
-                        </div>
-                        <div>
-                          <span className="neo-text-secondary">Long Run:</span>
-                          <span className="neo-text-primary ml-2">{renderProfileField(profile.long_run_miles || profile.profile_json?.long_run)}</span>
-                        </div>
-                        <div>
-                          <span className="neo-text-secondary">Bench:</span>
-                          <span className="neo-text-primary ml-2">{renderProfileField(profile.pb_bench_1rm_lb || profile.profile_json?.pb_bench_1rm)}</span>
-                        </div>
-                        <div>
-                          <span className="neo-text-secondary">Status:</span>
-                          <span className="neo-text-primary ml-2">{score ? 'Scored' : 'Pending'}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
-        </div>
+        {/* The new design content will continue... */}
       </div>
     </div>
   );
