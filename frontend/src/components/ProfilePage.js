@@ -6,7 +6,7 @@ import { Card } from './ui/card';
 import { Input } from './ui/input';
 import { useToast } from '../hooks/use-toast';
 import { 
-  User, Calendar, Trophy, BarChart3, Plus, Target, 
+  User, Calendar, Trophy, BarChart3, Plus, Target, Activity,
   Zap, RefreshCw, ArrowRight, Award, TrendingUp, Camera, 
   Save, Edit, MapPin, Globe, Mail, Settings, Upload, X
 } from 'lucide-react';
