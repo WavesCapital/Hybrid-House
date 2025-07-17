@@ -1209,8 +1209,8 @@ const ProfilePage = () => {
         {/* Hero Row - Profile Card + Hybrid Score Dial */}
         <div className="hero-row flex gap-8">
           
-          {/* Profile Card (30% width) - Inline Editing Preserved */}
-          {(!loading && user) && (
+          {/* Profile Card (30% width) - Only shown for authenticated users */}
+          {user && userProfile && (
             <div className="w-full lg:w-[30%]">
               <div className="glass-card p-6">
                 <div className="flex items-center justify-between mb-6">
