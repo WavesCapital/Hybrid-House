@@ -11,6 +11,7 @@ import {
   Save, Edit, MapPin, Globe, Mail, Settings, Upload, X
 } from 'lucide-react';
 import axios from 'axios';
+import { v4 as uuid } from 'uuid';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
