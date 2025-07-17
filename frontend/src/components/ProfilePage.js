@@ -158,22 +158,22 @@ const ProfilePage = () => {
           // Build the form data
           const formData = {
             // Body Metrics (individual fields)
-            weight_lb: bodyMetrics.weight_lb || bodyMetrics.weight || '',
-            vo2_max: bodyMetrics.vo2_max || bodyMetrics.vo2max || '',
-            resting_hr: bodyMetrics.resting_hr || bodyMetrics.resting_hr_bpm || '',
-            hrv: bodyMetrics.hrv || bodyMetrics.hrv_ms || '',
+            weight_lb: bodyMetrics.weight_lb || bodyMetrics.weight || '170',
+            vo2_max: bodyMetrics.vo2_max || bodyMetrics.vo2max || '50',
+            resting_hr: bodyMetrics.resting_hr || bodyMetrics.resting_hr_bpm || '60',
+            hrv: bodyMetrics.hrv || bodyMetrics.hrv_ms || '45',
             
             // Running Performance
             pb_mile: getFieldValue('pb_mile_seconds') ? 
               `${Math.floor(getFieldValue('pb_mile_seconds') / 60)}:${String(getFieldValue('pb_mile_seconds') % 60).padStart(2, '0')}` : 
-              getFieldValue('pb_mile'),
-            weekly_miles: getFieldValue('weekly_miles'),
-            long_run: getFieldValue('long_run_miles') || getFieldValue('long_run'),
+              getFieldValue('pb_mile') || '7:30',
+            weekly_miles: getFieldValue('weekly_miles') || '20',
+            long_run: getFieldValue('long_run_miles') || getFieldValue('long_run') || '8',
             
             // Strength Performance
-            pb_bench_1rm: extractWeight(getFieldValue('pb_bench_1rm_lb') || getFieldValue('pb_bench_1rm')),
-            pb_squat_1rm: extractWeight(getFieldValue('pb_squat_1rm_lb') || getFieldValue('pb_squat_1rm')),
-            pb_deadlift_1rm: extractWeight(getFieldValue('pb_deadlift_1rm_lb') || getFieldValue('pb_deadlift_1rm'))
+            pb_bench_1rm: extractWeight(getFieldValue('pb_bench_1rm_lb') || getFieldValue('pb_bench_1rm')) || '185',
+            pb_squat_1rm: extractWeight(getFieldValue('pb_squat_1rm_lb') || getFieldValue('pb_squat_1rm')) || '225',
+            pb_deadlift_1rm: extractWeight(getFieldValue('pb_deadlift_1rm_lb') || getFieldValue('pb_deadlift_1rm')) || '275'
           };
           
           console.log('📝 Pre-populated form data:', formData);
