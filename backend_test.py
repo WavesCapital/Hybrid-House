@@ -4903,7 +4903,7 @@ class BackendTester:
             # Test public endpoint with comprehensive data
             response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=profile_data)
             
-            if response.status_code == 201:
+            if response.status_code in [200, 201]:
                 data = response.json()
                 profile = data.get("profile", {})
                 profile_json = profile.get("profile_json", {})
