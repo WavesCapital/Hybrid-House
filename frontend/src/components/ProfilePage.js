@@ -755,7 +755,7 @@ const ProfilePage = () => {
         
         /* Glass Cards */
         .glass-card {
-          background: rgba(20, 20, 25, 0.8);
+          background: rgba(20, 20, 25, 0.96);
           backdrop-filter: blur(16px);
           border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 8px;
@@ -771,6 +771,91 @@ const ProfilePage = () => {
             0 8px 32px rgba(27, 109, 255, 0.2),
             0 4px 16px rgba(0, 0, 0, 0.4),
             inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Sub-score Progress Bars */
+        .sub-score-progress {
+          height: 3px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 2px;
+          overflow: hidden;
+        }
+        
+        .sub-score-progress-bar {
+          height: 100%;
+          background: linear-gradient(90deg, #1B6DFF 0%, #D64EF9 100%);
+          transition: width 0.6s ease-out;
+          border-radius: 2px;
+        }
+        
+        /* Data Points */
+        .chart-point {
+          r: 6;
+          fill: url(#trendGradient);
+          filter: drop-shadow(0 0 4px rgba(27, 109, 255, 0.5));
+          transition: all 0.3s ease;
+        }
+        
+        .chart-point:hover {
+          r: 8;
+          filter: drop-shadow(0 0 8px rgba(27, 109, 255, 0.8));
+        }
+        
+        /* Table Enhancements */
+        .score-archive-table {
+          border-collapse: separate;
+          border-spacing: 0;
+          font-variant-numeric: tabular-nums;
+        }
+        
+        .score-archive-table th {
+          background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.6));
+          border-bottom: 2px solid;
+          border-image: linear-gradient(90deg, #1B6DFF, #D64EF9) 1;
+          position: sticky;
+          top: 0;
+          z-index: 10;
+          text-align: right;
+        }
+        
+        .score-archive-table th:first-child {
+          text-align: left;
+        }
+        
+        .score-archive-table td {
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+        }
+        
+        .score-archive-table td:first-child {
+          text-align: left;
+        }
+        
+        .score-archive-table tr:hover {
+          background: rgba(255, 255, 255, 0.05);
+          transform: translateY(-1px);
+          border-bottom: 1px solid;
+          border-image: linear-gradient(90deg, #1B6DFF, #D64EF9) 1;
+        }
+        
+        .score-archive-table tr:focus {
+          outline: 2px solid rgba(27, 109, 255, 0.5);
+          outline-offset: -2px;
+        }
+        
+        .most-recent-row {
+          background: rgba(27, 109, 255, 0.13);
+        }
+        
+        .em-dash {
+          color: #7A7D83;
+        }
+        
+        /* Reduced spacing */
+        .space-y-12 > * + * { margin-top: 3rem; }
+        
+        @media (max-width: 768px) {
+          .space-y-12 > * + * { margin-top: 1.5rem; }
         }
         
         /* Gradient Elements */
