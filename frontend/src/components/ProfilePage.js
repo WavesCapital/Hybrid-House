@@ -908,11 +908,11 @@ const ProfilePage = () => {
           color: rgba(255, 255, 255, 0.4);
         }
         
-        /* Radar Cluster - Iron-Man HUD Style */
+        /* Radar Cluster - Iron-Man HUD Style - Improved Proportions */
         .radar-cluster-container {
           position: relative;
           width: 100%;
-          padding: 60px 0;
+          padding: 80px 0;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -920,8 +920,8 @@ const ProfilePage = () => {
         
         .cluster {
           position: relative;
-          width: 540px;
-          height: 540px;
+          width: 700px;
+          height: 700px;
           margin: 0;
         }
         
@@ -930,8 +930,8 @@ const ProfilePage = () => {
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          width: 400px;
-          height: 400px;
+          width: 500px;
+          height: 500px;
           background: radial-gradient(circle, rgba(27, 109, 255, 0.067) 0%, transparent 70%);
           border-radius: 50%;
           z-index: 0;
@@ -948,52 +948,52 @@ const ProfilePage = () => {
         }
         
         .dial.big {
-          width: 220px;
-          height: 220px;
+          width: 280px;
+          height: 280px;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
         }
         
         .dial.mini {
-          width: 96px;
-          height: 96px;
+          width: 140px;
+          height: 140px;
         }
         
-        /* Hexagon Positioning (160px radius from center) */
+        /* Hexagon Positioning (250px radius from center) */
         .dial.pos-1 { /* Top-center (0°) */
-          top: calc(50% - 160px);
+          top: calc(50% - 250px);
           left: 50%;
           transform: translate(-50%, -50%);
         }
         
         .dial.pos-2 { /* Top-right (60°) */
-          top: calc(50% - 138px);
-          left: calc(50% + 80px);
+          top: calc(50% - 216px);
+          left: calc(50% + 125px);
           transform: translate(-50%, -50%);
         }
         
         .dial.pos-3 { /* Bottom-right (120°) */
-          top: calc(50% + 138px);
-          left: calc(50% + 80px);
+          top: calc(50% + 216px);
+          left: calc(50% + 125px);
           transform: translate(-50%, -50%);
         }
         
         .dial.pos-4 { /* Bottom-center (180°) */
-          top: calc(50% + 160px);
+          top: calc(50% + 250px);
           left: 50%;
           transform: translate(-50%, -50%);
         }
         
         .dial.pos-5 { /* Bottom-left (240°) */
-          top: calc(50% + 138px);
-          left: calc(50% - 80px);
+          top: calc(50% + 216px);
+          left: calc(50% - 125px);
           transform: translate(-50%, -50%);
         }
         
         .dial.pos-6 { /* Top-left (300°) */
-          top: calc(50% - 138px);
-          left: calc(50% - 80px);
+          top: calc(50% - 216px);
+          left: calc(50% - 125px);
           transform: translate(-50%, -50%);
         }
         
@@ -1002,6 +1002,8 @@ const ProfilePage = () => {
           display: flex;
           align-items: center;
           justify-content: center;
+          width: 100%;
+          height: 100%;
         }
         
         .dial-svg {
@@ -1021,35 +1023,41 @@ const ProfilePage = () => {
         }
         
         .dial.big .score-number {
-          font-size: 3rem;
+          font-size: 4rem;
           font-weight: bold;
           background: linear-gradient(45deg, #1B6DFF, #D64EF9);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
           line-height: 1;
-          margin-bottom: 4px;
+          margin-bottom: 8px;
         }
         
         .dial.big .score-label {
-          font-size: 0.875rem;
+          font-size: 1rem;
           color: #C9CDD2;
           font-weight: 500;
         }
         
         .dial.mini .score-number {
-          font-size: 1.125rem;
+          font-size: 1.75rem;
           font-weight: bold;
           color: #1B6DFF;
+          line-height: 1;
+          margin-bottom: 4px;
         }
         
-        .dial-label {
-          margin-top: 8px;
-          font-size: 14px;
+        .dial.mini .score-label {
+          font-size: 0.75rem;
           color: #C9CDD2;
           font-family: 'Inter', sans-serif;
           font-weight: 500;
           text-align: center;
+        }
+        
+        /* Remove the external dial-label since labels are now inside circles */
+        .dial-label {
+          display: none;
         }
         
         /* Hover Interactions */
@@ -1058,36 +1066,36 @@ const ProfilePage = () => {
         }
         
         .dial.big:hover ~ .dial.mini {
-          transform: translate(-50%, -50%) translateY(-4px);
+          transform: translate(-50%, -50%) translateY(-6px);
         }
         
         .dial.big:hover ~ .dial.pos-1 {
-          transform: translate(-50%, -50%) translateY(-4px);
+          transform: translate(-50%, -50%) translateY(-6px);
         }
         
         .dial.big:hover ~ .dial.pos-2 {
-          transform: translate(-50%, -50%) translate(4px, -2px);
+          transform: translate(-50%, -50%) translate(6px, -3px);
         }
         
         .dial.big:hover ~ .dial.pos-3 {
-          transform: translate(-50%, -50%) translate(4px, 2px);
+          transform: translate(-50%, -50%) translate(6px, 3px);
         }
         
         .dial.big:hover ~ .dial.pos-4 {
-          transform: translate(-50%, -50%) translateY(4px);
+          transform: translate(-50%, -50%) translateY(6px);
         }
         
         .dial.big:hover ~ .dial.pos-5 {
-          transform: translate(-50%, -50%) translate(-4px, 2px);
+          transform: translate(-50%, -50%) translate(-6px, 3px);
         }
         
         .dial.big:hover ~ .dial.pos-6 {
-          transform: translate(-50%, -50%) translate(-4px, -2px);
+          transform: translate(-50%, -50%) translate(-6px, -3px);
         }
         
         .dial.mini:hover {
-          transform: translate(-50%, -50%) translateY(-3px);
-          filter: drop-shadow(0 0 12px rgba(27, 109, 255, 0.4));
+          transform: translate(-50%, -50%) translateY(-4px);
+          filter: drop-shadow(0 0 16px rgba(27, 109, 255, 0.5));
         }
         
         .cluster:hover .cluster-vignette {
@@ -1095,46 +1103,75 @@ const ProfilePage = () => {
         }
         
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 1200px) {
           .cluster {
-            width: 400px;
-            height: 400px;
+            width: 600px;
+            height: 600px;
           }
           
           .dial.big {
-            width: 160px;
-            height: 160px;
+            width: 240px;
+            height: 240px;
           }
           
           .dial.mini {
-            width: 72px;
-            height: 72px;
+            width: 120px;
+            height: 120px;
           }
           
           .dial.big .score-number {
-            font-size: 2.25rem;
+            font-size: 3.5rem;
           }
           
           .dial.mini .score-number {
-            font-size: 1rem;
+            font-size: 1.5rem;
           }
           
-          .dial-label {
-            font-size: 12px;
+          /* Reduce hexagon radius to 200px */
+          .dial.pos-1 { top: calc(50% - 200px); }
+          .dial.pos-2 { top: calc(50% - 173px); left: calc(50% + 100px); }
+          .dial.pos-3 { top: calc(50% + 173px); left: calc(50% + 100px); }
+          .dial.pos-4 { top: calc(50% + 200px); }
+          .dial.pos-5 { top: calc(50% + 173px); left: calc(50% - 100px); }
+          .dial.pos-6 { top: calc(50% - 173px); left: calc(50% - 100px); }
+        }
+        
+        @media (max-width: 768px) {
+          .cluster {
+            width: 500px;
+            height: 500px;
           }
           
-          /* Reduce hexagon radius to 110px */
-          .dial.pos-1 { top: calc(50% - 110px); }
-          .dial.pos-2 { top: calc(50% - 95px); left: calc(50% + 55px); }
-          .dial.pos-3 { top: calc(50% + 95px); left: calc(50% + 55px); }
-          .dial.pos-4 { top: calc(50% + 110px); }
-          .dial.pos-5 { top: calc(50% + 95px); left: calc(50% - 55px); }
-          .dial.pos-6 { top: calc(50% - 95px); left: calc(50% - 55px); }
+          .dial.big {
+            width: 200px;
+            height: 200px;
+          }
+          
+          .dial.mini {
+            width: 100px;
+            height: 100px;
+          }
+          
+          .dial.big .score-number {
+            font-size: 2.75rem;
+          }
+          
+          .dial.mini .score-number {
+            font-size: 1.25rem;
+          }
+          
+          /* Reduce hexagon radius to 160px */
+          .dial.pos-1 { top: calc(50% - 160px); }
+          .dial.pos-2 { top: calc(50% - 138px); left: calc(50% + 80px); }
+          .dial.pos-3 { top: calc(50% + 138px); left: calc(50% + 80px); }
+          .dial.pos-4 { top: calc(50% + 160px); }
+          .dial.pos-5 { top: calc(50% + 138px); left: calc(50% - 80px); }
+          .dial.pos-6 { top: calc(50% - 138px); left: calc(50% - 80px); }
         }
         
         @media (max-width: 480px) {
           .radar-cluster-container {
-            padding: 30px 0;
+            padding: 40px 0;
           }
           
           .cluster {
@@ -1142,7 +1179,7 @@ const ProfilePage = () => {
             height: auto;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 24px;
             padding: 20px;
           }
           
@@ -1156,14 +1193,22 @@ const ProfilePage = () => {
           .dial.big {
             grid-column: 1 / -1;
             justify-self: center;
-            width: 180px;
-            height: 180px;
+            width: 200px;
+            height: 200px;
           }
           
           .dial.mini {
-            width: 80px;
-            height: 80px;
+            width: 120px;
+            height: 120px;
             justify-self: center;
+          }
+          
+          .dial.big .score-number {
+            font-size: 2.5rem;
+          }
+          
+          .dial.mini .score-number {
+            font-size: 1.125rem;
           }
           
           .cluster-vignette {
