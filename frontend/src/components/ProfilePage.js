@@ -736,106 +736,308 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#0A0B0C' }}>
+    <div className="min-h-screen neon-noir-canvas">
       <style>
         {`
-        .neo-card {
-          background: linear-gradient(135deg, rgba(217, 217, 217, 0.1) 0%, rgba(159, 161, 163, 0.05) 100%);
-          border: 1px solid rgba(217, 217, 217, 0.2);
-          backdrop-filter: blur(10px);
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        /* Neon-Noir Performance Cockpit Styles */
+        .neon-noir-canvas {
+          background: #0E0E11;
+          background-image: 
+            linear-gradient(45deg, rgba(27, 109, 255, 0.03) 0%, transparent 50%),
+            linear-gradient(-45deg, rgba(214, 78, 249, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 20% 80%, rgba(27, 109, 255, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(214, 78, 249, 0.05) 0%, transparent 50%);
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+          min-height: 100vh;
         }
-        .neo-primary {
-          color: #79CFF7;
-        }
-        .neo-text-primary {
-          color: #D9D9D9;
-        }
-        .neo-text-secondary {
-          color: #9FA1A3;
-        }
-        .neo-text-muted {
-          color: #6B7280;
-        }
-        .neo-btn-primary {
-          background: linear-gradient(135deg, #79CFF7 0%, #4FC3F7 100%);
-          color: #0A0B0C;
-          border: none;
-          font-weight: 600;
-        }
-        .neo-btn-primary:hover {
-          background: linear-gradient(135deg, #4FC3F7 0%, #79CFF7 100%);
-          transform: translateY(-1px);
-        }
-        .neo-btn-secondary {
-          background: rgba(159, 161, 163, 0.1);
-          color: #D9D9D9;
-          border: 1px solid rgba(159, 161, 163, 0.3);
-        }
-        .neo-btn-secondary:hover {
-          background: rgba(159, 161, 163, 0.2);
-          color: #D9D9D9;
-        }
-        .neo-input {
-          background: rgba(159, 161, 163, 0.1);
-          border: 1px solid rgba(159, 161, 163, 0.3);
-          color: #D9D9D9;
+        
+        /* Glass Cards */
+        .glass-card {
+          background: rgba(20, 20, 25, 0.8);
+          backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 8px;
-          padding: 12px 16px;
-          font-size: 14px;
-        }
-        .neo-input:focus {
-          outline: none;
-          border-color: #79CFF7;
-          box-shadow: 0 0 0 3px rgba(121, 207, 247, 0.1);
-        }
-        .neo-input::placeholder {
-          color: #6B7280;
-        }
-        .profile-card {
+          box-shadow: 
+            0 4px 16px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
           transition: all 0.3s ease;
         }
-        .profile-card:hover {
+        
+        .glass-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 
+            0 8px 32px rgba(27, 109, 255, 0.2),
+            0 4px 16px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Gradient Elements */
+        .accent-gradient {
+          background: linear-gradient(135deg, #1B6DFF 0%, #D64EF9 100%);
+        }
+        
+        .accent-gradient-text {
+          background: linear-gradient(135deg, #1B6DFF 0%, #D64EF9 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        
+        /* Colors */
+        .text-positive { color: #00FF90; }
+        .text-negative { color: #FF4F70; }
+        .text-primary { color: #FFFFFF; }
+        .text-secondary { color: rgba(255, 255, 255, 0.7); }
+        .text-muted { color: rgba(255, 255, 255, 0.5); }
+        
+        /* Buttons */
+        .neon-button {
+          background: linear-gradient(135deg, #1B6DFF 0%, #D64EF9 100%);
+          border: none;
+          border-radius: 8px;
+          color: white;
+          font-weight: 600;
+          padding: 16px 24px;
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .neon-button:hover {
           transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          box-shadow: 
+            0 8px 32px rgba(27, 109, 255, 0.4),
+            0 4px 16px rgba(214, 78, 249, 0.3);
         }
         
-        .editable-field {
+        .neon-button:active {
+          transform: translateY(0);
+        }
+        
+        .neon-button:disabled {
+          opacity: 0.6;
+          transform: none;
+          box-shadow: none;
+        }
+        
+        /* Input Fields */
+        .neon-input {
+          background: rgba(20, 20, 25, 0.6);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 6px;
+          color: #FFFFFF;
+          padding: 12px 16px;
+          transition: all 0.3s ease;
+          font-family: 'Inter', sans-serif;
+        }
+        
+        .neon-input:focus {
+          outline: none;
+          border-color: transparent;
+          box-shadow: 
+            0 0 0 2px rgba(27, 109, 255, 0.3),
+            0 0 16px rgba(27, 109, 255, 0.2);
+        }
+        
+        .neon-input::placeholder {
+          color: rgba(255, 255, 255, 0.4);
+        }
+        
+        /* Score Dial */
+        .score-dial {
+          position: relative;
+          width: 200px;
+          height: 200px;
+        }
+        
+        .score-dial-track {
+          stroke: rgba(255, 255, 255, 0.1);
+          stroke-width: 8;
+          fill: none;
+        }
+        
+        .score-dial-progress {
+          stroke: url(#scoreGradient);
+          stroke-width: 8;
+          fill: none;
+          stroke-linecap: round;
+          transition: stroke-dasharray 1s ease-out;
+        }
+        
+        /* Mini KPI Cards */
+        .mini-kpi {
+          background: rgba(20, 20, 25, 0.6);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 6px;
+          padding: 12px;
+          text-align: center;
+          transition: all 0.3s ease;
+        }
+        
+        .mini-kpi:hover {
+          border-color: rgba(27, 109, 255, 0.3);
+          box-shadow: 0 4px 16px rgba(27, 109, 255, 0.1);
+        }
+        
+        /* Archive Cards */
+        .archive-card {
+          background: rgba(20, 20, 25, 0.4);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 6px;
+          padding: 16px;
+          transition: all 0.3s ease;
+        }
+        
+        .archive-card:hover {
+          background: rgba(20, 20, 25, 0.6);
+          border-color: rgba(27, 109, 255, 0.3);
+          transform: translateX(4px);
+        }
+        
+        /* Inline Editing */
+        .inline-edit-field {
+          background: rgba(20, 20, 25, 0.4);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 4px;
+          color: #FFFFFF;
+          padding: 8px 12px;
+          transition: all 0.3s ease;
           cursor: pointer;
-          transition: all 0.2s ease;
-        }
-        .editable-field:hover {
-          background-color: rgba(159, 161, 163, 0.1);
-          border-color: rgba(121, 207, 247, 0.3);
-        }
-        .editable-field.editing {
-          background-color: rgba(159, 161, 163, 0.1);
-          border-color: #79CFF7;
         }
         
-        .gradient-border {
-          padding: 2px;
-          background: linear-gradient(135deg, #79CFF7 0%, #4FC3F7 100%);
-          border-radius: 16px;
-        }
-        .gradient-border-inner {
-          background: #0A0B0C;
-          border-radius: 14px;
+        .inline-edit-field:hover {
+          background: rgba(20, 20, 25, 0.6);
+          border-color: rgba(27, 109, 255, 0.3);
         }
         
-        /* Mobile optimizations */
+        .inline-edit-field.editing {
+          border-color: #1B6DFF;
+          box-shadow: 0 0 0 2px rgba(27, 109, 255, 0.2);
+          cursor: text;
+        }
+        
+        /* Animations */
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 0 8px rgba(27, 109, 255, 0.3); }
+          50% { box-shadow: 0 0 16px rgba(27, 109, 255, 0.6); }
+        }
+        
+        .pulse-glow {
+          animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes ripple {
+          0% { transform: scale(0); opacity: 1; }
+          100% { transform: scale(4); opacity: 0; }
+        }
+        
+        .ripple::after {
+          content: '';
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.5);
+          animation: ripple 0.6s ease-out;
+        }
+        
+        /* Mobile FAB */
+        .mobile-fab {
+          position: fixed;
+          bottom: 24px;
+          right: 24px;
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #1B6DFF 0%, #D64EF9 100%);
+          border: none;
+          box-shadow: 
+            0 4px 16px rgba(27, 109, 255, 0.4),
+            0 2px 8px rgba(0, 0, 0, 0.3);
+          z-index: 1000;
+          display: none;
+        }
+        
         @media (max-width: 768px) {
-          .container {
-            padding-left: 1rem;
-            padding-right: 1rem;
-          }
-          .grid {
-            grid-template-columns: 1fr;
-          }
+          .mobile-fab { display: flex; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+          .hero-row { flex-direction: column; }
+          .main-grid { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 768px) {
+          .neon-noir-canvas { padding: 16px; }
+          .hero-row { gap: 16px; }
+          .main-grid { gap: 16px; }
         }
         `}
       </style>
 
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+      {/* Full-screen Score Calculation Loading (preserved) */}
+      {isCalculatingScore && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm" style={{ 
+          background: 'rgba(14, 14, 17, 0.9)' 
+        }}>
+          <div className="glass-card max-w-md w-full mx-6">
+            <div className="p-12 text-center">
+              <h2 className="text-3xl font-bold accent-gradient-text mb-6">
+                Calculating Your Hybrid Score! 🎉
+              </h2>
+              <p className="text-secondary mb-8 leading-relaxed">
+                We're analyzing your athlete profile to generate your personalized hybrid score and recommendations.
+              </p>
+              <div className="flex justify-center items-center space-x-2 mb-4">
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+              </div>
+              <p className="text-sm text-muted">
+                This may take up to 2 minutes...
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
+      <header className="border-b border-white/10 bg-black/20 backdrop-blur-sm">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 accent-gradient rounded-lg flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-primary">Hybrid House</h1>
+                  <p className="text-xs text-muted">Performance Analytics</p>
+                </div>
+              </div>
+              <div className="h-6 w-px bg-white/20"></div>
+              <h2 className="text-lg font-semibold text-secondary">Profile</h2>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                <Settings className="w-5 h-5 text-secondary" />
+              </button>
+              <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                <Calendar className="w-5 h-5 text-secondary" />
+              </button>
+              <div className="w-8 h-8 accent-gradient rounded-full flex items-center justify-center">
+                <User className="w-5 h-5 text-white" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-6 py-8 max-w-7xl space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
