@@ -1856,7 +1856,7 @@ const ProfilePage = () => {
                           </td>
                           <td className="p-3 text-xs text-secondary">
                             {profile.pb_mile_seconds ? formatMileTime(profile.pb_mile_seconds) : 
-                             renderProfileField(profileJson.pb_mile)}
+                             safeRenderField(profileJson.pb_mile)}
                           </td>
                           <td className="p-3 text-xs text-secondary">
                             {formatValue(profile.long_run_miles || profileJson.long_run)}
@@ -1871,13 +1871,13 @@ const ProfilePage = () => {
                             {formatValue(profile.resting_hr_bpm || profile.resting_hr || bodyMetrics.resting_hr || bodyMetrics.resting_hr_bpm)}
                           </td>
                           <td className="p-3 text-xs text-secondary">
-                            {formatValue(profile.pb_bench_1rm_lb || profileJson.pb_bench_1rm)}
+                            {safeRenderField(profile.pb_bench_1rm_lb || profileJson.pb_bench_1rm)}
                           </td>
                           <td className="p-3 text-xs text-secondary">
-                            {formatValue(profile.pb_squat_1rm_lb || profileJson.pb_squat_1rm)}
+                            {safeRenderField(profile.pb_squat_1rm_lb || profileJson.pb_squat_1rm)}
                           </td>
                           <td className="p-3 text-xs text-secondary">
-                            {formatValue(profile.pb_deadlift_1rm_lb || profileJson.pb_deadlift_1rm)}
+                            {safeRenderField(profile.pb_deadlift_1rm_lb || profileJson.pb_deadlift_1rm)}
                           </td>
                           <td className="p-3">
                             <button 
