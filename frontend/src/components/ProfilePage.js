@@ -1380,32 +1380,22 @@ const ProfilePage = () => {
 
               <div className="flex items-center justify-center mb-3 pt-8">
                 {profiles.length > 0 && profiles[0]?.score_data?.hybridScore ? (
-                  <div className="relative">
-                    <svg className="score-dial transform -rotate-90" viewBox="0 0 200 200">
-                      <defs>
-                        <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#1B6DFF" />
-                          <stop offset="100%" stopColor="#D64EF9" />
-                        </linearGradient>
-                      </defs>
-                      <circle cx="100" cy="100" r="80" className="score-dial-track" />
-                      <circle 
-                        cx="100" 
-                        cy="100" 
-                        r="80" 
-                        className="score-dial-progress"
-                        strokeDasharray={`${(Math.round(profiles[0].score_data.hybridScore) / 100) * 50.27} 50.27`}
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-4xl font-bold accent-gradient-text"
-                          aria-label={`Hybrid Score ${Math.round(profiles[0].score_data.hybridScore)}. Sub-scores: ${profiles[0].score_data.strengthScore ? `Strength ${Math.round(profiles[0].score_data.strengthScore)}, ` : ''}${profiles[0].score_data.speedScore ? `Speed ${Math.round(profiles[0].score_data.speedScore)}, ` : ''}${profiles[0].score_data.vo2Score ? `VO₂ ${Math.round(profiles[0].score_data.vo2Score)}, ` : ''}${profiles[0].score_data.distanceScore ? `Distance ${Math.round(profiles[0].score_data.distanceScore)}, ` : ''}${profiles[0].score_data.volumeScore ? `Volume ${Math.round(profiles[0].score_data.volumeScore)}, ` : ''}${profiles[0].score_data.recoveryScore ? `Recovery ${Math.round(profiles[0].score_data.recoveryScore)}` : ''}`}
-                        >
-                          {Math.round(profiles[0].score_data.hybridScore)}
-                        </div>
-                        <div className="text-xs text-muted mt-1">/ 100</div>
+                  <div className="w-full max-w-md">
+                    {/* Centered Score Number */}
+                    <div className="text-center mb-6">
+                      <div className="text-6xl font-bold accent-gradient-text"
+                        aria-label={`Hybrid Score ${Math.round(profiles[0].score_data.hybridScore)}. Sub-scores: ${profiles[0].score_data.strengthScore ? `Strength ${Math.round(profiles[0].score_data.strengthScore)}, ` : ''}${profiles[0].score_data.speedScore ? `Speed ${Math.round(profiles[0].score_data.speedScore)}, ` : ''}${profiles[0].score_data.vo2Score ? `VO₂ ${Math.round(profiles[0].score_data.vo2Score)}, ` : ''}${profiles[0].score_data.distanceScore ? `Distance ${Math.round(profiles[0].score_data.distanceScore)}, ` : ''}${profiles[0].score_data.volumeScore ? `Volume ${Math.round(profiles[0].score_data.volumeScore)}, ` : ''}${profiles[0].score_data.recoveryScore ? `Recovery ${Math.round(profiles[0].score_data.recoveryScore)}` : ''}`}
+                      >
+                        {Math.round(profiles[0].score_data.hybridScore)}
                       </div>
+                    </div>
+                    
+                    {/* Full Width Progress Bar */}
+                    <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden mb-4">
+                      <div 
+                        className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-1000 ease-out"
+                        style={{ width: `${Math.round(profiles[0].score_data.hybridScore)}%` }}
+                      />
                     </div>
                   </div>
                 ) : (
