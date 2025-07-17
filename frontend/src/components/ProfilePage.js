@@ -1637,20 +1637,20 @@ const ProfilePage = () => {
                         <td className="p-4 text-sm text-secondary">
                           {profile.pb_mile_seconds ? 
                             `${Math.floor(profile.pb_mile_seconds / 60)}:${String(profile.pb_mile_seconds % 60).padStart(2, '0')}` : 
-                            profile.profile_json?.pb_mile || 'N/A'
+                            renderProfileField(profile.profile_json?.pb_mile)
                           }
                         </td>
                         <td className="p-4 text-sm text-secondary">
-                          {profile.weekly_miles || profile.profile_json?.weekly_miles || 'N/A'}
+                          {renderProfileField(profile.weekly_miles || profile.profile_json?.weekly_miles)}
                         </td>
                         <td className="p-4 text-sm text-secondary">
-                          {profile.pb_bench_1rm_lb || profile.profile_json?.pb_bench_1rm || 'N/A'}
+                          {renderProfileField(profile.pb_bench_1rm_lb || profile.profile_json?.pb_bench_1rm)}
                         </td>
                         <td className="p-4 text-sm text-secondary">
-                          {profile.pb_squat_1rm_lb || profile.profile_json?.pb_squat_1rm || 'N/A'}
+                          {renderProfileField(profile.pb_squat_1rm_lb || profile.profile_json?.pb_squat_1rm)}
                         </td>
                         <td className="p-4 text-sm text-secondary">
-                          {profile.pb_deadlift_1rm_lb || profile.profile_json?.pb_deadlift_1rm || 'N/A'}
+                          {renderProfileField(profile.pb_deadlift_1rm_lb || profile.profile_json?.pb_deadlift_1rm)}
                         </td>
                         <td className="p-4">
                           <button 
