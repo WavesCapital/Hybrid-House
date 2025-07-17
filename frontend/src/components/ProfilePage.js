@@ -1795,7 +1795,8 @@ const ProfilePage = () => {
                             })}
                           </td>
                           <td className="p-3 text-xs font-semibold accent-gradient-text">
-                            {scoreData.hybridScore ? Math.round(scoreData.hybridScore) : <span className="em-dash">—</span>}
+                            {scoreData.hybridScore ? Math.round(scoreData.hybridScore) : 
+                             <span className="inline-block px-2 py-1 bg-gray-600 text-gray-200 rounded-full text-xs">Pending</span>}
                           </td>
                           <td className="p-3 text-xs text-secondary">
                             {scoreData.strengthScore ? Math.round(scoreData.strengthScore) : <span className="em-dash">—</span>}
@@ -1814,6 +1815,12 @@ const ProfilePage = () => {
                           </td>
                           <td className="p-3 text-xs text-secondary">
                             {scoreData.recoveryScore ? Math.round(scoreData.recoveryScore) : <span className="em-dash">—</span>}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {formatValue(profile.hrv_ms || profile.hrv || bodyMetrics.hrv || bodyMetrics.hrv_ms)}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {formatValue(profile.resting_hr_bpm || profile.resting_hr || bodyMetrics.resting_hr || bodyMetrics.resting_hr_bpm)}
                           </td>
                           <td className="p-3 text-xs text-secondary">
                             {formatValue(profile.weight_lb || bodyMetrics.weight_lb || bodyMetrics.weight)}
