@@ -4940,8 +4940,8 @@ class BackendTester:
     def test_athlete_profile_get_endpoint(self):
         """Test GET /api/athlete-profile/{profile_id} endpoint"""
         try:
-            # Test with a sample profile ID
-            test_profile_id = "test-profile-id-123"
+            # Test with a valid UUID format
+            test_profile_id = "12345678-1234-1234-1234-123456789abc"
             response = self.session.get(f"{API_BASE_URL}/athlete-profile/{test_profile_id}")
             
             if response.status_code == 404:
