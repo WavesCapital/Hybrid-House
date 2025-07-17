@@ -4975,8 +4975,8 @@ class BackendTester:
     def test_athlete_profile_score_endpoint(self):
         """Test POST /api/athlete-profile/{profile_id}/score endpoint for webhook integration"""
         try:
-            # Test with sample score data
-            test_profile_id = "test-profile-id-123"
+            # Test with valid UUID format and sample score data
+            test_profile_id = "12345678-1234-1234-1234-123456789abc"
             score_data = {
                 "hybridScore": 70.9,
                 "strengthScore": 92.1,
