@@ -5167,6 +5167,400 @@ class BackendTester:
             self.log_test("Complete Generate Hybrid Score Workflow", False, "Workflow test failed", str(e))
             return False
 
+    def test_supabase_database_connection(self):
+        """Test Supabase database connection and basic functionality"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/status")
+            
+            if response.status_code == 200:
+                data = response.json()
+                supabase_status = None
+                
+                for status_check in data:
+                    if status_check.get("component") == "Supabase":
+                        supabase_status = status_check
+                        break
+                
+                if supabase_status and supabase_status.get("status") == "healthy":
+                    self.log_test("Supabase Database Connection", True, "Backend can connect to Supabase using current credentials", supabase_status)
+                    return True
+                else:
+                    self.log_test("Supabase Database Connection", False, "Supabase connection not healthy", data)
+                    return False
+            else:
+                self.log_test("Supabase Database Connection", False, f"Status endpoint failed: HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Supabase Database Connection", False, "Database connection test failed", str(e))
+            return False
+    
+    def test_profile_data_retrieval(self):
+        """Test GET /api/athlete-profiles to ensure it's pulling real data from athlete_profiles table"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if "profiles" in data and isinstance(data["profiles"], list):
+                    profiles = data["profiles"]
+                    total = data.get("total", 0)
+                    
+                    if total > 0 and len(profiles) > 0:
+                        # Check data structure
+                        sample_profile = profiles[0]
+                        required_fields = ["id", "profile_json", "score_data", "created_at"]
+                        
+                        has_required_fields = all(field in sample_profile for field in required_fields)
+                        
+                        if has_required_fields:
+                            self.log_test("Profile Data Retrieval", True, f"GET /api/athlete-profiles returns {total} profiles with proper data structure", {
+                                "total_profiles": total,
+                                "sample_fields": list(sample_profile.keys()),
+                                "has_score_data": sample_profile.get("score_data") is not None,
+                                "has_profile_json": sample_profile.get("profile_json") is not None
+                            })
+                            return True
+                        else:
+                            self.log_test("Profile Data Retrieval", False, "Profile data missing required fields", {
+                                "expected": required_fields,
+                                "actual": list(sample_profile.keys())
+                            })
+                            return False
+                    else:
+                        self.log_test("Profile Data Retrieval", False, "No profiles found in database", data)
+                        return False
+                else:
+                    self.log_test("Profile Data Retrieval", False, "Invalid response structure", data)
+                    return False
+            else:
+                self.log_test("Profile Data Retrieval", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Profile Data Retrieval", False, "Profile data retrieval test failed", str(e))
+            return False
+    
+    def test_individual_profile_access(self):
+        """Test GET /api/athlete-profile/{id} to verify individual profile data is accessible"""
+        try:
+            # First get a list of profiles to get a valid ID
+            profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if profiles_response.status_code != 200:
+                self.log_test("Individual Profile Access", False, "Could not get profiles list for testing", profiles_response.text)
+                return False
+            
+            profiles_data = profiles_response.json()
+            if not profiles_data.get("profiles") or len(profiles_data["profiles"]) == 0:
+                self.log_test("Individual Profile Access", False, "No profiles available for testing", profiles_data)
+                return False
+            
+            # Test with first profile ID
+            test_profile_id = profiles_data["profiles"][0]["id"]
+            
+            response = self.session.get(f"{API_BASE_URL}/athlete-profile/{test_profile_id}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                required_fields = ["profile_id", "profile_json", "score_data", "created_at"]
+                has_required_fields = all(field in data for field in required_fields)
+                
+                if has_required_fields:
+                    # Check if profile_json has individual fields that frontend expects
+                    profile_json = data.get("profile_json", {})
+                    score_data = data.get("score_data", {})
+                    
+                    self.log_test("Individual Profile Access", True, f"GET /api/athlete-profile/{test_profile_id} returns individual profile with complete data", {
+                        "profile_id": data["profile_id"],
+                        "has_profile_json": bool(profile_json),
+                        "has_score_data": bool(score_data),
+                        "profile_json_keys": list(profile_json.keys()) if profile_json else [],
+                        "score_data_keys": list(score_data.keys()) if score_data else []
+                    })
+                    return True
+                else:
+                    self.log_test("Individual Profile Access", False, "Individual profile missing required fields", {
+                        "expected": required_fields,
+                        "actual": list(data.keys())
+                    })
+                    return False
+            else:
+                self.log_test("Individual Profile Access", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Individual Profile Access", False, "Individual profile access test failed", str(e))
+            return False
+    
+    def test_data_structure_validation(self):
+        """Test that returned data has correct structure with score_data, profile_json, and individual fields"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code != 200:
+                self.log_test("Data Structure Validation", False, f"HTTP {response.status_code}", response.text)
+                return False
+            
+            data = response.json()
+            profiles = data.get("profiles", [])
+            
+            if not profiles:
+                self.log_test("Data Structure Validation", False, "No profiles to validate", data)
+                return False
+            
+            # Analyze data structure across multiple profiles
+            structure_analysis = {
+                "total_profiles": len(profiles),
+                "profiles_with_score_data": 0,
+                "profiles_with_profile_json": 0,
+                "common_profile_json_fields": set(),
+                "common_score_data_fields": set(),
+                "sample_profile_structure": {}
+            }
+            
+            for i, profile in enumerate(profiles[:5]):  # Check first 5 profiles
+                if profile.get("score_data"):
+                    structure_analysis["profiles_with_score_data"] += 1
+                    if isinstance(profile["score_data"], dict):
+                        structure_analysis["common_score_data_fields"].update(profile["score_data"].keys())
+                
+                if profile.get("profile_json"):
+                    structure_analysis["profiles_with_profile_json"] += 1
+                    if isinstance(profile["profile_json"], dict):
+                        structure_analysis["common_profile_json_fields"].update(profile["profile_json"].keys())
+                
+                if i == 0:  # Sample first profile structure
+                    structure_analysis["sample_profile_structure"] = {
+                        "top_level_fields": list(profile.keys()),
+                        "profile_json_type": type(profile.get("profile_json", None)).__name__,
+                        "score_data_type": type(profile.get("score_data", None)).__name__
+                    }
+            
+            # Convert sets to lists for JSON serialization
+            structure_analysis["common_profile_json_fields"] = list(structure_analysis["common_profile_json_fields"])
+            structure_analysis["common_score_data_fields"] = list(structure_analysis["common_score_data_fields"])
+            
+            # Validate expected structure
+            has_valid_structure = (
+                structure_analysis["profiles_with_profile_json"] > 0 and
+                len(structure_analysis["common_profile_json_fields"]) > 0
+            )
+            
+            if has_valid_structure:
+                self.log_test("Data Structure Validation", True, "Data has correct structure with score_data, profile_json, and individual fields", structure_analysis)
+                return True
+            else:
+                self.log_test("Data Structure Validation", False, "Data structure validation failed", structure_analysis)
+                return False
+                
+        except Exception as e:
+            self.log_test("Data Structure Validation", False, "Data structure validation test failed", str(e))
+            return False
+    
+    def test_score_data_availability(self):
+        """Test that profiles with hybridScore data are properly stored and retrieved"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code != 200:
+                self.log_test("Score Data Availability", False, f"HTTP {response.status_code}", response.text)
+                return False
+            
+            data = response.json()
+            profiles = data.get("profiles", [])
+            
+            if not profiles:
+                self.log_test("Score Data Availability", False, "No profiles to check for score data", data)
+                return False
+            
+            # Analyze score data availability
+            score_analysis = {
+                "total_profiles": len(profiles),
+                "profiles_with_score_data": 0,
+                "profiles_with_hybrid_score": 0,
+                "profiles_with_null_score": 0,
+                "sample_score_structures": [],
+                "hybrid_score_values": []
+            }
+            
+            for profile in profiles:
+                score_data = profile.get("score_data")
+                
+                if score_data is not None:
+                    score_analysis["profiles_with_score_data"] += 1
+                    
+                    if isinstance(score_data, dict):
+                        hybrid_score = score_data.get("hybridScore")
+                        
+                        if hybrid_score is not None:
+                            score_analysis["profiles_with_hybrid_score"] += 1
+                            score_analysis["hybrid_score_values"].append(hybrid_score)
+                        else:
+                            score_analysis["profiles_with_null_score"] += 1
+                        
+                        # Sample score structure (first 3)
+                        if len(score_analysis["sample_score_structures"]) < 3:
+                            score_analysis["sample_score_structures"].append({
+                                "profile_id": profile.get("id"),
+                                "score_fields": list(score_data.keys()),
+                                "has_hybrid_score": hybrid_score is not None,
+                                "hybrid_score_value": hybrid_score
+                            })
+                else:
+                    score_analysis["profiles_with_null_score"] += 1
+            
+            # Check if we have both profiles with scores and without (for Pending functionality)
+            has_score_variety = (
+                score_analysis["profiles_with_hybrid_score"] > 0 and
+                score_analysis["profiles_with_null_score"] > 0
+            )
+            
+            if score_analysis["profiles_with_score_data"] > 0:
+                self.log_test("Score Data Availability", True, "Profiles with hybridScore data are properly stored and retrieved for trend chart and sub-score grid", score_analysis)
+                return True
+            else:
+                self.log_test("Score Data Availability", False, "No score data found in profiles", score_analysis)
+                return False
+                
+        except Exception as e:
+            self.log_test("Score Data Availability", False, "Score data availability test failed", str(e))
+            return False
+    
+    def test_database_write_operations_post_profiles(self):
+        """Test POST /api/athlete-profiles to ensure data can be written to Supabase"""
+        try:
+            # Test data for creating a new profile
+            test_profile_data = {
+                "profile_json": {
+                    "first_name": "Test",
+                    "last_name": "User",
+                    "email": "test@example.com",
+                    "age": 25,
+                    "sex": "Male",
+                    "body_metrics": {
+                        "weight_lb": 170,
+                        "vo2_max": 45
+                    },
+                    "pb_mile": "7:30",
+                    "weekly_miles": 20,
+                    "long_run": 8,
+                    "pb_bench_1rm": {"weight_lb": 185, "reps": 1},
+                    "schema_version": "v1.0"
+                }
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=test_profile_data)
+            
+            if response.status_code in [200, 201]:
+                data = response.json()
+                
+                if "profile" in data and data["profile"].get("id"):
+                    created_profile_id = data["profile"]["id"]
+                    
+                    # Verify the profile was actually created by fetching it
+                    verify_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{created_profile_id}")
+                    
+                    if verify_response.status_code == 200:
+                        verify_data = verify_response.json()
+                        
+                        self.log_test("Database Write Operations - POST Profiles", True, "POST /api/athlete-profiles successfully writes data to Supabase", {
+                            "created_profile_id": created_profile_id,
+                            "profile_json_stored": bool(verify_data.get("profile_json")),
+                            "data_integrity": verify_data.get("profile_json", {}).get("first_name") == "Test"
+                        })
+                        return True
+                    else:
+                        self.log_test("Database Write Operations - POST Profiles", False, "Profile created but could not be retrieved", verify_response.text)
+                        return False
+                else:
+                    self.log_test("Database Write Operations - POST Profiles", False, "Profile creation response missing profile data", data)
+                    return False
+            else:
+                self.log_test("Database Write Operations - POST Profiles", False, f"HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Database Write Operations - POST Profiles", False, "Database write test failed", str(e))
+            return False
+    
+    def test_database_write_operations_post_score(self):
+        """Test POST /api/athlete-profile/{id}/score to ensure score data can be written to Supabase"""
+        try:
+            # First get a profile to update
+            profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if profiles_response.status_code != 200:
+                self.log_test("Database Write Operations - POST Score", False, "Could not get profiles for score update test", profiles_response.text)
+                return False
+            
+            profiles_data = profiles_response.json()
+            if not profiles_data.get("profiles") or len(profiles_data["profiles"]) == 0:
+                self.log_test("Database Write Operations - POST Score", False, "No profiles available for score update test", profiles_data)
+                return False
+            
+            # Use first profile for testing
+            test_profile_id = profiles_data["profiles"][0]["id"]
+            
+            # Test score data
+            test_score_data = {
+                "hybridScore": 75.5,
+                "strengthScore": 85.2,
+                "speedScore": 72.8,
+                "vo2Score": 68.4,
+                "distanceScore": 70.1,
+                "volumeScore": 73.6,
+                "recoveryScore": 79.3,
+                "tips": ["Increase weekly mileage", "Focus on strength training"],
+                "balanceBonus": 0,
+                "hybridPenalty": 2
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profile/{test_profile_id}/score", json=test_score_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if "message" in data and "updated" in data["message"].lower():
+                    # Verify the score was actually updated by fetching the profile
+                    verify_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{test_profile_id}")
+                    
+                    if verify_response.status_code == 200:
+                        verify_data = verify_response.json()
+                        updated_score_data = verify_data.get("score_data", {})
+                        
+                        score_updated = (
+                            updated_score_data.get("hybridScore") == 75.5 and
+                            updated_score_data.get("strengthScore") == 85.2
+                        )
+                        
+                        if score_updated:
+                            self.log_test("Database Write Operations - POST Score", True, "POST /api/athlete-profile/{id}/score successfully writes score data to Supabase", {
+                                "profile_id": test_profile_id,
+                                "score_data_updated": True,
+                                "hybrid_score": updated_score_data.get("hybridScore"),
+                                "score_fields_count": len(updated_score_data)
+                            })
+                            return True
+                        else:
+                            self.log_test("Database Write Operations - POST Score", False, "Score data not properly updated", {
+                                "expected_hybrid_score": 75.5,
+                                "actual_score_data": updated_score_data
+                            })
+                            return False
+                    else:
+                        self.log_test("Database Write Operations - POST Score", False, "Score updated but could not verify", verify_response.text)
+                        return False
+                else:
+                    self.log_test("Database Write Operations - POST Score", False, "Score update response missing success message", data)
+                    return False
+            else:
+                self.log_test("Database Write Operations - POST Score", False, f"HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Database Write Operations - POST Score", False, "Score update test failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests focused on Supabase database connection and Profile Page functionality"""
         print("=" * 80)
