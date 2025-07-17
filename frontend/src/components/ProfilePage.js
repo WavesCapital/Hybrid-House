@@ -203,52 +203,53 @@ const ProfilePage = () => {
 
   // Generate new athlete profile
   const generateNewProfile = useCallback(async () => {
+    // Check if user is authenticated for name and gender
+    if (!user || !userProfile) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to generate a profile with your information",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsGenerating(true);
-      
-      // Validate required fields
-      if (!inputForm.first_name.trim()) {
-        toast({
-          title: "Name Required",
-          description: "Please enter your first name.",
-          variant: "destructive",
-        });
-        return;
-      }
 
-      // Prepare profile data
-      const profileData = {
-        ...inputForm,
-        schema_version: "v1.0",
-        meta_session_id: `manual-${Date.now()}`,
-        weekly_miles: parseInt(inputForm.weekly_miles) || 0,
-        long_run: parseInt(inputForm.long_run) || 0
+      // Create profile JSON using user profile data and form inputs
+      const profileJson = {
+        // Use data from user profile
+        first_name: userProfile.name || userProfile.display_name || 'User',
+        sex: userProfile.gender || 'Not specified',
+        
+        // Body metrics from individual form fields
+        body_metrics: {
+          weight_lb: inputForm.weight_lb,
+          vo2_max: inputForm.vo2_max,
+          resting_hr: inputForm.resting_hr,
+          hrv: inputForm.hrv
+        },
+        
+        // Performance data from form
+        pb_mile: inputForm.pb_mile,
+        weekly_miles: inputForm.weekly_miles,
+        long_run: inputForm.long_run,
+        pb_bench_1rm: inputForm.pb_bench_1rm,
+        pb_squat_1rm: inputForm.pb_squat_1rm,
+        pb_deadlift_1rm: inputForm.pb_deadlift_1rm,
+        
+        // Metadata
+        schema_version: 'v1.0',
+        created_via: 'manual_input'
       };
 
-      // Call webhook to generate score
-      const webhookResponse = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          athleteProfile: profileData,
-          deliverable: 'score'
-        })
-      });
+      console.log('Generated profile JSON:', profileJson);
 
-      if (!webhookResponse.ok) {
-        throw new Error(`Webhook request failed with status: ${webhookResponse.status}`);
-      }
-
-      const scoreData = await webhookResponse.json();
-      const finalScoreData = Array.isArray(scoreData) ? scoreData[0] : scoreData;
-
-      // Create new profile in database
-      const profileId = `manual-${Date.now()}`;
+      // Create the new profile with unique ID
+      const profileId = uuid();
       const newProfile = {
         id: profileId,
-        profile_json: profileData,
+        profile_json: profileJson,
         completed_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -276,8 +277,29 @@ const ProfilePage = () => {
         });
       }
 
+      // Call webhook for score computation
+      const webhookPayload = {
+        profile_data: profileJson,
+        deliverable: 'score'
+      };
+
+      console.log('Calling webhook with payload:', webhookPayload);
+      
+      const webhookResponse = await axios.post(
+        'https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c',
+        webhookPayload,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          timeout: 150000 // 2.5 minutes
+        }
+      );
+
+      console.log('Webhook response:', webhookResponse.data);
+
       // Store score data
-      await axios.post(`${BACKEND_URL}/api/athlete-profile/${profileId}/score`, finalScoreData);
+      await axios.post(`${BACKEND_URL}/api/athlete-profile/${profileId}/score`, webhookResponse.data);
 
       // Navigate to the new score page
       navigate(`/hybrid-score/${profileId}`);
@@ -292,7 +314,7 @@ const ProfilePage = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [inputForm, navigate, toast, user, session]);
+  }, [inputForm, navigate, toast, user, session, userProfile]);
 
   // Inline editing functions
   const startEditing = useCallback((fieldName) => {
