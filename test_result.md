@@ -126,51 +126,63 @@ backend:
 frontend:
   - task: "Latest Hybrid Score Card - Sub-Score Grid Fix"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/src/components/ProfilePage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
         comment: "✅ SUB-SCORE GRID FIXED: Updated sub-score grid to exact 2 rows × 3 columns layout (Strength | Speed | VO₂ Max / Distance | Volume | Recovery). Added Math.round() to all values for whole numbers. Progress bars now fill 100% width with 4px gap between bar and label. Improved spacing from mt-3 to mt-8 for better visual hierarchy."
+      - working: "NA"
+        agent: "testing"
+        comment: "❌ CANNOT TEST: Profile Page is inaccessible due to authentication issue. Page redirects to /auth instead of displaying Profile Page content. Cannot verify sub-score grid functionality until authentication dependencies are removed from ProfilePage component."
 
   - task: "Hybrid Score Trend Chart - Null Score Filtering"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/src/components/ProfilePage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
         comment: "✅ TREND CHART IMPROVED: Implemented filtering to plot only profiles with hybridScore ≠ null, skipping 'Pending' entries. Updated chart to break lines when dates are skipped. Changed dots to 6px with neon-violet effect, line to 2px width. Improved tooltip format to 'Jul 17 2025 • 76' style. Chart now shows proper trends without dropping to zero for pending entries."
+      - working: "NA"
+        agent: "testing"
+        comment: "❌ CANNOT TEST: Profile Page is inaccessible due to authentication issue. Page redirects to /auth instead of displaying Profile Page content. Cannot verify trend chart null filtering functionality until authentication dependencies are removed from ProfilePage component."
 
   - task: "Score Archive Table - Missing Columns & Pending Rows"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/src/components/ProfilePage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
         comment: "✅ SCORE ARCHIVE TABLE ENHANCED: Added comprehensive scoring columns (Strength, Speed, VO₂, Distance, Volume, Recovery) with proper right-alignment and tabular-nums font. Implemented grey 'Pending' pill for null hybridScore values. Fixed column ordering to match header. Added proper em-dash (—) rendering for null/0 values. Updated Eye icon for action buttons. Improved sticky header with gradient styling."
+      - working: "NA"
+        agent: "testing"
+        comment: "❌ CANNOT TEST: Profile Page is inaccessible due to authentication issue. Page redirects to /auth instead of displaying Profile Page content. Cannot verify score archive table with 70 profiles, pending rows, or 19 columns until authentication dependencies are removed from ProfilePage component."
 
   - task: "Visual Tweaks & Accessibility"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/src/components/ProfilePage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
         comment: "✅ VISUAL POLISH COMPLETE: Added 32px top padding to dial card for better sub-score grid spacing. Reduced major section spacing to 48px desktop/24px mobile. Added font-variant-numeric: tabular-nums for consistent number alignment. Improved progress bar styling with 100% width fill. Enhanced accessibility with proper aria-labels on dial component. Updated CSS for better keyboard navigation focus states."
+      - working: "NA"
+        agent: "testing"
+        comment: "❌ CANNOT TEST: Profile Page is inaccessible due to authentication issue. Page redirects to /auth instead of displaying Profile Page content. Cannot verify visual tweaks and accessibility improvements until authentication dependencies are removed from ProfilePage component."
 
 metadata:
   created_by: "main_agent"
