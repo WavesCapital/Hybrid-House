@@ -261,66 +261,102 @@ const ProfilePage = () => {
     }
   }, [inputForm, navigate, toast, user, session]);
 
-  // User Profile Management Functions
-  const handleUpdateProfile = useCallback(async () => {
-    console.log('🔄 handleUpdateProfile called');
-    console.log('User check:', { user: !!user, session: !!session });
-    console.log('Loading state:', loading);
-    
-    // Check if authentication is still loading
-    if (loading) {
-      console.log('⏳ Authentication still loading, waiting...');
-      toast({
-        title: "Please wait",
-        description: "Authentication is still loading. Please try again in a moment.",
-        variant: "default",
-      });
-      return;
-    }
-    
+  // Inline editing functions
+  const startEditing = useCallback((fieldName) => {
+    setEditingFields(prev => ({...prev, [fieldName]: true}));
+    setTempFieldValues(prev => ({
+      ...prev,
+      [fieldName]: userProfile?.[fieldName] || ''
+    }));
+  }, [userProfile]);
+
+  const cancelEditing = useCallback((fieldName) => {
+    setEditingFields(prev => ({...prev, [fieldName]: false}));
+    setFieldErrors(prev => ({...prev, [fieldName]: null}));
+    setTempFieldValues(prev => ({
+      ...prev,
+      [fieldName]: userProfile?.[fieldName] || ''
+    }));
+  }, [userProfile]);
+
+  const saveField = useCallback(async (fieldName, value) => {
     if (!user || !session) {
-      console.log('❌ No user or session found, redirecting to auth');
       toast({
         title: "Authentication Required",
-        description: "Please sign in to save your profile changes",
+        description: "Please sign in to save changes",
         variant: "destructive",
       });
-      
-      // Redirect to auth page
-      window.location.href = '/auth';
       return;
     }
 
     try {
-      setIsLoadingProfiles(true);
-      console.log('📝 Updating profile with data:', profileForm);
-      console.log('🔑 Using token:', session.access_token ? 'Token present' : 'No token');
-      console.log('👤 User ID:', user.id);
-      console.log('📧 User email:', user.email);
-      console.log('🌐 API URL:', `${BACKEND_URL}/api/user-profile/me`);
+      setSavingFields(prev => ({...prev, [fieldName]: true}));
+      setFieldErrors(prev => ({...prev, [fieldName]: null}));
       
-      const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, profileForm, {
+      const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, {
+        [fieldName]: value
+      }, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json'
         }
       });
 
-      console.log('✅ Profile update response:', response.data);
-      console.log('📊 Response status:', response.status);
-
+      // Update user profile with new data
       setUserProfile(response.data.profile);
-      setIsEditingProfile(false);
+      setEditingFields(prev => ({...prev, [fieldName]: false}));
+      
+      // Show success feedback
       toast({
-        title: "Success",
-        description: response.data.message || "Profile updated successfully",
+        title: "Saved",
+        description: `${fieldName.replace('_', ' ')} updated successfully`,
         variant: "default",
       });
       
+    } catch (error) {
+      console.error(`Error saving ${fieldName}:`, error);
+      
+      let errorMessage = "Failed to save changes";
+      if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.response?.status === 401) {
+        errorMessage = "Authentication required. Please sign in again.";
+      }
+      
+      setFieldErrors(prev => ({...prev, [fieldName]: errorMessage}));
+      
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
-      setIsLoadingProfiles(false);
+      setSavingFields(prev => ({...prev, [fieldName]: false}));
     }
-  }, [profileForm, BACKEND_URL, user, session, loading, toast]);
+  }, [user, session, BACKEND_URL, toast]);
+
+  const handleFieldBlur = useCallback((fieldName) => {
+    const currentValue = tempFieldValues[fieldName];
+    const originalValue = userProfile?.[fieldName] || '';
+    
+    if (currentValue !== originalValue) {
+      saveField(fieldName, currentValue);
+    } else {
+      setEditingFields(prev => ({...prev, [fieldName]: false}));
+    }
+  }, [tempFieldValues, userProfile, saveField]);
+
+  const handleFieldChange = useCallback((fieldName, value) => {
+    setTempFieldValues(prev => ({...prev, [fieldName]: value}));
+  }, []);
+
+  const handleFieldKeyDown = useCallback((e, fieldName) => {
+    if (e.key === 'Enter') {
+      e.target.blur(); // Trigger onBlur to save
+    } else if (e.key === 'Escape') {
+      cancelEditing(fieldName);
+    }
+  }, [cancelEditing]);
 
   const handleAvatarChange = useCallback((e) => {
     const file = e.target.files[0];
