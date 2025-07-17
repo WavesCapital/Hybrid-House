@@ -1721,8 +1721,17 @@ const ProfilePage = () => {
                             })}
                           </td>
                           <td className="p-3 text-xs font-semibold accent-gradient-text">
-                            {scoreData.hybridScore ? Math.round(scoreData.hybridScore) : 
-                             <span className="inline-block px-2 py-1 bg-gray-600 text-gray-200 rounded-full text-xs">Pending</span>}
+                            {scoreData.hybridScore ? (
+                              <button 
+                                onClick={() => navigate(`/hybrid-score/${profile.id}`)}
+                                className="hover:text-primary transition-colors cursor-pointer underline decoration-dotted underline-offset-2"
+                                aria-label={`View detailed score breakdown for ${Math.round(scoreData.hybridScore)}`}
+                              >
+                                {Math.round(scoreData.hybridScore)}
+                              </button>
+                            ) : (
+                              <span className="inline-block px-2 py-1 bg-gray-600 text-gray-200 rounded-full text-xs">Pending</span>
+                            )}
                           </td>
                           <td className="p-3 text-xs text-secondary">
                             {scoreData.strengthScore ? Math.round(scoreData.strengthScore) : <span className="em-dash">—</span>}
