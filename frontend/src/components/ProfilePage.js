@@ -1704,41 +1704,36 @@ const ProfilePage = () => {
             
             <div className="overflow-x-auto">
               <table className="w-full score-archive-table">
-                {/* Sticky header with accent gradient bottom border */}
+                {/* Sticky header with comprehensive columns */}
                 <thead>
                   <tr>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary">
-                      Date
-                    </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary">
-                      Hybrid Score
-                    </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary">
-                      Mile PR
-                    </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary">
-                      Weekly Miles
-                    </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary">
-                      Bench 1RM
-                    </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary">
-                      Squat 1RM
-                    </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary">
-                      Deadlift 1RM
-                    </th>
-                    <th className="text-left p-4 text-sm font-semibold text-secondary">
-                      Action
-                    </th>
+                    <th className="text-left p-3 text-xs font-semibold text-secondary">Date</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Hybrid</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Str</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Spd</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">VO₂</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Dist</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Vol</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Rec</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">BW (lb)</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">VO₂-max</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Mile PR</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Long Run (mi)</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Wk Miles</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">HRV (ms)</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">RHR (bpm)</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Bench 1RM</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Squat 1RM</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Deadlift 1RM</th>
+                    <th className="text-right p-3 text-xs font-semibold text-secondary">Action</th>
                   </tr>
                 </thead>
                 
-                {/* Table body with keyboard navigation */}
+                {/* Table body with comprehensive data */}
                 <tbody>
                   {profiles.length === 0 ? (
                     <tr>
-                      <td colSpan="8" className="text-center py-12">
+                      <td colSpan="19" className="text-center py-12">
                         <div className="text-muted">
                           <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-50" />
                           <p>No scores yet. Generate your first one above!</p>
@@ -1746,50 +1741,109 @@ const ProfilePage = () => {
                       </td>
                     </tr>
                   ) : (
-                    profiles.map((profile, index) => (
-                      <tr 
-                        key={profile.id} 
-                        className="hover:bg-white/5 transition-colors border-b border-white/5"
-                        tabIndex={0}
-                        role="row"
-                      >
-                        <td className="p-4 text-sm text-primary">
-                          {new Date(profile.created_at).toLocaleDateString()}
-                        </td>
-                        <td className="p-4 text-sm">
-                          <span className="accent-gradient-text font-semibold">
-                            {profile?.score_data?.hybridScore?.toFixed(1) || 'Pending'}
-                          </span>
-                        </td>
-                        <td className="p-4 text-sm text-secondary">
-                          {profile.pb_mile_seconds ? 
-                            `${Math.floor(profile.pb_mile_seconds / 60)}:${String(profile.pb_mile_seconds % 60).padStart(2, '0')}` : 
-                            renderProfileField(profile.profile_json?.pb_mile)
-                          }
-                        </td>
-                        <td className="p-4 text-sm text-secondary">
-                          {renderProfileField(profile.weekly_miles || profile.profile_json?.weekly_miles)}
-                        </td>
-                        <td className="p-4 text-sm text-secondary">
-                          {renderProfileField(profile.pb_bench_1rm_lb || profile.profile_json?.pb_bench_1rm)}
-                        </td>
-                        <td className="p-4 text-sm text-secondary">
-                          {renderProfileField(profile.pb_squat_1rm_lb || profile.profile_json?.pb_squat_1rm)}
-                        </td>
-                        <td className="p-4 text-sm text-secondary">
-                          {renderProfileField(profile.pb_deadlift_1rm_lb || profile.profile_json?.pb_deadlift_1rm)}
-                        </td>
-                        <td className="p-4">
-                          <button 
-                            onClick={() => navigate(`/hybrid-score/${profile.id}`)}
-                            className="px-3 py-1 text-xs bg-white/10 hover:bg-white/20 rounded-lg border border-white/20 hover:border-white/40 text-secondary hover:text-primary transition-all"
-                            aria-label={`View score details for ${new Date(profile.created_at).toLocaleDateString()}`}
-                          >
-                            View
-                          </button>
-                        </td>
-                      </tr>
-                    ))
+                    profiles.map((profile, index) => {
+                      const isFirstRow = index === 0;
+                      const scoreData = profile?.score_data || {};
+                      const profileJson = profile?.profile_json || {};
+                      const bodyMetrics = profileJson?.body_metrics || {};
+                      
+                      // Helper function to format values
+                      const formatValue = (value) => {
+                        if (value === null || value === undefined || value === 0 || value === '') {
+                          return <span className="em-dash">—</span>;
+                        }
+                        return value;
+                      };
+                      
+                      // Format mile time from seconds
+                      const formatMileTime = (seconds) => {
+                        if (!seconds || seconds === 0) return <span className="em-dash">—</span>;
+                        const minutes = Math.floor(seconds / 60);
+                        const remainingSeconds = seconds % 60;
+                        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+                      };
+                      
+                      return (
+                        <tr 
+                          key={profile.id} 
+                          className={`hover:bg-white/5 transition-colors border-b border-white/5 ${isFirstRow ? 'most-recent-row' : ''}`}
+                          tabIndex={0}
+                          role="row"
+                        >
+                          <td className="p-3 text-xs text-primary">
+                            {new Date(profile.created_at).toLocaleDateString('en-US', { 
+                              month: 'short', 
+                              day: 'numeric', 
+                              year: 'numeric' 
+                            })}
+                          </td>
+                          <td className="p-3 text-xs font-semibold accent-gradient-text">
+                            {scoreData.hybridScore ? Math.round(scoreData.hybridScore) : <span className="em-dash">—</span>}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {scoreData.strengthScore ? Math.round(scoreData.strengthScore) : <span className="em-dash">—</span>}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {scoreData.speedScore ? Math.round(scoreData.speedScore) : <span className="em-dash">—</span>}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {scoreData.vo2Score ? Math.round(scoreData.vo2Score) : <span className="em-dash">—</span>}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {scoreData.distanceScore ? Math.round(scoreData.distanceScore) : <span className="em-dash">—</span>}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {scoreData.volumeScore ? Math.round(scoreData.volumeScore) : <span className="em-dash">—</span>}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {scoreData.recoveryScore ? Math.round(scoreData.recoveryScore) : <span className="em-dash">—</span>}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {formatValue(profile.weight_lb || bodyMetrics.weight_lb || bodyMetrics.weight)}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {formatValue(profile.vo2_max || bodyMetrics.vo2_max || bodyMetrics.vo2max)}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {profile.pb_mile_seconds ? formatMileTime(profile.pb_mile_seconds) : 
+                             renderProfileField(profileJson.pb_mile)}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {formatValue(profile.long_run_miles || profileJson.long_run)}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {formatValue(profile.weekly_miles || profileJson.weekly_miles)}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {formatValue(profile.hrv || bodyMetrics.hrv || bodyMetrics.hrv_ms)}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {formatValue(profile.resting_hr || bodyMetrics.resting_hr || bodyMetrics.resting_hr_bpm)}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {formatValue(profile.pb_bench_1rm_lb || profileJson.pb_bench_1rm)}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {formatValue(profile.pb_squat_1rm_lb || profileJson.pb_squat_1rm)}
+                          </td>
+                          <td className="p-3 text-xs text-secondary">
+                            {formatValue(profile.pb_deadlift_1rm_lb || profileJson.pb_deadlift_1rm)}
+                          </td>
+                          <td className="p-3">
+                            <button 
+                              onClick={() => navigate(`/hybrid-score/${profile.id}`)}
+                              className="p-1 text-secondary hover:text-primary transition-colors"
+                              aria-label={`View score details for ${new Date(profile.created_at).toLocaleDateString()}`}
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
