@@ -1420,7 +1420,7 @@ const ProfilePage = () => {
 
               {/* Sub-Score Grid (2 rows × 3 cols) */}
               {profiles.length > 0 && profiles[0]?.score_data && (
-                <div className="grid grid-cols-3 gap-4 mt-3">
+                <div className="grid grid-cols-3 gap-4 mt-8">
                   {[
                     { label: 'Strength', key: 'strengthScore' },
                     { label: 'Speed', key: 'speedScore' },
@@ -1440,7 +1440,7 @@ const ProfilePage = () => {
                           {roundedValue}
                         </div>
                         <div className="text-xs text-muted mb-1">{item.label}</div>
-                        <div className="sub-score-progress">
+                        <div className="sub-score-progress mb-1">
                           <div 
                             className="sub-score-progress-bar"
                             style={{ width: `${roundedValue}%` }}
