@@ -8,7 +8,7 @@ import { useToast } from '../hooks/use-toast';
 import { 
   User, Calendar, Trophy, BarChart3, Plus, Target, Activity,
   Zap, RefreshCw, ArrowRight, Award, TrendingUp, Camera, 
-  Save, Edit, MapPin, Globe, Mail, Settings, Upload, X
+  Save, Edit, MapPin, Globe, Mail, Settings, Upload, X, Eye
 } from 'lucide-react';
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
