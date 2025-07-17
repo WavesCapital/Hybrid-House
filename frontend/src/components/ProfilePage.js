@@ -1248,16 +1248,21 @@ const ProfilePage = () => {
                   <Button
                     onClick={generateNewProfile}
                     className="neo-btn-primary w-full py-4 text-lg"
-                    disabled={isGenerating}
+                    disabled={isGenerating || isCalculatingScore}
                   >
                     {isGenerating ? (
                       <>
                         <RefreshCw className="h-5 w-5 mr-3 animate-spin" />
-                        Generating Profile...
+                        Creating Profile...
+                      </>
+                    ) : isCalculatingScore ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
+                        Calculating Score...
                       </>
                     ) : (
                       <>
-                        <Zap className="h-5 w-5 mr-3" />
+                        <Target className="h-5 w-5 mr-3" />
                         Generate Hybrid Score
                       </>
                     )}
