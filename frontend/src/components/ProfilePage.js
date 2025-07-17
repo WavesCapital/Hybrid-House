@@ -22,6 +22,15 @@ const ProfilePage = () => {
   // User Profile Management States
   const [userProfile, setUserProfile] = useState(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    name: '',
+    display_name: '',
+    location: '',
+    website: '',
+    gender: '',
+    units_preference: 'imperial',
+    privacy_level: 'private'
+  });
   // Profile editing states - individual field management
   const [editingFields, setEditingFields] = useState({});
   const [savingFields, setSavingFields] = useState({});
