@@ -1787,7 +1787,7 @@ const ProfilePage = () => {
                           if (value.vo2_max || value.vo2max) {
                             return value.vo2_max || value.vo2max;
                           }
-                          // For other objects, return em-dash
+                          // For any other objects, return em-dash to prevent React errors
                           return <span className="em-dash">—</span>;
                         }
                         return value;
