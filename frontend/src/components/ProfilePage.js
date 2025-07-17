@@ -158,8 +158,18 @@ const ProfilePage = () => {
         console.log('User profile fetched:', response.data);
         const profile = response.data.profile;
         setUserProfile(profile);
-        // Initialize temp field values (no longer need profileForm)
+        // Initialize temp field values for inline editing
         setTempFieldValues({
+          name: profile.name || '',
+          display_name: profile.display_name || '',
+          location: profile.location || '',
+          website: profile.website || '',
+          gender: profile.gender || '',
+          units_preference: profile.units_preference || 'imperial',
+          privacy_level: profile.privacy_level || 'private'
+        });
+        // Initialize profile form for edit mode
+        setProfileForm({
           name: profile.name || '',
           display_name: profile.display_name || '',
           location: profile.location || '',
