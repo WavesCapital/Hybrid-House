@@ -191,11 +191,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Iteration 6 Implementation Complete"
-    - "Sub-Score Grid Visual Fix"
-    - "Trend Chart Null Filtering"
-    - "Score Archive Table Enhancement"
-  stuck_tasks: []
+    - "Profile Page Authentication Removal - CRITICAL ISSUE"
+    - "ProfilePage Component Authentication Dependencies"
+    - "Frontend Authentication Logic Removal"
+  stuck_tasks:
+    - "Profile Page Authentication Removal"
   test_all: false
   test_priority: "high_first"
 
@@ -204,6 +204,8 @@ agent_communication:
     message: "✅ ITERATION 6 IMPLEMENTATION COMPLETE: Successfully implemented all requirements from the Iteration 6 specification. Fixed sub-score grid layout (2x3 exact layout with rounded values), improved trend chart to filter null scores, enhanced score archive table with missing columns and pending row handling, updated visual spacing and accessibility. All working IDs, event hooks, and data sources remain unchanged as requested. Ready for backend testing to verify data flow."
   - agent: "testing"
     message: "✅ ITERATION 6 PROFILE PAGE BACKEND TESTING COMPLETE: Executed comprehensive testing of backend endpoints for Iteration 6 Profile Page improvements with 80% success rate (4/5 tests passed). CRITICAL FINDINGS: ✅ Profile Data Endpoints Structure - GET /api/athlete-profiles returns 69 profiles with proper data structure including score_data and profile_json fields needed for enhanced table display ✅ Individual Profile Endpoint Complete Data - GET /api/athlete-profile/{id} returns individual profiles with complete data including sub-scores (strengthScore, speedScore, vo2Score, distanceScore, volumeScore, recoveryScore) and individual fields (weight_lb, vo2_max, pb_mile_seconds, hrv_ms, resting_hr_bpm) ✅ Score Data Structure Null Handling - Profiles with and without hybridScore are properly handled, null values identifiable for 'Pending' pill functionality (7 profiles with no_score_data status, 3 with hybrid scores) ✅ Public Access Profile Endpoints - All profile endpoints work without authentication as required for Profile Page public access. Minor: Some profiles missing optional fields like last_name/email for comprehensive score archive table, but core functionality working. The backend is production-ready for Iteration 6 enhanced UI components."
+  - agent: "testing"
+    message: "❌ CRITICAL ISSUE DISCOVERED: Profile Page authentication removal is NOT working despite claims in test history. ACTUAL BEHAVIOR: /profile redirects to /auth requiring authentication. BACKEND CONFIRMED WORKING: GET /api/athlete-profiles returns HTTP 200 without auth. ROOT CAUSE: ProfilePage component still uses useAuth() hook causing authentication redirect. IMPACT: Cannot test any Iteration 6 Profile Page improvements (sub-score grid, trend chart, score archive table) until frontend authentication dependencies are removed. URGENT ACTION REQUIRED: Remove useAuth() dependency from ProfilePage.js and implement proper non-authenticated profile display."
 
 backend:
   - task: "User Profile Upsert Functionality - Save Profile Button Fix"
