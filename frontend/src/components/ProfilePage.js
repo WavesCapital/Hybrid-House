@@ -1345,49 +1345,89 @@ const ProfilePage = () => {
 
               <div className="flex items-center justify-center mb-3 pt-8">
                 {profiles.length > 0 && profiles[0]?.score_data?.hybridScore ? (
-                  <div className="text-center">
-                    {/* Main Score with Circular Progress */}
-                    <div className="relative inline-block mb-8">
-                      <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 160 160">
-                        <defs>
-                          <linearGradient id="mainScoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#1B6DFF" />
-                            <stop offset="100%" stopColor="#D64EF9" />
-                          </linearGradient>
-                        </defs>
-                        {/* Track */}
-                        <circle
-                          cx="80"
-                          cy="80"
-                          r="70"
-                          stroke="rgba(255, 255, 255, 0.1)"
-                          strokeWidth="10"
-                          fill="none"
-                        />
-                        {/* Progress */}
-                        <circle
-                          cx="80"
-                          cy="80"
-                          r="70"
-                          stroke="url(#mainScoreGradient)"
-                          strokeWidth="10"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeDasharray={`${(Math.round(profiles[0].score_data.hybridScore) / 100) * 439.82} 439.82`}
-                          style={{ transition: 'stroke-dasharray 1s ease-out' }}
-                        />
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="text-5xl font-bold accent-gradient-text mb-2"
-                            aria-label={`Hybrid Score ${Math.round(profiles[0].score_data.hybridScore)}. Sub-scores: ${profiles[0].score_data.strengthScore ? `Strength ${Math.round(profiles[0].score_data.strengthScore)}, ` : ''}${profiles[0].score_data.speedScore ? `Speed ${Math.round(profiles[0].score_data.speedScore)}, ` : ''}${profiles[0].score_data.vo2Score ? `VO₂ ${Math.round(profiles[0].score_data.vo2Score)}, ` : ''}${profiles[0].score_data.distanceScore ? `Distance ${Math.round(profiles[0].score_data.distanceScore)}, ` : ''}${profiles[0].score_data.volumeScore ? `Volume ${Math.round(profiles[0].score_data.volumeScore)}, ` : ''}${profiles[0].score_data.recoveryScore ? `Recovery ${Math.round(profiles[0].score_data.recoveryScore)}` : ''}`}
-                          >
-                            {Math.round(profiles[0].score_data.hybridScore)}
+                  <div className="radar-cluster-container">
+                    {/* Radar Cluster Layout */}
+                    <figure className="cluster">
+                      {/* Faint radial vignette for depth */}
+                      <div className="cluster-vignette"></div>
+                      
+                      {/* Central Hybrid Dial */}
+                      <div id="dial-hybrid" className="dial big" 
+                        aria-label={`Hybrid score ${Math.round(profiles[0].score_data.hybridScore)}. Strength ${profiles[0].score_data.strengthScore ? Math.round(profiles[0].score_data.strengthScore) : 0}. Speed ${profiles[0].score_data.speedScore ? Math.round(profiles[0].score_data.speedScore) : 0}. VO₂ ${profiles[0].score_data.vo2Score ? Math.round(profiles[0].score_data.vo2Score) : 0}. Distance ${profiles[0].score_data.distanceScore ? Math.round(profiles[0].score_data.distanceScore) : 0}. Volume ${profiles[0].score_data.volumeScore ? Math.round(profiles[0].score_data.volumeScore) : 0}. Recovery ${profiles[0].score_data.recoveryScore ? Math.round(profiles[0].score_data.recoveryScore) : 0}.`}
+                      >
+                        <div className="dial-content">
+                          <svg className="dial-svg" viewBox="0 0 220 220">
+                            <defs>
+                              <linearGradient id="hybridGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#1B6DFF" />
+                                <stop offset="100%" stopColor="#D64EF9" />
+                              </linearGradient>
+                            </defs>
+                            <circle cx="110" cy="110" r="95" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="10" fill="none" />
+                            <circle 
+                              cx="110" cy="110" r="95" 
+                              stroke="url(#hybridGradient)" 
+                              strokeWidth="10" 
+                              fill="none" 
+                              strokeLinecap="round"
+                              strokeDasharray={`${(Math.round(profiles[0].score_data.hybridScore) / 100) * 596.9} 596.9`}
+                              style={{ transition: 'stroke-dasharray 1s ease-out' }}
+                            />
+                          </svg>
+                          <div className="dial-value">
+                            <div className="score-number">{Math.round(profiles[0].score_data.hybridScore)}</div>
+                            <div className="score-label">Hybrid Score</div>
                           </div>
-                          <div className="text-sm text-muted font-medium">Hybrid Score</div>
                         </div>
                       </div>
-                    </div>
+
+                      {/* Mini Dials in Hexagon */}
+                      {[
+                        { label: 'Strength', key: 'strengthScore', pos: 'pos-1' },
+                        { label: 'Speed', key: 'speedScore', pos: 'pos-2' },
+                        { label: 'VO₂ Max', key: 'vo2Score', pos: 'pos-3' },
+                        { label: 'Distance', key: 'distanceScore', pos: 'pos-4' },
+                        { label: 'Volume', key: 'volumeScore', pos: 'pos-5' },
+                        { label: 'Recovery', key: 'recoveryScore', pos: 'pos-6' }
+                      ].map((item, index) => {
+                        const value = profiles[0].score_data[item.key] || 0;
+                        const roundedValue = Math.round(value);
+                        return (
+                          <div 
+                            key={item.key} 
+                            id={`dial-${item.key.replace('Score', '').toLowerCase()}`}
+                            className={`dial mini ${item.pos}`}
+                            aria-label={`${item.label} score ${roundedValue} out of 100`}
+                            title={`${item.label} ${roundedValue}/100`}
+                          >
+                            <div className="dial-content">
+                              <svg className="dial-svg" viewBox="0 0 96 96">
+                                <defs>
+                                  <linearGradient id={`miniGradient${index}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stopColor="#1B6DFF" />
+                                    <stop offset="100%" stopColor="#D64EF9" />
+                                  </linearGradient>
+                                </defs>
+                                <circle cx="48" cy="48" r="40" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="5" fill="none" />
+                                <circle 
+                                  cx="48" cy="48" r="40" 
+                                  stroke={`url(#miniGradient${index})`} 
+                                  strokeWidth="5" 
+                                  fill="none" 
+                                  strokeLinecap="round"
+                                  strokeDasharray={`${(roundedValue / 100) * 251.33} 251.33`}
+                                  style={{ transition: 'stroke-dasharray 0.6s ease-out' }}
+                                />
+                              </svg>
+                              <div className="dial-value">
+                                <div className="score-number">{roundedValue}</div>
+                              </div>
+                            </div>
+                            <div className="dial-label">{item.label}</div>
+                          </div>
+                        );
+                      })}
+                    </figure>
                   </div>
                 ) : (
                   <div className="text-center py-12">
@@ -1400,66 +1440,7 @@ const ProfilePage = () => {
                 )}
               </div>
 
-              {/* Sub-Score Grid (2 rows × 3 cols) */}
-              {profiles.length > 0 && profiles[0]?.score_data && (
-                <div className="grid grid-cols-3 gap-8 mt-12">
-                  {[
-                    { label: 'Strength', key: 'strengthScore' },
-                    { label: 'Speed', key: 'speedScore' },
-                    { label: 'VO₂ Max', key: 'vo2Score' },
-                    { label: 'Distance', key: 'distanceScore' },
-                    { label: 'Volume', key: 'volumeScore' },
-                    { label: 'Recovery', key: 'recoveryScore' }
-                  ].map((item, index) => {
-                    const value = profiles[0].score_data[item.key] || 0;
-                    const roundedValue = Math.round(value);
-                    return (
-                      <div key={item.key} className="text-center">
-                        {/* Circular Progress for Sub-Score */}
-                        <div className="relative inline-block mb-3">
-                          <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 80 80">
-                            <defs>
-                              <linearGradient id={`subScoreGradient${index}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stopColor="#1B6DFF" />
-                                <stop offset="100%" stopColor="#D64EF9" />
-                              </linearGradient>
-                            </defs>
-                            {/* Track */}
-                            <circle
-                              cx="40"
-                              cy="40"
-                              r="34"
-                              stroke="rgba(255, 255, 255, 0.1)"
-                              strokeWidth="5"
-                              fill="none"
-                            />
-                            {/* Progress */}
-                            <circle
-                              cx="40"
-                              cy="40"
-                              r="34"
-                              stroke={`url(#subScoreGradient${index})`}
-                              strokeWidth="5"
-                              fill="none"
-                              strokeLinecap="round"
-                              strokeDasharray={`${(roundedValue / 100) * 213.63} 213.63`}
-                              style={{ transition: 'stroke-dasharray 0.6s ease-out' }}
-                            />
-                          </svg>
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="text-lg font-bold text-primary"
-                              title={`${item.label} score out of 100`}
-                            >
-                              {roundedValue}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-sm text-muted font-medium">{item.label}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              {/* Remove old sub-score grid since it's now integrated into the radar cluster */}
             </div>
           </div>
         </div>
