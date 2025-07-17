@@ -94,6 +94,15 @@ const ProfilePage = () => {
           // Extract individual body metrics
           const bodyMetrics = mostRecent.body_metrics || mostRecent.profile_json?.body_metrics || {};
           
+          // Helper function to convert object to string
+          const convertToString = (value) => {
+            if (!value) return '';
+            if (typeof value === 'object') {
+              return JSON.stringify(value);
+            }
+            return value.toString();
+          };
+          
           // Helper function to extract weight from object or string
           const extractWeight = (value) => {
             if (!value) return '';
