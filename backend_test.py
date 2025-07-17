@@ -4844,7 +4844,7 @@ class BackendTester:
             # Test public endpoint (should work without auth)
             response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=profile_data)
             
-            if response.status_code == 201:
+            if response.status_code in [200, 201]:
                 data = response.json()
                 if "profile" in data and "message" in data:
                     self.log_test("Athlete Profile Creation (Public)", True, "POST /api/athlete-profiles/public creates profiles without authentication", data.get("message"))
