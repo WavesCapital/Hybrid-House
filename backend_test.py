@@ -5254,6 +5254,21 @@ class BackendTester:
         self.test_score_updates_with_disabled_columns()
         self.test_optimized_database_structure_comprehensive()
         
+        # ===== ATHLETE PROFILE CREATION AND WEBHOOK INTEGRATION TESTS =====
+        print("\n" + "=" * 60)
+        print("🎯 ATHLETE PROFILE CREATION AND WEBHOOK INTEGRATION TESTS")
+        print("=" * 60)
+        
+        self.test_athlete_profile_creation_authenticated()
+        self.test_athlete_profile_creation_public()
+        self.test_athlete_profile_data_structure()
+        self.test_athlete_profile_get_endpoint()
+        self.test_athlete_profile_score_endpoint()
+        self.test_athlete_profiles_list_endpoint()
+        self.test_hybrid_interview_completion_flow()
+        self.test_webhook_integration_data_format()
+        self.test_complete_generate_hybrid_score_workflow()
+        
         # System configuration tests
         self.test_cors_configuration()
         self.test_openai_responses_api_integration()
