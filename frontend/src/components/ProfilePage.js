@@ -1700,29 +1700,29 @@ const ProfilePage = () => {
                             title={`${item.label} ${roundedValue}/100`}
                           >
                             <div className="dial-content">
-                              <svg className="dial-svg" viewBox="0 0 96 96">
+                              <svg className="dial-svg" viewBox="0 0 140 140">
                                 <defs>
                                   <linearGradient id={`miniGradient${index}`} x1="0%" y1="0%" x2="100%" y2="0%">
                                     <stop offset="0%" stopColor="#1B6DFF" />
                                     <stop offset="100%" stopColor="#D64EF9" />
                                   </linearGradient>
                                 </defs>
-                                <circle cx="48" cy="48" r="40" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="5" fill="none" />
+                                <circle cx="70" cy="70" r="60" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="8" fill="none" />
                                 <circle 
-                                  cx="48" cy="48" r="40" 
+                                  cx="70" cy="70" r="60" 
                                   stroke={`url(#miniGradient${index})`} 
-                                  strokeWidth="5" 
+                                  strokeWidth="8" 
                                   fill="none" 
                                   strokeLinecap="round"
-                                  strokeDasharray={`${(roundedValue / 100) * 251.33} 251.33`}
+                                  strokeDasharray={`${(roundedValue / 100) * 377} 377`}
                                   style={{ transition: 'stroke-dasharray 0.6s ease-out' }}
                                 />
                               </svg>
                               <div className="dial-value">
                                 <div className="score-number">{roundedValue}</div>
+                                <div className="score-label">{item.label}</div>
                               </div>
                             </div>
-                            <div className="dial-label">{item.label}</div>
                           </div>
                         );
                       })}
