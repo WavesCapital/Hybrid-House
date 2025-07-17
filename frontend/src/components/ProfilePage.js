@@ -1310,168 +1310,577 @@ const ProfilePage = () => {
           </div>
         )}
 
-        {/* User Profile Section - Inline Editing */}
-        {(!loading && user) && (
-          <div className="w-full lg:w-[30%]">
-            <div className="glass-card p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-primary flex items-center">
-                  <User className="h-5 w-5 mr-2" />
-                  Your Profile
-                </h3>
-                <span className="text-xs text-muted">
-                  Click any field to edit
-                </span>
-              </div>
-
-              <div className="space-y-6">
-                {/* Avatar Section */}
-                <div className="text-center">
-                  <div className="relative inline-block">
-                    <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
-                      {avatarPreview ? (
-                        <img src={avatarPreview} alt="Avatar preview" className="w-full h-full object-cover" />
-                      ) : userProfile?.avatar_url ? (
-                        <img src={userProfile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                      ) : (
-                        <User className="w-8 h-8 text-gray-400" />
-                      )}
-                    </div>
-                    
-                    <label className="absolute bottom-0 right-0 accent-gradient rounded-full p-1.5 cursor-pointer hover:scale-110 transition-transform">
-                      <Camera className="w-3 h-3 text-white" />
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleAvatarChange}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-                  
-                  <div className="mt-3">
-                    <p className="text-sm font-medium text-primary">
-                      {userProfile?.display_name || userProfile?.name || 'User'}
-                    </p>
-                    <p className="text-xs text-muted">
-                      {userProfile?.email}
-                    </p>
-                  </div>
-                  
-                  {avatarFile && (
-                    <div className="mt-3 space-y-2">
-                      <button onClick={handleAvatarUpload} disabled={isLoadingProfiles} className="neon-button text-xs px-3 py-1">
-                        <Upload className="w-3 h-3 mr-1" />
-                        Upload
-                      </button>
-                      <button 
-                        onClick={() => { setAvatarFile(null); setAvatarPreview(null); }} 
-                        className="block w-full text-xs text-muted hover:text-secondary transition-colors"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  )}
+        {/* Hero Row - Profile Card + Hybrid Score Dial */}
+        <div className="hero-row flex gap-8">
+          
+          {/* Profile Card (30% width) - Inline Editing Preserved */}
+          {(!loading && user) && (
+            <div className="w-full lg:w-[30%]">
+              <div className="glass-card p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-primary flex items-center">
+                    <User className="h-5 w-5 mr-2" />
+                    Your Profile
+                  </h3>
+                  <span className="text-xs text-muted">
+                    Click any field to edit
+                  </span>
                 </div>
 
-                {/* Profile Fields - Inline Editing Preserved */}
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-medium text-muted mb-1">Name</label>
-                    <EditableField
-                      fieldName="name"
-                      label="Name"
-                      value={userProfile?.name}
-                      placeholder="Enter your name"
-                    />
-                    {fieldErrors.name && (
-                      <p className="text-negative text-xs mt-1">{fieldErrors.name}</p>
+                <div className="space-y-6">
+                  {/* Avatar Section */}
+                  <div className="text-center">
+                    <div className="relative inline-block">
+                      <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
+                        {avatarPreview ? (
+                          <img src={avatarPreview} alt="Avatar preview" className="w-full h-full object-cover" />
+                        ) : userProfile?.avatar_url ? (
+                          <img src={userProfile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-8 h-8 text-gray-400" />
+                        )}
+                      </div>
+                      
+                      <label className="absolute bottom-0 right-0 accent-gradient rounded-full p-1.5 cursor-pointer hover:scale-110 transition-transform">
+                        <Camera className="w-3 h-3 text-white" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleAvatarChange}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                    
+                    <div className="mt-3">
+                      <p className="text-sm font-medium text-primary">
+                        {userProfile?.display_name || userProfile?.name || 'User'}
+                      </p>
+                      <p className="text-xs text-muted">
+                        {userProfile?.email}
+                      </p>
+                    </div>
+                    
+                    {avatarFile && (
+                      <div className="mt-3 space-y-2">
+                        <button onClick={handleAvatarUpload} disabled={isLoadingProfiles} className="neon-button text-xs px-3 py-1">
+                          <Upload className="w-3 h-3 mr-1" />
+                          Upload
+                        </button>
+                        <button 
+                          onClick={() => { setAvatarFile(null); setAvatarPreview(null); }} 
+                          className="block w-full text-xs text-muted hover:text-secondary transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     )}
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-medium text-muted mb-1">Display Name</label>
-                    <EditableField
-                      fieldName="display_name"
-                      label="Display Name"
-                      value={userProfile?.display_name}
-                      placeholder="Enter your display name"
-                    />
-                    {fieldErrors.display_name && (
-                      <p className="text-negative text-xs mt-1">{fieldErrors.display_name}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-muted mb-1">
-                      <MapPin className="w-3 h-3 inline mr-1" />
-                      Location
-                    </label>
-                    <EditableField
-                      fieldName="location"
-                      label="Location"
-                      value={userProfile?.location}
-                      placeholder="City, Country"
-                    />
-                    {fieldErrors.location && (
-                      <p className="text-negative text-xs mt-1">{fieldErrors.location}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-muted mb-1">
-                      <Globe className="w-3 h-3 inline mr-1" />
-                      Website
-                    </label>
-                    <EditableField
-                      fieldName="website"
-                      label="Website"
-                      value={userProfile?.website}
-                      placeholder="https://yourwebsite.com"
-                      type="url"
-                    />
-                    {fieldErrors.website && (
-                      <p className="text-negative text-xs mt-1">{fieldErrors.website}</p>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
+                  {/* Profile Fields - Inline Editing Preserved */}
+                  <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-medium text-muted mb-1">Units</label>
+                      <label className="block text-xs font-medium text-muted mb-1">Name</label>
                       <EditableField
-                        fieldName="units_preference"
-                        label="Units"
-                        value={userProfile?.units_preference}
-                        type="select"
-                        options={[
-                          { value: 'imperial', label: 'Imperial' },
-                          { value: 'metric', label: 'Metric' }
-                        ]}
+                        fieldName="name"
+                        label="Name"
+                        value={userProfile?.name}
+                        placeholder="Enter your name"
                       />
+                      {fieldErrors.name && (
+                        <p className="text-negative text-xs mt-1">{fieldErrors.name}</p>
+                      )}
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-muted mb-1">Privacy</label>
+                      <label className="block text-xs font-medium text-muted mb-1">Display Name</label>
                       <EditableField
-                        fieldName="privacy_level"
-                        label="Privacy"
-                        value={userProfile?.privacy_level}
-                        type="select"
-                        options={[
-                          { value: 'private', label: 'Private' },
-                          { value: 'friends', label: 'Friends' },
-                          { value: 'public', label: 'Public' }
-                        ]}
+                        fieldName="display_name"
+                        label="Display Name"
+                        value={userProfile?.display_name}
+                        placeholder="Enter your display name"
                       />
+                      {fieldErrors.display_name && (
+                        <p className="text-negative text-xs mt-1">{fieldErrors.display_name}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-muted mb-1">
+                        <MapPin className="w-3 h-3 inline mr-1" />
+                        Location
+                      </label>
+                      <EditableField
+                        fieldName="location"
+                        label="Location"
+                        value={userProfile?.location}
+                        placeholder="City, Country"
+                      />
+                      {fieldErrors.location && (
+                        <p className="text-negative text-xs mt-1">{fieldErrors.location}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-muted mb-1">
+                        <Globe className="w-3 h-3 inline mr-1" />
+                        Website
+                      </label>
+                      <EditableField
+                        fieldName="website"
+                        label="Website"
+                        value={userProfile?.website}
+                        placeholder="https://yourwebsite.com"
+                        type="url"
+                      />
+                      {fieldErrors.website && (
+                        <p className="text-negative text-xs mt-1">{fieldErrors.website}</p>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-muted mb-1">Units</label>
+                        <EditableField
+                          fieldName="units_preference"
+                          label="Units"
+                          value={userProfile?.units_preference}
+                          type="select"
+                          options={[
+                            { value: 'imperial', label: 'Imperial' },
+                            { value: 'metric', label: 'Metric' }
+                          ]}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-muted mb-1">Privacy</label>
+                        <EditableField
+                          fieldName="privacy_level"
+                          label="Privacy"
+                          value={userProfile?.privacy_level}
+                          type="select"
+                          options={[
+                            { value: 'private', label: 'Private' },
+                            { value: 'friends', label: 'Friends' },
+                            { value: 'public', label: 'Public' }
+                          ]}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* The new design content will continue... */}
+          {/* Hybrid Score Dial (70% width) */}
+          <div className="flex-1">
+            <div className="glass-card p-8">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-2xl font-bold text-primary mb-1">Latest Hybrid Score</h3>
+                  <p className="text-sm text-secondary">
+                    {profiles.length > 0 ? `Updated ${new Date(profiles[0]?.created_at).toLocaleDateString()}` : 'No scores yet'}
+                  </p>
+                </div>
+                {profiles.length > 0 && (
+                  <div className="text-right">
+                    <div className="text-xs text-muted">Trend</div>
+                    <div className="text-positive text-sm font-semibold">+2.4 ↗</div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-center">
+                {profiles.length > 0 && profiles[0]?.score_data?.hybridScore ? (
+                  <div className="relative">
+                    <svg className="score-dial transform -rotate-90" viewBox="0 0 200 200">
+                      <defs>
+                        <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stopColor="#1B6DFF" />
+                          <stop offset="100%" stopColor="#D64EF9" />
+                        </linearGradient>
+                      </defs>
+                      <circle cx="100" cy="100" r="80" className="score-dial-track" />
+                      <circle 
+                        cx="100" 
+                        cy="100" 
+                        r="80" 
+                        className="score-dial-progress"
+                        strokeDasharray={`${(profiles[0].score_data.hybridScore / 10) * 50.27} 50.27`}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-4xl font-bold accent-gradient-text">
+                          {profiles[0].score_data.hybridScore.toFixed(1)}
+                        </div>
+                        <div className="text-xs text-muted mt-1">/ 10.0</div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 accent-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Target className="w-8 h-8 text-white" />
+                    </div>
+                    <h4 className="text-lg font-semibold text-primary mb-2">No Scores Yet</h4>
+                    <p className="text-sm text-secondary">Generate your first hybrid score to see your performance analytics</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Section - Stack with proper spacing */}
+        <div className="space-y-16 lg:space-y-16 md:space-y-8 sm:space-y-6">
+          
+          {/* A. Generate New Score - Full Width Card */}
+          <div className="glass-card p-8">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-2xl font-bold text-primary flex items-center">
+                  🛠️ Generate New Score
+                </h3>
+                {user && userProfile && (
+                  <p className="text-sm text-secondary mt-2">
+                    Creating profile for: <span className="text-primary">{userProfile.display_name || userProfile.name}</span> 
+                    ({userProfile.gender || 'Gender not specified'})
+                  </p>
+                )}
+                {(!user || !userProfile) && (
+                  <p className="text-sm text-negative mt-2">
+                    Sign in to create profiles linked to your account
+                  </p>
+                )}
+              </div>
+            </div>
+            
+            {/* 10 inputs in 2×5 grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+              <div>
+                <label className="block text-sm font-medium text-muted mb-2">Weight (lbs)</label>
+                <input
+                  type="number"
+                  value={inputForm.weight_lb}
+                  onChange={(e) => setInputForm({...inputForm, weight_lb: e.target.value})}
+                  className="neon-input w-full"
+                  placeholder="163"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted mb-2">VO₂ Max</label>
+                <input
+                  type="number"
+                  value={inputForm.vo2_max}
+                  onChange={(e) => setInputForm({...inputForm, vo2_max: e.target.value})}
+                  className="neon-input w-full"
+                  placeholder="54"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted mb-2">RHR (bpm)</label>
+                <input
+                  type="number"
+                  value={inputForm.resting_hr}
+                  onChange={(e) => setInputForm({...inputForm, resting_hr: e.target.value})}
+                  className="neon-input w-full"
+                  placeholder="42"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted mb-2">HRV (ms)</label>
+                <input
+                  type="number"
+                  value={inputForm.hrv}
+                  onChange={(e) => setInputForm({...inputForm, hrv: e.target.value})}
+                  className="neon-input w-full"
+                  placeholder="64"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted mb-2">Mile PR</label>
+                <input
+                  type="text"
+                  value={inputForm.pb_mile}
+                  onChange={(e) => setInputForm({...inputForm, pb_mile: e.target.value})}
+                  className="neon-input w-full"
+                  placeholder="7:43"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted mb-2">Weekly Miles</label>
+                <input
+                  type="number"
+                  value={inputForm.weekly_miles}
+                  onChange={(e) => setInputForm({...inputForm, weekly_miles: e.target.value})}
+                  className="neon-input w-full"
+                  placeholder="15"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted mb-2">Long Run (mi)</label>
+                <input
+                  type="number"
+                  value={inputForm.long_run}
+                  onChange={(e) => setInputForm({...inputForm, long_run: e.target.value})}
+                  className="neon-input w-full"
+                  placeholder="7"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted mb-2">Bench 1RM</label>
+                <input
+                  type="text"
+                  value={inputForm.pb_bench_1rm}
+                  onChange={(e) => setInputForm({...inputForm, pb_bench_1rm: e.target.value})}
+                  className="neon-input w-full"
+                  placeholder="225 lbs"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted mb-2">Squat 1RM</label>
+                <input
+                  type="text"
+                  value={inputForm.pb_squat_1rm}
+                  onChange={(e) => setInputForm({...inputForm, pb_squat_1rm: e.target.value})}
+                  className="neon-input w-full"
+                  placeholder="315 lbs"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted mb-2">Deadlift 1RM</label>
+                <input
+                  type="text"
+                  value={inputForm.pb_deadlift_1rm}
+                  onChange={(e) => setInputForm({...inputForm, pb_deadlift_1rm: e.target.value})}
+                  className="neon-input w-full"
+                  placeholder="405 lbs"
+                />
+              </div>
+            </div>
+
+            {/* Full-width gradient button - preserving exact onClick */}
+            <button 
+              onClick={generateNewProfile} 
+              disabled={isGenerating || isCalculatingScore} 
+              className="neon-button w-full py-4 text-lg font-semibold flex items-center justify-center"
+            >
+              {isGenerating ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
+                  Creating Profile...
+                </>
+              ) : isCalculatingScore ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
+                  Calculating Score...
+                </>
+              ) : (
+                <>
+                  <Target className="w-5 h-5 mr-3" />
+                  Generate Hybrid Score
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* B. Hybrid Score Trend - Line Chart */}
+          <div className="glass-card p-8">
+            <h3 className="text-2xl font-bold text-primary mb-6 flex items-center">
+              <TrendingUp className="w-6 h-6 mr-3" />
+              Hybrid Score Trend
+            </h3>
+            
+            <div className="relative h-64 mb-4">
+              {profiles.length > 1 ? (
+                <div className="w-full h-full relative">
+                  <svg className="w-full h-full" aria-label="Hybrid score trend">
+                    <defs>
+                      <linearGradient id="trendGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#8B5CF6" />
+                        <stop offset="100%" stopColor="#D64EF9" />
+                      </linearGradient>
+                    </defs>
+                    
+                    {/* Grid lines */}
+                    <g stroke="rgba(255,255,255,0.1)" strokeWidth="1">
+                      {[0, 25, 50, 75, 100].map(y => (
+                        <line key={y} x1="0" y1={`${y}%`} x2="100%" y2={`${y}%`} />
+                      ))}
+                      {[0, 25, 50, 75, 100].map(x => (
+                        <line key={x} x1={`${x}%`} y1="0" x2={`${x}%`} y2="100%" />
+                      ))}
+                    </g>
+                    
+                    {/* Trend line */}
+                    <polyline
+                      fill="none"
+                      stroke="url(#trendGradient)"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      points={profiles.slice(-10).map((profile, index, arr) => {
+                        const x = (index / (arr.length - 1)) * 100;
+                        const score = profile?.score_data?.hybridScore || 0;
+                        const y = 100 - (score * 10); // Scale 0-10 to 0-100%
+                        return `${x},${y}`;
+                      }).join(' ')}
+                    />
+                    
+                    {/* Data points */}
+                    {profiles.slice(-10).map((profile, index, arr) => {
+                      const x = (index / (arr.length - 1)) * 100;
+                      const score = profile?.score_data?.hybridScore || 0;
+                      const y = 100 - (score * 10);
+                      return (
+                        <circle
+                          key={profile.id}
+                          cx={`${x}%`}
+                          cy={`${y}%`}
+                          r="4"
+                          fill="url(#trendGradient)"
+                          className="hover:r-6 transition-all cursor-pointer"
+                          title={`${new Date(profile.created_at).toLocaleDateString()}: ${score?.toFixed(1)}`}
+                        />
+                      );
+                    })}
+                  </svg>
+                  
+                  {/* Y-axis labels */}
+                  <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-muted -ml-8">
+                    <span>10.0</span>
+                    <span>7.5</span>
+                    <span>5.0</span>
+                    <span>2.5</span>
+                    <span>0.0</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <TrendingUp className="w-12 h-12 text-muted mx-auto mb-4" />
+                    <p className="text-secondary">Need at least 2 scores to show trend</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* C. Score Archive - Table Format */}
+          <div className="glass-card p-8">
+            <h3 className="text-2xl font-bold text-primary mb-6 flex items-center">
+              📜 Score Archive
+            </h3>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                {/* Sticky header with accent gradient bottom border */}
+                <thead className="sticky top-0 bg-black/50 backdrop-blur-sm">
+                  <tr>
+                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                      Date
+                    </th>
+                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                      Hybrid Score
+                    </th>
+                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                      Mile PR
+                    </th>
+                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                      Weekly Miles
+                    </th>
+                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                      Bench 1RM
+                    </th>
+                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                      Squat 1RM
+                    </th>
+                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                      Deadlift 1RM
+                    </th>
+                    <th className="text-left p-4 text-sm font-semibold text-secondary border-b-2 border-gradient-to-r from-blue-500 to-purple-500">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                
+                {/* Table body with keyboard navigation */}
+                <tbody>
+                  {profiles.length === 0 ? (
+                    <tr>
+                      <td colSpan="8" className="text-center py-12">
+                        <div className="text-muted">
+                          <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                          <p>No scores yet. Generate your first one above!</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    profiles.map((profile, index) => (
+                      <tr 
+                        key={profile.id} 
+                        className="hover:bg-white/5 transition-colors border-b border-white/5"
+                        tabIndex={0}
+                        role="row"
+                      >
+                        <td className="p-4 text-sm text-primary">
+                          {new Date(profile.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="p-4 text-sm">
+                          <span className="accent-gradient-text font-semibold">
+                            {profile?.score_data?.hybridScore?.toFixed(1) || 'Pending'}
+                          </span>
+                        </td>
+                        <td className="p-4 text-sm text-secondary">
+                          {profile.pb_mile_seconds ? 
+                            `${Math.floor(profile.pb_mile_seconds / 60)}:${String(profile.pb_mile_seconds % 60).padStart(2, '0')}` : 
+                            profile.profile_json?.pb_mile || 'N/A'
+                          }
+                        </td>
+                        <td className="p-4 text-sm text-secondary">
+                          {profile.weekly_miles || profile.profile_json?.weekly_miles || 'N/A'}
+                        </td>
+                        <td className="p-4 text-sm text-secondary">
+                          {profile.pb_bench_1rm_lb || profile.profile_json?.pb_bench_1rm || 'N/A'}
+                        </td>
+                        <td className="p-4 text-sm text-secondary">
+                          {profile.pb_squat_1rm_lb || profile.profile_json?.pb_squat_1rm || 'N/A'}
+                        </td>
+                        <td className="p-4 text-sm text-secondary">
+                          {profile.pb_deadlift_1rm_lb || profile.profile_json?.pb_deadlift_1rm || 'N/A'}
+                        </td>
+                        <td className="p-4">
+                          <button 
+                            onClick={() => navigate(`/hybrid-score/${profile.id}`)}
+                            className="px-3 py-1 text-xs bg-white/10 hover:bg-white/20 rounded-lg border border-white/20 hover:border-white/40 text-secondary hover:text-primary transition-all"
+                            aria-label={`View score details for ${new Date(profile.created_at).toLocaleDateString()}`}
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+            
+            {profiles.length > 0 && (
+              <div className="mt-4 text-xs text-muted text-center">
+                {profiles.length} {profiles.length === 1 ? 'score' : 'scores'} • 
+                Use arrow keys to navigate table rows
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile FAB (Hidden on desktop) */}
+        <button className="mobile-fab items-center justify-center">
+          <Plus className="w-6 h-6 text-white" />
+        </button>
+
       </div>
     </div>
   );
