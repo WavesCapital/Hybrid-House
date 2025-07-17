@@ -931,19 +931,13 @@ const ProfilePage = () => {
           color: rgba(255, 255, 255, 0.4);
         }
         
-        /* Score Progress Bar */
-        .score-progress-bar {
-          background: linear-gradient(90deg, #1B6DFF 0%, #D64EF9 100%);
-          border-radius: 9999px;
-          height: 16px;
-          transition: width 1s ease-out;
+        /* Circular Progress Styles */
+        .circular-progress {
+          transition: stroke-dasharray 0.6s ease-out;
         }
         
-        .score-progress-track {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 9999px;
-          height: 16px;
-          overflow: hidden;
+        .main-circular-progress {
+          transition: stroke-dasharray 1s ease-out;
         }
         
         /* Mini KPI Cards */
