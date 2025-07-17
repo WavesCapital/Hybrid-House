@@ -43,13 +43,20 @@ const ProfilePage = () => {
   const [profiles, setProfiles] = useState([]);
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
+  // Form state for new profile generation (updated structure)
   const [inputForm, setInputForm] = useState({
-    first_name: '',
-    sex: '',
-    body_metrics: '',
+    // Body Metrics (individual fields)
+    weight_lb: '',
+    vo2_max: '',
+    resting_hr: '',
+    hrv: '',
+    
+    // Running Performance
     pb_mile: '',
     weekly_miles: '',
     long_run: '',
+    
+    // Strength Performance
     pb_bench_1rm: '',
     pb_squat_1rm: '',
     pb_deadlift_1rm: ''
