@@ -21,6 +21,7 @@ const ProfilePage = () => {
   
   // User Profile Management States
   const [userProfile, setUserProfile] = useState(null);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
   // Profile editing states - individual field management
   const [editingFields, setEditingFields] = useState({});
   const [savingFields, setSavingFields] = useState({});
