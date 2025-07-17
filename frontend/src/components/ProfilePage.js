@@ -977,48 +977,59 @@ const ProfilePage = () => {
               </h2>
               
               <div className="space-y-4">
-                {/* Basic Information */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium neo-text-secondary mb-2">
-                      First Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={inputForm.first_name}
-                      onChange={(e) => setInputForm({...inputForm, first_name: e.target.value})}
-                      className="neo-input w-full"
-                      placeholder="Enter your first name"
-                    />
+                {/* Body Metrics - Individual Fields */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold neo-text-primary">Body Metrics</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium neo-text-secondary mb-2">
+                        Weight (lbs)
+                      </label>
+                      <input
+                        type="number"
+                        value={inputForm.weight_lb}
+                        onChange={(e) => setInputForm({...inputForm, weight_lb: e.target.value})}
+                        className="neo-input w-full"
+                        placeholder="e.g., 163"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium neo-text-secondary mb-2">
+                        VO2 Max
+                      </label>
+                      <input
+                        type="number"
+                        value={inputForm.vo2_max}
+                        onChange={(e) => setInputForm({...inputForm, vo2_max: e.target.value})}
+                        className="neo-input w-full"
+                        placeholder="e.g., 54"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium neo-text-secondary mb-2">
+                        Resting HR (bpm)
+                      </label>
+                      <input
+                        type="number"
+                        value={inputForm.resting_hr}
+                        onChange={(e) => setInputForm({...inputForm, resting_hr: e.target.value})}
+                        className="neo-input w-full"
+                        placeholder="e.g., 42"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium neo-text-secondary mb-2">
+                        HRV (ms)
+                      </label>
+                      <input
+                        type="number"
+                        value={inputForm.hrv}
+                        onChange={(e) => setInputForm({...inputForm, hrv: e.target.value})}
+                        className="neo-input w-full"
+                        placeholder="e.g., 64"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium neo-text-secondary mb-2">
-                      Sex
-                    </label>
-                    <select
-                      value={inputForm.sex}
-                      onChange={(e) => setInputForm({...inputForm, sex: e.target.value})}
-                      className="neo-input w-full"
-                    >
-                      <option value="">Select...</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Body Metrics */}
-                <div>
-                  <label className="block text-sm font-medium neo-text-secondary mb-2">
-                    Body Metrics
-                  </label>
-                  <input
-                    type="text"
-                    value={inputForm.body_metrics}
-                    onChange={(e) => setInputForm({...inputForm, body_metrics: e.target.value})}
-                    className="neo-input w-full"
-                    placeholder="e.g., 163 lbs, VO2 max 54, resting HR 42, HRV 64"
-                  />
                 </div>
 
                 {/* Running Performance */}
