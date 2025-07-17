@@ -1626,10 +1626,10 @@ const ProfilePage = () => {
                       </linearGradient>
                     </defs>
                     
-                    {/* Grid lines */}
+                    {/* Grid lines (0-100 in 10-pt steps) */}
                     <g stroke="rgba(255,255,255,0.1)" strokeWidth="1">
-                      {[0, 25, 50, 75, 100].map(y => (
-                        <line key={y} x1="0" y1={`${y}%`} x2="100%" y2={`${y}%`} />
+                      {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(y => (
+                        <line key={y} x1="0" y1={`${100 - y}%`} x2="100%" y2={`${100 - y}%`} />
                       ))}
                       {[0, 25, 50, 75, 100].map(x => (
                         <line key={x} x1={`${x}%`} y1="0" x2={`${x}%`} y2="100%" />
@@ -1644,39 +1644,45 @@ const ProfilePage = () => {
                       strokeLinecap="round"
                       className="trend-line"
                       points={profiles.slice(-10).map((profile, index, arr) => {
-                        const x = (index / (arr.length - 1)) * 100;
-                        const score = profile?.score_data?.hybridScore || 0;
-                        const y = 100 - (score * 10); // Scale 0-10 to 0-100%
+                        const x = (index / Math.max(arr.length - 1, 1)) * 100;
+                        const hybridScore = profile?.score_data?.hybridScore || 0;
+                        const roundedScore = Math.round(hybridScore);
+                        const y = 100 - roundedScore; // Scale 0-100 to 0-100%
                         return `${x},${y}`;
                       }).join(' ')}
                     />
                     
-                    {/* Data points */}
+                    {/* Data points (6px glowing dots) */}
                     {profiles.slice(-10).map((profile, index, arr) => {
-                      const x = (index / (arr.length - 1)) * 100;
-                      const score = profile?.score_data?.hybridScore || 0;
-                      const y = 100 - (score * 10);
+                      const x = (index / Math.max(arr.length - 1, 1)) * 100;
+                      const hybridScore = profile?.score_data?.hybridScore || 0;
+                      const roundedScore = Math.round(hybridScore);
+                      const y = 100 - roundedScore;
+                      const date = new Date(profile.created_at).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric', 
+                        year: 'numeric' 
+                      });
                       return (
                         <circle
                           key={profile.id}
                           cx={`${x}%`}
                           cy={`${y}%`}
-                          r="4"
-                          fill="url(#trendGradient)"
-                          className="hover:r-6 transition-all cursor-pointer"
-                          title={`${new Date(profile.created_at).toLocaleDateString()}: ${score?.toFixed(1)}`}
+                          className="chart-point"
+                          title={`${date} • ${roundedScore}`}
                         />
                       );
                     })}
                   </svg>
                   
-                  {/* Y-axis labels */}
+                  {/* Y-axis labels (0-100) */}
                   <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-muted -ml-8">
-                    <span>10.0</span>
-                    <span>7.5</span>
-                    <span>5.0</span>
-                    <span>2.5</span>
-                    <span>0.0</span>
+                    <span>100</span>
+                    <span>80</span>
+                    <span>60</span>
+                    <span>40</span>
+                    <span>20</span>
+                    <span>0</span>
                   </div>
                 </div>
               ) : (
