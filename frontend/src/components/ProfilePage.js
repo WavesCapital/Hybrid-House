@@ -79,32 +79,74 @@ const ProfilePage = () => {
         
         // Populate form with most recent profile data
         if (profilesData.length > 0) {
-          const mostRecent = profilesData[0];
+          console.log('🔄 Pre-populating form with most recent profile data...');
           
-          // Helper function to get field value from either individual column or JSON
+          // Find the profile with the most complete data
+          let bestProfile = profilesData[0]; // Start with most recent
+          
+          // Look for a profile with more complete data
+          for (const profile of profilesData) {
+            const hasPerformanceData = profile.profile_json && (
+              profile.profile_json.pb_mile ||
+              profile.profile_json.weekly_miles ||
+              profile.profile_json.pb_bench_1rm ||
+              profile.profile_json.pb_squat_1rm ||
+              profile.profile_json.pb_deadlift_1rm
+            );
+            
+            if (hasPerformanceData) {
+              bestProfile = profile;
+              console.log(`📊 Using profile ${profile.id.substring(0, 8)}... for pre-population (has performance data)`);
+              break;
+            }
+          }
+          
+          console.log(`📋 Selected profile: ${bestProfile.id.substring(0, 8)}...`);
+          console.log('📊 Profile data:', bestProfile);
+          
+          // Helper function to get field value from multiple sources
           const getFieldValue = (fieldName, jsonPath) => {
-            if (mostRecent[fieldName] !== undefined && mostRecent[fieldName] !== null) {
-              return mostRecent[fieldName];
+            // Check individual database columns first
+            if (bestProfile[fieldName] !== undefined && bestProfile[fieldName] !== null && bestProfile[fieldName] !== '') {
+              return bestProfile[fieldName].toString();
             }
-            if (mostRecent.profile_json && mostRecent.profile_json[jsonPath || fieldName]) {
-              return mostRecent.profile_json[jsonPath || fieldName];
+            
+            // Check profile_json
+            if (bestProfile.profile_json) {
+              const jsonField = bestProfile.profile_json[jsonPath || fieldName];
+              if (jsonField !== undefined && jsonField !== null && jsonField !== '') {
+                return jsonField.toString();
+              }
             }
+            
             return '';
           };
           
-          // Extract individual body metrics
-          const bodyMetrics = mostRecent.body_metrics || mostRecent.profile_json?.body_metrics || {};
+          // Extract body metrics from various sources
+          let bodyMetrics = {};
           
-          // Helper function to convert object to string
-          const convertToString = (value) => {
-            if (!value) return '';
-            if (typeof value === 'object') {
-              return JSON.stringify(value);
+          // Check individual columns
+          if (bestProfile.weight_lb) bodyMetrics.weight_lb = bestProfile.weight_lb;
+          if (bestProfile.vo2_max) bodyMetrics.vo2_max = bestProfile.vo2_max;
+          if (bestProfile.resting_hr) bodyMetrics.resting_hr = bestProfile.resting_hr;
+          if (bestProfile.hrv) bodyMetrics.hrv = bestProfile.hrv;
+          
+          // Check profile_json body_metrics
+          if (bestProfile.profile_json?.body_metrics) {
+            const jsonBodyMetrics = bestProfile.profile_json.body_metrics;
+            if (typeof jsonBodyMetrics === 'object') {
+              bodyMetrics = { ...bodyMetrics, ...jsonBodyMetrics };
             }
-            return value.toString();
-          };
+          }
           
-          // Helper function to extract weight from object or string
+          // Check individual weight_lb field in profile_json
+          if (bestProfile.profile_json?.weight_lb) {
+            bodyMetrics.weight_lb = bestProfile.profile_json.weight_lb;
+          }
+          
+          console.log('📊 Extracted body metrics:', bodyMetrics);
+          
+          // Helper function to extract weight from complex objects
           const extractWeight = (value) => {
             if (!value) return '';
             if (typeof value === 'object') {
@@ -113,7 +155,8 @@ const ProfilePage = () => {
             return value.toString();
           };
           
-          setInputForm({
+          // Build the form data
+          const formData = {
             // Body Metrics (individual fields)
             weight_lb: bodyMetrics.weight_lb || bodyMetrics.weight || '',
             vo2_max: bodyMetrics.vo2_max || bodyMetrics.vo2max || '',
@@ -123,15 +166,20 @@ const ProfilePage = () => {
             // Running Performance
             pb_mile: getFieldValue('pb_mile_seconds') ? 
               `${Math.floor(getFieldValue('pb_mile_seconds') / 60)}:${String(getFieldValue('pb_mile_seconds') % 60).padStart(2, '0')}` : 
-              convertToString(getFieldValue('pb_mile')),
-            weekly_miles: convertToString(getFieldValue('weekly_miles')),
-            long_run: convertToString(getFieldValue('long_run_miles') || getFieldValue('long_run')),
+              getFieldValue('pb_mile'),
+            weekly_miles: getFieldValue('weekly_miles'),
+            long_run: getFieldValue('long_run_miles') || getFieldValue('long_run'),
             
             // Strength Performance
             pb_bench_1rm: extractWeight(getFieldValue('pb_bench_1rm_lb') || getFieldValue('pb_bench_1rm')),
             pb_squat_1rm: extractWeight(getFieldValue('pb_squat_1rm_lb') || getFieldValue('pb_squat_1rm')),
             pb_deadlift_1rm: extractWeight(getFieldValue('pb_deadlift_1rm_lb') || getFieldValue('pb_deadlift_1rm'))
-          });
+          };
+          
+          console.log('📝 Pre-populated form data:', formData);
+          setInputForm(formData);
+        } else {
+          console.log('❌ No profiles available for pre-population');
         }
         
       } catch (error) {
