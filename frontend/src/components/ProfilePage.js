@@ -1428,7 +1428,7 @@ const ProfilePage = () => {
 
               {/* Sub-Score Grid (2 rows × 3 cols) */}
               {profiles.length > 0 && profiles[0]?.score_data && (
-                <div className="grid grid-cols-3 gap-4 mt-8">
+                <div className="grid grid-cols-3 gap-6 mt-8">
                   {[
                     { label: 'Strength', key: 'strengthScore' },
                     { label: 'Speed', key: 'speedScore' },
@@ -1441,19 +1441,46 @@ const ProfilePage = () => {
                     const roundedValue = Math.round(value);
                     return (
                       <div key={item.key} className="text-center">
-                        <div 
-                          className="text-sm font-semibold text-primary mb-1"
-                          title={`${item.label} score out of 100`}
-                        >
-                          {roundedValue}
+                        {/* Circular Progress for Sub-Score */}
+                        <div className="relative inline-block mb-2">
+                          <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
+                            <defs>
+                              <linearGradient id={`subScoreGradient${index}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#1B6DFF" />
+                                <stop offset="100%" stopColor="#D64EF9" />
+                              </linearGradient>
+                            </defs>
+                            {/* Track */}
+                            <circle
+                              cx="32"
+                              cy="32"
+                              r="28"
+                              stroke="rgba(255, 255, 255, 0.1)"
+                              strokeWidth="4"
+                              fill="none"
+                            />
+                            {/* Progress */}
+                            <circle
+                              cx="32"
+                              cy="32"
+                              r="28"
+                              stroke={`url(#subScoreGradient${index})`}
+                              strokeWidth="4"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeDasharray={`${(roundedValue / 100) * 175.93} 175.93`}
+                              style={{ transition: 'stroke-dasharray 0.6s ease-out' }}
+                            />
+                          </svg>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-sm font-semibold text-primary"
+                              title={`${item.label} score out of 100`}
+                            >
+                              {roundedValue}
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-xs text-muted mb-1">{item.label}</div>
-                        <div className="sub-score-progress mb-1">
-                          <div 
-                            className="sub-score-progress-bar"
-                            style={{ width: `${roundedValue}%` }}
-                          ></div>
-                        </div>
+                        <div className="text-xs text-muted">{item.label}</div>
                       </div>
                     );
                   })}
