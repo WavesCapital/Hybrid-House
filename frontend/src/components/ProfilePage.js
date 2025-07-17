@@ -756,20 +756,7 @@ const ProfilePage = () => {
             inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
         
-        /* Sub-score Progress Bars */
-        .sub-score-progress {
-          height: 3px;
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 2px;
-          overflow: hidden;
-        }
-        
-        .sub-score-progress-bar {
-          height: 100%;
-          background: linear-gradient(90deg, #1B6DFF 0%, #D64EF9 100%);
-          transition: width 0.6s ease-out;
-          border-radius: 2px;
-        }
+
         
         /* Data Points */
         .chart-point {
