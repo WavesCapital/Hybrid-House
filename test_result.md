@@ -102,7 +102,88 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Fix the 'Save Changes' button on the Profile Page: The current issue is that changes are not persisting despite backend upsert functionality, indicating a frontend issue related to authentication context or API call triggers. The user reported that auth users need to be linked with the user_profiles table and athlete profiles need to be linked when users create profiles. Kyle's profile (KyleSteinmeyer7@gmail.com, user_id: 6f14acc7-b2b2-494d-8a38-7e868337a25f) should be manually created."
+user_problem_statement: "Implementing Iteration 6 of the Hybrid House Profile Page - Bug-Fix & Polish phase. Key requirements: Fix sub-score grid to exact 2x3 layout with rounded values, improve trend chart to skip null scores, add missing columns to score archive table, handle pending rows with grey 'Pending' pills, improve visual spacing and accessibility."
+
+backend:
+  - task: "Profile Page Data Endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ ITERATION 6 BACKEND PREP: All existing athlete profile endpoints are working correctly. GET /api/athlete-profiles returns profile data, GET /api/athlete-profile/{id} returns individual profiles, POST /api/athlete-profile/{id}/score handles score updates. Backend is ready to support the Iteration 6 frontend improvements."
+
+frontend:
+  - task: "Latest Hybrid Score Card - Sub-Score Grid Fix"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ProfilePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ SUB-SCORE GRID FIXED: Updated sub-score grid to exact 2 rows × 3 columns layout (Strength | Speed | VO₂ Max / Distance | Volume | Recovery). Added Math.round() to all values for whole numbers. Progress bars now fill 100% width with 4px gap between bar and label. Improved spacing from mt-3 to mt-8 for better visual hierarchy."
+
+  - task: "Hybrid Score Trend Chart - Null Score Filtering"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ProfilePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ TREND CHART IMPROVED: Implemented filtering to plot only profiles with hybridScore ≠ null, skipping 'Pending' entries. Updated chart to break lines when dates are skipped. Changed dots to 6px with neon-violet effect, line to 2px width. Improved tooltip format to 'Jul 17 2025 • 76' style. Chart now shows proper trends without dropping to zero for pending entries."
+
+  - task: "Score Archive Table - Missing Columns & Pending Rows"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ProfilePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ SCORE ARCHIVE TABLE ENHANCED: Added comprehensive scoring columns (Strength, Speed, VO₂, Distance, Volume, Recovery) with proper right-alignment and tabular-nums font. Implemented grey 'Pending' pill for null hybridScore values. Fixed column ordering to match header. Added proper em-dash (—) rendering for null/0 values. Updated Eye icon for action buttons. Improved sticky header with gradient styling."
+
+  - task: "Visual Tweaks & Accessibility"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ProfilePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ VISUAL POLISH COMPLETE: Added 32px top padding to dial card for better sub-score grid spacing. Reduced major section spacing to 48px desktop/24px mobile. Added font-variant-numeric: tabular-nums for consistent number alignment. Improved progress bar styling with 100% width fill. Enhanced accessibility with proper aria-labels on dial component. Updated CSS for better keyboard navigation focus states."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.3"
+  test_sequence: 4
+
+test_plan:
+  current_focus:
+    - "Iteration 6 Implementation Complete"
+    - "Sub-Score Grid Visual Fix"
+    - "Trend Chart Null Filtering"
+    - "Score Archive Table Enhancement"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "✅ ITERATION 6 IMPLEMENTATION COMPLETE: Successfully implemented all requirements from the Iteration 6 specification. Fixed sub-score grid layout (2x3 exact layout with rounded values), improved trend chart to filter null scores, enhanced score archive table with missing columns and pending row handling, updated visual spacing and accessibility. All working IDs, event hooks, and data sources remain unchanged as requested. Ready for backend testing to verify data flow."
 
 backend:
   - task: "User Profile Upsert Functionality - Save Profile Button Fix"
