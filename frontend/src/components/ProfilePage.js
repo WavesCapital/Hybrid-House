@@ -368,6 +368,55 @@ const ProfilePage = () => {
     }
   }, [cancelEditing]);
 
+  // Legacy profile form update function (for the edit profile form)
+  const handleUpdateProfile = useCallback(async () => {
+    if (!user || !session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to save your profile changes",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoadingProfiles(true);
+      
+      const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, profileForm, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      setUserProfile(response.data.profile);
+      setIsEditingProfile(false);
+      toast({
+        title: "Success",
+        description: response.data.message || "Profile updated successfully",
+        variant: "default",
+      });
+      
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      
+      let errorMessage = "Failed to update profile";
+      if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.response?.status === 401) {
+        errorMessage = "Authentication required. Please sign in again.";
+      }
+      
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingProfiles(false);
+    }
+  }, [profileForm, user, session, BACKEND_URL, toast]);
+
   const handleAvatarChange = useCallback((e) => {
     const file = e.target.files[0];
     if (file) {
