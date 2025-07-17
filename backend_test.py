@@ -5168,209 +5168,64 @@ class BackendTester:
             return False
 
     def run_all_tests(self):
-        """Run all backend tests with focus on enhanced ProfilePage system"""
+        """Run all backend tests focused on Supabase database connection and Profile Page functionality"""
         print("=" * 80)
-        print("🚀 TESTING ENHANCED PROFILEPAGE SYSTEM WITH USER PROFILE MANAGEMENT")
+        print("🚀 TESTING SUPABASE DATABASE CONNECTION AND PROFILE PAGE DATA FUNCTIONALITY")
         print("=" * 80)
         
-        # Core connectivity tests
-        self.test_api_root()
-        self.test_unprotected_endpoints()
-        self.test_supabase_connection()
-        self.test_jwt_secret_configuration()
+        # Core Supabase and Profile Page tests as requested in review
+        tests = [
+            # 1. Database Connection Test
+            self.test_supabase_database_connection,
+            
+            # 2. Profile Data Retrieval
+            self.test_profile_data_retrieval,
+            
+            # 3. Individual Profile Access
+            self.test_individual_profile_access,
+            
+            # 4. Data Structure Validation
+            self.test_data_structure_validation,
+            
+            # 5. Score Data Availability
+            self.test_score_data_availability,
+            
+            # 6. Database Write Operations
+            self.test_database_write_operations_post_profiles,
+            self.test_database_write_operations_post_score,
+            
+            # Additional supporting tests
+            self.test_api_root,
+            self.test_supabase_connection,
+            self.test_jwt_secret_configuration
+        ]
         
-        # Authentication tests
-        self.test_protected_endpoints_without_token()
-        self.test_protected_endpoints_with_invalid_token()
+        passed = 0
+        failed = 0
         
-        # ===== USER PROFILE UPSERT FUNCTIONALITY TESTS (PRIMARY FOCUS) =====
-        print("\n" + "=" * 60)
-        print("🔧 USER PROFILE UPSERT FUNCTIONALITY TESTS")
-        print("=" * 60)
+        for test in tests:
+            try:
+                if test():
+                    passed += 1
+                else:
+                    failed += 1
+            except Exception as e:
+                print(f"❌ FAIL: {test.__name__} - Exception: {str(e)}")
+                failed += 1
         
-        self.test_user_profile_upsert_endpoint_exists()
-        self.test_user_profile_upsert_authentication_enforcement()
-        self.test_user_profile_upsert_functionality_no_existing_profile()
-        self.test_user_profile_upsert_functionality_existing_profile()
-        self.test_user_profile_upsert_error_handling()
-        self.test_user_profile_upsert_response_format()
-        self.test_user_profile_upsert_comprehensive_functionality()
-        
-        # ===== REVIEW REQUEST: USER PROFILE SYSTEM TESTS =====
-        print("\n" + "=" * 60)
-        print("📋 REVIEW REQUEST: USER PROFILE SYSTEM TESTS")
-        print("=" * 60)
-        
-        self.test_user_profile_upsert_put_endpoint()
-        self.test_user_profile_auto_creation_get_endpoint()
-        self.test_user_profile_updates_functionality()
-        self.test_user_profile_authentication_requirements()
-        self.test_kyle_user_profile_verification()
-        self.test_athlete_profile_linking_to_users()
-        
-        # ===== ENHANCED PROFILEPAGE SYSTEM TESTS =====
-        print("\n" + "=" * 60)
-        print("🎯 ENHANCED PROFILEPAGE SYSTEM TESTS")
-        print("=" * 60)
-        
-        self.test_enhanced_profile_page_user_profile_get()
-        self.test_enhanced_profile_page_user_profile_update()
-        self.test_enhanced_profile_page_avatar_upload()
-        self.test_enhanced_profile_page_athlete_profiles_list()
-        self.test_enhanced_profile_page_athlete_profile_linking()
-        self.test_enhanced_athlete_profile_creation_with_auto_linking()
-        self.test_public_athlete_profile_creation_endpoint()
-        self.test_enhanced_profile_page_database_schema()
-        self.test_enhanced_profile_page_athlete_profile_relationships()
-        self.test_enhanced_profile_page_individual_columns_optimization()
-        self.test_enhanced_profile_page_comprehensive_system()
-        
-        # ===== EXISTING USER PROFILE MANAGEMENT SYSTEM TESTS =====
-        print("\n" + "=" * 60)
-        print("🔐 EXISTING USER PROFILE MANAGEMENT SYSTEM TESTS")
-        print("=" * 60)
-        
-        self.test_user_profile_get_endpoint()
-        self.test_user_profile_update_endpoint()
-        self.test_user_profile_avatar_upload_endpoint()
-        self.test_user_profile_athlete_profiles_endpoint()
-        self.test_user_profile_link_athlete_profile_endpoint()
-        self.test_enhanced_athlete_profile_creation_with_jwt()
-        self.test_public_athlete_profile_creation()
-        self.test_user_profile_auto_creation()
-        self.test_athlete_profile_auto_linking()
-        self.test_user_profile_system_error_handling()
-        self.test_user_profile_database_relationships()
-        
-        # ===== OPTIMIZED DATABASE STRUCTURE TESTS =====
-        print("\n" + "=" * 60)
-        print("🗄️ OPTIMIZED DATABASE STRUCTURE TESTS")
-        print("=" * 60)
-        
-        self.test_extract_individual_fields_function()
-        self.test_post_athlete_profiles_endpoint_fixed()
-        self.test_get_athlete_profiles_with_individual_fields()
-        self.test_hybrid_interview_completion_with_individual_fields()
-        self.test_score_updates_with_disabled_columns()
-        self.test_optimized_database_structure_comprehensive()
-        
-        # ===== ATHLETE PROFILE CREATION AND WEBHOOK INTEGRATION TESTS =====
-        print("\n" + "=" * 60)
-        print("🎯 ATHLETE PROFILE CREATION AND WEBHOOK INTEGRATION TESTS")
-        print("=" * 60)
-        
-        self.test_athlete_profile_creation_authenticated()
-        self.test_athlete_profile_creation_public()
-        self.test_athlete_profile_data_structure()
-        self.test_athlete_profile_get_endpoint()
-        self.test_athlete_profile_score_endpoint()
-        self.test_athlete_profiles_list_endpoint()
-        self.test_hybrid_interview_completion_flow()
-        self.test_webhook_integration_data_format()
-        self.test_complete_generate_hybrid_score_workflow()
-        
-        # System configuration tests
-        self.test_cors_configuration()
-        self.test_openai_responses_api_integration()
-        self.test_gpt41_model_configuration()
-        
-        # Interview Flow tests
-        self.test_interview_flow_endpoints_without_auth()
-        self.test_authentication_session_management()
-        self.test_database_table_accessibility()
-        self.test_interview_flow_readiness()
-        
-        # Enhanced Interview Flow tests (55-question Kendall Toole system)
-        self.test_kendall_toole_55_question_system()
-        self.test_kendall_toole_personality_system()
-        self.test_new_section_structure()
-        self.test_conversational_tone_verification()
-        self.test_v44_np_ln_system_prompt()
-        self.test_primer_message_verification()
-        self.test_section_recaps_verification()
-        self.test_55_question_completion_logic()
-        self.test_streak_detection_system()
-        self.test_stateful_conversations_verification()
-        self.test_progress_tracking_system()
-        self.test_emergentintegrations_removal()
-        
-        # Hybrid Interview Flow tests (Essential Questions)
-        self.test_hybrid_interview_start_endpoint()
-        self.test_hybrid_interview_chat_endpoint()
-        self.test_essential_score_prompt_v10_configuration()
-        self.test_hybrid_athlete_voice_configuration()
-        self.test_hybrid_gamification_features()
-        self.test_hybrid_completion_trigger_v10()
-        self.test_hybrid_interview_database_operations()
-        self.test_openai_prompt_id_configuration()
-        self.test_prompt_id_vs_instructions_migration()
-        
-        # System health check
-        self.test_system_health_comprehensive()
-        
-        # Summary
         print("\n" + "=" * 80)
-        print("📊 ENHANCED PROFILEPAGE SYSTEM TEST SUMMARY")
+        print("📊 SUPABASE DATABASE & PROFILE PAGE TESTING SUMMARY")
         print("=" * 80)
+        print(f"✅ PASSED: {passed}")
+        print(f"❌ FAILED: {failed}")
+        print(f"📈 SUCCESS RATE: {(passed/(passed+failed)*100):.1f}%")
         
-        passed = sum(1 for result in self.test_results if result['success'])
-        total = len(self.test_results)
+        if failed == 0:
+            print("🎉 ALL TESTS PASSED! Supabase database connection and Profile Page data functionality is working correctly.")
+        else:
+            print(f"⚠️  {failed} test(s) failed. Review the issues above.")
         
-        print(f"Total Tests: {total}")
-        print(f"Passed: {passed}")
-        print(f"Failed: {total - passed}")
-        print(f"Success Rate: {(passed/total)*100:.1f}%")
-        
-        # Highlight enhanced ProfilePage system results
-        enhanced_profile_tests = [
-            "Enhanced ProfilePage - GET /user-profile/me",
-            "Enhanced ProfilePage - PUT /user-profile/me", 
-            "Enhanced ProfilePage - Avatar Upload",
-            "Enhanced ProfilePage - User Athlete Profiles List",
-            "Enhanced ProfilePage - Athlete Profile Linking",
-            "Enhanced Athlete Profile Creation with Auto-Linking",
-            "Public Athlete Profile Creation",
-            "Enhanced ProfilePage - Database Schema",
-            "Enhanced ProfilePage - Athlete Profile Relationships",
-            "Enhanced ProfilePage - Individual Columns Optimization",
-            "Enhanced ProfilePage - Comprehensive System"
-        ]
-        
-        enhanced_results = [r for r in self.test_results if r['test'] in enhanced_profile_tests]
-        enhanced_passed = sum(1 for r in enhanced_results if r['success'])
-        enhanced_total = len(enhanced_results)
-        
-        print(f"\n🎯 ENHANCED PROFILEPAGE SYSTEM RESULTS:")
-        print(f"Enhanced ProfilePage Tests: {enhanced_total}")
-        print(f"Enhanced ProfilePage Passed: {enhanced_passed}")
-        print(f"Enhanced ProfilePage Success Rate: {(enhanced_passed/enhanced_total)*100:.1f}%")
-        
-        # Highlight optimized database structure results
-        db_structure_tests = [
-            "Extract Individual Fields Function",
-            "POST /api/athlete-profiles Endpoint Fixed", 
-            "GET /api/athlete-profiles with Individual Fields",
-            "Hybrid Interview Completion with Individual Fields",
-            "Score Updates with Disabled Columns",
-            "Optimized Database Structure Comprehensive"
-        ]
-        
-        db_structure_results = [r for r in self.test_results if r['test'] in db_structure_tests]
-        db_passed = sum(1 for r in db_structure_results if r['success'])
-        db_total = len(db_structure_results)
-        
-        print(f"\n🗄️ OPTIMIZED DATABASE STRUCTURE RESULTS:")
-        print(f"Database Structure Tests: {db_total}")
-        print(f"Database Structure Passed: {db_passed}")
-        print(f"Database Structure Success Rate: {(db_passed/db_total)*100:.1f}%")
-        
-        if total - passed > 0:
-            print("\n❌ FAILED TESTS:")
-            for result in self.test_results:
-                if not result['success']:
-                    print(f"  • {result['test']}: {result['message']}")
-        
-        return passed == total
+        return passed, failed
 
 if __name__ == "__main__":
     tester = BackendTester()
