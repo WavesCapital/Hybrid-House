@@ -148,7 +148,8 @@ const ProfilePage = () => {
         console.log('User profile fetched:', response.data);
         const profile = response.data.profile;
         setUserProfile(profile);
-        setProfileForm({
+        // Initialize temp field values (no longer need profileForm)
+        setTempFieldValues({
           name: profile.name || '',
           display_name: profile.display_name || '',
           location: profile.location || '',
