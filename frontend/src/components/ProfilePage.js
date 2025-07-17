@@ -249,6 +249,9 @@ const ProfilePage = () => {
     fetchUserProfile();
   }, [user, session]);
 
+  // State for score calculation loading
+  const [isCalculatingScore, setIsCalculatingScore] = useState(false);
+
   // Generate new athlete profile
   const generateNewProfile = useCallback(async () => {
     // Check if user is authenticated for name and gender
@@ -325,42 +328,71 @@ const ProfilePage = () => {
         });
       }
 
-      // Call webhook for score computation
-      const webhookPayload = {
-        profile_data: profileJson,
-        deliverable: 'score'
-      };
+      // Set loading state for score calculation (like interview)
+      setIsCalculatingScore(true);
+      setIsGenerating(false); // Stop profile creation loading, start score calculation loading
 
-      console.log('Calling webhook with payload:', webhookPayload);
+      // Call webhook for score computation (same format as interview)
+      console.log('Calling webhook with athleteProfile payload...');
       
-      const webhookResponse = await axios.post(
+      // Set up abort controller for timeout (4 minutes like interview)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 240000);
+
+      const webhookResponse = await fetch(
         'https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c',
-        webhookPayload,
         {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          timeout: 150000 // 2.5 minutes
+          body: JSON.stringify({
+            athleteProfile: profileJson,  // FIXED: Use athleteProfile field like interview
+            deliverable: 'score'
+          }),
+          signal: controller.signal
         }
       );
 
-      console.log('Webhook response:', webhookResponse.data);
+      clearTimeout(timeoutId);
+
+      if (!webhookResponse.ok) {
+        throw new Error(`Webhook request failed with status: ${webhookResponse.status}`);
+      }
+
+      const webhookData = await webhookResponse.json();
+      console.log('Webhook response:', webhookData);
+
+      // Handle the response - it's an array with the score data (like interview)
+      const scoreData = Array.isArray(webhookData) ? webhookData[0] : webhookData;
 
       // Store score data
-      await axios.post(`${BACKEND_URL}/api/athlete-profile/${profileId}/score`, webhookResponse.data);
+      await axios.post(`${BACKEND_URL}/api/athlete-profile/${profileId}/score`, scoreData);
 
       // Navigate to the new score page
       navigate(`/hybrid-score/${profileId}`);
       
     } catch (error) {
       console.error('Error generating profile:', error);
+      
+      let errorMessage = "Failed to generate your athlete profile. Please try again.";
+      if (error.name === 'AbortError') {
+        errorMessage = "Score calculation timed out. Please try again.";
+      } else if (error.message.includes('Webhook')) {
+        errorMessage = "Score calculation failed. Please try again.";
+      }
+      
       toast({
         title: "Error generating profile",
-        description: "Failed to generate your athlete profile. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
-      setIsGenerating(false);
+      // Don't immediately set calculating to false - let the redirect happen first (like interview)
+      setTimeout(() => {
+        setIsCalculatingScore(false);
+        setIsGenerating(false);
+      }, 1000);
     }
   }, [inputForm, navigate, toast, user, session, userProfile]);
 
