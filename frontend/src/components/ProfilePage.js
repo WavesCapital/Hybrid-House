@@ -91,40 +91,36 @@ const ProfilePage = () => {
             return '';
           };
           
-          // Convert body_metrics object to string if it's an object
-          let bodyMetricsStr = '';
-          const bodyMetrics = mostRecent.body_metrics || mostRecent.profile_json?.body_metrics;
-          if (bodyMetrics) {
-            if (typeof bodyMetrics === 'object') {
-              bodyMetricsStr = Object.entries(bodyMetrics)
-                .map(([key, value]) => `${key}: ${value}`)
-                .join(', ');
-            } else {
-              bodyMetricsStr = bodyMetrics.toString();
-            }
-          }
+          // Extract individual body metrics
+          const bodyMetrics = mostRecent.body_metrics || mostRecent.profile_json?.body_metrics || {};
           
-          // Helper function to convert object to string
-          const convertToString = (value) => {
+          // Helper function to extract weight from object or string
+          const extractWeight = (value) => {
             if (!value) return '';
             if (typeof value === 'object') {
-              return JSON.stringify(value);
+              return value.weight_lb || value.weight || '';
             }
             return value.toString();
           };
           
           setInputForm({
-            first_name: getFieldValue('first_name'),
-            sex: getFieldValue('sex'), 
-            body_metrics: bodyMetricsStr,
-            pb_mile: convertToString(getFieldValue('pb_mile_seconds') ? 
+            // Body Metrics (individual fields)
+            weight_lb: bodyMetrics.weight_lb || bodyMetrics.weight || '',
+            vo2_max: bodyMetrics.vo2_max || bodyMetrics.vo2max || '',
+            resting_hr: bodyMetrics.resting_hr || bodyMetrics.resting_hr_bpm || '',
+            hrv: bodyMetrics.hrv || bodyMetrics.hrv_ms || '',
+            
+            // Running Performance
+            pb_mile: getFieldValue('pb_mile_seconds') ? 
               `${Math.floor(getFieldValue('pb_mile_seconds') / 60)}:${String(getFieldValue('pb_mile_seconds') % 60).padStart(2, '0')}` : 
-              getFieldValue('pb_mile')),
+              convertToString(getFieldValue('pb_mile')),
             weekly_miles: convertToString(getFieldValue('weekly_miles')),
             long_run: convertToString(getFieldValue('long_run_miles') || getFieldValue('long_run')),
-            pb_bench_1rm: convertToString(getFieldValue('pb_bench_1rm_lb') || getFieldValue('pb_bench_1rm')),
-            pb_squat_1rm: convertToString(getFieldValue('pb_squat_1rm_lb') || getFieldValue('pb_squat_1rm')),
-            pb_deadlift_1rm: convertToString(getFieldValue('pb_deadlift_1rm_lb') || getFieldValue('pb_deadlift_1rm'))
+            
+            // Strength Performance
+            pb_bench_1rm: extractWeight(getFieldValue('pb_bench_1rm_lb') || getFieldValue('pb_bench_1rm')),
+            pb_squat_1rm: extractWeight(getFieldValue('pb_squat_1rm_lb') || getFieldValue('pb_squat_1rm')),
+            pb_deadlift_1rm: extractWeight(getFieldValue('pb_deadlift_1rm_lb') || getFieldValue('pb_deadlift_1rm'))
           });
         }
         
