@@ -1377,7 +1377,7 @@ const ProfilePage = () => {
                 )}
               </div>
 
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center mb-3">
                 {profiles.length > 0 && profiles[0]?.score_data?.hybridScore ? (
                   <div className="relative">
                     <svg className="score-dial transform -rotate-90" viewBox="0 0 200 200">
@@ -1393,15 +1393,17 @@ const ProfilePage = () => {
                         cy="100" 
                         r="80" 
                         className="score-dial-progress"
-                        strokeDasharray={`${(profiles[0].score_data.hybridScore / 10) * 50.27} 50.27`}
+                        strokeDasharray={`${(Math.round(profiles[0].score_data.hybridScore) / 100) * 50.27} 50.27`}
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
-                        <div className="text-4xl font-bold accent-gradient-text">
-                          {profiles[0].score_data.hybridScore.toFixed(1)}
+                        <div className="text-4xl font-bold accent-gradient-text"
+                          aria-label={`Hybrid Score ${Math.round(profiles[0].score_data.hybridScore)}. Sub-scores: ${profiles[0].score_data.strengthScore ? `Strength ${Math.round(profiles[0].score_data.strengthScore)}, ` : ''}${profiles[0].score_data.speedScore ? `Speed ${Math.round(profiles[0].score_data.speedScore)}, ` : ''}${profiles[0].score_data.vo2Score ? `VO₂ ${Math.round(profiles[0].score_data.vo2Score)}, ` : ''}${profiles[0].score_data.distanceScore ? `Distance ${Math.round(profiles[0].score_data.distanceScore)}, ` : ''}${profiles[0].score_data.volumeScore ? `Volume ${Math.round(profiles[0].score_data.volumeScore)}, ` : ''}${profiles[0].score_data.recoveryScore ? `Recovery ${Math.round(profiles[0].score_data.recoveryScore)}` : ''}`}
+                        >
+                          {Math.round(profiles[0].score_data.hybridScore)}
                         </div>
-                        <div className="text-xs text-muted mt-1">/ 10.0</div>
+                        <div className="text-xs text-muted mt-1">/ 100</div>
                       </div>
                     </div>
                   </div>
@@ -1415,6 +1417,40 @@ const ProfilePage = () => {
                   </div>
                 )}
               </div>
+
+              {/* Sub-Score Grid (2 rows × 3 cols) */}
+              {profiles.length > 0 && profiles[0]?.score_data && (
+                <div className="grid grid-cols-3 gap-4 mt-3">
+                  {[
+                    { label: 'Strength', key: 'strengthScore' },
+                    { label: 'Speed', key: 'speedScore' },
+                    { label: 'VO₂ Max', key: 'vo2Score' },
+                    { label: 'Distance', key: 'distanceScore' },
+                    { label: 'Volume', key: 'volumeScore' },
+                    { label: 'Recovery', key: 'recoveryScore' }
+                  ].map((item, index) => {
+                    const value = profiles[0].score_data[item.key] || 0;
+                    const roundedValue = Math.round(value);
+                    return (
+                      <div key={item.key} className="text-center">
+                        <div 
+                          className="text-sm font-semibold text-primary mb-1"
+                          title={`${item.label} score out of 100`}
+                        >
+                          {roundedValue}
+                        </div>
+                        <div className="text-xs text-muted mb-1">{item.label}</div>
+                        <div className="sub-score-progress">
+                          <div 
+                            className="sub-score-progress-bar"
+                            style={{ width: `${roundedValue}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </div>
