@@ -1462,21 +1462,6 @@ const ProfilePage = () => {
           {/* Latest Hybrid Score (Left Column - 60% width) */}
           <div className="w-full lg:w-[60%]">
             <div className="glass-card p-8 pt-8">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h3 className="text-2xl font-bold text-primary mb-1">Latest Hybrid Score</h3>
-                  <p className="text-sm text-secondary">
-                    {profiles.length > 0 ? `Updated ${new Date(profiles[0]?.created_at).toLocaleDateString()}` : 'No scores yet'}
-                  </p>
-                </div>
-                {profiles.length > 0 && (
-                  <div className="text-right">
-                    <div className="text-xs text-muted">Trend</div>
-                    <div className="text-positive text-sm font-semibold">+2.4 ↗</div>
-                  </div>
-                )}
-              </div>
-
               <div className="flex items-center justify-center mb-3 pt-8">
                 {profiles.length > 0 && profiles[0]?.score_data?.hybridScore ? (
                   <div className="radar-cluster-container">
