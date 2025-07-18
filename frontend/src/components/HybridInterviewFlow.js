@@ -776,7 +776,7 @@ const HybridInterviewFlow = () => {
                 disabled={isLoading}
                 className="neon-button text-lg"
               >
-                {isLoading ? 'Starting...' : 'Start Hybrid Interview 🚀'}
+                {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
               </button>
             </div>
           </div>
