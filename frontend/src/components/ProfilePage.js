@@ -1555,172 +1555,320 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Generate New Score (Right Column - 40% width) */}
+          {/* Edit Profile (Right Column - 40% width) */}
           <div className="w-full lg:w-[40%]">
             <div className="glass-card p-8">
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h3 className="text-2xl font-bold text-primary flex items-center">
-                    Generate New Score
+                    Edit Profile
                   </h3>
                   {user && userProfile && (
                     <p className="text-sm text-secondary mt-2">
-                      Creating profile for: <span className="text-primary">{userProfile.display_name || userProfile.name}</span> 
-                      ({userProfile.gender || 'Gender not specified'})
+                      Editing profile for: <span className="text-primary">{userProfile.display_name || userProfile.name}</span>
                     </p>
                   )}
                   {!user && (
                     <p className="text-sm text-secondary mt-2">
-                      Create an anonymous athlete profile
+                      Please log in to edit your profile
                     </p>
                   )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Body Metrics */}
-                <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-primary">Body Metrics</h4>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">Weight (lbs)</label>
-                    <Input
-                      type="number"
-                      value={inputForm.weight_lb}
-                      onChange={(e) => setInputForm({...inputForm, weight_lb: e.target.value})}
-                      placeholder="e.g., 180"
-                      className="neon-input"
-                    />
+              {user && userProfile ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Personal Info */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-primary">Personal Info</h4>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-secondary mb-2">Name</label>
+                      <Input
+                        type="text"
+                        value={profileForm.name}
+                        onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
+                        placeholder="Your full name"
+                        className="neon-input"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-secondary mb-2">Display Name</label>
+                      <Input
+                        type="text"
+                        value={profileForm.display_name}
+                        onChange={(e) => setProfileForm({...profileForm, display_name: e.target.value})}
+                        placeholder="Public display name"
+                        className="neon-input"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-secondary mb-2">Location</label>
+                      <Input
+                        type="text"
+                        value={profileForm.location}
+                        onChange={(e) => setProfileForm({...profileForm, location: e.target.value})}
+                        placeholder="City, Country"
+                        className="neon-input"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-secondary mb-2">Website</label>
+                      <Input
+                        type="url"
+                        value={profileForm.website}
+                        onChange={(e) => setProfileForm({...profileForm, website: e.target.value})}
+                        placeholder="https://yourwebsite.com"
+                        className="neon-input"
+                      />
+                    </div>
                   </div>
                   
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">VO₂ Max (ml/kg/min)</label>
-                    <Input
-                      type="number"
-                      value={inputForm.vo2_max}
-                      onChange={(e) => setInputForm({...inputForm, vo2_max: e.target.value})}
-                      placeholder="e.g., 45"
-                      className="neon-input"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">Resting HR (bpm)</label>
-                    <Input
-                      type="number"
-                      value={inputForm.resting_hr}
-                      onChange={(e) => setInputForm({...inputForm, resting_hr: e.target.value})}
-                      placeholder="e.g., 60"
-                      className="neon-input"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">HRV (ms)</label>
-                    <Input
-                      type="number"
-                      value={inputForm.hrv}
-                      onChange={(e) => setInputForm({...inputForm, hrv: e.target.value})}
-                      placeholder="e.g., 35"
-                      className="neon-input"
-                    />
-                  </div>
-                </div>
-                
-                {/* Performance Metrics */}
-                <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-primary">Performance</h4>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">Mile PR (m:ss)</label>
-                    <Input
-                      type="text"
-                      value={inputForm.pb_mile}
-                      onChange={(e) => setInputForm({...inputForm, pb_mile: e.target.value})}
-                      placeholder="e.g., 6:30"
-                      className="neon-input"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">Weekly Miles</label>
-                    <Input
-                      type="number"
-                      value={inputForm.weekly_miles}
-                      onChange={(e) => setInputForm({...inputForm, weekly_miles: e.target.value})}
-                      placeholder="e.g., 25"
-                      className="neon-input"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">Long Run (miles)</label>
-                    <Input
-                      type="number"
-                      value={inputForm.long_run}
-                      onChange={(e) => setInputForm({...inputForm, long_run: e.target.value})}
-                      placeholder="e.g., 12"
-                      className="neon-input"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">Bench 1RM (lbs)</label>
-                    <Input
-                      type="number"
-                      value={inputForm.pb_bench_1rm}
-                      onChange={(e) => setInputForm({...inputForm, pb_bench_1rm: e.target.value})}
-                      placeholder="e.g., 225"
-                      className="neon-input"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">Squat 1RM (lbs)</label>
-                    <Input
-                      type="number"
-                      value={inputForm.pb_squat_1rm}
-                      onChange={(e) => setInputForm({...inputForm, pb_squat_1rm: e.target.value})}
-                      placeholder="e.g., 315"
-                      className="neon-input"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">Deadlift 1RM (lbs)</label>
-                    <Input
-                      type="number"
-                      value={inputForm.pb_deadlift_1rm}
-                      onChange={(e) => setInputForm({...inputForm, pb_deadlift_1rm: e.target.value})}
-                      placeholder="e.g., 405"
-                      className="neon-input"
-                    />
+                  {/* Preferences */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-primary">Preferences</h4>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-secondary mb-2">Gender</label>
+                      <select
+                        value={profileForm.gender}
+                        onChange={(e) => setProfileForm({...profileForm, gender: e.target.value})}
+                        className="neon-input w-full"
+                      >
+                        <option value="">Select gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                        <option value="prefer_not_to_say">Prefer not to say</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-secondary mb-2">Units</label>
+                      <select
+                        value={profileForm.units_preference}
+                        onChange={(e) => setProfileForm({...profileForm, units_preference: e.target.value})}
+                        className="neon-input w-full"
+                      >
+                        <option value="imperial">Imperial</option>
+                        <option value="metric">Metric</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-secondary mb-2">Privacy</label>
+                      <select
+                        value={profileForm.privacy_level}
+                        onChange={(e) => setProfileForm({...profileForm, privacy_level: e.target.value})}
+                        className="neon-input w-full"
+                      >
+                        <option value="private">Private</option>
+                        <option value="friends">Friends</option>
+                        <option value="public">Public</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-muted">
+                    Please log in to edit your profile
+                  </div>
+                </div>
+              )}
               
-              <div className="mt-8 flex justify-end">
-                <Button 
-                  onClick={generateNewProfile}
-                  disabled={isGenerating}
-                  className="neon-button min-w-[180px]"
-                >
-                  {isGenerating ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-4 h-4 mr-2" />
-                      Generate Profile
-                    </>
-                  )}
-                </Button>
-              </div>
+              {user && userProfile && (
+                <div className="mt-8 flex justify-end">
+                  <Button 
+                    onClick={handleProfileUpdate}
+                    disabled={isLoadingProfiles}
+                    className="neon-button min-w-[180px]"
+                  >
+                    {isLoadingProfiles ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4 mr-2" />
+                        Save Profile
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
+
+        {/* Generate New Score - Full Width Section */}
+        <div className="space-y-12">
+          <div className="glass-card p-8">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-2xl font-bold text-primary flex items-center">
+                  Generate New Score
+                </h3>
+                {user && userProfile && (
+                  <p className="text-sm text-secondary mt-2">
+                    Creating profile for: <span className="text-primary">{userProfile.display_name || userProfile.name}</span> 
+                    ({userProfile.gender || 'Gender not specified'})
+                  </p>
+                )}
+                {!user && (
+                  <p className="text-sm text-secondary mt-2">
+                    Create an anonymous athlete profile
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Body Metrics */}
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold text-primary">Body Metrics</h4>
+                
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">Weight (lbs)</label>
+                  <Input
+                    type="number"
+                    value={inputForm.weight_lb}
+                    onChange={(e) => setInputForm({...inputForm, weight_lb: e.target.value})}
+                    placeholder="e.g., 180"
+                    className="neon-input"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">VO₂ Max (ml/kg/min)</label>
+                  <Input
+                    type="number"
+                    value={inputForm.vo2_max}
+                    onChange={(e) => setInputForm({...inputForm, vo2_max: e.target.value})}
+                    placeholder="e.g., 45"
+                    className="neon-input"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">Resting HR (bpm)</label>
+                  <Input
+                    type="number"
+                    value={inputForm.resting_hr}
+                    onChange={(e) => setInputForm({...inputForm, resting_hr: e.target.value})}
+                    placeholder="e.g., 60"
+                    className="neon-input"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">HRV (ms)</label>
+                  <Input
+                    type="number"
+                    value={inputForm.hrv}
+                    onChange={(e) => setInputForm({...inputForm, hrv: e.target.value})}
+                    placeholder="e.g., 35"
+                    className="neon-input"
+                  />
+                </div>
+              </div>
+              
+              {/* Performance Metrics */}
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold text-primary">Performance</h4>
+                
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">Mile PR (m:ss)</label>
+                  <Input
+                    type="text"
+                    value={inputForm.pb_mile}
+                    onChange={(e) => setInputForm({...inputForm, pb_mile: e.target.value})}
+                    placeholder="e.g., 6:30"
+                    className="neon-input"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">Weekly Miles</label>
+                  <Input
+                    type="number"
+                    value={inputForm.weekly_miles}
+                    onChange={(e) => setInputForm({...inputForm, weekly_miles: e.target.value})}
+                    placeholder="e.g., 25"
+                    className="neon-input"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">Long Run (miles)</label>
+                  <Input
+                    type="number"
+                    value={inputForm.long_run}
+                    onChange={(e) => setInputForm({...inputForm, long_run: e.target.value})}
+                    placeholder="e.g., 12"
+                    className="neon-input"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">Bench 1RM (lbs)</label>
+                  <Input
+                    type="number"
+                    value={inputForm.pb_bench_1rm}
+                    onChange={(e) => setInputForm({...inputForm, pb_bench_1rm: e.target.value})}
+                    placeholder="e.g., 225"
+                    className="neon-input"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">Squat 1RM (lbs)</label>
+                  <Input
+                    type="number"
+                    value={inputForm.pb_squat_1rm}
+                    onChange={(e) => setInputForm({...inputForm, pb_squat_1rm: e.target.value})}
+                    placeholder="e.g., 315"
+                    className="neon-input"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">Deadlift 1RM (lbs)</label>
+                  <Input
+                    type="number"
+                    value={inputForm.pb_deadlift_1rm}
+                    onChange={(e) => setInputForm({...inputForm, pb_deadlift_1rm: e.target.value})}
+                    placeholder="e.g., 405"
+                    className="neon-input"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-8 flex justify-end">
+              <Button 
+                onClick={generateNewProfile}
+                disabled={isGenerating}
+                className="neon-button min-w-[180px]"
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-4 h-4 mr-2" />
+                    Generate Profile
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
 
         {/* Main Section - Stack with reduced spacing */}
         <div className="space-y-12">{/* Reduced spacing: 48px desktop, 24px mobile */}
