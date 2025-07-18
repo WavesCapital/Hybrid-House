@@ -1027,10 +1027,7 @@ const ProfilePage = () => {
         .dial.big .score-number {
           font-size: 4rem;
           font-weight: bold;
-          background: linear-gradient(45deg, #1B6DFF, #D64EF9);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: #FF2DDE;
           line-height: 1;
           margin-bottom: 8px;
         }
