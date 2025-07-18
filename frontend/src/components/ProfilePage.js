@@ -1041,7 +1041,6 @@ const ProfilePage = () => {
         .dial.mini .score-number {
           font-size: 1.75rem;
           font-weight: bold;
-          color: #52FF00;
           line-height: 1;
           margin-bottom: 4px;
         }
