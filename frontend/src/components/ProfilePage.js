@@ -857,7 +857,7 @@ const ProfilePage = () => {
         
         /* Buttons */
         .neon-button {
-          background: linear-gradient(135deg, #52FF00 0%, #00B7FF 100%);
+          background: #08F0FF;
           border: none;
           border-radius: 8px;
           color: #0E0E11;
@@ -870,10 +870,11 @@ const ProfilePage = () => {
         
         .neon-button:hover {
           transform: translateY(-2px);
-          filter: hue-rotate(8deg);
+          background: #FF2DDE;
+          color: #0E0E11;
           box-shadow: 
-            0 8px 32px rgba(82, 255, 0, 0.4),
-            0 4px 16px rgba(0, 183, 255, 0.3);
+            0 8px 32px rgba(8, 240, 255, 0.4),
+            0 4px 16px rgba(255, 45, 222, 0.3);
         }
         
         .neon-button:active {
