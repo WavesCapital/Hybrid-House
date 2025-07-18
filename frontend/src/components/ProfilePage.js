@@ -1026,7 +1026,7 @@ const ProfilePage = () => {
         .dial.big .score-number {
           font-size: 4rem;
           font-weight: bold;
-          color: #FF2DDE;
+          color: #08F0FF;
           line-height: 1;
           margin-bottom: 8px;
         }
