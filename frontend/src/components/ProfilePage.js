@@ -728,36 +728,36 @@ const ProfilePage = () => {
         {`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
-        /* Neon-Noir Performance Cockpit Styles */
+        /* Electric Limeade Color System */
         .neon-noir-canvas {
           background: #0E0E11;
           background-image: 
-            linear-gradient(45deg, rgba(27, 109, 255, 0.03) 0%, transparent 50%),
-            linear-gradient(-45deg, rgba(214, 78, 249, 0.03) 0%, transparent 50%),
-            radial-gradient(circle at 20% 80%, rgba(27, 109, 255, 0.05) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(214, 78, 249, 0.05) 0%, transparent 50%);
+            linear-gradient(45deg, rgba(82, 255, 0, 0.03) 0%, transparent 50%),
+            linear-gradient(-45deg, rgba(0, 183, 255, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 20% 80%, rgba(82, 255, 0, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(0, 183, 255, 0.05) 0%, transparent 50%);
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
           min-height: 100vh;
         }
         
         /* Glass Cards */
         .glass-card {
-          background: rgba(20, 20, 25, 0.96);
+          background: #15161A;
           backdrop-filter: blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid #1F2025;
           border-radius: 8px;
           box-shadow: 
-            0 4px 16px rgba(0, 0, 0, 0.4),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            0 12px 32px -24px rgba(0,0,0,.65),
+            0 0 0 1px #1F2025 inset;
           transition: all 0.3s ease;
         }
         
         .glass-card:hover {
           transform: translateY(-3px);
           box-shadow: 
-            0 8px 32px rgba(27, 109, 255, 0.2),
-            0 4px 16px rgba(0, 0, 0, 0.4),
-            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            0 0 12px 0 rgba(82,255,0,.35),
+            0 12px 32px -24px rgba(0,0,0,.65),
+            0 0 0 1px #1F2025 inset;
         }
         
 
