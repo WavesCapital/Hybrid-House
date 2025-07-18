@@ -1006,6 +1006,7 @@ const ProfilePage = () => {
           justify-content: center;
           width: 100%;
           height: 100%;
+          overflow: visible;
         }
         
         .dial-svg {
