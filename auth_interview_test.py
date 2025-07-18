@@ -251,34 +251,33 @@ class AuthInterviewTester:
                     all_configured = False
             
             # Test athlete profile endpoints for completion flow
-            profile_endpoints = [
-                ("/athlete-profiles/public", "POST", {
-                    "profile_json": {"first_name": "Test", "sex": "Male"}
-                }),
-                ("/athlete-profiles", "GET"),
-                ("/athlete-profile/test-id", "GET")
-            ]
+            # Test public profile creation
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json={
+                "profile_json": {"first_name": "Test", "sex": "Male"}
+            })
+            if response.status_code in [200, 201]:
+                self.log_test("Profile Creation /athlete-profiles/public", True, "Public profile creation working")
+            else:
+                self.log_test("Profile Creation /athlete-profiles/public", False, f"Expected 200/201 but got {response.status_code}")
+                all_configured = False
             
-            for endpoint, method in profile_endpoints:
-                if method == "POST":
-                    payload = profile_endpoints[0][2]  # Get the payload from the first item
-                    response = self.session.post(f"{API_BASE_URL}{endpoint}", json=payload)
-                    # Public endpoint should work
-                    if response.status_code in [200, 201]:
-                        self.log_test(f"Profile Creation {endpoint}", True, "Public profile creation working")
-                    else:
-                        self.log_test(f"Profile Creation {endpoint}", False, f"Expected 200/201 but got {response.status_code}")
-                        all_configured = False
-                elif method == "GET":
-                    response = self.session.get(f"{API_BASE_URL}{endpoint}")
-                    # These should work without auth for public access
-                    if response.status_code == 200:
-                        self.log_test(f"Profile Access {endpoint}", True, "Public profile access working")
-                    elif response.status_code == 404 and "test-id" in endpoint:
-                        self.log_test(f"Profile Access {endpoint}", True, "Profile endpoint working (404 expected for test-id)")
-                    else:
-                        self.log_test(f"Profile Access {endpoint}", False, f"Unexpected status {response.status_code}")
-                        all_configured = False
+            # Test profile list access
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            if response.status_code == 200:
+                self.log_test("Profile Access /athlete-profiles", True, "Public profile list access working")
+            else:
+                self.log_test("Profile Access /athlete-profiles", False, f"Expected 200 but got {response.status_code}")
+                all_configured = False
+            
+            # Test individual profile access (should return 404 for non-existent ID)
+            response = self.session.get(f"{API_BASE_URL}/athlete-profile/test-id")
+            if response.status_code == 404:
+                self.log_test("Profile Access /athlete-profile/test-id", True, "Profile endpoint working (404 expected for test-id)")
+            elif response.status_code == 200:
+                self.log_test("Profile Access /athlete-profile/test-id", True, "Profile endpoint working")
+            else:
+                self.log_test("Profile Access /athlete-profile/test-id", False, f"Unexpected status {response.status_code}")
+                all_configured = False
             
             return all_configured
             
