@@ -1255,12 +1255,12 @@ const ProfilePage = () => {
         
         .inline-edit-field:hover {
           background: #15161A;
-          border-color: rgba(82, 255, 0, 0.3);
+          border-color: rgba(8, 240, 255, 0.3);
         }
         
         .inline-edit-field.editing {
-          border-color: #52FF00;
-          box-shadow: 0 0 0 2px rgba(82, 255, 0, 0.2);
+          border-color: #08F0FF;
+          box-shadow: 0 0 0 2px rgba(8, 240, 255, 0.2);
           cursor: text;
         }
         
