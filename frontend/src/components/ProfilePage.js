@@ -1683,7 +1683,7 @@ const ProfilePage = () => {
               {user && userProfile && (
                 <div className="mt-8 flex justify-end">
                   <Button 
-                    onClick={handleProfileUpdate}
+                    onClick={handleUpdateProfile}
                     disabled={isLoadingProfiles}
                     className="neon-button min-w-[180px]"
                   >
