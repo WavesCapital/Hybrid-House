@@ -1497,17 +1497,17 @@ const ProfilePage = () => {
                                 <stop offset="100%" stopColor="#08F0FF" />
                               </linearGradient>
                             </defs>
-                            <circle cx="110" cy="110" r="95" stroke="rgba(255, 255, 255, 0.08)" strokeWidth="18" fill="none" />
+                            <circle cx="110" cy="110" r="95" stroke="rgba(255, 255, 255, 0.08)" strokeWidth="14" fill="none" />
                             <circle 
                               cx="110" cy="110" r="95" 
                               stroke="url(#hybridGradient)" 
-                              strokeWidth="18" 
+                              strokeWidth="14" 
                               fill="none" 
                               strokeLinecap="round"
                               strokeDasharray={`${(Math.round(profiles[0].score_data.hybridScore) / 100) * 596.9} 596.9`}
                               style={{ 
                                 transition: 'stroke-dasharray 320ms cubic-bezier(.2,1.4,.3,1)',
-                                filter: 'drop-shadow(0 0 10px #08F0FFAA)'
+                                filter: 'drop-shadow(0 0 8px rgba(8, 240, 255, 0.6))'
                               }}
                             />
                           </svg>
