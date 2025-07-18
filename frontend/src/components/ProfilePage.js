@@ -797,9 +797,9 @@ const ProfilePage = () => {
         }
         
         .score-archive-table tr:hover {
-          background: rgba(8, 240, 255, 0.08);
-          transform: translateY(-1px);
-          border-bottom: 1px solid #08F0FF;
+          background: transparent;
+          transform: none;
+          border-bottom: none;
           border-image: none;
         }
         
