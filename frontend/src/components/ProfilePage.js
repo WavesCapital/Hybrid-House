@@ -920,8 +920,8 @@ const ProfilePage = () => {
         
         .cluster {
           position: relative;
-          width: 700px;
-          height: 700px;
+          width: 500px;
+          height: 500px;
           margin: 0;
         }
         
