@@ -367,157 +367,205 @@ const HybridInterviewFlow = () => {
   }, [currentIndex]);
 
   return (
-    <div className="min-h-screen" style={{ background: '#0A0B0C' }}>
+    <div className="min-h-screen" style={{ background: '#000000' }}>
       <style>
         {`
-        .neo-card {
-          background: linear-gradient(135deg, rgba(217, 217, 217, 0.1) 0%, rgba(159, 161, 163, 0.05) 100%);
-          border: 1px solid rgba(217, 217, 217, 0.2);
-          backdrop-filter: blur(10px);
+        /* Flat-Neon Palette ("Laser Pop") */
+        .glass-card {
+          background: #15161A;
+          backdrop-filter: blur(16px);
+          border: 1px solid #1F2025;
+          border-radius: 8px;
+          box-shadow: 
+            0 12px 32px -24px rgba(0,0,0,.65),
+            0 0 0 1px #1F2025 inset;
+          transition: all 0.3s ease;
+          overflow: visible;
         }
-        .neo-primary {
-          color: #79CFF7;
-        }
-        .neo-text-primary {
-          color: #D9D9D9;
-        }
-        .neo-text-secondary {
-          color: #9FA1A3;
-        }
-        .neo-text-muted {
-          color: #6B7280;
-        }
-        .neo-btn-primary {
-          background: linear-gradient(135deg, #79CFF7 0%, #4FC3F7 100%);
-          color: #0A0B0C;
+        
+        .text-positive { color: #32FF7A; }
+        .text-negative { color: #FF5E5E; }
+        .text-primary { color: #F5FAFF; }
+        .text-secondary { color: rgba(245, 250, 255, 0.7); }
+        .text-muted { color: #8D9299; }
+        
+        .neon-button {
+          background: #08F0FF;
           border: none;
+          border-radius: 8px;
+          color: #000000;
           font-weight: 600;
+          padding: 16px 24px;
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
         }
-        .neo-btn-primary:hover {
-          background: linear-gradient(135deg, #4FC3F7 0%, #79CFF7 100%);
-          transform: translateY(-1px);
+        
+        .neon-button:hover {
+          transform: translateY(-2px);
+          background: #FF2DDE;
+          color: #000000;
+          box-shadow: 
+            0 8px 32px rgba(8, 240, 255, 0.4),
+            0 4px 16px rgba(255, 45, 222, 0.3);
         }
-        .neo-btn-secondary {
-          background: rgba(159, 161, 163, 0.1);
-          color: #D9D9D9;
-          border: 1px solid rgba(159, 161, 163, 0.3);
+        
+        .neon-button:active {
+          transform: translateY(0);
         }
-        .neo-btn-secondary:hover {
-          background: rgba(159, 161, 163, 0.2);
-          color: #D9D9D9;
+        
+        .neon-button:disabled {
+          opacity: 0.6;
+          transform: none;
+          box-shadow: none;
         }
-        .neo-progress-bar {
+        
+        .neon-input {
+          background: #15161A;
+          border: 1px solid #1F2025;
+          border-radius: 6px;
+          color: #F5FAFF;
+          padding: 12px 16px;
+          transition: all 0.3s ease;
+          font-family: 'Inter', sans-serif;
+        }
+        
+        .neon-input:focus {
+          outline: none;
+          border-color: transparent;
+          box-shadow: 
+            0 0 0 2px rgba(8, 240, 255, 0.3),
+            0 0 16px rgba(8, 240, 255, 0.2);
+        }
+        
+        .neon-input::placeholder {
+          color: #8D9299;
+        }
+        
+        .neon-progress-bar {
           height: 8px;
-          background: rgba(159, 161, 163, 0.2);
+          background: #1F2025;
           border-radius: 4px;
           overflow: hidden;
         }
-        .neo-progress-fill {
+        
+        .neon-progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, #79CFF7 0%, #4FC3F7 100%);
+          background: #08F0FF;
           transition: width 0.3s ease;
         }
+        
         .chat-bubble-user {
-          background: linear-gradient(135deg, #79CFF7 0%, #4FC3F7 100%);
-          color: #0A0B0C;
+          background: #08F0FF;
+          color: #000000;
           font-weight: 500;
         }
+        
         .chat-bubble-assistant {
-          background: linear-gradient(135deg, rgba(217, 217, 217, 0.1) 0%, rgba(159, 161, 163, 0.05) 100%);
-          border: 1px solid rgba(217, 217, 217, 0.2);
-          color: #D9D9D9;
+          background: #15161A;
+          border: 1px solid #1F2025;
+          color: #F5FAFF;
           backdrop-filter: blur(10px);
         }
-        .gradient-border {
-          padding: 2px;
-          background: linear-gradient(135deg, #79CFF7 0%, #4FC3F7 50%, #D9D9D9 100%);
-          border-radius: 12px;
+        
+        .neon-btn-secondary {
+          background: #15161A;
+          color: #F5FAFF;
+          border: 1px solid #1F2025;
         }
-        .gradient-border-inner {
-          background: #181B1D;
-          border-radius: 11px;
-          height: 100%;
+        
+        .neon-btn-secondary:hover {
+          background: #15161A;
+          border-color: rgba(8, 240, 255, 0.3);
+          color: #F5FAFF;
         }
-        .streak-badge {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background: linear-gradient(45deg, #FF6B6B, #FFE66D);
-          color: white;
-          padding: 20px 40px;
-          border-radius: 50px;
-          font-size: 24px;
-          font-weight: bold;
-          box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
-          animation: streak-bounce 0.6s ease-out;
-          z-index: 1000;
-        }
-        @keyframes streak-bounce {
-          0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
-          50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-          100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-        .mono-progress {
-          font-family: 'Courier New', monospace;
-          font-size: 12px;
-          letter-spacing: 1px;
+        
+        .feature-dot {
+          width: 6px;
+          height: 6px;
+          background: #08F0FF;
+          border-radius: 50%;
         }
         `}
       </style>
 
-      <div className="container mx-auto px-6 py-8 max-w-4xl">
-        {!sessionId ? (
-          <div className="gradient-border max-w-2xl mx-auto">
-            <div className="gradient-border-inner p-12 text-center">
-              <h2 className="text-4xl font-bold neo-primary mb-6">
-                Ready for Your Hybrid Score?
-              </h2>
-              <p className="neo-text-secondary mb-8 text-lg leading-relaxed">
-                I'm your high-energy Hybrid House Coach! I'll ask you just 11 essential questions to 
-                calculate your Hybrid Score quickly. This focused assessment covers the core metrics 
-                that matter most. Takes about 3 minutes. Let's get your score! 🏃‍♂️💪
-              </p>
-              
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center space-x-3 neo-text-secondary">
-                  <div className="w-2 h-2 rounded-full bg-primary"></div>
-                  <span>11 essential questions only</span>
+      {/* Header */}
+      <header className="border-b border-white/10 bg-black/20 backdrop-blur-sm">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] rounded-lg flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-white" />
                 </div>
-                <div className="flex items-center space-x-3 neo-text-secondary">
-                  <div className="w-2 h-2 rounded-full bg-primary"></div>
-                  <span>Auto-save your progress</span>
-                </div>
-                <div className="flex items-center space-x-3 neo-text-secondary">
-                  <div className="w-2 h-2 rounded-full bg-primary"></div>
-                  <span>Skip any question anytime</span>
+                <div>
+                  <h1 className="text-xl font-bold text-primary">Hybrid House</h1>
+                  <p className="text-xs text-muted">Performance Analytics</p>
                 </div>
               </div>
-              
-              <Button
-                onClick={startInterview}
-                disabled={isLoading}
-                className="neo-btn-primary w-full max-w-xs h-14 text-lg font-semibold"
-              >
-                {isLoading ? 'Starting...' : 'Start Hybrid Interview 🚀'}
-              </Button>
+              <div className="h-6 w-px bg-white/20"></div>
+              <h2 className="text-lg font-semibold text-secondary">Home</h2>
             </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] rounded-full flex items-center justify-center">
+                <User className="w-5 h-5 text-white" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-6 py-8 max-w-4xl">
+        {!sessionId ? (
+          <div className="glass-card max-w-2xl mx-auto p-12 text-center">
+            <h2 className="text-4xl font-bold text-primary mb-6">
+              Ready for Your Hybrid Score?
+            </h2>
+            <p className="text-secondary mb-8 text-lg leading-relaxed">
+              I'm your high-energy Hybrid House Coach! I'll ask you just 11 essential questions to 
+              calculate your Hybrid Score quickly. This focused assessment covers the core metrics 
+              that matter most. Takes about 3 minutes. Let's get your score! 🏃‍♂️💪
+            </p>
+            
+            <div className="space-y-4 mb-8">
+              <div className="flex items-center space-x-3 text-secondary">
+                <div className="feature-dot"></div>
+                <span>11 essential questions only</span>
+              </div>
+              <div className="flex items-center space-x-3 text-secondary">
+                <div className="feature-dot"></div>
+                <span>Auto-save your progress</span>
+              </div>
+              <div className="flex items-center space-x-3 text-secondary">
+                <div className="feature-dot"></div>
+                <span>Skip any question anytime</span>
+              </div>
+            </div>
+            
+            <Button
+              onClick={startInterview}
+              disabled={isLoading}
+              className="neon-button w-full max-w-xs h-14 text-lg font-semibold"
+            >
+              {isLoading ? 'Starting...' : 'Start Hybrid Interview 🚀'}
+            </Button>
           </div>
         ) : (
           <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h1 className="text-2xl font-bold neo-primary">Hybrid Score - Essential Questions</h1>
-                <p className="neo-text-secondary">Quick assessment for your hybrid athlete score</p>
+                <h1 className="text-2xl font-bold text-primary">Hybrid Score - Essential Questions</h1>
+                <p className="text-secondary">Quick assessment for your hybrid athlete score</p>
               </div>
               <div className="flex space-x-3">
                 <Button
                   onClick={() => navigate('/profile')}
-                  className="neo-btn-secondary"
+                  className="neon-btn-secondary"
                   size="sm"
                 >
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center mr-2">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] flex items-center justify-center mr-2">
                     <User className="h-3 w-3 text-white" />
                   </div>
                   Profile
@@ -526,23 +574,23 @@ const HybridInterviewFlow = () => {
             </div>
 
             {/* Sticky Progress Bar */}
-            <div className="sticky top-0 z-10 bg-opacity-95 backdrop-blur-sm py-4 mb-8" style={{ background: 'rgba(10, 11, 12, 0.95)' }}>
+            <div className="sticky top-0 z-10 bg-opacity-95 backdrop-blur-sm py-4 mb-8" style={{ background: 'rgba(0, 0, 0, 0.95)' }}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm neo-text-secondary font-medium">
+                <span className="text-sm text-secondary font-medium">
                   Progress
                 </span>
-                <span className="text-sm neo-text-muted">
+                <span className="text-sm text-muted">
                   {currentIndex} of {TOTAL_QUESTIONS} questions
                 </span>
               </div>
               <div className="flex items-center space-x-4">
-                <div className="flex-1 neo-progress-bar">
+                <div className="flex-1 neon-progress-bar">
                   <div 
-                    className="neo-progress-fill" 
+                    className="neon-progress-fill" 
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>
-                <span className="text-sm font-semibold neo-primary min-w-[40px]">
+                <span className="text-sm font-semibold text-primary min-w-[40px]">
                   {Math.round(progress)}%
                 </span>
               </div>
@@ -601,7 +649,7 @@ const HybridInterviewFlow = () => {
                         <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                         <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                       </div>
-                      <span className="text-sm neo-text-secondary">Coach is thinking...</span>
+                      <span className="text-sm text-secondary">Coach is thinking...</span>
                     </div>
                   </div>
                 </div>
@@ -612,7 +660,7 @@ const HybridInterviewFlow = () => {
 
             {/* Sticky Input Area */}
             {!isCompleted && (
-              <div className="fixed bottom-0 left-0 right-0 z-10 bg-opacity-95 backdrop-blur-sm border-t border-gray-700 p-6" style={{ background: 'rgba(10, 11, 12, 0.95)' }}>
+              <div className="fixed bottom-0 left-0 right-0 z-10 bg-opacity-95 backdrop-blur-sm border-t border-gray-700 p-6" style={{ background: 'rgba(0, 0, 0, 0.95)' }}>
                 <div className="container mx-auto max-w-4xl">
                   <div className="flex space-x-4">
                     <textarea
@@ -620,14 +668,14 @@ const HybridInterviewFlow = () => {
                       onChange={(e) => setCurrentMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
                       placeholder="Type your answer here..."
-                      className="flex-1 px-4 py-3 rounded-xl bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:border-blue-500 focus:outline-none resize-none"
+                      className="neon-input flex-1 resize-none"
                       rows="2"
                       disabled={isLoading}
                     />
                     <Button
                       onClick={() => sendMessage()}
                       disabled={isLoading || !currentMessage.trim()}
-                      className="neo-btn-primary px-8 py-3 rounded-xl h-auto"
+                      className="neon-button px-8 py-3 rounded-xl h-auto"
                     >
                       Send
                     </Button>
@@ -638,14 +686,14 @@ const HybridInterviewFlow = () => {
                       <Button
                         onClick={skipQuestion}
                         disabled={isLoading}
-                        className="neo-btn-secondary text-sm px-4 py-2"
+                        className="neon-btn-secondary text-sm px-4 py-2"
                       >
                         Skip
                       </Button>
                       <Button
                         onClick={forceComplete}
                         disabled={isLoading}
-                        className="neo-btn-secondary text-sm px-4 py-2"
+                        className="neon-btn-secondary text-sm px-4 py-2"
                       >
                         Finish Early
                       </Button>
@@ -658,42 +706,40 @@ const HybridInterviewFlow = () => {
             {/* Completion Loading */}
             {isCompleted && (
               <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm" style={{ 
-                background: 'rgba(10, 11, 12, 0.8)' 
+                background: 'rgba(0, 0, 0, 0.8)' 
               }}>
-                <div className="gradient-border max-w-md w-full mx-6">
-                  <div className="gradient-border-inner p-12 text-center">
-                    <h2 className="text-3xl font-bold neo-primary mb-6">
-                      {redirectFailed ? 'Score Ready!' : 'Calculating Your Hybrid Score!'} 🎉
-                    </h2>
-                    <p className="neo-text-secondary mb-8 leading-relaxed">
-                      {redirectFailed 
-                        ? 'Your hybrid score has been calculated and saved! Click below to view your results.'
-                        : 'Thanks for completing the essential questions! We\'re now computing your Hybrid Athlete Score and will redirect you to your results.'
-                      }
-                    </p>
-                    
-                    {redirectFailed && completedProfileId ? (
-                      <Button
-                        onClick={() => {
-                          navigate(`/hybrid-score/${completedProfileId}`);
-                          // Also try direct navigation as backup
-                          setTimeout(() => {
-                            if (window.location.pathname !== `/hybrid-score/${completedProfileId}`) {
-                              window.location.href = `/hybrid-score/${completedProfileId}`;
-                            }
-                          }, 100);
-                        }}
-                        className="neo-btn-primary mb-6"
-                      >
-                        View Your Score
-                      </Button>
-                    ) : (
-                      <div className="flex items-center justify-center space-x-3">
-                        <Loader2 className="h-6 w-6 neo-cyan animate-spin" />
-                        <span className="text-sm neo-text-muted">Coach is thinking...</span>
-                      </div>
-                    )}
-                  </div>
+                <div className="glass-card max-w-md w-full mx-6 p-12 text-center">
+                  <h2 className="text-3xl font-bold text-primary mb-6">
+                    {redirectFailed ? 'Score Ready!' : 'Calculating Your Hybrid Score!'} 🎉
+                  </h2>
+                  <p className="text-secondary mb-8 leading-relaxed">
+                    {redirectFailed 
+                      ? 'Your hybrid score has been calculated and saved! Click below to view your results.'
+                      : 'Thanks for completing the essential questions! We\'re now computing your Hybrid Athlete Score and will redirect you to your results.'
+                    }
+                  </p>
+                  
+                  {redirectFailed && completedProfileId ? (
+                    <Button
+                      onClick={() => {
+                        navigate(`/hybrid-score/${completedProfileId}`);
+                        // Also try direct navigation as backup
+                        setTimeout(() => {
+                          if (window.location.pathname !== `/hybrid-score/${completedProfileId}`) {
+                            window.location.href = `/hybrid-score/${completedProfileId}`;
+                          }
+                        }, 100);
+                      }}
+                      className="neon-button mb-6"
+                    >
+                      View Your Score
+                    </Button>
+                  ) : (
+                    <div className="flex items-center justify-center space-x-3">
+                      <Loader2 className="h-6 w-6 text-primary animate-spin" />
+                      <span className="text-sm text-muted">Coach is thinking...</span>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
