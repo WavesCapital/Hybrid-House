@@ -193,44 +193,49 @@ const HybridInterviewFlow = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Handle starting interview with auth check
   const startInterview = async () => {
-    if (!user || !session) {
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to start your hybrid interview.",
-        variant: "destructive",
-      });
+    // Check if user is authenticated
+    if (!user) {
+      // Store intent to start interview after signup
+      localStorage.setItem('postAuthAction', 'startInterview');
+      // Redirect to auth page with signup as default
+      navigate('/auth?mode=signup');
       return;
     }
 
-    try {
-      setIsLoading(true);
-      const response = await axios.post(
-        `${BACKEND_URL}/api/hybrid-interview/start`,
-        {},
-        {
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+    // User is authenticated, proceed with starting interview
+    if (isLoading) return;
 
-      setSessionId(response.data.session_id);
-      setMessages(response.data.messages ? response.data.messages.filter(m => m.role !== 'system') : []);
-      setCurrentIndex(response.data.current_index || 0);
-      
-      toast({
-        title: "Hybrid Interview Started! 🚀",
-        description: "Your answers will be auto-saved as we go.",
+    setIsLoading(true);
+    
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/hybrid-interview/start`, {
+        user_id: user?.id
       });
       
+      if (response.data.success) {
+        const newSessionId = response.data.session_id;
+        setSessionId(newSessionId);
+        
+        // Show success message
+        toast({
+          title: "Interview Started! 🚀",
+          description: "Ready to build your hybrid athlete profile. Let's go!",
+          duration: 2000,
+        });
+        
+        console.log('✅ Interview started successfully with session:', newSessionId);
+      } else {
+        throw new Error('Failed to start interview');
+      }
     } catch (error) {
-      console.error('Error starting hybrid interview:', error);
+      console.error('Error starting interview:', error);
       toast({
-        title: "Error",
-        description: "Failed to start hybrid interview. Please try again.",
+        title: "Interview start failed",
+        description: error.response?.data?.error || "Unable to start interview. Please try again.",
         variant: "destructive",
+        duration: 3000,
       });
     } finally {
       setIsLoading(false);
