@@ -620,7 +620,9 @@ const HybridInterviewFlow = () => {
             <div 
               className="absolute inset-0 opacity-30"
               style={{
-                background: `radial-gradient(circle at center, #08F0FF22 0%, transparent 420px)`
+                background: `radial-gradient(circle at center, #08F0FF22 0%, transparent 420px)`,
+                zIndex: 1,
+                pointerEvents: 'none'
               }}
             />
             
