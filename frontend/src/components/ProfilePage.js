@@ -836,24 +836,24 @@ const ProfilePage = () => {
         
 
         
+        /* Colors */
+        .text-positive { color: #7CFF6B; }
+        .text-negative { color: #FF6262; }
+        .text-primary { color: #F5FAFF; }
+        .text-secondary { color: rgba(245, 250, 255, 0.7); }
+        .text-muted { color: #8D9299; }
+        
         /* Gradient Elements */
         .accent-gradient {
-          background: linear-gradient(135deg, #1B6DFF 0%, #D64EF9 100%);
+          background: linear-gradient(135deg, #52FF00 0%, #00B7FF 100%);
         }
         
         .accent-gradient-text {
-          background: linear-gradient(135deg, #1B6DFF 0%, #D64EF9 100%);
+          background: linear-gradient(135deg, #52FF00 0%, #00B7FF 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
         }
-        
-        /* Colors */
-        .text-positive { color: #00FF90; }
-        .text-negative { color: #FF4F70; }
-        .text-primary { color: #FFFFFF; }
-        .text-secondary { color: rgba(255, 255, 255, 0.7); }
-        .text-muted { color: rgba(255, 255, 255, 0.5); }
         
         /* Buttons */
         .neon-button {
