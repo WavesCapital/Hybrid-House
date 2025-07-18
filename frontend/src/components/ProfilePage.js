@@ -787,6 +787,7 @@ const ProfilePage = () => {
         .score-archive-table th {
           background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.6));
           border-bottom: 2px solid #08F0FF;
+          border-image: none;
           position: sticky;
           top: 0;
           z-index: 10;
