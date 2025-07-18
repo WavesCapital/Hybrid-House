@@ -809,8 +809,8 @@ const ProfilePage = () => {
         }
         
         .most-recent-row {
-          background: rgba(8, 240, 255, 0.15);
-          border-left: 3px solid #08F0FF;
+          background: transparent;
+          border-left: none;
         }
         
         .em-dash {
