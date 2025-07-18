@@ -730,12 +730,7 @@ const ProfilePage = () => {
         
         /* Flat-Neon Palette ("Laser Pop") */
         .neon-noir-canvas {
-          background: #0E0E11;
-          background-image: 
-            linear-gradient(45deg, rgba(8, 240, 255, 0.03) 0%, transparent 50%),
-            linear-gradient(-45deg, rgba(255, 45, 222, 0.03) 0%, transparent 50%),
-            radial-gradient(circle at 20% 80%, rgba(8, 240, 255, 0.05) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(255, 45, 222, 0.05) 0%, transparent 50%);
+          background: #000000;
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
           min-height: 100vh;
         }
