@@ -902,8 +902,8 @@ const ProfilePage = () => {
           outline: none;
           border-color: transparent;
           box-shadow: 
-            0 0 0 2px rgba(82, 255, 0, 0.3),
-            0 0 16px rgba(82, 255, 0, 0.2);
+            0 0 0 2px rgba(8, 240, 255, 0.3),
+            0 0 16px rgba(8, 240, 255, 0.2);
         }
         
         .neon-input::placeholder {
