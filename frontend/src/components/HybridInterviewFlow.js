@@ -674,7 +674,7 @@ const HybridInterviewFlow = () => {
                     stroke="var(--neon-primary)"
                     strokeWidth="12"
                     strokeLinecap="round"
-                    strokeDasharray={`${(77 / 100) * 754} 754`}
+                    strokeDasharray={`${(91 / 100) * 754} 754`}
                     style={{
                       transition: 'stroke-dasharray 320ms cubic-bezier(.2,1.4,.3,1)',
                       filter: 'drop-shadow(0 0 10px #08F0FFAA)'
@@ -682,7 +682,7 @@ const HybridInterviewFlow = () => {
                   />
                 </svg>
                 <div className="dial-value">
-                  <div className="score-number">77</div>
+                  <div className="score-number">91</div>
                   <div className="score-label">Hybrid Score</div>
                 </div>
               </div>
