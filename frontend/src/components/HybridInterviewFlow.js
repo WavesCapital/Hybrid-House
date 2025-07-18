@@ -714,19 +714,25 @@ const HybridInterviewFlow = () => {
               
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="space-y-4">
-                  <div className="text-4xl">🔄</div>
+                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-full mx-auto">
+                    <RefreshCw className="w-8 h-8 text-white" />
+                  </div>
                   <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>Training plans conflict</h3>
                   <p style={{ color: 'var(--muted)' }}>Algorithm balances volume automatically</p>
                 </div>
                 
                 <div className="space-y-4">
-                  <div className="text-4xl">❓</div>
+                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mx-auto">
+                    <Target className="w-8 h-8 text-white" />
+                  </div>
                   <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>No single progress marker</h3>
                   <p style={{ color: 'var(--muted)' }}>Hybrid Score = one benchmark</p>
                 </div>
                 
                 <div className="space-y-4">
-                  <div className="text-4xl">⏱</div>
+                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full mx-auto">
+                    <Activity className="w-8 h-8 text-white" />
+                  </div>
                   <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>Time-crunched schedules</h3>
                   <p style={{ color: 'var(--muted)' }}>11-question interview &lt; 3 min to complete</p>
                 </div>
