@@ -193,6 +193,22 @@ const HybridInterviewFlow = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Handle automatic interview start after authentication
+  useEffect(() => {
+    if (user && !sessionId) {
+      // Check if user was redirected back from auth to start interview
+      const postAuthAction = localStorage.getItem('postAuthAction');
+      if (postAuthAction === 'startInterview') {
+        // Clear the stored action
+        localStorage.removeItem('postAuthAction');
+        // Automatically start the interview
+        setTimeout(() => {
+          startInterview();
+        }, 1000);
+      }
+    }
+  }, [user, sessionId]);
+
   // Handle starting interview with auth check
   const startInterview = async () => {
     // Check if user is authenticated
