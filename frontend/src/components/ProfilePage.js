@@ -1539,16 +1539,17 @@ const ProfilePage = () => {
                           >
                             <div className="dial-content">
                               <svg className="dial-svg" viewBox="0 0 140 140">
-                                <circle cx="70" cy="70" r="60" stroke="rgba(255, 255, 255, 0.08)" strokeWidth="11" fill="none" />
+                                <circle cx="70" cy="70" r="60" stroke="rgba(255, 255, 255, 0.08)" strokeWidth="9" fill="none" />
                                 <circle 
                                   cx="70" cy="70" r="60" 
                                   stroke="#4BFF7AD9" 
-                                  strokeWidth="11" 
+                                  strokeWidth="9" 
                                   fill="none" 
                                   strokeLinecap="round"
                                   strokeDasharray={`${(roundedValue / 100) * 377} 377`}
                                   style={{ 
-                                    transition: 'stroke-dasharray 180ms ease-out'
+                                    transition: 'stroke-dasharray 180ms ease-out',
+                                    filter: 'drop-shadow(0 0 4px rgba(75, 255, 122, 0.3))'
                                   }}
                                 />
                               </svg>
