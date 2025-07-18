@@ -1324,24 +1324,8 @@ const ProfilePage = () => {
         .score-archive-table {
           border-collapse: separate;
           border-spacing: 0;
-        }
-        
-        .score-archive-table th {
-          background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.6));
-          border-bottom: 2px solid;
-          border-image: linear-gradient(90deg, #1B6DFF, #D64EF9) 1;
-          position: sticky;
-          top: 0;
-          z-index: 10;
-        }
-        
-        .score-archive-table tr:hover {
-          background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .score-archive-table tr:focus {
-          outline: 2px solid rgba(27, 109, 255, 0.5);
-          outline-offset: -2px;
+          font-variant-numeric: tabular-nums;
+          font-family: 'Inter', sans-serif;
         }
         
         /* Mobile table scroll */
