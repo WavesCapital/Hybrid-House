@@ -1523,12 +1523,12 @@ const ProfilePage = () => {
 
                       {/* Mini Dials in Perfect Circle */}
                       {[
-                        { label: 'Strength', key: 'strengthScore', pos: 'pos-1', color: '#6EFF2B' },
-                        { label: 'Speed', key: 'speedScore', pos: 'pos-2', color: '#1EE2FF' },
-                        { label: 'VO₂ Max', key: 'vo2Score', pos: 'pos-3', color: '#00D0E0' },
-                        { label: 'Distance', key: 'distanceScore', pos: 'pos-4', color: '#38FF8E' },
-                        { label: 'Volume', key: 'volumeScore', pos: 'pos-5', color: '#00D4FF' },
-                        { label: 'Recovery', key: 'recoveryScore', pos: 'pos-6', color: '#34FFA0' }
+                        { label: 'Strength', key: 'strengthScore', pos: 'pos-1', color: '#5CFF5C' },
+                        { label: 'Speed', key: 'speedScore', pos: 'pos-2', color: '#FFA42D' },
+                        { label: 'VO₂ Max', key: 'vo2Score', pos: 'pos-3', color: '#B96DFF' },
+                        { label: 'Distance', key: 'distanceScore', pos: 'pos-4', color: '#16D7FF' },
+                        { label: 'Volume', key: 'volumeScore', pos: 'pos-5', color: '#F9F871' },
+                        { label: 'Recovery', key: 'recoveryScore', pos: 'pos-6', color: '#2EFFC0' }
                       ].map((item, index) => {
                         const value = profiles[0].score_data[item.key] || 0;
                         const roundedValue = Math.round(value);
@@ -1544,19 +1544,22 @@ const ProfilePage = () => {
                               <svg className="dial-svg" viewBox="0 0 140 140">
                                 <defs>
                                   <linearGradient id={`miniGradient${index}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stopColor="#52FF00" />
-                                    <stop offset="100%" stopColor="#00B7FF" />
+                                    <stop offset="0%" stopColor={item.color} />
+                                    <stop offset="100%" stopColor={item.color} />
                                   </linearGradient>
                                 </defs>
-                                <circle cx="70" cy="70" r="60" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="8" fill="none" />
+                                <circle cx="70" cy="70" r="60" stroke="#313236" strokeWidth="8" fill="none" />
                                 <circle 
                                   cx="70" cy="70" r="60" 
-                                  stroke={`url(#miniGradient${index})`} 
+                                  stroke={item.color} 
                                   strokeWidth="8" 
                                   fill="none" 
                                   strokeLinecap="round"
                                   strokeDasharray={`${(roundedValue / 100) * 377} 377`}
-                                  style={{ transition: 'stroke-dasharray 0.6s ease-out' }}
+                                  style={{ 
+                                    transition: 'stroke-dasharray 0.6s ease-out',
+                                    filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.1))'
+                                  }}
                                 />
                               </svg>
                               <div className="dial-value">
