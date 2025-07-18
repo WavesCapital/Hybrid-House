@@ -750,6 +750,7 @@ const ProfilePage = () => {
             0 12px 32px -24px rgba(0,0,0,.65),
             0 0 0 1px #1F2025 inset;
           transition: all 0.3s ease;
+          overflow: visible;
         }
         
         .glass-card:hover {
