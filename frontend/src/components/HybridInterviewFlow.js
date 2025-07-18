@@ -950,198 +950,215 @@ const HybridInterviewFlow = () => {
         </>
       ) : (
         // Interview Interface
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-bold" style={{ color: 'var(--txt)' }}>Hybrid Score - Essential Questions</h1>
-              <p style={{ color: 'var(--muted)' }}>Quick assessment for your hybrid athlete score</p>
-            </div>
-            <div className="flex space-x-3">
-              <button
-                onClick={() => navigate('/profile')}
-                className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-gray-400 transition-colors"
-              >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] flex items-center justify-center mr-2 inline-block">
-                  <User className="h-3 w-3 text-white" />
+        <div className="container mx-auto px-6 py-8 max-w-4xl">
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="glass-card p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold" style={{ color: 'var(--txt)' }}>Hybrid Score - Essential Questions</h1>
+                  <p style={{ color: 'var(--muted)' }}>Quick assessment for your hybrid athlete score</p>
                 </div>
-                Profile
-              </button>
-            </div>
-          </div>
-
-          {/* Sticky Progress Bar */}
-          <div className="sticky top-0 z-10 bg-opacity-95 backdrop-blur-sm py-4 mb-8" style={{ background: 'rgba(14, 14, 17, 0.95)' }}>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium" style={{ color: 'var(--muted)' }}>
-                Progress
-              </span>
-              <span className="text-sm" style={{ color: 'var(--muted)' }}>
-                {currentIndex} of {TOTAL_QUESTIONS} questions
-              </span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex-1 neon-progress-bar">
-                <div 
-                  className="neon-progress-fill" 
-                  style={{ width: `${progress}%` }}
-                ></div>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => navigate('/profile')}
+                    className="flex items-center space-x-2 px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-[#08F0FF] transition-colors"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] flex items-center justify-center">
+                      <User className="h-3 w-3 text-white" />
+                    </div>
+                    <span>Profile</span>
+                  </button>
+                </div>
               </div>
-              <span className="text-sm font-semibold min-w-[40px]" style={{ color: 'var(--txt)' }}>
-                {Math.round(progress)}%
-              </span>
             </div>
-          </div>
 
-          {/* Messages - with bottom padding for sticky input */}
-          <div className="space-y-6 min-h-[400px] pb-32">
-            {(() => {
-              // Filter messages to only show first assistant message when multiple consecutive assistant messages exist
-              const getDisplayMessages = (messages) => {
-                const filteredMessages = [];
-                let lastRole = null;
-                
-                for (const message of messages) {
-                  // If this is an assistant message and the last message was also assistant, skip it
-                  if (message.role === 'assistant' && lastRole === 'assistant') {
-                    console.log('Skipping duplicate assistant message:', message.content.substring(0, 50) + '...');
-                    continue;
+            {/* Progress Bar */}
+            <div className="glass-card p-6">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm font-medium" style={{ color: 'var(--txt)' }}>
+                  Progress
+                </span>
+                <span className="text-sm" style={{ color: 'var(--muted)' }}>
+                  {currentIndex} of {TOTAL_QUESTIONS} questions
+                </span>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="flex-1 h-3 bg-gray-800 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-[#08F0FF] to-[#FF2DDE] rounded-full transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+                <span className="text-sm font-semibold min-w-[50px] text-right" style={{ color: 'var(--txt)' }}>
+                  {Math.round(progress)}%
+                </span>
+              </div>
+            </div>
+
+            {/* Messages */}
+            <div className="space-y-6 min-h-[400px]">
+              {(() => {
+                // Filter messages to only show first assistant message when multiple consecutive assistant messages exist
+                const getDisplayMessages = (messages) => {
+                  const filteredMessages = [];
+                  let lastRole = null;
+                  
+                  for (const message of messages) {
+                    // If this is an assistant message and the last message was also assistant, skip it
+                    if (message.role === 'assistant' && lastRole === 'assistant') {
+                      console.log('Skipping duplicate assistant message:', message.content.substring(0, 50) + '...');
+                      continue;
+                    }
+                    
+                    filteredMessages.push(message);
+                    lastRole = message.role;
                   }
                   
-                  filteredMessages.push(message);
-                  lastRole = message.role;
-                }
-                
-                return filteredMessages;
-              };
+                  return filteredMessages;
+                };
 
-              const displayMessages = getDisplayMessages(messages);
-              return displayMessages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
+                const displayMessages = getDisplayMessages(messages);
+                return displayMessages.map((message, index) => (
                   <div
-                    className={`max-w-[85%] p-6 rounded-2xl ${
-                      message.role === 'user'
-                        ? 'bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] text-black font-medium ml-16'
-                        : 'glass-card mr-16'
-                    }`}
-                    style={message.role === 'assistant' ? { color: 'var(--txt)' } : {}}
+                    key={index}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div className="text-base leading-relaxed whitespace-pre-wrap">
-                      {message.content}
+                    <div
+                      className={`max-w-[75%] p-6 rounded-2xl ${
+                        message.role === 'user'
+                          ? 'bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] text-black font-medium'
+                          : 'glass-card'
+                      }`}
+                      style={message.role === 'assistant' ? { color: 'var(--txt)' } : {}}
+                    >
+                      <div className="text-base leading-relaxed whitespace-pre-wrap">
+                        {message.content}
+                      </div>
+                    </div>
+                  </div>
+                ));
+              })()}
+              
+              {/* Loading indicator */}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="glass-card p-6 rounded-2xl max-w-[75%]">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-[#08F0FF] rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-[#08F0FF] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-[#08F0FF] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                      <span className="text-sm" style={{ color: 'var(--muted)' }}>Coach is thinking...</span>
                     </div>
                   </div>
                 </div>
-              ));
-            })()}
-            
-            {/* Loading indicator */}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="glass-card p-6 rounded-2xl mr-16">
-                  <div className="flex items-center space-x-3">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    </div>
-                    <span className="text-sm" style={{ color: 'var(--muted)' }}>Coach is thinking...</span>
-                  </div>
-                </div>
-              </div>
-            )}
+              )}
 
-            <div ref={messagesEndRef} />
-          </div>
+              <div ref={messagesEndRef} />
+            </div>
 
-          {/* Sticky Input Area */}
-          {!isCompleted && (
-            <div className="fixed bottom-0 left-0 right-0 z-10 bg-opacity-95 backdrop-blur-sm border-t border-gray-700 p-6" style={{ background: 'rgba(14, 14, 17, 0.95)' }}>
-              <div className="container mx-auto max-w-4xl">
-                <div className="flex space-x-4">
+            {/* Input Area */}
+            {!isCompleted && (
+              <div className="glass-card p-6">
+                <div className="flex space-x-4 mb-4">
                   <textarea
                     value={currentMessage}
                     onChange={(e) => setCurrentMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Type your answer here..."
-                    className="flex-1 px-4 py-3 rounded-xl border border-gray-600 focus:border-[#08F0FF] focus:outline-none resize-none"
-                    style={{ background: 'var(--card)', color: 'var(--txt)' }}
+                    className="flex-1 px-4 py-3 rounded-xl border border-gray-600 focus:border-[#08F0FF] focus:outline-none resize-none transition-colors"
+                    style={{ 
+                      background: 'var(--card)', 
+                      color: 'var(--txt)',
+                      minHeight: '60px'
+                    }}
                     rows="2"
                     disabled={isLoading}
                   />
                   <button
                     onClick={() => sendMessage()}
                     disabled={isLoading || !currentMessage.trim()}
-                    className="neon-button px-8 py-3 rounded-xl h-auto"
+                    className="neon-button px-8 py-3 rounded-xl"
+                    style={{ height: 'fit-content', alignSelf: 'flex-end' }}
                   >
                     Send
                   </button>
                 </div>
                 
-                <div className="flex justify-between items-center mt-4">
+                <div className="flex justify-between items-center">
                   <div className="flex space-x-3">
                     <button
                       onClick={skipQuestion}
                       disabled={isLoading}
-                      className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-gray-400 transition-colors text-sm"
+                      className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-[#08F0FF] transition-colors text-sm"
                     >
-                      Skip
+                      Skip Question
                     </button>
                     <button
                       onClick={forceComplete}
                       disabled={isLoading}
-                      className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-gray-400 transition-colors text-sm"
+                      className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-[#08F0FF] transition-colors text-sm"
                     >
                       Finish Early
                     </button>
                   </div>
+                  <div className="text-sm" style={{ color: 'var(--muted)' }}>
+                    Press Enter to send
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Completion Loading */}
-          {isCompleted && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm" style={{ 
-              background: 'rgba(14, 14, 17, 0.8)' 
-            }}>
-              <div className="glass-card max-w-md w-full mx-6 p-12 text-center">
-                <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--txt)' }}>
-                  {redirectFailed ? 'Score Ready!' : 'Calculating Your Hybrid Score!'} 🎉
-                </h2>
-                <p className="mb-8 leading-relaxed" style={{ color: 'var(--muted)' }}>
-                  {redirectFailed 
-                    ? 'Your hybrid score has been calculated and saved! Click below to view your results.'
-                    : 'Thanks for completing the essential questions! We\'re now computing your Hybrid Athlete Score and will redirect you to your results.'
-                  }
-                </p>
-                
-                {redirectFailed && completedProfileId ? (
-                  <button
-                    onClick={() => {
-                      navigate(`/hybrid-score/${completedProfileId}`);
-                      // Also try direct navigation as backup
-                      setTimeout(() => {
-                        if (window.location.pathname !== `/hybrid-score/${completedProfileId}`) {
-                          window.location.href = `/hybrid-score/${completedProfileId}`;
-                        }
-                      }, 100);
-                    }}
-                    className="neon-button mb-6"
-                  >
-                    View Your Score
-                  </button>
-                ) : (
-                  <div className="flex items-center justify-center space-x-3">
-                    <Loader2 className="h-6 w-6 animate-spin" style={{ color: 'var(--txt)' }} />
-                    <span className="text-sm" style={{ color: 'var(--muted)' }}>Coach is thinking...</span>
+            {/* Completion Loading */}
+            {isCompleted && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm" style={{ 
+                background: 'rgba(14, 14, 17, 0.8)' 
+              }}>
+                <div className="glass-card max-w-md w-full mx-6 p-12 text-center">
+                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] rounded-full mx-auto mb-6">
+                    <Trophy className="w-8 h-8 text-white" />
                   </div>
-                )}
+                  <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--txt)' }}>
+                    {redirectFailed ? 'Score Ready!' : 'Calculating Your Hybrid Score!'}
+                  </h2>
+                  <p className="mb-8 leading-relaxed" style={{ color: 'var(--muted)' }}>
+                    {redirectFailed 
+                      ? 'Your hybrid score has been calculated and saved! Click below to view your results.'
+                      : 'Thanks for completing the essential questions! We\'re now computing your Hybrid Athlete Score and will redirect you to your results.'
+                    }
+                  </p>
+                  
+                  {redirectFailed && completedProfileId ? (
+                    <button
+                      onClick={() => {
+                        navigate(`/hybrid-score/${completedProfileId}`);
+                        // Also try direct navigation as backup
+                        setTimeout(() => {
+                          if (window.location.pathname !== `/hybrid-score/${completedProfileId}`) {
+                            window.location.href = `/hybrid-score/${completedProfileId}`;
+                          }
+                        }, 100);
+                      }}
+                      className="neon-button mb-6"
+                    >
+                      View Your Score
+                    </button>
+                  ) : (
+                    <div className="flex items-center justify-center space-x-3">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-[#08F0FF] rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-[#08F0FF] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-[#08F0FF] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                      <span className="text-sm" style={{ color: 'var(--muted)' }}>Computing your score...</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
     </div>
