@@ -946,6 +946,7 @@ const ProfilePage = () => {
           justify-content: center;
           transition: all 0.3s ease;
           z-index: 1;
+          overflow: visible;
         }
         
         .dial.big {
