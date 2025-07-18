@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Input } from './ui/input';
 import { useToast } from '../hooks/use-toast';
+import { useAuth } from '../contexts/AuthContext';
 import { 
   User, Calendar, Trophy, BarChart3, Plus, Target, Activity,
   Zap, RefreshCw, ArrowRight, Award, TrendingUp, Camera, 
@@ -17,11 +18,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001'
 const ProfilePage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  
-  // Authentication states (optional - set to null for public access)
-  const [user, setUser] = useState(null);
-  const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { user, session, loading } = useAuth();
   
   // User Profile Management States (optional - only for authenticated users)
   const [userProfile, setUserProfile] = useState(null);
