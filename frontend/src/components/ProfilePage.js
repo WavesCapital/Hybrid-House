@@ -1223,8 +1223,8 @@ const ProfilePage = () => {
         }
         
         .mini-kpi:hover {
-          border-color: rgba(82, 255, 0, 0.3);
-          box-shadow: 0 4px 16px rgba(82, 255, 0, 0.1);
+          border-color: rgba(8, 240, 255, 0.3);
+          box-shadow: 0 4px 16px rgba(8, 240, 255, 0.1);
         }
         
         /* Archive Cards */
@@ -1238,7 +1238,7 @@ const ProfilePage = () => {
         
         .archive-card:hover {
           background: #15161A;
-          border-color: rgba(82, 255, 0, 0.3);
+          border-color: rgba(8, 240, 255, 0.3);
           transform: translateX(4px);
         }
         
