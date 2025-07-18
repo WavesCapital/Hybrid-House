@@ -824,7 +824,7 @@ const ProfilePage = () => {
         }
         
         .em-dash {
-          color: #7A7D83;
+          color: #8D9299;
         }
         
         /* Reduced spacing - 48px desktop, 24px mobile */
