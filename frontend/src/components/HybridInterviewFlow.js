@@ -367,384 +367,569 @@ const HybridInterviewFlow = () => {
   }, [currentIndex]);
 
   return (
-    <div className="min-h-screen" style={{ background: '#000000' }}>
+    <div className="min-h-screen" style={{ background: '#0E0E11' }}>
       <style>
         {`
-        /* Flat-Neon Palette ("Laser Pop") */
+        /* Flat-Neon "Laser Pop" Color System */
+        :root {
+          --bg: #0E0E11;
+          --card: #15161A;
+          --border: #1F2025;
+          --txt: #F5FAFF;
+          --muted: #8D9299;
+          --neon-primary: #08F0FF;
+          --neon-secondary: #FF2DDE;
+          --strength: #5CFF5C;
+          --speed: #FFA42D;
+          --vo2: #B96DFF;
+          --distance: #16D7FF;
+          --volume: #F9F871;
+          --recovery: #2EFFC0;
+        }
+
+        body {
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+          font-variant-numeric: tabular-nums;
+        }
+
         .glass-card {
-          background: #15161A;
+          background: var(--card);
           backdrop-filter: blur(16px);
-          border: 1px solid #1F2025;
-          border-radius: 8px;
+          border: 1px solid var(--border);
+          border-radius: 12px;
           box-shadow: 
             0 12px 32px -24px rgba(0,0,0,.65),
-            0 0 0 1px #1F2025 inset;
-          transition: all 0.3s ease;
-          overflow: visible;
+            0 0 0 1px var(--border) inset;
         }
-        
-        .text-positive { color: #32FF7A; }
-        .text-negative { color: #FF5E5E; }
-        .text-primary { color: #F5FAFF; }
-        .text-secondary { color: rgba(245, 250, 255, 0.7); }
-        .text-muted { color: #8D9299; }
-        
+
         .neon-button {
-          background: #08F0FF;
+          background: var(--neon-primary);
           border: none;
           border-radius: 8px;
           color: #000000;
           font-weight: 600;
-          padding: 16px 24px;
+          padding: 16px 32px;
+          font-size: 16px;
           transition: all 0.3s ease;
-          position: relative;
-          overflow: hidden;
+          cursor: pointer;
         }
-        
+
         .neon-button:hover {
           transform: translateY(-2px);
-          background: #FF2DDE;
-          color: #000000;
+          background: var(--neon-secondary);
           box-shadow: 
             0 8px 32px rgba(8, 240, 255, 0.4),
             0 4px 16px rgba(255, 45, 222, 0.3);
         }
-        
-        .neon-button:active {
-          transform: translateY(0);
-        }
-        
+
         .neon-button:disabled {
           opacity: 0.6;
           transform: none;
-          box-shadow: none;
+          cursor: not-allowed;
         }
-        
-        .neon-input {
-          background: #15161A;
-          border: 1px solid #1F2025;
-          border-radius: 6px;
-          color: #F5FAFF;
-          padding: 12px 16px;
-          transition: all 0.3s ease;
-          font-family: 'Inter', sans-serif;
+
+        .hero-dial {
+          width: 280px;
+          height: 280px;
+          filter: drop-shadow(0 0 10px #08F0FFAA);
         }
-        
-        .neon-input:focus {
-          outline: none;
-          border-color: transparent;
-          box-shadow: 
-            0 0 0 2px rgba(8, 240, 255, 0.3),
-            0 0 16px rgba(8, 240, 255, 0.2);
-        }
-        
-        .neon-input::placeholder {
-          color: #8D9299;
-        }
-        
-        .neon-progress-bar {
-          height: 8px;
-          background: #1F2025;
-          border-radius: 4px;
-          overflow: hidden;
-        }
-        
-        .neon-progress-fill {
+
+        .hero-dial svg {
+          width: 100%;
           height: 100%;
-          background: #08F0FF;
-          transition: width 0.3s ease;
+          transform: rotate(-90deg);
         }
-        
-        .chat-bubble-user {
-          background: #08F0FF;
-          color: #000000;
+
+        .hero-dial .dial-value {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+        }
+
+        .hero-dial .score-number {
+          font-size: 4rem;
+          font-weight: 800;
+          color: var(--neon-primary);
+          line-height: 1;
+          margin-bottom: 8px;
+        }
+
+        .hero-dial .score-label {
+          font-size: 1.2rem;
+          color: var(--txt);
+          font-weight: 600;
+        }
+
+        .pillar-ring {
+          width: 150px;
+          height: 150px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .pillar-ring:hover {
+          transform: translateY(-2px);
+          filter: drop-shadow(0 0 20px currentColor);
+        }
+
+        .pillar-ring svg {
+          width: 100%;
+          height: 100%;
+          transform: rotate(-90deg);
+        }
+
+        .pillar-ring .ring-value {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+        }
+
+        .pillar-ring .ring-number {
+          font-size: 2rem;
+          font-weight: 700;
+          line-height: 1;
+          margin-bottom: 4px;
+        }
+
+        .pillar-ring .ring-label {
+          font-size: 0.875rem;
+          color: var(--muted);
           font-weight: 500;
         }
-        
-        .chat-bubble-assistant {
-          background: #15161A;
-          border: 1px solid #1F2025;
-          color: #F5FAFF;
-          backdrop-filter: blur(10px);
+
+        .sticky-cta {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 50;
+          background: rgba(14, 14, 17, 0.95);
+          backdrop-filter: blur(20px);
+          border-top: 1px solid var(--border);
+          padding: 16px 24px;
+          transform: translateY(100%);
+          transition: transform 0.3s ease;
         }
-        
-        .neon-btn-secondary {
-          background: #15161A;
-          color: #F5FAFF;
-          border: 1px solid #1F2025;
+
+        .sticky-cta.visible {
+          transform: translateY(0);
         }
-        
-        .neon-btn-secondary:hover {
-          background: #15161A;
-          border-color: rgba(8, 240, 255, 0.3);
-          color: #F5FAFF;
+
+        .authority-logos {
+          opacity: 0.6;
+          filter: grayscale(100%);
+          transition: opacity 0.3s ease;
         }
-        
-        .feature-dot {
-          width: 6px;
-          height: 6px;
-          background: #08F0FF;
+
+        .authority-logos:hover {
+          opacity: 0.8;
+        }
+
+        .step-card {
+          background: var(--card);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          padding: 32px;
+          text-align: center;
+          transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+          transform: translateY(-4px);
+          border-color: var(--neon-primary);
+        }
+
+        .step-number {
+          width: 48px;
+          height: 48px;
+          background: var(--neon-primary);
+          color: #000000;
           border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+          font-weight: 800;
+          margin: 0 auto 24px;
+        }
+
+        .faq-item {
+          background: var(--card);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 24px;
+          margin-bottom: 16px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+          border-color: var(--neon-primary);
+        }
+
+        .testimonial-card {
+          background: var(--card);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          padding: 32px;
+          margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+          .hero-dial {
+            width: 180px;
+            height: 180px;
+          }
+          
+          .hero-dial .score-number {
+            font-size: 2.5rem;
+          }
+          
+          .pillar-ring {
+            width: 120px;
+            height: 120px;
+          }
+          
+          .step-card {
+            padding: 24px;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .hero-dial svg circle,
+          .pillar-ring svg circle {
+            animation: none !important;
+          }
         }
         `}
       </style>
 
-      {/* Header */}
-      <header className="border-b border-white/10 bg-black/20 backdrop-blur-sm">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] rounded-lg flex items-center justify-center">
-                  <Activity className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-primary">Hybrid House</h1>
-                  <p className="text-xs text-muted">Performance Analytics</p>
-                </div>
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Radial Highlight */}
+        <div 
+          className="absolute inset-0 opacity-30"
+          style={{
+            background: `radial-gradient(circle at center, #08F0FF22 0%, transparent 420px)`
+          }}
+        />
+        
+        <div className="container mx-auto px-6 py-16">
+          <div className="grid lg:grid-cols-2 gap-16 items-center max-w-7xl mx-auto">
+            {/* Left Column - Copy */}
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <h1 className="text-5xl lg:text-6xl font-bold leading-tight" style={{ color: 'var(--txt)' }}>
+                  Build Muscle.<br />
+                  Shave Minutes.<br />
+                  <span style={{ color: 'var(--neon-primary)' }}>Know Your Score.</span>
+                </h1>
+                <p className="text-xl lg:text-2xl leading-relaxed" style={{ color: 'var(--muted)' }}>
+                  The only 0-100 metric built for athletes who deadlift at dawn and hit tempo runs by dusk.
+                </p>
               </div>
-              <div className="h-6 w-px bg-white/20"></div>
-              <h2 className="text-lg font-semibold text-secondary">Home</h2>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button 
+                  onClick={startInterview}
+                  disabled={isLoading}
+                  className="neon-button text-lg"
+                >
+                  {isLoading ? 'Starting...' : 'Start Hybrid Interview 🚀'}
+                </button>
+                <button 
+                  className="px-8 py-4 border border-gray-600 rounded-lg text-gray-300 hover:border-gray-400 transition-colors"
+                  onClick={() => {/* Navigate to sample report */}}
+                >
+                  See Sample Report
+                </button>
+              </div>
+
+              <p className="text-sm" style={{ color: 'var(--muted)' }}>
+                Backed by peer-reviewed concurrent-training studies and used by >8,000 athletes.
+              </p>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] rounded-full flex items-center justify-center">
-                <User className="w-5 h-5 text-white" />
+
+            {/* Right Column - Hero Dial */}
+            <div className="flex justify-center">
+              <div className="hero-dial relative">
+                <svg viewBox="0 0 280 280">
+                  <circle
+                    cx="140"
+                    cy="140"
+                    r="120"
+                    fill="none"
+                    stroke="var(--border)"
+                    strokeWidth="12"
+                  />
+                  <circle
+                    cx="140"
+                    cy="140"
+                    r="120"
+                    fill="none"
+                    stroke="var(--neon-primary)"
+                    strokeWidth="12"
+                    strokeLinecap="round"
+                    strokeDasharray={`${(77 / 100) * 754} 754`}
+                    style={{
+                      transition: 'stroke-dasharray 320ms cubic-bezier(.2,1.4,.3,1)',
+                      filter: 'drop-shadow(0 0 10px #08F0FFAA)'
+                    }}
+                  />
+                </svg>
+                <div className="dial-value">
+                  <div className="score-number">77</div>
+                  <div className="score-label">Hybrid Score</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </header>
+      </section>
 
-      <div className="container mx-auto px-6 py-8 max-w-4xl">
-        {!sessionId ? (
-          <div className="glass-card max-w-2xl mx-auto p-12 text-center">
-            <h2 className="text-4xl font-bold text-primary mb-6">
-              Ready for Your Hybrid Score?
+      {/* Authority Bar */}
+      <section className="py-8 border-t border-b border-gray-800">
+        <div className="container mx-auto px-6">
+          <div className="flex justify-center items-center space-x-12 authority-logos">
+            <div className="text-gray-500 font-semibold">Men's Health</div>
+            <div className="text-gray-500 font-semibold">HYROX</div>
+            <div className="text-gray-500 font-semibold">CrossFit Community</div>
+            <div className="text-gray-500 font-semibold">Bare Performance</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Problem/Solution */}
+      <section className="py-24">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="glass-card p-12 text-center">
+              <h2 className="text-4xl font-bold mb-16" style={{ color: 'var(--txt)' }}>
+                Strength or endurance? <span style={{ color: 'var(--neon-primary)' }}>Stop choosing.</span>
+              </h2>
+              
+              <div className="grid md:grid-cols-3 gap-8">
+                <div className="space-y-4">
+                  <div className="text-4xl">🔄</div>
+                  <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>Training plans conflict</h3>
+                  <p style={{ color: 'var(--muted)' }}>Algorithm balances volume automatically</p>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="text-4xl">❓</div>
+                  <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>No single progress marker</h3>
+                  <p style={{ color: 'var(--muted)' }}>Hybrid Score = one benchmark</p>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="text-4xl">⏱</div>
+                  <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>Time-crunched schedules</h3>
+                  <p style={{ color: 'var(--muted)' }}>11-question interview < 3 min to complete</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-24 bg-black">
+        <div className="container mx-auto px-6">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl font-bold text-center mb-16" style={{ color: 'var(--txt)' }}>
+              How It Works
             </h2>
-            <p className="text-secondary mb-8 text-lg leading-relaxed">
-              I'm your high-energy Hybrid House Coach! I'll ask you just 11 essential questions to 
-              calculate your Hybrid Score quickly. This focused assessment covers the core metrics 
-              that matter most. Takes about 3 minutes. Let's get your score! 🏃‍♂️💪
-            </p>
             
-            <div className="space-y-4 mb-8">
-              <div className="flex items-center space-x-3 text-secondary">
-                <div className="feature-dot"></div>
-                <span>11 essential questions only</span>
+            <div className="grid md:grid-cols-3 gap-8 mb-16">
+              <div className="step-card">
+                <div className="step-number">1</div>
+                <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>Answer 11 essentials</h3>
+                <p style={{ color: 'var(--muted)' }}>Weight, mile time, lifts, and key metrics</p>
               </div>
-              <div className="flex items-center space-x-3 text-secondary">
-                <div className="feature-dot"></div>
-                <span>Auto-save your progress</span>
+              
+              <div className="step-card">
+                <div className="step-number">2</div>
+                <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>AI crunches data</h3>
+                <p style={{ color: 'var(--muted)' }}>Coach-GPT normalizes data → algorithm v5.0</p>
               </div>
-              <div className="flex items-center space-x-3 text-secondary">
-                <div className="feature-dot"></div>
-                <span>Skip any question anytime</span>
+              
+              <div className="step-card">
+                <div className="step-number">3</div>
+                <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>Score + plan</h3>
+                <p style={{ color: 'var(--muted)' }}>Dial, pillar scores, and 5 actionable tips</p>
               </div>
             </div>
             
-            <Button
+            <div className="text-center">
+              <button 
+                onClick={startInterview}
+                disabled={isLoading}
+                className="neon-button text-lg"
+              >
+                {isLoading ? 'Starting...' : 'Start Hybrid Interview 🚀'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Score Breakdown Grid */}
+      <section className="py-24">
+        <div className="container mx-auto px-6">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl font-bold text-center mb-16" style={{ color: 'var(--txt)' }}>
+              Your Complete Performance Picture
+            </h2>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                { pillar: 'Strength', color: 'var(--strength)', description: 'Bench, squat & deadlift relative to body weight' },
+                { pillar: 'Speed', color: 'var(--speed)', description: 'Fastest mile pace' },
+                { pillar: 'VO₂ Max', color: 'var(--vo2)', description: 'Engine capacity straight from your watch' },
+                { pillar: 'Distance', color: 'var(--distance)', description: 'Longest run (last 60 days)' },
+                { pillar: 'Volume', color: 'var(--volume)', description: 'Weekly mileage signal' },
+                { pillar: 'Recovery', color: 'var(--recovery)', description: 'HRV & resting HR stability' }
+              ].map((item, index) => (
+                <div key={index} className="glass-card p-8 text-center">
+                  <div className="pillar-ring relative mx-auto mb-6" style={{ color: item.color }}>
+                    <svg viewBox="0 0 150 150">
+                      <circle
+                        cx="75"
+                        cy="75"
+                        r="65"
+                        fill="none"
+                        stroke="var(--border)"
+                        strokeWidth="8"
+                      />
+                      <circle
+                        cx="75"
+                        cy="75"
+                        r="65"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="8"
+                        strokeLinecap="round"
+                        strokeDasharray={`${(85 / 100) * 408} 408`}
+                        style={{ transition: 'stroke-dasharray 180ms linear' }}
+                      />
+                    </svg>
+                    <div className="ring-value">
+                      <div className="ring-number" style={{ color: item.color }}>85</div>
+                      <div className="ring-label">{item.pillar}</div>
+                    </div>
+                  </div>
+                  <p className="text-sm" style={{ color: 'var(--muted)' }}>
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof */}
+      <section className="py-24 bg-black">
+        <div className="container mx-auto px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              <div className="space-y-8">
+                <h2 className="text-4xl font-bold" style={{ color: 'var(--txt)' }}>
+                  Real Results from Real Athletes
+                </h2>
+                <div className="flex items-center space-x-2">
+                  <div className="flex space-x-1">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="w-5 h-5 text-yellow-400">★</div>
+                    ))}
+                  </div>
+                  <span style={{ color: 'var(--muted)' }}>4.9/5 from 8,000+ athletes</span>
+                </div>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="testimonial-card">
+                  <p className="text-lg mb-4" style={{ color: 'var(--txt)' }}>
+                    "Hybrid Score nailed where I lagged. 8-week focus block and my marathon split dropped by 9 min while my deadlift PR rose 20 lb."
+                  </p>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                      <User className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="font-semibold" style={{ color: 'var(--txt)' }}>Sam</div>
+                      <div className="text-sm" style={{ color: 'var(--muted)' }}>HYROX age-group champ</div>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-xs">#AppleWatch</span>
+                    <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-xs">#CrossFit</span>
+                    <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-xs">#Marathon</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-24">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-4xl font-bold text-center mb-16" style={{ color: 'var(--txt)' }}>
+              Frequently Asked Questions
+            </h2>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="faq-item">
+                <h3 className="font-semibold mb-2" style={{ color: 'var(--txt)' }}>Is it really free?</h3>
+                <p style={{ color: 'var(--muted)' }}>Yes, completely free. No hidden costs or subscription required.</p>
+              </div>
+              
+              <div className="faq-item">
+                <h3 className="font-semibold mb-2" style={{ color: 'var(--txt)' }}>Do I need a smartwatch?</h3>
+                <p style={{ color: 'var(--muted)' }}>No, but having HRV and VO₂ data improves accuracy significantly.</p>
+              </div>
+              
+              <div className="faq-item">
+                <h3 className="font-semibold mb-2" style={{ color: 'var(--txt)' }}>How accurate is it for women?</h3>
+                <p style={{ color: 'var(--muted)' }}>Algorithm accounts for gender differences in strength and endurance ratios.</p>
+              </div>
+              
+              <div className="faq-item">
+                <h3 className="font-semibold mb-2" style={{ color: 'var(--txt)' }}>Can I retake the assessment?</h3>
+                <p style={{ color: 'var(--muted)' }}>Yes, track your progress by retaking monthly or after training blocks.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sticky CTA Bar */}
+      <div className="sticky-cta">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="text-2xl">🏆</div>
+              <div>
+                <div className="font-semibold" style={{ color: 'var(--txt)' }}>Ready to claim your score?</div>
+                <div className="text-sm" style={{ color: 'var(--muted)' }}>3-min assessment • zero cost</div>
+              </div>
+            </div>
+            <button 
               onClick={startInterview}
               disabled={isLoading}
-              className="neon-button w-full max-w-xs h-14 text-lg font-semibold"
+              className="neon-button"
             >
-              {isLoading ? 'Starting...' : 'Start Hybrid Interview 🚀'}
-            </Button>
+              {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
+            </button>
           </div>
-        ) : (
-          <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-2xl font-bold text-primary">Hybrid Score - Essential Questions</h1>
-                <p className="text-secondary">Quick assessment for your hybrid athlete score</p>
-              </div>
-              <div className="flex space-x-3">
-                <Button
-                  onClick={() => navigate('/profile')}
-                  className="neon-btn-secondary"
-                  size="sm"
-                >
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] flex items-center justify-center mr-2">
-                    <User className="h-3 w-3 text-white" />
-                  </div>
-                  Profile
-                </Button>
-              </div>
-            </div>
-
-            {/* Sticky Progress Bar */}
-            <div className="sticky top-0 z-10 bg-opacity-95 backdrop-blur-sm py-4 mb-8" style={{ background: 'rgba(0, 0, 0, 0.95)' }}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-secondary font-medium">
-                  Progress
-                </span>
-                <span className="text-sm text-muted">
-                  {currentIndex} of {TOTAL_QUESTIONS} questions
-                </span>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="flex-1 neon-progress-bar">
-                  <div 
-                    className="neon-progress-fill" 
-                    style={{ width: `${progress}%` }}
-                  ></div>
-                </div>
-                <span className="text-sm font-semibold text-primary min-w-[40px]">
-                  {Math.round(progress)}%
-                </span>
-              </div>
-            </div>
-
-            {/* Messages - with bottom padding for sticky input */}
-            <div className="space-y-6 min-h-[400px] pb-32">
-              {(() => {
-                // Filter messages to only show first assistant message when multiple consecutive assistant messages exist
-                const getDisplayMessages = (messages) => {
-                  const filteredMessages = [];
-                  let lastRole = null;
-                  
-                  for (const message of messages) {
-                    // If this is an assistant message and the last message was also assistant, skip it
-                    if (message.role === 'assistant' && lastRole === 'assistant') {
-                      console.log('Skipping duplicate assistant message:', message.content.substring(0, 50) + '...');
-                      continue;
-                    }
-                    
-                    filteredMessages.push(message);
-                    lastRole = message.role;
-                  }
-                  
-                  return filteredMessages;
-                };
-
-                const displayMessages = getDisplayMessages(messages);
-                return displayMessages.map((message, index) => (
-                  <div
-                    key={index}
-                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-[85%] p-6 rounded-2xl ${
-                        message.role === 'user'
-                          ? 'chat-bubble-user ml-16'
-                          : 'chat-bubble-assistant mr-16'
-                      }`}
-                    >
-                      <div className="text-base leading-relaxed whitespace-pre-wrap">
-                        {message.content}
-                      </div>
-                    </div>
-                  </div>
-                ));
-              })()}
-              
-              {/* Loading indicator */}
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="chat-bubble-assistant p-6 rounded-2xl mr-16">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                      </div>
-                      <span className="text-sm text-secondary">Coach is thinking...</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Sticky Input Area */}
-            {!isCompleted && (
-              <div className="fixed bottom-0 left-0 right-0 z-10 bg-opacity-95 backdrop-blur-sm border-t border-gray-700 p-6" style={{ background: 'rgba(0, 0, 0, 0.95)' }}>
-                <div className="container mx-auto max-w-4xl">
-                  <div className="flex space-x-4">
-                    <textarea
-                      value={currentMessage}
-                      onChange={(e) => setCurrentMessage(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="Type your answer here..."
-                      className="neon-input flex-1 resize-none"
-                      rows="2"
-                      disabled={isLoading}
-                    />
-                    <Button
-                      onClick={() => sendMessage()}
-                      disabled={isLoading || !currentMessage.trim()}
-                      className="neon-button px-8 py-3 rounded-xl h-auto"
-                    >
-                      Send
-                    </Button>
-                  </div>
-                  
-                  <div className="flex justify-between items-center mt-4">
-                    <div className="flex space-x-3">
-                      <Button
-                        onClick={skipQuestion}
-                        disabled={isLoading}
-                        className="neon-btn-secondary text-sm px-4 py-2"
-                      >
-                        Skip
-                      </Button>
-                      <Button
-                        onClick={forceComplete}
-                        disabled={isLoading}
-                        className="neon-btn-secondary text-sm px-4 py-2"
-                      >
-                        Finish Early
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Completion Loading */}
-            {isCompleted && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm" style={{ 
-                background: 'rgba(0, 0, 0, 0.8)' 
-              }}>
-                <div className="glass-card max-w-md w-full mx-6 p-12 text-center">
-                  <h2 className="text-3xl font-bold text-primary mb-6">
-                    {redirectFailed ? 'Score Ready!' : 'Calculating Your Hybrid Score!'} 🎉
-                  </h2>
-                  <p className="text-secondary mb-8 leading-relaxed">
-                    {redirectFailed 
-                      ? 'Your hybrid score has been calculated and saved! Click below to view your results.'
-                      : 'Thanks for completing the essential questions! We\'re now computing your Hybrid Athlete Score and will redirect you to your results.'
-                    }
-                  </p>
-                  
-                  {redirectFailed && completedProfileId ? (
-                    <Button
-                      onClick={() => {
-                        navigate(`/hybrid-score/${completedProfileId}`);
-                        // Also try direct navigation as backup
-                        setTimeout(() => {
-                          if (window.location.pathname !== `/hybrid-score/${completedProfileId}`) {
-                            window.location.href = `/hybrid-score/${completedProfileId}`;
-                          }
-                        }, 100);
-                      }}
-                      className="neon-button mb-6"
-                    >
-                      View Your Score
-                    </Button>
-                  ) : (
-                    <div className="flex items-center justify-center space-x-3">
-                      <Loader2 className="h-6 w-6 text-primary animate-spin" />
-                      <span className="text-sm text-muted">Coach is thinking...</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
