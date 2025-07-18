@@ -923,6 +923,7 @@ const ProfilePage = () => {
           width: 500px;
           height: 500px;
           margin: 0;
+          overflow: visible;
         }
         
         .cluster-vignette {
