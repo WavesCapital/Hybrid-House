@@ -921,7 +921,9 @@ const HybridInterviewFlow = () => {
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="text-2xl">🏆</div>
+              <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full">
+                <Trophy className="w-6 h-6 text-white" />
+              </div>
               <div>
                 <div className="font-semibold" style={{ color: 'var(--txt)' }}>Ready to claim your score?</div>
                 <div className="text-sm" style={{ color: 'var(--muted)' }}>3-min assessment • zero cost</div>
