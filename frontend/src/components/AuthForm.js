@@ -3,13 +3,47 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function AuthForm() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false); // Default to signup as requested
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   
-  const { signInWithEmail, signUpWithEmail } = useAuth();
+  const { signInWithEmail, signUpWithEmail, user } = useAuth();
+  const navigate = useNavigate();
+
+  // Check URL params for mode (signup/login)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    if (mode === 'signup') {
+      setIsLogin(false);
+    } else if (mode === 'login') {
+      setIsLogin(true);
+    }
+  }, []);
+
+  // Handle post-auth redirect
+  useEffect(() => {
+    if (user) {
+      // Check if there's a stored post-auth action
+      const postAuthAction = localStorage.getItem('postAuthAction');
+      
+      if (postAuthAction === 'startInterview') {
+        // Clear the stored action
+        localStorage.removeItem('postAuthAction');
+        // Redirect to home page which will trigger interview start
+        setTimeout(() => {
+          navigate('/', { replace: true });
+        }, 1000);
+      } else {
+        // Default redirect to home
+        setTimeout(() => {
+          navigate('/', { replace: true });
+        }, 1000);
+      }
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
