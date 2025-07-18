@@ -253,15 +253,15 @@ class AuthInterviewTester:
             # Test athlete profile endpoints for completion flow
             profile_endpoints = [
                 ("/athlete-profiles/public", "POST", {
-                    "profile_json": {"first_name": "Test", "sex": "Male"},
-                    "score_data": None
+                    "profile_json": {"first_name": "Test", "sex": "Male"}
                 }),
                 ("/athlete-profiles", "GET"),
                 ("/athlete-profile/test-id", "GET")
             ]
             
-            for endpoint, method, payload in profile_endpoints:
+            for endpoint, method in profile_endpoints:
                 if method == "POST":
+                    payload = profile_endpoints[0][2]  # Get the payload from the first item
                     response = self.session.post(f"{API_BASE_URL}{endpoint}", json=payload)
                     # Public endpoint should work
                     if response.status_code in [200, 201]:
