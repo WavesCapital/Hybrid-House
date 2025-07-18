@@ -809,8 +809,7 @@ const ProfilePage = () => {
         .score-archive-table tr:hover {
           background: rgba(245, 250, 255, 0.05);
           transform: translateY(-1px);
-          border-bottom: 1px solid;
-          border-image: linear-gradient(90deg, #52FF00, #00B7FF) 1;
+          border-bottom: 1px solid #08F0FF;
         }
         
         .score-archive-table tr:focus {
