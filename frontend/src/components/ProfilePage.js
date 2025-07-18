@@ -1461,8 +1461,8 @@ const ProfilePage = () => {
           
           {/* Latest Hybrid Score (Left Column - 60% width) */}
           <div className="w-full lg:w-[60%]">
-            <div className="glass-card p-8 pt-8">
-              <div className="flex items-center justify-center mb-3 pt-8">
+            <div className="glass-card p-6">
+              <div className="flex items-center justify-center mb-3">
                 {profiles.length > 0 && profiles[0]?.score_data?.hybridScore ? (
                   <div className="radar-cluster-container">
                     {/* Radar Cluster Layout */}
