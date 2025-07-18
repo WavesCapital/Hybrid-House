@@ -1024,11 +1024,11 @@ const ProfilePage = () => {
         }
         
         .dial.big .score-number {
-          font-size: 4rem;
+          font-size: 3rem;
           font-weight: bold;
           color: #08F0FF;
           line-height: 1;
-          margin-bottom: 8px;
+          margin-bottom: 6px;
         }
         
         .dial.big .score-label {
