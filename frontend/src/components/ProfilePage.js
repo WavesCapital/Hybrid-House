@@ -809,18 +809,19 @@ const ProfilePage = () => {
         }
         
         .score-archive-table tr:hover {
-          background: rgba(245, 250, 255, 0.05);
+          background: rgba(8, 240, 255, 0.08);
           transform: translateY(-1px);
           border-bottom: 1px solid #08F0FF;
         }
         
         .score-archive-table tr:focus {
-          outline: 2px solid rgba(27, 109, 255, 0.5);
+          outline: 2px solid rgba(8, 240, 255, 0.5);
           outline-offset: -2px;
         }
         
         .most-recent-row {
-          background: rgba(27, 109, 255, 0.13);
+          background: rgba(8, 240, 255, 0.15);
+          border-left: 3px solid #08F0FF;
         }
         
         .em-dash {
