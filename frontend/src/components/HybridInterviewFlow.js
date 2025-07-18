@@ -760,7 +760,7 @@ const HybridInterviewFlow = () => {
               <div className="step-card">
                 <div className="step-number">2</div>
                 <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>AI crunches data</h3>
-                <p style={{ color: 'var(--muted)' }}>Coach-GPT normalizes data → algorithm v5.0</p>
+                <p style={{ color: 'var(--muted)' }}>Our AI normalizes data → algorithm v5.0</p>
               </div>
               
               <div className="step-card">
