@@ -728,14 +728,14 @@ const ProfilePage = () => {
         {`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
-        /* Electric Limeade Color System */
+        /* Flat-Neon Palette ("Laser Pop") */
         .neon-noir-canvas {
           background: #0E0E11;
           background-image: 
-            linear-gradient(45deg, rgba(82, 255, 0, 0.03) 0%, transparent 50%),
-            linear-gradient(-45deg, rgba(0, 183, 255, 0.03) 0%, transparent 50%),
-            radial-gradient(circle at 20% 80%, rgba(82, 255, 0, 0.05) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(0, 183, 255, 0.05) 0%, transparent 50%);
+            linear-gradient(45deg, rgba(8, 240, 255, 0.03) 0%, transparent 50%),
+            linear-gradient(-45deg, rgba(255, 45, 222, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 20% 80%, rgba(8, 240, 255, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 45, 222, 0.05) 0%, transparent 50%);
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
           min-height: 100vh;
         }
@@ -755,7 +755,7 @@ const ProfilePage = () => {
         .glass-card:hover {
           transform: translateY(-3px);
           box-shadow: 
-            0 0 12px 0 rgba(82,255,0,.35),
+            0 0 14px 0 rgba(8,240,255,.35),
             0 12px 32px -24px rgba(0,0,0,.65),
             0 0 0 1px #1F2025 inset;
         }
