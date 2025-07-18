@@ -650,7 +650,7 @@ const HybridInterviewFlow = () => {
               </div>
 
               <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                Backed by peer-reviewed concurrent-training studies and used by >8,000 athletes.
+                Backed by peer-reviewed concurrent-training studies and used by &gt;8,000 athletes.
               </p>
             </div>
 
