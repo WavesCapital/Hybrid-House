@@ -888,10 +888,10 @@ const ProfilePage = () => {
         
         /* Input Fields */
         .neon-input {
-          background: rgba(20, 20, 25, 0.6);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: #15161A;
+          border: 1px solid #1F2025;
           border-radius: 6px;
-          color: #FFFFFF;
+          color: #F5FAFF;
           padding: 12px 16px;
           transition: all 0.3s ease;
           font-family: 'Inter', sans-serif;
@@ -901,12 +901,12 @@ const ProfilePage = () => {
           outline: none;
           border-color: transparent;
           box-shadow: 
-            0 0 0 2px rgba(27, 109, 255, 0.3),
-            0 0 16px rgba(27, 109, 255, 0.2);
+            0 0 0 2px rgba(82, 255, 0, 0.3),
+            0 0 16px rgba(82, 255, 0, 0.2);
         }
         
         .neon-input::placeholder {
-          color: rgba(255, 255, 255, 0.4);
+          color: #8D9299;
         }
         
         /* Radar Cluster - Iron-Man HUD Style - Improved Proportions */
