@@ -1575,7 +1575,7 @@ const ProfilePage = () => {
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h3 className="text-2xl font-bold text-primary flex items-center">
-                    🛠️ Generate New Score
+                    Generate New Score
                   </h3>
                   {user && userProfile && (
                     <p className="text-sm text-secondary mt-2">
