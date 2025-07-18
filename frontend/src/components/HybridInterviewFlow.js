@@ -208,7 +208,7 @@ const HybridInterviewFlow = () => {
         }, 1000);
       }
     }
-  }, [user, sessionId, startInterview]);
+  }, [user, sessionId]);
 
   // Handle starting interview with auth check
   const startInterview = async () => {
