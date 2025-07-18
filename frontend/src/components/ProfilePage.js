@@ -912,7 +912,7 @@ const ProfilePage = () => {
         .radar-cluster-container {
           position: relative;
           width: 100%;
-          padding: 80px 0;
+          padding: 40px 0;
           display: flex;
           justify-content: center;
           align-items: center;
