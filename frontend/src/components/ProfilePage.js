@@ -808,10 +808,10 @@ const ProfilePage = () => {
         }
         
         .score-archive-table tr:hover {
-          background: rgba(255, 255, 255, 0.05);
+          background: rgba(245, 250, 255, 0.05);
           transform: translateY(-1px);
           border-bottom: 1px solid;
-          border-image: linear-gradient(90deg, #1B6DFF, #D64EF9) 1;
+          border-image: linear-gradient(90deg, #52FF00, #00B7FF) 1;
         }
         
         .score-archive-table tr:focus {
