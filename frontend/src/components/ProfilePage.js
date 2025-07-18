@@ -1739,10 +1739,10 @@ const ProfilePage = () => {
         {/* Main Section - Stack with reduced spacing */}
         <div className="space-y-12">{/* Reduced spacing: 48px desktop, 24px mobile */}
           
-          {/* Score Archive - Table Format */}
+          {/* Hybrid Score History - Table Format */}
           <div className="glass-card p-8">
             <h3 className="text-2xl font-bold text-primary mb-6 flex items-center">
-              📜 Score Archive
+              Hybrid Score History
             </h3>
             
             <div className="overflow-x-auto">
