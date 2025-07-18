@@ -45,11 +45,7 @@ function AppContent() {
           />
           <Route 
             path="/" 
-            element={
-              <ProtectedRoute>
-                <HybridInterviewFlow />
-              </ProtectedRoute>
-            } 
+            element={<HybridInterviewFlow />} 
           />
           <Route 
             path="/full-interview" 
