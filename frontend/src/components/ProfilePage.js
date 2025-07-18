@@ -813,6 +813,7 @@ const ProfilePage = () => {
           background: rgba(8, 240, 255, 0.08);
           transform: translateY(-1px);
           border-bottom: 1px solid #08F0FF;
+          border-image: none;
         }
         
         .score-archive-table tr:focus {
