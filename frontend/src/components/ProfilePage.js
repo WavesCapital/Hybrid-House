@@ -930,9 +930,9 @@ const ProfilePage = () => {
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          width: 500px;
-          height: 500px;
-          background: radial-gradient(circle at 50% 50%, #08F0FF22 0%, transparent 70%);
+          width: 350px;
+          height: 350px;
+          background: radial-gradient(circle at 50% 50%, #08F0FF15 0%, transparent 70%);
           border-radius: 50%;
           z-index: 0;
           pointer-events: none;
