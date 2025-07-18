@@ -828,6 +828,17 @@ const ProfilePage = () => {
           color: #8D9299;
         }
         
+        /* Table Score Colors */
+        .score-archive-table .hybrid-score {
+          color: #08F0FF;
+          font-weight: 700;
+        }
+        
+        .score-archive-table .sub-score {
+          color: #4BFF7A;
+          font-weight: 600;
+        }
+        
         /* Reduced spacing - 48px desktop, 24px mobile */
         .space-y-12 > * + * { margin-top: 3rem; }
         
