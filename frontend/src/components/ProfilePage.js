@@ -932,7 +932,7 @@ const ProfilePage = () => {
           transform: translate(-50%, -50%);
           width: 500px;
           height: 500px;
-          background: radial-gradient(circle, rgba(82, 255, 0, 0.067) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(8, 240, 255, 0.067) 0%, transparent 70%);
           border-radius: 50%;
           z-index: 0;
         }
