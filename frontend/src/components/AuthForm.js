@@ -68,16 +68,13 @@ export default function AuthForm() {
         if (!isLogin) {
           // Check if user is immediately logged in (no email confirmation)
           if (result.data?.session) {
-            setMessage('Account created successfully! Welcome to Hybrid House! 🎉');
-            setTimeout(() => {
-              // The auth context will handle the redirect automatically
-            }, 1500);
+            setMessage('Account created successfully! Starting your interview...');
           } else {
             // Email confirmation is still enabled
             setMessage('Account created! Please check your email and click the confirmation link to activate your account.');
           }
         } else {
-          setMessage('Welcome back! Redirecting...');
+          setMessage('Welcome back! Starting your interview...');
         }
       }
     } catch (error) {
