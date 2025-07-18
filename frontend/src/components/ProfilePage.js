@@ -916,6 +916,7 @@ const ProfilePage = () => {
           display: flex;
           justify-content: center;
           align-items: center;
+          overflow: visible;
         }
         
         .cluster {
