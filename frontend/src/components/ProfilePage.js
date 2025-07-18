@@ -1092,11 +1092,10 @@ const ProfilePage = () => {
         
         .dial.mini:hover {
           transform: translate(-50%, -50%) translateY(-4px);
-          filter: drop-shadow(0 0 16px rgba(8, 240, 255, 0.5));
         }
         
         .cluster:hover .cluster-vignette {
-          background: radial-gradient(circle, rgba(8, 240, 255, 0.133) 0%, transparent 70%);
+          background: radial-gradient(circle at 50% 50%, #08F0FF33 0%, transparent 70%);
         }
         
         /* Responsive Design */
