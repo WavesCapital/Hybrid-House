@@ -1855,7 +1855,7 @@ const ProfilePage = () => {
                               year: 'numeric' 
                             })}
                           </td>
-                          <td className="p-3 text-xs font-semibold accent-gradient-text">
+                          <td className="p-3 text-xs font-semibold hybrid-score">
                             {scoreData.hybridScore ? (
                               <button 
                                 onClick={() => navigate(`/hybrid-score/${profile.id}`)}
@@ -1868,22 +1868,22 @@ const ProfilePage = () => {
                               <span className="inline-block px-2 py-1 bg-gray-600 text-gray-200 rounded-full text-xs">Pending</span>
                             )}
                           </td>
-                          <td className="p-3 text-xs text-secondary">
+                          <td className="p-3 text-xs sub-score">
                             {scoreData.strengthScore ? Math.round(scoreData.strengthScore) : <span className="em-dash">—</span>}
                           </td>
-                          <td className="p-3 text-xs text-secondary">
+                          <td className="p-3 text-xs sub-score">
                             {scoreData.speedScore ? Math.round(scoreData.speedScore) : <span className="em-dash">—</span>}
                           </td>
-                          <td className="p-3 text-xs text-secondary">
+                          <td className="p-3 text-xs sub-score">
                             {scoreData.vo2Score ? Math.round(scoreData.vo2Score) : <span className="em-dash">—</span>}
                           </td>
-                          <td className="p-3 text-xs text-secondary">
+                          <td className="p-3 text-xs sub-score">
                             {scoreData.distanceScore ? Math.round(scoreData.distanceScore) : <span className="em-dash">—</span>}
                           </td>
-                          <td className="p-3 text-xs text-secondary">
+                          <td className="p-3 text-xs sub-score">
                             {scoreData.volumeScore ? Math.round(scoreData.volumeScore) : <span className="em-dash">—</span>}
                           </td>
-                          <td className="p-3 text-xs text-secondary">
+                          <td className="p-3 text-xs sub-score">
                             {scoreData.recoveryScore ? Math.round(scoreData.recoveryScore) : <span className="em-dash">—</span>}
                           </td>
                           <td className="p-3 text-xs text-secondary">
