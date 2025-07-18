@@ -949,8 +949,8 @@ const ProfilePage = () => {
         }
         
         .dial.big {
-          width: 280px;
-          height: 280px;
+          width: 200px;
+          height: 200px;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
