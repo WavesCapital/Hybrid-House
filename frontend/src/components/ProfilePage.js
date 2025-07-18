@@ -1428,12 +1428,6 @@ const ProfilePage = () => {
             </div>
             
             <div className="flex items-center space-x-4">
-              <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-                <Settings className="w-5 h-5 text-secondary" />
-              </button>
-              <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-                <Calendar className="w-5 h-5 text-secondary" />
-              </button>
               <div className="w-8 h-8 accent-gradient rounded-full flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
