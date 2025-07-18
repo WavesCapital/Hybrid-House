@@ -639,7 +639,7 @@ const HybridInterviewFlow = () => {
                   disabled={isLoading}
                   className="neon-button text-lg"
                 >
-                  {isLoading ? 'Starting...' : 'Start Hybrid Interview 🚀'}
+                  {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
                 </button>
                 <button 
                   className="px-8 py-4 border border-gray-600 rounded-lg text-gray-300 hover:border-gray-400 transition-colors"
