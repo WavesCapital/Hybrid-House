@@ -1014,6 +1014,7 @@ const ProfilePage = () => {
           width: 100%;
           height: 100%;
           transform: rotate(-90deg);
+          overflow: visible;
         }
         
         .dial-value {
