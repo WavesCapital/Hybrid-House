@@ -202,12 +202,13 @@ const HybridInterviewFlow = () => {
         // Clear the stored action
         localStorage.removeItem('postAuthAction');
         // Automatically start the interview
+        console.log('Auto-starting interview after authentication');
         setTimeout(() => {
           startInterview();
         }, 1000);
       }
     }
-  }, [user, sessionId]);
+  }, [user, sessionId, startInterview]);
 
   // Handle starting interview with auth check
   const startInterview = async () => {
