@@ -1249,23 +1249,23 @@ const ProfilePage = () => {
         
         /* Inline Editing */
         .inline-edit-field {
-          background: rgba(20, 20, 25, 0.4);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: #15161A;
+          border: 1px solid #1F2025;
           border-radius: 4px;
-          color: #FFFFFF;
+          color: #F5FAFF;
           padding: 8px 12px;
           transition: all 0.3s ease;
           cursor: pointer;
         }
         
         .inline-edit-field:hover {
-          background: rgba(20, 20, 25, 0.6);
-          border-color: rgba(27, 109, 255, 0.3);
+          background: #15161A;
+          border-color: rgba(82, 255, 0, 0.3);
         }
         
         .inline-edit-field.editing {
-          border-color: #1B6DFF;
-          box-shadow: 0 0 0 2px rgba(27, 109, 255, 0.2);
+          border-color: #52FF00;
+          box-shadow: 0 0 0 2px rgba(82, 255, 0, 0.2);
           cursor: text;
         }
         
