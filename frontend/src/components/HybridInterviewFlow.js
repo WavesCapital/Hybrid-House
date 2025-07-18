@@ -608,337 +608,537 @@ const HybridInterviewFlow = () => {
         `}
       </style>
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Radial Highlight */}
-        <div 
-          className="absolute inset-0 opacity-30"
-          style={{
-            background: `radial-gradient(circle at center, #08F0FF22 0%, transparent 420px)`
-          }}
-        />
-        
-        <div className="container mx-auto px-6 py-16">
-          <div className="grid lg:grid-cols-2 gap-16 items-center max-w-7xl mx-auto">
-            {/* Left Column - Copy */}
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <h1 className="text-5xl lg:text-6xl font-bold leading-tight" style={{ color: 'var(--txt)' }}>
-                  Build Muscle.<br />
-                  Shave Minutes.<br />
-                  <span style={{ color: 'var(--neon-primary)' }}>Know Your Score.</span>
-                </h1>
-                <p className="text-xl lg:text-2xl leading-relaxed" style={{ color: 'var(--muted)' }}>
-                  The only 0-100 metric built for athletes who deadlift at dawn and hit tempo runs by dusk.
-                </p>
-              </div>
+      {!sessionId ? (
+        // Landing Page
+        <>
+          {/* Hero Section */}
+          <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+            {/* Background Radial Highlight */}
+            <div 
+              className="absolute inset-0 opacity-30"
+              style={{
+                background: `radial-gradient(circle at center, #08F0FF22 0%, transparent 420px)`
+              }}
+            />
+            
+            <div className="container mx-auto px-6 py-16">
+              <div className="grid lg:grid-cols-2 gap-16 items-center max-w-7xl mx-auto">
+                {/* Left Column - Copy */}
+                <div className="space-y-8">
+                  <div className="space-y-4">
+                    <h1 className="text-5xl lg:text-6xl font-bold leading-tight" style={{ color: 'var(--txt)' }}>
+                      Build Muscle.<br />
+                      Shave Minutes.<br />
+                      <span style={{ color: 'var(--neon-primary)' }}>Know Your Score.</span>
+                    </h1>
+                    <p className="text-xl lg:text-2xl leading-relaxed" style={{ color: 'var(--muted)' }}>
+                      The only 0-100 metric built for athletes who deadlift at dawn and hit tempo runs by dusk.
+                    </p>
+                  </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <button 
+                      onClick={startInterview}
+                      disabled={isLoading}
+                      className="neon-button text-lg"
+                    >
+                      {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
+                    </button>
+                    <button 
+                      className="px-8 py-4 border border-gray-600 rounded-lg text-gray-300 hover:border-gray-400 transition-colors"
+                      onClick={() => {/* Navigate to sample report */}}
+                    >
+                      See Sample Report
+                    </button>
+                  </div>
+
+                  <p className="text-sm" style={{ color: 'var(--muted)' }}>
+                    Backed by peer-reviewed concurrent-training studies and used by &gt;8,000 athletes.
+                  </p>
+                </div>
+
+                {/* Right Column - Hero Dial */}
+                <div className="flex justify-center">
+                  <div className="hero-dial relative">
+                    <svg viewBox="0 0 280 280">
+                      <circle
+                        cx="140"
+                        cy="140"
+                        r="120"
+                        fill="none"
+                        stroke="var(--border)"
+                        strokeWidth="12"
+                      />
+                      <circle
+                        cx="140"
+                        cy="140"
+                        r="120"
+                        fill="none"
+                        stroke="var(--neon-primary)"
+                        strokeWidth="12"
+                        strokeLinecap="round"
+                        strokeDasharray={`${(91 / 100) * 754} 754`}
+                        style={{
+                          transition: 'stroke-dasharray 320ms cubic-bezier(.2,1.4,.3,1)',
+                          filter: 'drop-shadow(0 0 10px #08F0FFAA)'
+                        }}
+                      />
+                    </svg>
+                    <div className="dial-value">
+                      <div className="score-number">91</div>
+                      <div className="score-label">Hybrid Score</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Authority Bar */}
+          <section className="py-8 border-t border-b border-gray-800">
+            <div className="container mx-auto px-6">
+              <div className="flex justify-center items-center space-x-12 authority-logos">
+                <div className="text-gray-500 font-semibold">Men's Health</div>
+                <div className="text-gray-500 font-semibold">HYROX</div>
+                <div className="text-gray-500 font-semibold">CrossFit Community</div>
+                <div className="text-gray-500 font-semibold">Bare Performance</div>
+              </div>
+            </div>
+          </section>
+
+          {/* Problem/Solution */}
+          <section className="py-24">
+            <div className="container mx-auto px-6">
+              <div className="max-w-4xl mx-auto">
+                <div className="glass-card p-12 text-center">
+                  <h2 className="text-4xl font-bold mb-16" style={{ color: 'var(--txt)' }}>
+                    Strength or endurance? <span style={{ color: 'var(--neon-primary)' }}>Stop choosing.</span>
+                  </h2>
+                  
+                  <div className="grid md:grid-cols-3 gap-8">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-full mx-auto">
+                        <RefreshCw className="w-8 h-8 text-white" />
+                      </div>
+                      <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>Training plans conflict</h3>
+                      <p style={{ color: 'var(--muted)' }}>Algorithm balances volume automatically</p>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mx-auto">
+                        <Target className="w-8 h-8 text-white" />
+                      </div>
+                      <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>No single progress marker</h3>
+                      <p style={{ color: 'var(--muted)' }}>Hybrid Score = one benchmark</p>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full mx-auto">
+                        <Activity className="w-8 h-8 text-white" />
+                      </div>
+                      <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>Time-crunched schedules</h3>
+                      <p style={{ color: 'var(--muted)' }}>11-question interview &lt; 3 min to complete</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* How It Works */}
+          <section className="py-24 bg-black">
+            <div className="container mx-auto px-6">
+              <div className="max-w-6xl mx-auto">
+                <h2 className="text-4xl font-bold text-center mb-16" style={{ color: 'var(--txt)' }}>
+                  How It Works
+                </h2>
+                
+                <div className="grid md:grid-cols-3 gap-8 mb-16">
+                  <div className="step-card">
+                    <div className="step-number">1</div>
+                    <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>Answer 11 essentials</h3>
+                    <p style={{ color: 'var(--muted)' }}>Weight, mile time, lifts, and key metrics</p>
+                  </div>
+                  
+                  <div className="step-card">
+                    <div className="step-number">2</div>
+                    <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>AI crunches data</h3>
+                    <p style={{ color: 'var(--muted)' }}>Our AI normalizes data → algorithm v5.0</p>
+                  </div>
+                  
+                  <div className="step-card">
+                    <div className="step-number">3</div>
+                    <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>Score + plan</h3>
+                    <p style={{ color: 'var(--muted)' }}>Dial, pillar scores, and 5 actionable tips</p>
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <button 
+                    onClick={startInterview}
+                    disabled={isLoading}
+                    className="neon-button text-lg"
+                  >
+                    {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Score Breakdown Grid */}
+          <section className="py-24">
+            <div className="container mx-auto px-6">
+              <div className="max-w-6xl mx-auto">
+                <h2 className="text-4xl font-bold text-center mb-16" style={{ color: 'var(--txt)' }}>
+                  Your Complete Performance Picture
+                </h2>
+                
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {[
+                    { pillar: 'Strength', color: 'var(--strength)', description: 'Bench, squat & deadlift relative to body weight' },
+                    { pillar: 'Speed', color: 'var(--speed)', description: 'Fastest mile pace' },
+                    { pillar: 'VO₂ Max', color: 'var(--vo2)', description: 'Engine capacity straight from your watch' },
+                    { pillar: 'Distance', color: 'var(--distance)', description: 'Longest run (last 60 days)' },
+                    { pillar: 'Volume', color: 'var(--volume)', description: 'Weekly mileage signal' },
+                    { pillar: 'Recovery', color: 'var(--recovery)', description: 'HRV & resting HR stability' }
+                  ].map((item, index) => (
+                    <div key={index} className="glass-card p-8 text-center">
+                      <div className="pillar-ring relative mx-auto mb-6" style={{ color: item.color }}>
+                        <svg viewBox="0 0 150 150">
+                          <circle
+                            cx="75"
+                            cy="75"
+                            r="65"
+                            fill="none"
+                            stroke="var(--border)"
+                            strokeWidth="8"
+                          />
+                          <circle
+                            cx="75"
+                            cy="75"
+                            r="65"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="8"
+                            strokeLinecap="round"
+                            strokeDasharray={`${(85 / 100) * 408} 408`}
+                            style={{ transition: 'stroke-dasharray 180ms linear' }}
+                          />
+                        </svg>
+                        <div className="ring-value">
+                          <div className="ring-number" style={{ color: item.color }}>85</div>
+                          <div className="ring-label">{item.pillar}</div>
+                        </div>
+                      </div>
+                      <p className="text-sm" style={{ color: 'var(--muted)' }}>
+                        {item.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Social Proof */}
+          <section className="py-24 bg-black">
+            <div className="container mx-auto px-6">
+              <div className="max-w-6xl mx-auto">
+                <div className="grid lg:grid-cols-2 gap-16 items-center">
+                  <div className="space-y-8">
+                    <h2 className="text-4xl font-bold" style={{ color: 'var(--txt)' }}>
+                      Real Results from Real Athletes
+                    </h2>
+                    <div className="flex items-center space-x-2">
+                      <div className="flex space-x-1">
+                        {[...Array(5)].map((_, i) => (
+                          <div key={i} className="w-5 h-5 text-yellow-400">★</div>
+                        ))}
+                      </div>
+                      <span style={{ color: 'var(--muted)' }}>4.9/5 from 8,000+ athletes</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-6">
+                    <div className="testimonial-card">
+                      <p className="text-lg mb-4" style={{ color: 'var(--txt)' }}>
+                        "Hybrid Score nailed where I lagged. 8-week focus block and my marathon split dropped by 9 min while my deadlift PR rose 20 lb."
+                      </p>
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                          <User className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <div className="font-semibold" style={{ color: 'var(--txt)' }}>Sam</div>
+                          <div className="text-sm" style={{ color: 'var(--muted)' }}>HYROX age-group champ</div>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-xs">#AppleWatch</span>
+                        <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-xs">#CrossFit</span>
+                        <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-xs">#Marathon</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* FAQ */}
+          <section className="py-24">
+            <div className="container mx-auto px-6">
+              <div className="max-w-4xl mx-auto">
+                <h2 className="text-4xl font-bold text-center mb-16" style={{ color: 'var(--txt)' }}>
+                  Frequently Asked Questions
+                </h2>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="faq-item">
+                    <h3 className="font-semibold mb-2" style={{ color: 'var(--txt)' }}>Is it really free?</h3>
+                    <p style={{ color: 'var(--muted)' }}>Yes, completely free. No hidden costs or subscription required.</p>
+                  </div>
+                  
+                  <div className="faq-item">
+                    <h3 className="font-semibold mb-2" style={{ color: 'var(--txt)' }}>Do I need a smartwatch?</h3>
+                    <p style={{ color: 'var(--muted)' }}>No, but having HRV and VO₂ data improves accuracy significantly.</p>
+                  </div>
+                  
+                  <div className="faq-item">
+                    <h3 className="font-semibold mb-2" style={{ color: 'var(--txt)' }}>How accurate is it for women?</h3>
+                    <p style={{ color: 'var(--muted)' }}>Algorithm accounts for gender differences in strength and endurance ratios.</p>
+                  </div>
+                  
+                  <div className="faq-item">
+                    <h3 className="font-semibold mb-2" style={{ color: 'var(--txt)' }}>Can I retake the assessment?</h3>
+                    <p style={{ color: 'var(--muted)' }}>Yes, track your progress by retaking monthly or after training blocks.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Sticky CTA Bar */}
+          <div className="sticky-cta">
+            <div className="container mx-auto px-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full">
+                    <Trophy className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <div className="font-semibold" style={{ color: 'var(--txt)' }}>Ready to claim your score?</div>
+                    <div className="text-sm" style={{ color: 'var(--muted)' }}>3-min assessment • zero cost</div>
+                  </div>
+                </div>
                 <button 
                   onClick={startInterview}
                   disabled={isLoading}
-                  className="neon-button text-lg"
+                  className="neon-button"
                 >
                   {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
                 </button>
-                <button 
-                  className="px-8 py-4 border border-gray-600 rounded-lg text-gray-300 hover:border-gray-400 transition-colors"
-                  onClick={() => {/* Navigate to sample report */}}
-                >
-                  See Sample Report
-                </button>
-              </div>
-
-              <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                Backed by peer-reviewed concurrent-training studies and used by &gt;8,000 athletes.
-              </p>
-            </div>
-
-            {/* Right Column - Hero Dial */}
-            <div className="flex justify-center">
-              <div className="hero-dial relative">
-                <svg viewBox="0 0 280 280">
-                  <circle
-                    cx="140"
-                    cy="140"
-                    r="120"
-                    fill="none"
-                    stroke="var(--border)"
-                    strokeWidth="12"
-                  />
-                  <circle
-                    cx="140"
-                    cy="140"
-                    r="120"
-                    fill="none"
-                    stroke="var(--neon-primary)"
-                    strokeWidth="12"
-                    strokeLinecap="round"
-                    strokeDasharray={`${(91 / 100) * 754} 754`}
-                    style={{
-                      transition: 'stroke-dasharray 320ms cubic-bezier(.2,1.4,.3,1)',
-                      filter: 'drop-shadow(0 0 10px #08F0FFAA)'
-                    }}
-                  />
-                </svg>
-                <div className="dial-value">
-                  <div className="score-number">91</div>
-                  <div className="score-label">Hybrid Score</div>
-                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Authority Bar */}
-      <section className="py-8 border-t border-b border-gray-800">
-        <div className="container mx-auto px-6">
-          <div className="flex justify-center items-center space-x-12 authority-logos">
-            <div className="text-gray-500 font-semibold">Men's Health</div>
-            <div className="text-gray-500 font-semibold">HYROX</div>
-            <div className="text-gray-500 font-semibold">CrossFit Community</div>
-            <div className="text-gray-500 font-semibold">Bare Performance</div>
-          </div>
-        </div>
-      </section>
-
-      {/* Problem/Solution */}
-      <section className="py-24">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="glass-card p-12 text-center">
-              <h2 className="text-4xl font-bold mb-16" style={{ color: 'var(--txt)' }}>
-                Strength or endurance? <span style={{ color: 'var(--neon-primary)' }}>Stop choosing.</span>
-              </h2>
-              
-              <div className="grid md:grid-cols-3 gap-8">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-full mx-auto">
-                    <RefreshCw className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>Training plans conflict</h3>
-                  <p style={{ color: 'var(--muted)' }}>Algorithm balances volume automatically</p>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mx-auto">
-                    <Target className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>No single progress marker</h3>
-                  <p style={{ color: 'var(--muted)' }}>Hybrid Score = one benchmark</p>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full mx-auto">
-                    <Activity className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>Time-crunched schedules</h3>
-                  <p style={{ color: 'var(--muted)' }}>11-question interview &lt; 3 min to complete</p>
-                </div>
-              </div>
+        </>
+      ) : (
+        // Interview Interface
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold" style={{ color: 'var(--txt)' }}>Hybrid Score - Essential Questions</h1>
+              <p style={{ color: 'var(--muted)' }}>Quick assessment for your hybrid athlete score</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-24 bg-black">
-        <div className="container mx-auto px-6">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-16" style={{ color: 'var(--txt)' }}>
-              How It Works
-            </h2>
-            
-            <div className="grid md:grid-cols-3 gap-8 mb-16">
-              <div className="step-card">
-                <div className="step-number">1</div>
-                <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>Answer 11 essentials</h3>
-                <p style={{ color: 'var(--muted)' }}>Weight, mile time, lifts, and key metrics</p>
-              </div>
-              
-              <div className="step-card">
-                <div className="step-number">2</div>
-                <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>AI crunches data</h3>
-                <p style={{ color: 'var(--muted)' }}>Our AI normalizes data → algorithm v5.0</p>
-              </div>
-              
-              <div className="step-card">
-                <div className="step-number">3</div>
-                <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>Score + plan</h3>
-                <p style={{ color: 'var(--muted)' }}>Dial, pillar scores, and 5 actionable tips</p>
-              </div>
-            </div>
-            
-            <div className="text-center">
-              <button 
-                onClick={startInterview}
-                disabled={isLoading}
-                className="neon-button text-lg"
+            <div className="flex space-x-3">
+              <button
+                onClick={() => navigate('/profile')}
+                className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-gray-400 transition-colors"
               >
-                {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] flex items-center justify-center mr-2 inline-block">
+                  <User className="h-3 w-3 text-white" />
+                </div>
+                Profile
               </button>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Score Breakdown Grid */}
-      <section className="py-24">
-        <div className="container mx-auto px-6">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-16" style={{ color: 'var(--txt)' }}>
-              Your Complete Performance Picture
-            </h2>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                { pillar: 'Strength', color: 'var(--strength)', description: 'Bench, squat & deadlift relative to body weight' },
-                { pillar: 'Speed', color: 'var(--speed)', description: 'Fastest mile pace' },
-                { pillar: 'VO₂ Max', color: 'var(--vo2)', description: 'Engine capacity straight from your watch' },
-                { pillar: 'Distance', color: 'var(--distance)', description: 'Longest run (last 60 days)' },
-                { pillar: 'Volume', color: 'var(--volume)', description: 'Weekly mileage signal' },
-                { pillar: 'Recovery', color: 'var(--recovery)', description: 'HRV & resting HR stability' }
-              ].map((item, index) => (
-                <div key={index} className="glass-card p-8 text-center">
-                  <div className="pillar-ring relative mx-auto mb-6" style={{ color: item.color }}>
-                    <svg viewBox="0 0 150 150">
-                      <circle
-                        cx="75"
-                        cy="75"
-                        r="65"
-                        fill="none"
-                        stroke="var(--border)"
-                        strokeWidth="8"
-                      />
-                      <circle
-                        cx="75"
-                        cy="75"
-                        r="65"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="8"
-                        strokeLinecap="round"
-                        strokeDasharray={`${(85 / 100) * 408} 408`}
-                        style={{ transition: 'stroke-dasharray 180ms linear' }}
-                      />
-                    </svg>
-                    <div className="ring-value">
-                      <div className="ring-number" style={{ color: item.color }}>85</div>
-                      <div className="ring-label">{item.pillar}</div>
-                    </div>
-                  </div>
-                  <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                    {item.description}
-                  </p>
-                </div>
-              ))}
+          {/* Sticky Progress Bar */}
+          <div className="sticky top-0 z-10 bg-opacity-95 backdrop-blur-sm py-4 mb-8" style={{ background: 'rgba(14, 14, 17, 0.95)' }}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium" style={{ color: 'var(--muted)' }}>
+                Progress
+              </span>
+              <span className="text-sm" style={{ color: 'var(--muted)' }}>
+                {currentIndex} of {TOTAL_QUESTIONS} questions
+              </span>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof */}
-      <section className="py-24 bg-black">
-        <div className="container mx-auto px-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div className="space-y-8">
-                <h2 className="text-4xl font-bold" style={{ color: 'var(--txt)' }}>
-                  Real Results from Real Athletes
-                </h2>
-                <div className="flex items-center space-x-2">
-                  <div className="flex space-x-1">
-                    {[...Array(5)].map((_, i) => (
-                      <div key={i} className="w-5 h-5 text-yellow-400">★</div>
-                    ))}
-                  </div>
-                  <span style={{ color: 'var(--muted)' }}>4.9/5 from 8,000+ athletes</span>
-                </div>
-              </div>
-              
-              <div className="space-y-6">
-                <div className="testimonial-card">
-                  <p className="text-lg mb-4" style={{ color: 'var(--txt)' }}>
-                    "Hybrid Score nailed where I lagged. 8-week focus block and my marathon split dropped by 9 min while my deadlift PR rose 20 lb."
-                  </p>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                      <User className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <div className="font-semibold" style={{ color: 'var(--txt)' }}>Sam</div>
-                      <div className="text-sm" style={{ color: 'var(--muted)' }}>HYROX age-group champ</div>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-xs">#AppleWatch</span>
-                    <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-xs">#CrossFit</span>
-                    <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-xs">#Marathon</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-24">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-16" style={{ color: 'var(--txt)' }}>
-              Frequently Asked Questions
-            </h2>
-            
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="faq-item">
-                <h3 className="font-semibold mb-2" style={{ color: 'var(--txt)' }}>Is it really free?</h3>
-                <p style={{ color: 'var(--muted)' }}>Yes, completely free. No hidden costs or subscription required.</p>
-              </div>
-              
-              <div className="faq-item">
-                <h3 className="font-semibold mb-2" style={{ color: 'var(--txt)' }}>Do I need a smartwatch?</h3>
-                <p style={{ color: 'var(--muted)' }}>No, but having HRV and VO₂ data improves accuracy significantly.</p>
-              </div>
-              
-              <div className="faq-item">
-                <h3 className="font-semibold mb-2" style={{ color: 'var(--txt)' }}>How accurate is it for women?</h3>
-                <p style={{ color: 'var(--muted)' }}>Algorithm accounts for gender differences in strength and endurance ratios.</p>
-              </div>
-              
-              <div className="faq-item">
-                <h3 className="font-semibold mb-2" style={{ color: 'var(--txt)' }}>Can I retake the assessment?</h3>
-                <p style={{ color: 'var(--muted)' }}>Yes, track your progress by retaking monthly or after training blocks.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sticky CTA Bar */}
-      <div className="sticky-cta">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full">
-                <Trophy className="w-6 h-6 text-white" />
+              <div className="flex-1 neon-progress-bar">
+                <div 
+                  className="neon-progress-fill" 
+                  style={{ width: `${progress}%` }}
+                ></div>
               </div>
-              <div>
-                <div className="font-semibold" style={{ color: 'var(--txt)' }}>Ready to claim your score?</div>
-                <div className="text-sm" style={{ color: 'var(--muted)' }}>3-min assessment • zero cost</div>
+              <span className="text-sm font-semibold min-w-[40px]" style={{ color: 'var(--txt)' }}>
+                {Math.round(progress)}%
+              </span>
+            </div>
+          </div>
+
+          {/* Messages - with bottom padding for sticky input */}
+          <div className="space-y-6 min-h-[400px] pb-32">
+            {(() => {
+              // Filter messages to only show first assistant message when multiple consecutive assistant messages exist
+              const getDisplayMessages = (messages) => {
+                const filteredMessages = [];
+                let lastRole = null;
+                
+                for (const message of messages) {
+                  // If this is an assistant message and the last message was also assistant, skip it
+                  if (message.role === 'assistant' && lastRole === 'assistant') {
+                    console.log('Skipping duplicate assistant message:', message.content.substring(0, 50) + '...');
+                    continue;
+                  }
+                  
+                  filteredMessages.push(message);
+                  lastRole = message.role;
+                }
+                
+                return filteredMessages;
+              };
+
+              const displayMessages = getDisplayMessages(messages);
+              return displayMessages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[85%] p-6 rounded-2xl ${
+                      message.role === 'user'
+                        ? 'bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] text-black font-medium ml-16'
+                        : 'glass-card mr-16'
+                    }`}
+                    style={message.role === 'assistant' ? { color: 'var(--txt)' } : {}}
+                  >
+                    <div className="text-base leading-relaxed whitespace-pre-wrap">
+                      {message.content}
+                    </div>
+                  </div>
+                </div>
+              ));
+            })()}
+            
+            {/* Loading indicator */}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="glass-card p-6 rounded-2xl mr-16">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    </div>
+                    <span className="text-sm" style={{ color: 'var(--muted)' }}>Coach is thinking...</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Sticky Input Area */}
+          {!isCompleted && (
+            <div className="fixed bottom-0 left-0 right-0 z-10 bg-opacity-95 backdrop-blur-sm border-t border-gray-700 p-6" style={{ background: 'rgba(14, 14, 17, 0.95)' }}>
+              <div className="container mx-auto max-w-4xl">
+                <div className="flex space-x-4">
+                  <textarea
+                    value={currentMessage}
+                    onChange={(e) => setCurrentMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Type your answer here..."
+                    className="flex-1 px-4 py-3 rounded-xl border border-gray-600 focus:border-[#08F0FF] focus:outline-none resize-none"
+                    style={{ background: 'var(--card)', color: 'var(--txt)' }}
+                    rows="2"
+                    disabled={isLoading}
+                  />
+                  <button
+                    onClick={() => sendMessage()}
+                    disabled={isLoading || !currentMessage.trim()}
+                    className="neon-button px-8 py-3 rounded-xl h-auto"
+                  >
+                    Send
+                  </button>
+                </div>
+                
+                <div className="flex justify-between items-center mt-4">
+                  <div className="flex space-x-3">
+                    <button
+                      onClick={skipQuestion}
+                      disabled={isLoading}
+                      className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-gray-400 transition-colors text-sm"
+                    >
+                      Skip
+                    </button>
+                    <button
+                      onClick={forceComplete}
+                      disabled={isLoading}
+                      className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-gray-400 transition-colors text-sm"
+                    >
+                      Finish Early
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-            <button 
-              onClick={startInterview}
-              disabled={isLoading}
-              className="neon-button"
-            >
-              {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
-            </button>
-          </div>
+          )}
+
+          {/* Completion Loading */}
+          {isCompleted && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm" style={{ 
+              background: 'rgba(14, 14, 17, 0.8)' 
+            }}>
+              <div className="glass-card max-w-md w-full mx-6 p-12 text-center">
+                <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--txt)' }}>
+                  {redirectFailed ? 'Score Ready!' : 'Calculating Your Hybrid Score!'} 🎉
+                </h2>
+                <p className="mb-8 leading-relaxed" style={{ color: 'var(--muted)' }}>
+                  {redirectFailed 
+                    ? 'Your hybrid score has been calculated and saved! Click below to view your results.'
+                    : 'Thanks for completing the essential questions! We\'re now computing your Hybrid Athlete Score and will redirect you to your results.'
+                  }
+                </p>
+                
+                {redirectFailed && completedProfileId ? (
+                  <button
+                    onClick={() => {
+                      navigate(`/hybrid-score/${completedProfileId}`);
+                      // Also try direct navigation as backup
+                      setTimeout(() => {
+                        if (window.location.pathname !== `/hybrid-score/${completedProfileId}`) {
+                          window.location.href = `/hybrid-score/${completedProfileId}`;
+                        }
+                      }, 100);
+                    }}
+                    className="neon-button mb-6"
+                  >
+                    View Your Score
+                  </button>
+                ) : (
+                  <div className="flex items-center justify-center space-x-3">
+                    <Loader2 className="h-6 w-6 animate-spin" style={{ color: 'var(--txt)' }} />
+                    <span className="text-sm" style={{ color: 'var(--muted)' }}>Coach is thinking...</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 };
