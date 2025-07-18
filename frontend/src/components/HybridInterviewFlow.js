@@ -639,7 +639,7 @@ const HybridInterviewFlow = () => {
                     </p>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex flex-col sm:flex-row gap-4" style={{ position: 'relative', zIndex: 10 }}>
                     <button 
                       onClick={startInterview}
                       disabled={isLoading}
