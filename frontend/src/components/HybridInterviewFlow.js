@@ -728,7 +728,7 @@ const HybridInterviewFlow = () => {
                 <div className="space-y-4">
                   <div className="text-4xl">⏱</div>
                   <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>Time-crunched schedules</h3>
-                  <p style={{ color: 'var(--muted)' }}>11-question interview < 3 min to complete</p>
+                  <p style={{ color: 'var(--muted)' }}>11-question interview &lt; 3 min to complete</p>
                 </div>
               </div>
             </div>
