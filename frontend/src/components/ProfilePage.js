@@ -1050,7 +1050,7 @@ const ProfilePage = () => {
         
         .dial.mini .score-label {
           font-size: 0.75rem;
-          color: #C9CDD2;
+          color: #8D9299;
           font-family: 'Inter', sans-serif;
           font-weight: 500;
           text-align: center;
