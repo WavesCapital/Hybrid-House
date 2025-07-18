@@ -1219,8 +1219,8 @@ const ProfilePage = () => {
         
         /* Mini KPI Cards */
         .mini-kpi {
-          background: rgba(20, 20, 25, 0.6);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: #15161A;
+          border: 1px solid #1F2025;
           border-radius: 6px;
           padding: 12px;
           text-align: center;
@@ -1228,22 +1228,22 @@ const ProfilePage = () => {
         }
         
         .mini-kpi:hover {
-          border-color: rgba(27, 109, 255, 0.3);
-          box-shadow: 0 4px 16px rgba(27, 109, 255, 0.1);
+          border-color: rgba(82, 255, 0, 0.3);
+          box-shadow: 0 4px 16px rgba(82, 255, 0, 0.1);
         }
         
         /* Archive Cards */
         .archive-card {
-          background: rgba(20, 20, 25, 0.4);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: #15161A;
+          border: 1px solid #1F2025;
           border-radius: 6px;
           padding: 16px;
           transition: all 0.3s ease;
         }
         
         .archive-card:hover {
-          background: rgba(20, 20, 25, 0.6);
-          border-color: rgba(27, 109, 255, 0.3);
+          background: #15161A;
+          border-color: rgba(82, 255, 0, 0.3);
           transform: translateX(4px);
         }
         
