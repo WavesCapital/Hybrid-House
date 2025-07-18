@@ -412,6 +412,9 @@ const HybridInterviewFlow = () => {
           font-size: 16px;
           transition: all 0.3s ease;
           cursor: pointer;
+          position: relative;
+          z-index: 10;
+          pointer-events: auto;
         }
 
         .neon-button:hover {
