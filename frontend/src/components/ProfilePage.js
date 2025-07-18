@@ -1869,6 +1869,7 @@ const ProfilePage = () => {
               </Button>
             </div>
           </div>
+        </div>
 
         {/* Main Section - Stack with reduced spacing */}
         <div className="space-y-12">{/* Reduced spacing: 48px desktop, 24px mobile */}
