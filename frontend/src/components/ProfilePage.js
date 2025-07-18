@@ -1499,8 +1499,8 @@ const ProfilePage = () => {
                           <svg className="dial-svg" viewBox="0 0 220 220">
                             <defs>
                               <linearGradient id="hybridGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stopColor="#52FF00" />
-                                <stop offset="100%" stopColor="#00B7FF" />
+                                <stop offset="0%" stopColor="#08F0FF" />
+                                <stop offset="100%" stopColor="#08F0FF" />
                               </linearGradient>
                             </defs>
                             <circle cx="110" cy="110" r="95" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="10" fill="none" />
