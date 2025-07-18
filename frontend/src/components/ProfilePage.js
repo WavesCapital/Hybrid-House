@@ -1503,7 +1503,7 @@ const ProfilePage = () => {
                                 <stop offset="100%" stopColor="#08F0FF" />
                               </linearGradient>
                             </defs>
-                            <circle cx="110" cy="110" r="95" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="10" fill="none" />
+                            <circle cx="110" cy="110" r="95" stroke="#313236" strokeWidth="10" fill="none" />
                             <circle 
                               cx="110" cy="110" r="95" 
                               stroke="url(#hybridGradient)" 
