@@ -1100,7 +1100,7 @@ const ProfilePage = () => {
         }
         
         .cluster:hover .cluster-vignette {
-          background: radial-gradient(circle, rgba(27, 109, 255, 0.133) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(82, 255, 0, 0.133) 0%, transparent 70%);
         }
         
         /* Responsive Design */
