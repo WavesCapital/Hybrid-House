@@ -1127,13 +1127,13 @@ const ProfilePage = () => {
             font-size: 1.5rem;
           }
           
-          /* Reduce hexagon radius to 200px */
-          .dial.pos-1 { top: calc(50% - 200px); }
-          .dial.pos-2 { top: calc(50% - 173px); left: calc(50% + 100px); }
-          .dial.pos-3 { top: calc(50% + 173px); left: calc(50% + 100px); }
-          .dial.pos-4 { top: calc(50% + 200px); }
-          .dial.pos-5 { top: calc(50% + 173px); left: calc(50% - 100px); }
-          .dial.pos-6 { top: calc(50% - 173px); left: calc(50% - 100px); }
+          /* Reduce circle radius to 180px */
+          .dial.pos-1 { top: calc(50% - 180px); }
+          .dial.pos-2 { top: calc(50% - 90px); left: calc(50% + 156px); }
+          .dial.pos-3 { top: calc(50% + 90px); left: calc(50% + 156px); }
+          .dial.pos-4 { top: calc(50% + 180px); }
+          .dial.pos-5 { top: calc(50% + 90px); left: calc(50% - 156px); }
+          .dial.pos-6 { top: calc(50% - 90px); left: calc(50% - 156px); }
         }
         
         @media (max-width: 768px) {
