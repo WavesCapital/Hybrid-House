@@ -960,40 +960,40 @@ const ProfilePage = () => {
           height: 140px;
         }
         
-        /* Hexagon Positioning (250px radius from center) */
+        /* Hexagon Positioning (300px radius from center) */
         .dial.pos-1 { /* Top-center (0°) */
-          top: calc(50% - 250px);
+          top: calc(50% - 300px);
           left: 50%;
           transform: translate(-50%, -50%);
         }
         
         .dial.pos-2 { /* Top-right (60°) */
-          top: calc(50% - 216px);
-          left: calc(50% + 125px);
+          top: calc(50% - 260px);
+          left: calc(50% + 150px);
           transform: translate(-50%, -50%);
         }
         
         .dial.pos-3 { /* Bottom-right (120°) */
-          top: calc(50% + 216px);
-          left: calc(50% + 125px);
+          top: calc(50% + 260px);
+          left: calc(50% + 150px);
           transform: translate(-50%, -50%);
         }
         
         .dial.pos-4 { /* Bottom-center (180°) */
-          top: calc(50% + 250px);
+          top: calc(50% + 300px);
           left: 50%;
           transform: translate(-50%, -50%);
         }
         
         .dial.pos-5 { /* Bottom-left (240°) */
-          top: calc(50% + 216px);
-          left: calc(50% - 125px);
+          top: calc(50% + 260px);
+          left: calc(50% - 150px);
           transform: translate(-50%, -50%);
         }
         
         .dial.pos-6 { /* Top-left (300°) */
-          top: calc(50% - 216px);
-          left: calc(50% - 125px);
+          top: calc(50% - 260px);
+          left: calc(50% - 150px);
           transform: translate(-50%, -50%);
         }
         
