@@ -792,6 +792,7 @@ const ProfilePage = () => {
           z-index: 10;
           text-align: right;
           font-variant-numeric: tabular-nums;
+          color: #F5FAFF;
         }
         
         .score-archive-table th:first-child {
