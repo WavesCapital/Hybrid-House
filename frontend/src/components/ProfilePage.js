@@ -1036,7 +1036,7 @@ const ProfilePage = () => {
         
         .dial.big .score-label {
           font-size: 1rem;
-          color: #C9CDD2;
+          color: #8D9299;
           font-weight: 500;
         }
         
