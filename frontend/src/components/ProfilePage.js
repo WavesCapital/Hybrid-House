@@ -748,14 +748,6 @@ const ProfilePage = () => {
           overflow: visible;
         }
         
-        .glass-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 
-            0 0 14px 0 rgba(8,240,255,.35),
-            0 12px 32px -24px rgba(0,0,0,.65),
-            0 0 0 1px #1F2025 inset;
-        }
-        
 
         
         /* Data Points */
