@@ -199,18 +199,39 @@ const HybridInterviewFlow = () => {
 
   // Auto-start interview when component mounts on the dedicated interview page
   useEffect(() => {
+    console.log('useEffect running - Debug info:', {
+      user: user ? 'Present' : 'Missing',
+      sessionId: sessionId ? 'Present' : 'Missing',
+      isInterviewPage: isInterviewPage,
+      shouldStart: user && !sessionId && isInterviewPage
+    });
+
     if (user && !sessionId && isInterviewPage) {
-      // Automatically start the interview when user visits /hybrid-interview
       console.log('Auto-starting interview on dedicated interview page');
       const startInterviewOnMount = async () => {
-        if (isLoading) return;
+        if (isLoading) {
+          console.log('Already loading, skipping...');
+          return;
+        }
         
+        console.log('Starting interview with user:', user?.id);
         setIsLoading(true);
         
         try {
-          const response = await axios.post(`${BACKEND_URL}/api/hybrid-interview/start`, {
-            user_id: user?.id
-          });
+          const response = await axios.post(
+            `${BACKEND_URL}/api/hybrid-interview/start`,
+            {
+              user_id: user?.id
+            },
+            {
+              headers: {
+                'Authorization': `Bearer ${session?.access_token}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          
+          console.log('Interview start response:', response.data);
           
           if (response.data.success) {
             const newSessionId = response.data.session_id;
@@ -229,20 +250,35 @@ const HybridInterviewFlow = () => {
           }
         } catch (error) {
           console.error('Error starting interview:', error);
+          console.error('Error details:', {
+            status: error.response?.status,
+            data: error.response?.data,
+            message: error.message
+          });
+          
           toast({
             title: "Interview start failed",
             description: error.response?.data?.error || "Unable to start interview. Please try again.",
             variant: "destructive",
-            duration: 3000,
+            duration: 5000,
           });
+          
+          // If authentication failed, redirect back to auth
+          if (error.response?.status === 401 || error.response?.status === 403) {
+            console.log('Authentication failed, redirecting to auth');
+            navigate('/auth?mode=signup');
+          }
         } finally {
           setIsLoading(false);
         }
       };
       
-      startInterviewOnMount();
+      // Add a small delay to ensure everything is loaded
+      setTimeout(() => {
+        startInterviewOnMount();
+      }, 1000);
     }
-  }, [user, sessionId, isInterviewPage, toast]); // Removed isLoading from dependencies to prevent infinite loop
+  }, [user, sessionId, isInterviewPage, session, toast, navigate]); // Added session to dependencies
 
   // Handle starting interview with auth check
   const startInterview = async () => {
