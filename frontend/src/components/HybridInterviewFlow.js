@@ -246,17 +246,31 @@ const HybridInterviewFlow = () => {
 
   // Handle starting interview with auth check
   const startInterview = async () => {
-    // Check if user is authenticated
-    if (!user) {
-      // Store intent to redirect to interview page after signup
-      localStorage.setItem('postAuthRedirect', '/hybrid-interview');
-      // Redirect to auth page with signup as default
-      navigate('/auth?mode=signup');
-      return;
-    }
+    // Prevent multiple rapid clicks
+    if (isLoading) return;
+    
+    setIsLoading(true);
+    
+    try {
+      // Check if user is authenticated
+      if (!user) {
+        // Store intent to redirect to interview page after signup
+        localStorage.setItem('postAuthRedirect', '/hybrid-interview');
+        // Redirect to auth page with signup as default
+        navigate('/auth?mode=signup');
+        return;
+      }
 
-    // User is authenticated, redirect to dedicated interview page
-    navigate('/hybrid-interview');
+      // User is authenticated, redirect to dedicated interview page
+      navigate('/hybrid-interview');
+    } catch (error) {
+      console.error('Error in startInterview:', error);
+    } finally {
+      // Reset loading state after a short delay to prevent UI glitches
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }
   };
 
   // Memoize sendMessage function to prevent unnecessary re-renders
