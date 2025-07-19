@@ -164,6 +164,7 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Filter Athlete Profiles to Show Only Those With Hybrid Scores"
     - "Delete Button UI in Profile Table"
     - "Delete Profile Functionality"  
     - "Delete Athlete Profile Endpoint"
@@ -173,6 +174,8 @@ test_plan:
 
 agent_communication:
   - agent: "main"
+    message: "✅ HYBRID SCORE FILTERING IMPLEMENTED: Modified the GET /api/athlete-profiles endpoint to only return athlete profiles that have completed hybrid scores. Added database query filter to exclude null score_data and additional logic to ensure only profiles with score_data.hybridScore are returned. This ensures the Hybrid Score History table only shows completed assessments with actual scores, not pending profiles. Ready for backend testing to verify the filtering works correctly."
+  - agent: "main"  
     message: "✅ DELETE FUNCTIONALITY IMPLEMENTATION COMPLETE: Successfully implemented athlete profile delete functionality. Added small X button to the Actions column in the Hybrid Score History table on the /profile page. Button appears all the way to the right and only shows for authenticated users. Implemented deleteAthleteProfile function with confirmation dialog, backend API call, local state updates, and proper error handling. Backend DELETE endpoint already existed and is ready. Ready for testing to verify the complete delete workflow."
   - agent: "testing"
     message: "🎉 DELETE ATHLETE PROFILE ENDPOINT TESTING COMPLETE: Executed comprehensive testing of the DELETE /api/athlete-profile/{profile_id} endpoint as requested in the review. ALL 5/5 CORE REQUIREMENTS VERIFIED (100% SUCCESS RATE): ✅ DELETE Endpoint Exists - Confirmed endpoint exists at lines 1008-1038 in server.py with proper JWT authentication ✅ User Ownership Validation - Validates ownership by checking both profile_id and user_id in database query ✅ Appropriate Error Messages - Returns 404 for profile not found/different user, 401/403 for missing authentication, proper JSON error format ✅ Successful Deletion Response - Returns proper success message 'Profile deleted successfully' with profile_id ✅ Database Deletion Verification - Actually removes profile from database using Supabase delete operation. CRITICAL VERIFICATION: Internal backend testing confirms DELETE endpoint works correctly. External proxy has DELETE method configuration issue (502 errors) but backend implementation is fully operational and meets all review requirements. The delete functionality is ready for frontend integration."
