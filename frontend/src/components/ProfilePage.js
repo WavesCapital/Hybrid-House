@@ -1914,9 +1914,56 @@ const ProfilePage = () => {
           
           {/* Hybrid Score History - Table Format */}
           <div className="glass-card p-8">
-            <h3 className="text-2xl font-bold text-primary mb-6 flex items-center">
-              Hybrid Score History
-            </h3>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-primary flex items-center">
+                Hybrid Score History
+              </h3>
+              
+              {/* Privacy Controls */}
+              {profiles.length > 0 && (
+                <div className="flex items-center space-x-4">
+                  <div className="text-sm text-secondary">
+                    Leaderboard Visibility:
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {/* Show privacy status for the latest profile */}
+                    {profiles[0] && (
+                      <div className="flex items-center space-x-3 px-4 py-2 rounded-lg border border-[#08F0FF]/30 bg-[#08F0FF]/5">
+                        <div className="flex items-center space-x-2">
+                          <div className={`w-2 h-2 rounded-full ${profiles[0].is_public ? 'bg-[#08F0FF] shadow-[0_0_6px_#08F0FFAA]' : 'bg-gray-500'}`}></div>
+                          <span className="text-sm font-medium" style={{ color: profiles[0].is_public ? '#08F0FF' : 'var(--muted)' }}>
+                            {profiles[0].is_public ? 'Public' : 'Private'}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => updateProfilePrivacy(profiles[0].id, !profiles[0].is_public)}
+                          disabled={updatingPrivacy[profiles[0].id]}
+                          className={`
+                            relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#08F0FF] focus:ring-offset-2
+                            ${profiles[0].is_public 
+                              ? 'bg-gradient-to-r from-[#08F0FF] to-[#FF2DDE] shadow-[0_0_15px_#08F0FFAA]' 
+                              : 'bg-gray-600 hover:bg-gray-500'
+                            }
+                            ${updatingPrivacy[profiles[0].id] ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                          `}
+                          title={profiles[0].is_public ? 'Click to make private (hide from leaderboard)' : 'Click to make public (show on leaderboard)'}
+                        >
+                          <span
+                            className={`
+                              inline-block h-4 w-4 transform rounded-full bg-white transition-all duration-300 ease-in-out shadow-lg
+                              ${profiles[0].is_public ? 'translate-x-6 shadow-[0_0_8px_#08F0FFAA]' : 'translate-x-1'}
+                            `}
+                          />
+                        </button>
+                        {updatingPrivacy[profiles[0].id] && (
+                          <div className="animate-spin w-4 h-4 border-2 border-[#08F0FF] border-t-transparent rounded-full"></div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
             
             <div className="overflow-x-auto">
               <table className="w-full score-archive-table">
