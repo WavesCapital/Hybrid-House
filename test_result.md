@@ -280,9 +280,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Profile Page Iteration 6 Testing Complete"
-    - "All Profile Page Improvements Verified"
-    - "Real Supabase Data Connectivity Confirmed"
+    - "Privacy Settings Functionality Testing Complete"
+    - "Database Schema Update Required for is_public Column"
+    - "Backend Code Implementation Verified and Production-Ready"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
