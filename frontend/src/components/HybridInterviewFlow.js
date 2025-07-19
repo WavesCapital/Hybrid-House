@@ -976,6 +976,21 @@ const HybridInterviewFlow = () => {
             </div>
           </div>
         </>
+      ) : isInterviewPage && !sessionId ? (
+        // Interview page without session - show loading/starting state
+        <div className="min-h-screen flex items-center justify-center" style={{ background: '#0E0E11' }}>
+          <div className="glass-card max-w-md w-full mx-6 p-12 text-center">
+            <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] rounded-full mx-auto mb-6">
+              <Loader2 className="w-8 h-8 text-white animate-spin" />
+            </div>
+            <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--txt)' }}>
+              Starting Your Interview...
+            </h2>
+            <p className="mb-8 leading-relaxed" style={{ color: 'var(--muted)' }}>
+              We're setting up your personalized hybrid athlete assessment. This will just take a moment.
+            </p>
+          </div>
+        </div>
       ) : (
         // Interview Interface
         <div className="container mx-auto px-6 py-8 max-w-4xl">
