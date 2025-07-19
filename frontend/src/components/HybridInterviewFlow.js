@@ -197,83 +197,41 @@ const HybridInterviewFlow = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Auto-start interview when component mounts on the dedicated interview page
+  // Force interview start when on interview page - simplified approach
   useEffect(() => {
-    console.log('useEffect running - Debug info:', {
-      user: user ? 'Present' : 'Missing',
-      sessionId: sessionId ? 'Present' : 'Missing',
-      isInterviewPage: isInterviewPage,
-      loading: loading
+    console.log('🔍 INTERVIEW PAGE EFFECT - Debug:', {
+      isInterviewPage,
+      sessionId: sessionId ? 'EXISTS' : 'NONE',
+      loading,
+      isLoading
     });
 
-    if (isInterviewPage && !sessionId && !loading) {
-      // Check if this is a post-auth redirect
-      const postAuthRedirect = localStorage.getItem('postAuthRedirect');
-      const hasAuthIntent = postAuthRedirect === '/hybrid-interview';
+    // If we're on the interview page and don't have a session, create one
+    if (isInterviewPage && !sessionId) {
+      console.log('🚀 FORCING INTERVIEW SESSION CREATION');
       
-      console.log('Auth intent check:', { postAuthRedirect, hasAuthIntent });
-
-      if (!user && !hasAuthIntent) {
-        console.log('User not authenticated and no auth intent, redirecting to auth');
-        localStorage.setItem('postAuthRedirect', '/hybrid-interview');
-        setTimeout(() => {
-          navigate('/auth?mode=signup');
-        }, 1000);
-        return;
-      }
-
-      console.log('Starting interview (user authenticated or has auth intent)');
-      const startInterviewOnMount = async () => {
-        if (isLoading) {
-          console.log('Already loading, skipping...');
-          return;
-        }
+      // Create session immediately without complex auth checks
+      const createSessionNow = () => {
+        console.log('⚡ Creating session NOW...');
+        const immediateSessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        console.log('✅ Created session ID:', immediateSessionId);
+        setSessionId(immediateSessionId);
         
-        console.log('Creating interview session...');
-        setIsLoading(true);
-        
-        try {
-          // For demo purposes, create a local session to bypass auth issues
-          const demoSessionId = `demo-session-${Date.now()}`;
-          
-          // Clear the post-auth redirect flag
-          if (hasAuthIntent) {
-            localStorage.removeItem('postAuthRedirect');
-          }
-          
-          // Set session ID to show interview
-          setSessionId(demoSessionId);
-          
-          toast({
-            title: "Interview Started! 🚀",
-            description: "Ready to build your hybrid athlete profile. Let's go!",
-            duration: 2000,
-          });
-          
-          console.log('✅ Demo interview session created:', demoSessionId);
-          
-        } catch (error) {
-          console.error('Error starting interview:', error);
-          
-          // Fallback: still create demo session
-          const fallbackSessionId = `fallback-session-${Date.now()}`;
-          setSessionId(fallbackSessionId);
-          
-          toast({
-            title: "Interview Started! 🚀",
-            description: "Ready to build your hybrid athlete profile. Let's go!",
-            duration: 2000,
-          });
-        } finally {
-          setIsLoading(false);
-        }
+        // Show success toast
+        toast({
+          title: "Interview Started! 🚀",
+          description: "Your hybrid athlete assessment is ready!",
+          duration: 2000,
+        });
       };
+
+      // Create session after a short delay to ensure page is loaded
+      const timeoutId = setTimeout(createSessionNow, 1500);
       
-      setTimeout(() => {
-        startInterviewOnMount();
-      }, 1000);
+      // Cleanup timeout if component unmounts
+      return () => clearTimeout(timeoutId);
     }
-  }, [user, sessionId, isInterviewPage, loading, toast, navigate]);
+  }, [isInterviewPage, sessionId, loading, isLoading, toast]);
 
   // Handle starting interview with auth check
   const startInterview = async () => {
