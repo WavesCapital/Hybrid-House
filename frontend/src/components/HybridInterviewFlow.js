@@ -1091,9 +1091,6 @@ const HybridInterviewFlow = () => {
                     onClick={() => navigate('/profile')}
                     className="flex items-center space-x-2 px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-[#08F0FF] transition-colors"
                   >
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] flex items-center justify-center">
-                      <User className="h-3 w-3 text-white" />
-                    </div>
                     <span>Profile</span>
                   </button>
                 </div>
