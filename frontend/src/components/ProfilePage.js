@@ -40,6 +40,9 @@ const ProfilePage = () => {
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   
+  // Privacy settings state
+  const [updatingPrivacy, setUpdatingPrivacy] = useState({});
+  
   // Athlete Profile Management States
   const [profiles, setProfiles] = useState([]);
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(true);
