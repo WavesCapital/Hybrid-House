@@ -2078,6 +2078,35 @@ const ProfilePage = () => {
                           <td className="p-3 text-xs text-secondary">
                             {safeRenderField(profile.pb_deadlift_1rm_lb || profileJson.pb_deadlift_1rm)}
                           </td>
+                          <td className="p-3 text-center">
+                            <div className="flex items-center justify-center">
+                              <div className="relative inline-block">
+                                <input
+                                  type="checkbox"
+                                  id={`privacy-${profile.id}`}
+                                  className="privacy-toggle"
+                                  checked={profile.is_public || false}
+                                  onChange={(e) => updateProfilePrivacy(profile.id, e.target.checked)}
+                                  disabled={updatingPrivacy[profile.id]}
+                                />
+                                <label 
+                                  htmlFor={`privacy-toggle-${profile.id}`}
+                                  className={`privacy-toggle-label ${updatingPrivacy[profile.id] ? 'opacity-50' : ''}`}
+                                  title={profile.is_public ? 'Public - Visible on leaderboard' : 'Private - Hidden from leaderboard'}
+                                >
+                                  <span className="privacy-toggle-inner"></span>
+                                  <span className="privacy-toggle-switch"></span>
+                                </label>
+                              </div>
+                            </div>
+                            <div className="text-xs text-muted mt-1">
+                              {profile.is_public ? (
+                                <span className="text-green-400">Public</span>
+                              ) : (
+                                <span className="text-gray-500">Private</span>
+                              )}
+                            </div>
+                          </td>
                           <td className="p-3">
                             <button 
                               onClick={() => navigate(`/hybrid-score/${profile.id}`)}
