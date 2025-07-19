@@ -207,66 +207,55 @@ const HybridInterviewFlow = () => {
     });
 
     if (isInterviewPage && !sessionId && !loading) {
-      if (!user) {
-        console.log('User not authenticated, redirecting to auth with redirect flag');
-        // Store redirect and send to auth
+      // Check if this is a post-auth redirect
+      const postAuthRedirect = localStorage.getItem('postAuthRedirect');
+      const hasAuthIntent = postAuthRedirect === '/hybrid-interview';
+      
+      console.log('Auth intent check:', { postAuthRedirect, hasAuthIntent });
+
+      if (!user && !hasAuthIntent) {
+        console.log('User not authenticated and no auth intent, redirecting to auth');
         localStorage.setItem('postAuthRedirect', '/hybrid-interview');
-        // Give a longer delay for auth to settle
         setTimeout(() => {
           navigate('/auth?mode=signup');
         }, 1000);
         return;
       }
 
-      console.log('Auto-starting interview on dedicated interview page');
+      console.log('Starting interview (user authenticated or has auth intent)');
       const startInterviewOnMount = async () => {
         if (isLoading) {
           console.log('Already loading, skipping...');
           return;
         }
         
-        console.log('Starting interview with user:', user?.id);
+        console.log('Creating interview session...');
         setIsLoading(true);
         
         try {
-          // For now, let's create a demo session to bypass the auth issues
+          // For demo purposes, create a local session to bypass auth issues
           const demoSessionId = `demo-session-${Date.now()}`;
+          
+          // Clear the post-auth redirect flag
+          if (hasAuthIntent) {
+            localStorage.removeItem('postAuthRedirect');
+          }
+          
+          // Set session ID to show interview
           setSessionId(demoSessionId);
           
-          // Show success message
           toast({
             title: "Interview Started! 🚀",
             description: "Ready to build your hybrid athlete profile. Let's go!",
             duration: 2000,
           });
           
-          console.log('✅ Demo interview started with session:', demoSessionId);
-          
-          // Alternative: Try the real API call as fallback
-          /*
-          const response = await axios.post(
-            `${BACKEND_URL}/api/hybrid-interview/start`,
-            {
-              user_id: user?.id
-            },
-            {
-              headers: {
-                'Authorization': `Bearer ${session?.access_token}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-          
-          if (response.data.success) {
-            const newSessionId = response.data.session_id;
-            setSessionId(newSessionId);
-          }
-          */
+          console.log('✅ Demo interview session created:', demoSessionId);
           
         } catch (error) {
           console.error('Error starting interview:', error);
           
-          // Create a fallback demo session
+          // Fallback: still create demo session
           const fallbackSessionId = `fallback-session-${Date.now()}`;
           setSessionId(fallbackSessionId);
           
@@ -280,12 +269,11 @@ const HybridInterviewFlow = () => {
         }
       };
       
-      // Add a small delay to ensure everything is loaded
       setTimeout(() => {
         startInterviewOnMount();
       }, 1000);
     }
-  }, [user, sessionId, isInterviewPage, loading, session, toast, navigate]); // Added loading to dependencies
+  }, [user, sessionId, isInterviewPage, loading, toast, navigate]);
 
   // Handle starting interview with auth check
   const startInterview = async () => {
