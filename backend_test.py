@@ -5796,6 +5796,15 @@ class BackendTester:
             self.test_leaderboard_with_actual_database_data,
             self.test_leaderboard_error_handling_no_data,
             
+            # 8. Privacy Functionality Tests (REVIEW REQUEST)
+            self.test_database_is_public_column,
+            self.test_leaderboard_endpoint_exists,
+            self.test_leaderboard_public_filter,
+            self.test_privacy_update_endpoint_exists,
+            self.test_new_profiles_default_private,
+            self.test_leaderboard_empty_state,
+            self.test_privacy_system_comprehensive,
+            
             # Additional supporting tests
             self.test_api_root,
             self.test_supabase_connection,
