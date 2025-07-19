@@ -2079,32 +2079,34 @@ const ProfilePage = () => {
                             {safeRenderField(profile.pb_deadlift_1rm_lb || profileJson.pb_deadlift_1rm)}
                           </td>
                           <td className="p-3 text-center">
-                            <div className="flex items-center justify-center">
-                              <div className="relative inline-block">
-                                <input
-                                  type="checkbox"
-                                  id={`privacy-${profile.id}`}
-                                  className="privacy-toggle"
-                                  checked={profile.is_public || false}
-                                  onChange={(e) => updateProfilePrivacy(profile.id, e.target.checked)}
-                                  disabled={updatingPrivacy[profile.id]}
+                            <div className="flex flex-col items-center justify-center space-y-1">
+                              <button
+                                onClick={() => updateProfilePrivacy(profile.id, !profile.is_public)}
+                                disabled={updatingPrivacy[profile.id]}
+                                className={`
+                                  relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#08F0FF] focus:ring-offset-2
+                                  ${profile.is_public 
+                                    ? 'bg-[#08F0FF] shadow-[0_0_10px_#08F0FFAA]' 
+                                    : 'bg-gray-600'
+                                  }
+                                  ${updatingPrivacy[profile.id] ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-80'}
+                                `}
+                                title={profile.is_public ? 'Click to make private (hide from leaderboard)' : 'Click to make public (show on leaderboard)'}
+                              >
+                                <span
+                                  className={`
+                                    inline-block h-3 w-3 transform rounded-full bg-white transition duration-200 ease-in-out
+                                    ${profile.is_public ? 'translate-x-5' : 'translate-x-1'}
+                                  `}
                                 />
-                                <label 
-                                  htmlFor={`privacy-toggle-${profile.id}`}
-                                  className={`privacy-toggle-label ${updatingPrivacy[profile.id] ? 'opacity-50' : ''}`}
-                                  title={profile.is_public ? 'Public - Visible on leaderboard' : 'Private - Hidden from leaderboard'}
-                                >
-                                  <span className="privacy-toggle-inner"></span>
-                                  <span className="privacy-toggle-switch"></span>
-                                </label>
+                              </button>
+                              <div className="text-xs">
+                                {profile.is_public ? (
+                                  <span className="text-[#08F0FF] font-medium">Public</span>
+                                ) : (
+                                  <span className="text-gray-400">Private</span>
+                                )}
                               </div>
-                            </div>
-                            <div className="text-xs text-muted mt-1">
-                              {profile.is_public ? (
-                                <span className="text-green-400">Public</span>
-                              ) : (
-                                <span className="text-gray-500">Private</span>
-                              )}
                             </div>
                           </td>
                           <td className="p-3">
