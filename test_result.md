@@ -167,7 +167,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Filter Athlete Profiles to Show Only Those With Hybrid Scores"
     - "Delete Button UI in Profile Table"
     - "Delete Profile Functionality"  
     - "Delete Athlete Profile Endpoint"
