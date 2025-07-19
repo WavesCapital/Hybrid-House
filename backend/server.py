@@ -2124,6 +2124,83 @@ async def trigger_score_computation(profile_id: str, profile_json: dict):
         print(f"Error triggering score computation: {e}")
         # Don't raise exception as this is a background task
 
+@api_router.get("/leaderboard")
+async def get_leaderboard():
+    """Get leaderboard with highest scores per athlete (by display_name)"""
+    try:
+        # Get all athlete profiles with completed scores
+        profiles_result = supabase.table('athlete_profiles').select('*').not_.is_('score_data', 'null').execute()
+        
+        if not profiles_result.data:
+            return {
+                "leaderboard": [],
+                "total": 0
+            }
+        
+        # Process profiles to get highest score per display_name
+        athlete_scores = {}
+        
+        for profile in profiles_result.data:
+            try:
+                profile_json = profile.get('profile_json', {})
+                score_data = profile.get('score_data', {})
+                
+                # Extract display_name and hybrid_score
+                display_name = profile_json.get('display_name', '')
+                if not display_name:
+                    # Fallback to email prefix if no display_name
+                    email = profile_json.get('email', '')
+                    display_name = email.split('@')[0] if email else f'User {profile.get("id", "")[:8]}'
+                
+                # Get hybrid score
+                hybrid_score = None
+                if isinstance(score_data, dict):
+                    hybrid_score = score_data.get('hybrid_score')
+                
+                # Skip if no valid score
+                if hybrid_score is None:
+                    continue
+                
+                # Keep only highest score per display_name
+                if display_name not in athlete_scores or hybrid_score > athlete_scores[display_name]['score']:
+                    athlete_scores[display_name] = {
+                        'display_name': display_name,
+                        'score': hybrid_score,
+                        'profile_id': profile.get('id'),
+                        'completed_at': profile.get('completed_at'),
+                        'score_breakdown': {
+                            'strength_score': score_data.get('strength_score'),
+                            'endurance_score': score_data.get('endurance_score'),
+                            'power_score': score_data.get('power_score'),
+                            'agility_score': score_data.get('agility_score'),
+                            'recovery_score': score_data.get('recovery_score'),
+                            'flexibility_score': score_data.get('flexibility_score')
+                        }
+                    }
+            except Exception as e:
+                print(f"Error processing profile {profile.get('id')}: {e}")
+                continue
+        
+        # Convert to list and sort by score (descending)
+        leaderboard = list(athlete_scores.values())
+        leaderboard.sort(key=lambda x: x['score'], reverse=True)
+        
+        # Add rankings
+        for i, entry in enumerate(leaderboard):
+            entry['rank'] = i + 1
+        
+        return {
+            "leaderboard": leaderboard,
+            "total": len(leaderboard)
+        }
+        
+    except Exception as e:
+        print(f"Error fetching leaderboard: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching leaderboard: {str(e)}"
+        )
+
 app.include_router(api_router)
 
 @app.on_event("startup")
