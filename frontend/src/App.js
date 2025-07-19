@@ -57,11 +57,7 @@ function AppContent() {
           />
           <Route 
             path="/hybrid-interview" 
-            element={
-              <ProtectedRoute>
-                <HybridInterviewFlow />
-              </ProtectedRoute>
-            } 
+            element={<HybridInterviewFlow />}
           />
           <Route 
             path="/profile" 
