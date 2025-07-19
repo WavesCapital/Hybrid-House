@@ -611,6 +611,50 @@ const ProfilePage = () => {
     }
   }, [avatarFile, user, session, toast]);
 
+  // Update athlete profile privacy setting
+  const updateProfilePrivacy = useCallback(async (profileId, isPublic) => {
+    if (!user || !session) return;
+    
+    try {
+      setUpdatingPrivacy(prev => ({ ...prev, [profileId]: true }));
+      
+      const response = await axios.put(
+        `${BACKEND_URL}/api/athlete-profile/${profileId}/privacy`,
+        { is_public: isPublic },
+        {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Update the local state
+      setProfiles(prevProfiles => 
+        prevProfiles.map(profile => 
+          profile.id === profileId 
+            ? { ...profile, is_public: isPublic }
+            : profile
+        )
+      );
+      
+      toast({
+        title: "Privacy Updated",
+        description: `Profile is now ${isPublic ? 'public and will appear on the leaderboard' : 'private and hidden from the leaderboard'}`,
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Error updating privacy:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update privacy setting",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdatingPrivacy(prev => ({ ...prev, [profileId]: false }));
+    }
+  }, [user, session, toast]);
+
   // Create editable field component
   const EditableField = useCallback(({ fieldName, label, value, type = 'text', options = null, placeholder = '' }) => {
     const isEditing = editingFields[fieldName];
