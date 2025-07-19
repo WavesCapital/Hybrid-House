@@ -4,7 +4,7 @@ import { Card } from './ui/card';
 import { Progress } from './ui/progress';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Trophy, Target, AlertCircle, Dumbbell, Zap, Heart, MapPin, 
   BarChart3, Activity, Moon, Scale, CheckCircle, Loader2, User, RefreshCw 
