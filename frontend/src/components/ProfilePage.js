@@ -2179,6 +2179,27 @@ const ProfilePage = () => {
                 Use arrow keys to navigate table rows
               </div>
             )}
+            
+            {/* Privacy Explanation */}
+            {profiles.length > 0 && (
+              <div className="mb-6 p-4 rounded-lg border border-[#08F0FF]/20 bg-gradient-to-r from-[#08F0FF]/5 to-[#FF2DDE]/5">
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#08F0FF] to-[#FF2DDE] flex items-center justify-center">
+                      <Globe className="w-3 h-3 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-primary mb-1">Privacy Control</div>
+                    <div className="text-xs text-secondary leading-relaxed">
+                      <span className="font-medium text-[#08F0FF]">Public:</span> Your highest score appears on the global leaderboard for other athletes to see. 
+                      <span className="font-medium text-gray-400 ml-3">Private:</span> Your scores stay hidden and won't appear on any public rankings.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
           </div>
         </div>
 
