@@ -655,6 +655,58 @@ const ProfilePage = () => {
     }
   }, [user, session, toast]);
 
+  // Delete athlete profile
+  const deleteAthleteProfile = useCallback(async (profileId, profileDate) => {
+    if (!user || !session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to delete profiles",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Show confirmation dialog
+    const confirmed = window.confirm(`Are you sure you want to delete the profile created on ${profileDate}? This action cannot be undone.`);
+    if (!confirmed) return;
+    
+    try {
+      const response = await axios.delete(
+        `${BACKEND_URL}/api/athlete-profile/${profileId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        }
+      );
+
+      // Update the local state to remove the deleted profile
+      setProfiles(prevProfiles => 
+        prevProfiles.filter(profile => profile.id !== profileId)
+      );
+      
+      toast({
+        title: "Profile Deleted",
+        description: "The athlete profile has been successfully deleted",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Error deleting profile:', error);
+      let errorMessage = "Failed to delete profile";
+      if (error.response?.status === 404) {
+        errorMessage = "Profile not found or already deleted";
+      } else if (error.response?.status === 401) {
+        errorMessage = "Authentication required. Please sign in again.";
+      }
+      
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  }, [user, session, toast]);
+
   // Create editable field component
   const EditableField = useCallback(({ fieldName, label, value, type = 'text', options = null, placeholder = '' }) => {
     const isEditing = editingFields[fieldName];
