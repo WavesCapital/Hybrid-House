@@ -1110,7 +1110,7 @@ const HybridInterviewFlow = () => {
               <div className="flex items-center space-x-4">
                 <div className="flex-1 h-3 bg-gray-800 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-[#08F0FF] to-[#FF2DDE] rounded-full transition-all duration-300"
+                    className="h-full bg-[#08F0FF] rounded-full transition-all duration-300"
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>
