@@ -206,7 +206,15 @@ const HybridInterviewFlow = () => {
       shouldStart: user && !sessionId && isInterviewPage
     });
 
-    if (user && !sessionId && isInterviewPage) {
+    if (isInterviewPage && !sessionId) {
+      if (!user) {
+        console.log('User not authenticated, redirecting to auth with redirect flag');
+        // Store redirect and send to auth
+        localStorage.setItem('postAuthRedirect', '/hybrid-interview');
+        navigate('/auth?mode=signup');
+        return;
+      }
+
       console.log('Auto-starting interview on dedicated interview page');
       const startInterviewOnMount = async () => {
         if (isLoading) {
@@ -266,6 +274,7 @@ const HybridInterviewFlow = () => {
           // If authentication failed, redirect back to auth
           if (error.response?.status === 401 || error.response?.status === 403) {
             console.log('Authentication failed, redirecting to auth');
+            localStorage.setItem('postAuthRedirect', '/hybrid-interview');
             navigate('/auth?mode=signup');
           }
         } finally {
