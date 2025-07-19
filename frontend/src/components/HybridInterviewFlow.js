@@ -1151,7 +1151,7 @@ const HybridInterviewFlow = () => {
                     <div
                       className={`max-w-[75%] p-6 rounded-2xl ${
                         message.role === 'user'
-                          ? 'bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] text-black font-medium'
+                          ? 'bg-[#08F0FF] text-black font-medium'
                           : 'glass-card'
                       }`}
                       style={message.role === 'assistant' ? { color: 'var(--txt)' } : {}}
