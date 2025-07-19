@@ -199,7 +199,7 @@ const HybridInterviewFlow = () => {
 
   // Auto-start interview when component mounts on the dedicated interview page
   useEffect(() => {
-    if (user && !sessionId) {
+    if (user && !sessionId && isInterviewPage) {
       // Automatically start the interview when user visits /hybrid-interview
       console.log('Auto-starting interview on dedicated interview page');
       const startInterviewOnMount = async () => {
@@ -242,7 +242,7 @@ const HybridInterviewFlow = () => {
       
       startInterviewOnMount();
     }
-  }, [user, sessionId, isLoading, toast]);
+  }, [user, sessionId, isInterviewPage, toast]); // Removed isLoading from dependencies to prevent infinite loop
 
   // Handle starting interview with auth check
   const startInterview = async () => {
