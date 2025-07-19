@@ -102,7 +102,63 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implementing smooth authentication flow for Hybrid House application. The hybrid score landing page should always be the home page regardless of authentication status. If user is not signed in and clicks 'Start Hybrid Interview', redirect to sign up/login with signup as default. After successful authentication, redirect to hybrid interview for seamless user experience."
+user_problem_statement: "Add delete functionality to athlete profiles in the Hybrid Score History table on the /profile page. Users should be able to delete athlete profiles by clicking a small x button all the way to the right on the table."
+
+backend:
+  - task: "Delete Athlete Profile Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ DELETE ENDPOINT EXISTS: Confirmed that DELETE /api/athlete-profile/{profile_id} endpoint already exists in the backend at lines 1008-1030. The endpoint properly requires JWT authentication, validates that the profile belongs to the user, and deletes the profile from the database. Backend implementation is ready for frontend integration."
+
+frontend:
+  - task: "Delete Button UI in Profile Table"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ProfilePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ DELETE BUTTON IMPLEMENTED: Added small X button to the Actions column in the Hybrid Score History table. Button appears all the way to the right alongside the existing view button. Only shows for authenticated users. Added proper styling with red hover effect and confirmation dialog before deletion."
+
+  - task: "Delete Profile Functionality"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ProfilePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ DELETE FUNCTIONALITY IMPLEMENTED: Added deleteAthleteProfile function that shows confirmation dialog, calls backend DELETE endpoint with authentication, removes deleted profile from local state, and shows success/error toasts. Function includes proper error handling for 404 (profile not found) and 401 (authentication required) scenarios."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+
+test_plan:
+  current_focus:
+    - "Delete Button UI in Profile Table"
+    - "Delete Profile Functionality"  
+    - "Delete Athlete Profile Endpoint"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "✅ DELETE FUNCTIONALITY IMPLEMENTATION COMPLETE: Successfully implemented athlete profile delete functionality. Added small X button to the Actions column in the Hybrid Score History table on the /profile page. Button appears all the way to the right and only shows for authenticated users. Implemented deleteAthleteProfile function with confirmation dialog, backend API call, local state updates, and proper error handling. Backend DELETE endpoint already existed and is ready. Ready for testing to verify the complete delete workflow."
 
 backend:
   - task: "Database Migration for Privacy Functionality - is_public Column"
