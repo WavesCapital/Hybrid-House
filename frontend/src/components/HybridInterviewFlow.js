@@ -214,49 +214,15 @@ const HybridInterviewFlow = () => {
   const startInterview = async () => {
     // Check if user is authenticated
     if (!user) {
-      // Store intent to start interview after signup
-      localStorage.setItem('postAuthAction', 'startInterview');
+      // Store intent to redirect to interview page after signup
+      localStorage.setItem('postAuthRedirect', '/hybrid-interview');
       // Redirect to auth page with signup as default
       navigate('/auth?mode=signup');
       return;
     }
 
-    // User is authenticated, proceed with starting interview
-    if (isLoading) return;
-
-    setIsLoading(true);
-    
-    try {
-      const response = await axios.post(`${BACKEND_URL}/api/hybrid-interview/start`, {
-        user_id: user?.id
-      });
-      
-      if (response.data.success) {
-        const newSessionId = response.data.session_id;
-        setSessionId(newSessionId);
-        
-        // Show success message
-        toast({
-          title: "Interview Started! 🚀",
-          description: "Ready to build your hybrid athlete profile. Let's go!",
-          duration: 2000,
-        });
-        
-        console.log('✅ Interview started successfully with session:', newSessionId);
-      } else {
-        throw new Error('Failed to start interview');
-      }
-    } catch (error) {
-      console.error('Error starting interview:', error);
-      toast({
-        title: "Interview start failed",
-        description: error.response?.data?.error || "Unable to start interview. Please try again.",
-        variant: "destructive",
-        duration: 3000,
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    // User is authenticated, redirect to dedicated interview page
+    navigate('/hybrid-interview');
   };
 
   // Memoize sendMessage function to prevent unnecessary re-renders
