@@ -65,16 +65,18 @@ export default function AuthForm() {
           setMessage(result.error.message);
         }
       } else {
+        const postAuthRedirect = localStorage.getItem('postAuthRedirect');
+        
         if (!isLogin) {
           // Check if user is immediately logged in (no email confirmation)
           if (result.data?.session) {
-            setMessage('Account created successfully! Starting your interview...');
+            setMessage(postAuthRedirect ? 'Account created successfully! Redirecting to your interview...' : 'Account created successfully! Welcome to Hybrid House!');
           } else {
             // Email confirmation is still enabled
             setMessage('Account created! Please check your email and click the confirmation link to activate your account.');
           }
         } else {
-          setMessage('Welcome back! Starting your interview...');
+          setMessage(postAuthRedirect ? 'Welcome back! Redirecting to your interview...' : 'Welcome back! Redirecting...');
         }
       }
     } catch (error) {
