@@ -105,13 +105,25 @@
 user_problem_statement: "Add delete functionality to athlete profiles in the Hybrid Score History table on the /profile page. Users should be able to delete athlete profiles by clicking a small x button all the way to the right on the table."
 
 backend:
+  - task: "Filter Athlete Profiles to Show Only Those With Hybrid Scores"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ HYBRID SCORE FILTERING IMPLEMENTED: Modified GET /api/athlete-profiles endpoint to only return profiles that have score_data with hybridScore. Added database query filter .not_.is_('score_data', 'null') and additional logic to filter profiles that have score_data and score_data.hybridScore. Updated endpoint documentation and included all individual profile fields for table display. This ensures the Hybrid Score History table only shows completed assessments with actual scores."
+
   - task: "Delete Athlete Profile Endpoint"
     implemented: true
     working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
