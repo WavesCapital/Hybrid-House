@@ -5561,6 +5561,205 @@ class BackendTester:
             self.log_test("Database Write Operations - POST Score", False, "Score update test failed", str(e))
             return False
 
+    def test_leaderboard_endpoint_structure(self):
+        """Test GET /api/leaderboard endpoint returns correct structure"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check required fields in response
+                if "leaderboard" in data and "total" in data:
+                    if isinstance(data["leaderboard"], list) and isinstance(data["total"], int):
+                        self.log_test("Leaderboard Endpoint Structure", True, f"Correct structure returned with {data['total']} entries", data)
+                        return True, data
+                    else:
+                        self.log_test("Leaderboard Endpoint Structure", False, "Invalid data types in response", data)
+                        return False, None
+                else:
+                    self.log_test("Leaderboard Endpoint Structure", False, "Missing required fields (leaderboard, total)", data)
+                    return False, None
+            else:
+                self.log_test("Leaderboard Endpoint Structure", False, f"HTTP {response.status_code}", response.text)
+                return False, None
+        except Exception as e:
+            self.log_test("Leaderboard Endpoint Structure", False, "Request failed", str(e))
+            return False, None
+    
+    def test_leaderboard_entry_format(self):
+        """Test that leaderboard entries have correct format (rank, display_name, score, score_breakdown)"""
+        try:
+            success, data = self.test_leaderboard_endpoint_structure()
+            if not success or not data:
+                self.log_test("Leaderboard Entry Format", False, "Could not get leaderboard data")
+                return False
+            
+            leaderboard = data.get("leaderboard", [])
+            if not leaderboard:
+                self.log_test("Leaderboard Entry Format", True, "No entries to validate (empty leaderboard)")
+                return True
+            
+            # Check first entry format
+            first_entry = leaderboard[0]
+            required_fields = ["rank", "display_name", "score", "score_breakdown"]
+            
+            missing_fields = []
+            for field in required_fields:
+                if field not in first_entry:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                self.log_test("Leaderboard Entry Format", False, f"Missing required fields: {missing_fields}", first_entry)
+                return False
+            
+            # Validate score_breakdown structure
+            score_breakdown = first_entry.get("score_breakdown", {})
+            if not isinstance(score_breakdown, dict):
+                self.log_test("Leaderboard Entry Format", False, "score_breakdown should be a dictionary", first_entry)
+                return False
+            
+            self.log_test("Leaderboard Entry Format", True, f"Correct entry format with all required fields", first_entry)
+            return True
+            
+        except Exception as e:
+            self.log_test("Leaderboard Entry Format", False, "Entry format validation failed", str(e))
+            return False
+    
+    def test_leaderboard_highest_scores_per_display_name(self):
+        """Test that leaderboard only shows highest scores per display_name"""
+        try:
+            success, data = self.test_leaderboard_endpoint_structure()
+            if not success or not data:
+                self.log_test("Leaderboard Highest Scores Logic", False, "Could not get leaderboard data")
+                return False
+            
+            leaderboard = data.get("leaderboard", [])
+            if not leaderboard:
+                self.log_test("Leaderboard Highest Scores Logic", True, "No entries to validate (empty leaderboard)")
+                return True
+            
+            # Check for duplicate display_names
+            display_names = []
+            for entry in leaderboard:
+                display_name = entry.get("display_name")
+                if display_name in display_names:
+                    self.log_test("Leaderboard Highest Scores Logic", False, f"Duplicate display_name found: {display_name}", leaderboard)
+                    return False
+                display_names.append(display_name)
+            
+            # Check that scores are in descending order
+            scores = [entry.get("score", 0) for entry in leaderboard]
+            if scores != sorted(scores, reverse=True):
+                self.log_test("Leaderboard Highest Scores Logic", False, "Scores not in descending order", scores)
+                return False
+            
+            self.log_test("Leaderboard Highest Scores Logic", True, f"Unique display_names with scores in descending order: {len(display_names)} entries", {"display_names": display_names, "scores": scores})
+            return True
+            
+        except Exception as e:
+            self.log_test("Leaderboard Highest Scores Logic", False, "Highest scores validation failed", str(e))
+            return False
+    
+    def test_leaderboard_ranking_system(self):
+        """Test that leaderboard entries have correct ranking (1, 2, 3, etc.)"""
+        try:
+            success, data = self.test_leaderboard_endpoint_structure()
+            if not success or not data:
+                self.log_test("Leaderboard Ranking System", False, "Could not get leaderboard data")
+                return False
+            
+            leaderboard = data.get("leaderboard", [])
+            if not leaderboard:
+                self.log_test("Leaderboard Ranking System", True, "No entries to validate (empty leaderboard)")
+                return True
+            
+            # Check that rankings are sequential starting from 1
+            expected_ranks = list(range(1, len(leaderboard) + 1))
+            actual_ranks = [entry.get("rank") for entry in leaderboard]
+            
+            if actual_ranks != expected_ranks:
+                self.log_test("Leaderboard Ranking System", False, f"Incorrect ranking sequence. Expected: {expected_ranks}, Got: {actual_ranks}")
+                return False
+            
+            self.log_test("Leaderboard Ranking System", True, f"Correct ranking sequence 1-{len(leaderboard)}", {"ranks": actual_ranks})
+            return True
+            
+        except Exception as e:
+            self.log_test("Leaderboard Ranking System", False, "Ranking system validation failed", str(e))
+            return False
+    
+    def test_leaderboard_with_actual_database_data(self):
+        """Test leaderboard with actual database data if available"""
+        try:
+            success, data = self.test_leaderboard_endpoint_structure()
+            if not success or not data:
+                self.log_test("Leaderboard Database Data", False, "Could not get leaderboard data")
+                return False
+            
+            leaderboard = data.get("leaderboard", [])
+            total = data.get("total", 0)
+            
+            if total == 0:
+                self.log_test("Leaderboard Database Data", True, "No database entries found (empty leaderboard)", {"total": 0})
+                return True
+            
+            # Validate that we have real data
+            sample_entry = leaderboard[0] if leaderboard else None
+            if sample_entry:
+                display_name = sample_entry.get("display_name", "")
+                score = sample_entry.get("score", 0)
+                profile_id = sample_entry.get("profile_id", "")
+                
+                # Check for realistic data
+                if display_name and score > 0 and profile_id:
+                    self.log_test("Leaderboard Database Data", True, f"Real database data found: {total} entries, top score: {score} by {display_name}", sample_entry)
+                    return True
+                else:
+                    self.log_test("Leaderboard Database Data", False, "Data appears incomplete or invalid", sample_entry)
+                    return False
+            else:
+                self.log_test("Leaderboard Database Data", False, "No entries in leaderboard despite total > 0")
+                return False
+            
+        except Exception as e:
+            self.log_test("Leaderboard Database Data", False, "Database data validation failed", str(e))
+            return False
+    
+    def test_leaderboard_error_handling_no_data(self):
+        """Test leaderboard error handling when no data is available"""
+        try:
+            # This test verifies that the endpoint handles empty data gracefully
+            # We can't simulate no data directly, but we can verify the response structure
+            # handles the case where no profiles have scores
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Should always return valid structure even with no data
+                if "leaderboard" in data and "total" in data:
+                    if isinstance(data["leaderboard"], list) and isinstance(data["total"], int):
+                        if data["total"] == 0 and len(data["leaderboard"]) == 0:
+                            self.log_test("Leaderboard Error Handling (No Data)", True, "Correctly handles empty data case", data)
+                        else:
+                            self.log_test("Leaderboard Error Handling (No Data)", True, "Endpoint handles data gracefully", {"total": data["total"]})
+                        return True
+                    else:
+                        self.log_test("Leaderboard Error Handling (No Data)", False, "Invalid response structure", data)
+                        return False
+                else:
+                    self.log_test("Leaderboard Error Handling (No Data)", False, "Missing required response fields", data)
+                    return False
+            else:
+                self.log_test("Leaderboard Error Handling (No Data)", False, f"HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Leaderboard Error Handling (No Data)", False, "Error handling test failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests focused on Supabase database connection and Profile Page functionality"""
         print("=" * 80)
