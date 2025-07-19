@@ -193,22 +193,52 @@ const HybridInterviewFlow = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Handle automatic interview start after authentication
+  // Auto-start interview when component mounts on the dedicated interview page
   useEffect(() => {
     if (user && !sessionId) {
-      // Check if user was redirected back from auth to start interview
-      const postAuthAction = localStorage.getItem('postAuthAction');
-      if (postAuthAction === 'startInterview') {
-        // Clear the stored action
-        localStorage.removeItem('postAuthAction');
-        // Automatically start the interview
-        console.log('Auto-starting interview after authentication');
-        setTimeout(() => {
-          startInterview();
-        }, 1000);
-      }
+      // Automatically start the interview when user visits /hybrid-interview
+      console.log('Auto-starting interview on dedicated interview page');
+      const startInterviewOnMount = async () => {
+        if (isLoading) return;
+        
+        setIsLoading(true);
+        
+        try {
+          const response = await axios.post(`${BACKEND_URL}/api/hybrid-interview/start`, {
+            user_id: user?.id
+          });
+          
+          if (response.data.success) {
+            const newSessionId = response.data.session_id;
+            setSessionId(newSessionId);
+            
+            // Show success message
+            toast({
+              title: "Interview Started! 🚀",
+              description: "Ready to build your hybrid athlete profile. Let's go!",
+              duration: 2000,
+            });
+            
+            console.log('✅ Interview started successfully with session:', newSessionId);
+          } else {
+            throw new Error('Failed to start interview');
+          }
+        } catch (error) {
+          console.error('Error starting interview:', error);
+          toast({
+            title: "Interview start failed",
+            description: error.response?.data?.error || "Unable to start interview. Please try again.",
+            variant: "destructive",
+            duration: 3000,
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      
+      startInterviewOnMount();
     }
-  }, [user, sessionId]);
+  }, [user, sessionId, isLoading, toast]);
 
   // Handle starting interview with auth check
   const startInterview = async () => {
