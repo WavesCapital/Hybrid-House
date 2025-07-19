@@ -1941,6 +1941,7 @@ const ProfilePage = () => {
                     <th className="text-right p-3 text-xs font-semibold text-secondary">Bench 1RM</th>
                     <th className="text-right p-3 text-xs font-semibold text-secondary">Squat 1RM</th>
                     <th className="text-right p-3 text-xs font-semibold text-secondary">Deadlift 1RM</th>
+                    <th className="text-center p-3 text-xs font-semibold text-secondary">Privacy</th>
                     <th className="text-right p-3 text-xs font-semibold text-secondary">Action</th>
                   </tr>
                 </thead>
