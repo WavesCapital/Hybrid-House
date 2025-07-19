@@ -45,6 +45,10 @@ function AppContent() {
             element={user ? <Navigate to="/" replace /> : <AuthForm />} 
           />
           <Route 
+            path="/logout" 
+            element={<Logout />} 
+          />
+          <Route 
             path="/" 
             element={<HybridInterviewFlow />} 
           />
