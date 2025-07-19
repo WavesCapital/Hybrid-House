@@ -2209,13 +2209,28 @@ const ProfilePage = () => {
                             </div>
                           </td>
                           <td className="p-3">
-                            <button 
-                              onClick={() => navigate(`/hybrid-score/${profile.id}`)}
-                              className="p-1 text-secondary hover:text-primary transition-colors"
-                              aria-label={`View score details for ${new Date(profile.created_at).toLocaleDateString()}`}
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
+                            <div className="flex items-center justify-end space-x-2">
+                              <button 
+                                onClick={() => navigate(`/hybrid-score/${profile.id}`)}
+                                className="p-1 text-secondary hover:text-primary transition-colors"
+                                aria-label={`View score details for ${new Date(profile.created_at).toLocaleDateString()}`}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              {user && session && (
+                                <button 
+                                  onClick={() => deleteAthleteProfile(profile.id, new Date(profile.created_at).toLocaleDateString('en-US', { 
+                                    month: 'short', 
+                                    day: 'numeric', 
+                                    year: 'numeric' 
+                                  }))}
+                                  className="p-1 text-gray-400 hover:text-red-400 transition-colors"
+                                  aria-label={`Delete profile from ${new Date(profile.created_at).toLocaleDateString()}`}
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       );
