@@ -319,10 +319,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Privacy Settings Functionality Testing Complete"
-    - "Database Schema Update Required for is_public Column"
-    - "Backend Code Implementation Verified and Production-Ready"
-  stuck_tasks: []
+    - "Database Migration Required - is_public Column Missing"
+    - "Privacy Functionality Implementation Complete but Blocked by Database Schema"
+    - "Backend Code Ready for Privacy System Once Database Updated"
+  stuck_tasks:
+    - "Database Migration for Privacy Functionality - is_public Column"
+    - "Leaderboard API Endpoint with Privacy Filtering"
   test_all: false
   test_priority: "high_first"
 
