@@ -29,17 +29,20 @@ export default function AuthForm() {
       // Check if there's a stored post-auth redirect
       const postAuthRedirect = localStorage.getItem('postAuthRedirect');
       
-      if (postAuthRedirect) {
-        console.log('Post-auth redirect found:', postAuthRedirect);
-        // Clear the stored redirect first
+      console.log('Post-auth redirect check:', { postAuthRedirect, user: user?.email });
+      
+      if (postAuthRedirect === '/hybrid-interview') {
+        console.log('Redirecting to interview page after auth');
         localStorage.removeItem('postAuthRedirect');
-        // Redirect immediately
-        navigate(postAuthRedirect, { replace: true });
+        // Small delay to ensure auth is fully processed
+        setTimeout(() => {
+          navigate('/hybrid-interview', { replace: true });
+        }, 1000);
       } else {
-        // Default redirect to home with short delay
+        // Default redirect to home
         setTimeout(() => {
           navigate('/', { replace: true });
-        }, 500);
+        }, 1000);
       }
     }
   }, [user, navigate]);
