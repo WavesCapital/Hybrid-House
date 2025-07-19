@@ -26,15 +26,15 @@ export default function AuthForm() {
   // Handle post-auth redirect
   useEffect(() => {
     if (user) {
-      // Check if there's a stored post-auth action
-      const postAuthAction = localStorage.getItem('postAuthAction');
+      // Check if there's a stored post-auth redirect
+      const postAuthRedirect = localStorage.getItem('postAuthRedirect');
       
-      if (postAuthAction === 'startInterview') {
-        // Clear the stored action
-        localStorage.removeItem('postAuthAction');
-        // Redirect to home page which will trigger interview start
+      if (postAuthRedirect) {
+        // Clear the stored redirect
+        localStorage.removeItem('postAuthRedirect');
+        // Redirect to the intended page (e.g., /hybrid-interview)
         setTimeout(() => {
-          navigate('/', { replace: true });
+          navigate(postAuthRedirect, { replace: true });
         }, 1000);
       } else {
         // Default redirect to home
