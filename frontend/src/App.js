@@ -50,6 +50,10 @@ function AppContent() {
             element={<Logout />} 
           />
           <Route 
+            path="/leaderboard" 
+            element={<Leaderboard />} 
+          />
+          <Route 
             path="/" 
             element={<HybridInterviewFlow />} 
           />
