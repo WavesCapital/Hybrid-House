@@ -1207,8 +1207,12 @@ const HybridInterviewFlow = () => {
                   <button
                     onClick={() => sendMessage()}
                     disabled={isLoading || !currentMessage.trim()}
-                    className="neon-button px-8 py-3 rounded-xl"
-                    style={{ height: 'fit-content', alignSelf: 'flex-end' }}
+                    className="px-8 py-3 rounded-xl bg-[#08F0FF] text-black font-semibold hover:shadow-lg transition-all duration-300"
+                    style={{ 
+                      height: 'fit-content', 
+                      alignSelf: 'flex-end',
+                      boxShadow: '0 0 8px #08F0FF40'
+                    }}
                   >
                     Send
                   </button>
