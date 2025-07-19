@@ -29,7 +29,11 @@ const HybridInterviewFlow = () => {
   const { user, session } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const messagesEndRef = useRef(null);
+
+  // Determine if we're on the dedicated interview page
+  const isInterviewPage = location.pathname === '/hybrid-interview';
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
