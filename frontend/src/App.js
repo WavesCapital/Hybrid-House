@@ -8,6 +8,7 @@ import HybridInterviewFlow from './components/HybridInterviewFlow';
 import HybridScoreResults from './components/HybridScoreResults';
 import ProfilePage from './components/ProfilePage';
 import UserProfileSettings from './components/UserProfileSettings';
+import Leaderboard from './components/Leaderboard';
 import Logout from './components/Logout';
 import './App.css';
 
