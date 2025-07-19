@@ -633,7 +633,7 @@ const HybridInterviewFlow = () => {
         `}
       </style>
 
-      {!sessionId ? (
+      {(!sessionId && !isInterviewPage) ? (
         // Landing Page - Always shown regardless of auth status
         <>
           {/* Hero Section */}
