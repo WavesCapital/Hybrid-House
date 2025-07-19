@@ -2255,6 +2255,59 @@ async def get_leaderboard():
             detail=f"Error fetching leaderboard: {str(e)}"
         )
 
+@api_router.post("/admin/migrate-privacy")
+async def migrate_privacy_column():
+    """Admin endpoint to add is_public column to athlete_profiles table"""
+    try:
+        print("🔄 Starting privacy column migration...")
+        
+        # First check if column already exists by trying to select it
+        try:
+            test_query = supabase.table('athlete_profiles').select('id, is_public').limit(1).execute()
+            print("✅ is_public column already exists!")
+            
+            # Update any NULL values to FALSE
+            all_profiles = supabase.table('athlete_profiles').select('id').execute()
+            update_count = 0
+            
+            for profile in all_profiles.data:
+                try:
+                    supabase.table('athlete_profiles').update({'is_public': False}).eq('id', profile['id']).execute()
+                    update_count += 1
+                except:
+                    pass
+            
+            return {
+                "success": True,
+                "message": "Privacy column already exists and has been updated",
+                "updated_profiles": update_count,
+                "column_exists": True
+            }
+            
+        except Exception as column_check:
+            error_msg = str(column_check).lower()
+            if "does not exist" in error_msg or "42703" in error_msg:
+                print("❌ Column does not exist - providing manual instructions...")
+                
+                return {
+                    "success": False,
+                    "message": "is_public column does not exist and cannot be added via API",
+                    "column_exists": False,
+                    "instructions": "Run this SQL in your Supabase Dashboard SQL Editor",
+                    "required_sql": "ALTER TABLE athlete_profiles ADD COLUMN is_public BOOLEAN DEFAULT FALSE; UPDATE athlete_profiles SET is_public = FALSE WHERE is_public IS NULL;",
+                    "error_details": str(column_check)
+                }
+            else:
+                raise column_check
+        
+    except Exception as e:
+        print(f"❌ Migration endpoint failed: {e}")
+        return {
+            "success": False,
+            "message": f"Migration check failed: {str(e)}",
+            "error_details": str(e)
+        }
+
 app.include_router(api_router)
 
 @app.on_event("startup")
