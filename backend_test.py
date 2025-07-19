@@ -5787,6 +5787,14 @@ class BackendTester:
             self.test_database_write_operations_post_profiles,
             self.test_database_write_operations_post_score,
             
+            # 7. Leaderboard API Tests (NEW)
+            self.test_leaderboard_endpoint_structure,
+            self.test_leaderboard_entry_format,
+            self.test_leaderboard_highest_scores_per_display_name,
+            self.test_leaderboard_ranking_system,
+            self.test_leaderboard_with_actual_database_data,
+            self.test_leaderboard_error_handling_no_data,
+            
             # Additional supporting tests
             self.test_api_root,
             self.test_supabase_connection,
