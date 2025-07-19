@@ -4,25 +4,28 @@
 # Focus on testing the DELETE /api/athlete-profile/{profile_id} endpoint
 
 API_BASE_URL="https://a80e8c7b-ad46-4b7f-b333-fb885f46d4ff.preview.emergentagent.com/api"
+TEST_UUID="550e8400-e29b-41d4-a716-446655440000"
+NONEXISTENT_UUID="550e8400-e29b-41d4-a716-446655440001"
 
 echo "🗑️  TESTING DELETE ATHLETE PROFILE FUNCTIONALITY"
 echo "============================================================"
 echo "Testing at: $API_BASE_URL"
+echo "Using test UUID: $TEST_UUID"
 echo ""
 
 # Test 1: DELETE endpoint exists and requires authentication
 echo "Test 1: DELETE endpoint exists and requires authentication"
 echo "--------------------------------------------------------"
-response=$(curl -s -X DELETE "$API_BASE_URL/athlete-profile/test-profile-id" -w "HTTP_CODE:%{http_code}")
+response=$(curl -s -X DELETE "$API_BASE_URL/athlete-profile/$TEST_UUID" -w "HTTP_CODE:%{http_code}")
 http_code=$(echo "$response" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
 body=$(echo "$response" | sed 's/HTTP_CODE:[0-9]*$//')
 
-if [[ "$http_code" == "401" || "$http_code" == "403" || "$http_code" == "422" ]]; then
+if [[ "$http_code" == "401" || "$http_code" == "403" ]]; then
     echo "✅ PASS: DELETE endpoint exists and requires auth (HTTP $http_code)"
     echo "   Response: $body"
     test1_pass=1
 else
-    echo "❌ FAIL: Expected 401/403/422, got HTTP $http_code"
+    echo "❌ FAIL: Expected 401/403, got HTTP $http_code"
     echo "   Response: $body"
     test1_pass=0
 fi
@@ -31,18 +34,18 @@ echo ""
 # Test 2: Authentication validation with invalid token
 echo "Test 2: Authentication validation with invalid token"
 echo "---------------------------------------------------"
-response=$(curl -s -X DELETE "$API_BASE_URL/athlete-profile/test-id" \
+response=$(curl -s -X DELETE "$API_BASE_URL/athlete-profile/$TEST_UUID" \
     -H "Authorization: Bearer invalid_token" \
     -w "HTTP_CODE:%{http_code}")
 http_code=$(echo "$response" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
 body=$(echo "$response" | sed 's/HTTP_CODE:[0-9]*$//')
 
-if [[ "$http_code" == "401" || "$http_code" == "403" || "$http_code" == "422" ]]; then
+if [[ "$http_code" == "401" ]]; then
     echo "✅ PASS: Invalid token correctly rejected (HTTP $http_code)"
     echo "   Response: $body"
     test2_pass=1
 else
-    echo "❌ FAIL: Expected 401/403/422, got HTTP $http_code"
+    echo "❌ FAIL: Expected 401, got HTTP $http_code"
     echo "   Response: $body"
     test2_pass=0
 fi
@@ -51,18 +54,18 @@ echo ""
 # Test 3: Malformed JWT validation
 echo "Test 3: Malformed JWT validation"
 echo "--------------------------------"
-response=$(curl -s -X DELETE "$API_BASE_URL/athlete-profile/test-id" \
+response=$(curl -s -X DELETE "$API_BASE_URL/athlete-profile/$TEST_UUID" \
     -H "Authorization: Bearer eyJ.invalid.jwt" \
     -w "HTTP_CODE:%{http_code}")
 http_code=$(echo "$response" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
 body=$(echo "$response" | sed 's/HTTP_CODE:[0-9]*$//')
 
-if [[ "$http_code" == "401" || "$http_code" == "403" || "$http_code" == "422" ]]; then
+if [[ "$http_code" == "401" ]]; then
     echo "✅ PASS: Malformed JWT correctly rejected (HTTP $http_code)"
     echo "   Response: $body"
     test3_pass=1
 else
-    echo "❌ FAIL: Expected 401/403/422, got HTTP $http_code"
+    echo "❌ FAIL: Expected 401, got HTTP $http_code"
     echo "   Response: $body"
     test3_pass=0
 fi
@@ -71,12 +74,12 @@ echo ""
 # Test 4: Profile not found logic (auth checked first)
 echo "Test 4: Profile not found logic (auth checked first)"
 echo "----------------------------------------------------"
-response=$(curl -s -X DELETE "$API_BASE_URL/athlete-profile/non-existent-id" \
+response=$(curl -s -X DELETE "$API_BASE_URL/athlete-profile/$NONEXISTENT_UUID" \
     -w "HTTP_CODE:%{http_code}")
 http_code=$(echo "$response" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
 body=$(echo "$response" | sed 's/HTTP_CODE:[0-9]*$//')
 
-if [[ "$http_code" == "401" || "$http_code" == "403" || "$http_code" == "422" ]]; then
+if [[ "$http_code" == "401" || "$http_code" == "403" ]]; then
     echo "✅ PASS: Auth checked before profile existence (secure) (HTTP $http_code)"
     echo "   Response: $body"
     test4_pass=1
@@ -94,12 +97,12 @@ echo ""
 # Test 5: Error message format
 echo "Test 5: Error message format"
 echo "----------------------------"
-response=$(curl -s -X DELETE "$API_BASE_URL/athlete-profile/test-id" \
+response=$(curl -s -X DELETE "$API_BASE_URL/athlete-profile/$TEST_UUID" \
     -w "HTTP_CODE:%{http_code}")
 http_code=$(echo "$response" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
 body=$(echo "$response" | sed 's/HTTP_CODE:[0-9]*$//')
 
-if [[ "$http_code" == "401" || "$http_code" == "403" || "$http_code" == "422" ]]; then
+if [[ "$http_code" == "401" || "$http_code" == "403" ]]; then
     if echo "$body" | grep -q "detail"; then
         echo "✅ PASS: Proper JSON error format with detail field"
         echo "   Response: $body"
@@ -116,20 +119,23 @@ else
 fi
 echo ""
 
-# Test 6: CORS support for DELETE method
-echo "Test 6: CORS support for DELETE method"
-echo "--------------------------------------"
-response=$(curl -s -X OPTIONS "$API_BASE_URL/athlete-profile/test-id" \
-    -H "Access-Control-Request-Method: DELETE" \
+# Test 6: User ownership validation (with properly formatted but invalid JWT)
+echo "Test 6: User ownership validation"
+echo "---------------------------------"
+response=$(curl -s -X DELETE "$API_BASE_URL/athlete-profile/$TEST_UUID" \
+    -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" \
     -w "HTTP_CODE:%{http_code}")
 http_code=$(echo "$response" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2)
+body=$(echo "$response" | sed 's/HTTP_CODE:[0-9]*$//')
 
-if [[ "$http_code" == "200" || "$http_code" == "204" ]]; then
-    echo "✅ PASS: CORS preflight for DELETE method supported (HTTP $http_code)"
+if [[ "$http_code" == "401" ]]; then
+    echo "✅ PASS: JWT validation working for ownership check (HTTP $http_code)"
+    echo "   Response: $body"
     test6_pass=1
 else
-    echo "⚠️  INFO: CORS preflight response HTTP $http_code (may still work)"
-    test6_pass=1  # Don't fail on this as it's not critical
+    echo "❌ FAIL: Expected 401, got HTTP $http_code"
+    echo "   Response: $body"
+    test6_pass=0
 fi
 echo ""
 
