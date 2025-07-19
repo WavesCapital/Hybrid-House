@@ -1047,8 +1047,8 @@ const HybridInterviewFlow = () => {
         // Interview page without session - show loading/starting state with fallback button
         <div className="min-h-screen flex items-center justify-center" style={{ background: '#0E0E11' }}>
           <div className="glass-card max-w-md w-full mx-6 p-12 text-center">
-            <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] rounded-full mx-auto mb-6">
-              <Loader2 className="w-8 h-8 text-white animate-spin" />
+            <div className="flex items-center justify-center w-16 h-16 bg-[#08F0FF] rounded-full mx-auto mb-6">
+              <Loader2 className="w-8 h-8 text-black animate-spin" />
             </div>
             <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--txt)' }}>
               Starting Your Interview...
