@@ -680,6 +680,12 @@ const HybridInterviewFlow = () => {
                     >
                       {user ? 'View Profile' : 'See Sample Report'}
                     </button>
+                    <button 
+                      className="px-8 py-4 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors"
+                      onClick={() => navigate('/leaderboard')}
+                    >
+                      🏆 Leaderboard
+                    </button>
                   </div>
 
                   <p className="text-sm" style={{ color: 'var(--muted)' }}>
