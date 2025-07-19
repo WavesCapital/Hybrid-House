@@ -26,7 +26,7 @@ const HybridInterviewFlow = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastRequestTime, setLastRequestTime] = useState(0);
   const [currentProfileId, setCurrentProfileId] = useState(null);
-  const { user, session } = useAuth();
+  const { user, session, loading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
