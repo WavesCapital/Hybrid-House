@@ -7087,6 +7087,16 @@ class BackendTester:
             self.test_delete_athlete_profile_error_responses,
             self.test_delete_athlete_profile_endpoint_comprehensive,
             
+            # 10. Hybrid Score Filtering Tests (CURRENT REVIEW REQUEST)
+            self.test_hybrid_score_filtering_endpoint_exists,
+            self.test_hybrid_score_filtering_non_null_score_data,
+            self.test_hybrid_score_filtering_hybrid_score_exists,
+            self.test_hybrid_score_filtering_excludes_profiles_without_scores,
+            self.test_hybrid_score_filtering_response_format,
+            self.test_hybrid_score_filtering_ordered_by_created_at_desc,
+            self.test_hybrid_score_filtering_total_count_accuracy,
+            self.test_hybrid_score_filtering_comprehensive,
+            
             # Additional supporting tests
             self.test_api_root,
             self.test_supabase_connection,
