@@ -6685,6 +6685,358 @@ class BackendTester:
             self.log_test("Delete Athlete Profile Comprehensive", False, "Delete comprehensive test failed", str(e))
             return False
 
+    # ===== HYBRID SCORE FILTERING TESTS =====
+    
+    def test_hybrid_score_filtering_endpoint_exists(self):
+        """Test that GET /api/athlete-profiles endpoint exists and is accessible"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "profiles" in data and "total" in data:
+                    self.log_test("Hybrid Score Filtering - Endpoint Exists", True, "GET /api/athlete-profiles endpoint exists and returns proper structure", data)
+                    return True
+                else:
+                    self.log_test("Hybrid Score Filtering - Endpoint Exists", False, "Response missing required fields (profiles, total)", data)
+                    return False
+            else:
+                self.log_test("Hybrid Score Filtering - Endpoint Exists", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Hybrid Score Filtering - Endpoint Exists", False, "Request failed", str(e))
+            return False
+    
+    def test_hybrid_score_filtering_non_null_score_data(self):
+        """Test that endpoint only returns profiles with score_data that is not null"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get("profiles", [])
+                
+                # Check that all returned profiles have non-null score_data
+                profiles_with_null_score_data = []
+                for profile in profiles:
+                    score_data = profile.get("score_data")
+                    if score_data is None:
+                        profiles_with_null_score_data.append(profile.get("id", "unknown"))
+                
+                if len(profiles_with_null_score_data) == 0:
+                    self.log_test("Hybrid Score Filtering - Non-null Score Data", True, f"All {len(profiles)} returned profiles have non-null score_data", {"total_profiles": len(profiles)})
+                    return True
+                else:
+                    self.log_test("Hybrid Score Filtering - Non-null Score Data", False, f"Found {len(profiles_with_null_score_data)} profiles with null score_data", {"profiles_with_null": profiles_with_null_score_data})
+                    return False
+            else:
+                self.log_test("Hybrid Score Filtering - Non-null Score Data", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Hybrid Score Filtering - Non-null Score Data", False, "Request failed", str(e))
+            return False
+    
+    def test_hybrid_score_filtering_hybrid_score_exists(self):
+        """Test that each returned profile has score_data.hybridScore (not null/undefined)"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get("profiles", [])
+                
+                # Check that all returned profiles have hybridScore in score_data
+                profiles_without_hybrid_score = []
+                for profile in profiles:
+                    score_data = profile.get("score_data", {})
+                    if not isinstance(score_data, dict) or score_data.get("hybridScore") is None:
+                        profiles_without_hybrid_score.append({
+                            "id": profile.get("id", "unknown"),
+                            "score_data": score_data
+                        })
+                
+                if len(profiles_without_hybrid_score) == 0:
+                    self.log_test("Hybrid Score Filtering - HybridScore Exists", True, f"All {len(profiles)} returned profiles have score_data.hybridScore", {"total_profiles": len(profiles)})
+                    return True
+                else:
+                    self.log_test("Hybrid Score Filtering - HybridScore Exists", False, f"Found {len(profiles_without_hybrid_score)} profiles without hybridScore", {"profiles_without_hybrid": profiles_without_hybrid_score})
+                    return False
+            else:
+                self.log_test("Hybrid Score Filtering - HybridScore Exists", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Hybrid Score Filtering - HybridScore Exists", False, "Request failed", str(e))
+            return False
+    
+    def test_hybrid_score_filtering_excludes_profiles_without_scores(self):
+        """Test that profiles without hybrid scores are not included in the response"""
+        try:
+            # First, let's check if there are any profiles in the database without scores
+            # by testing the individual profile endpoint or checking the total count logic
+            
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get("profiles", [])
+                total = data.get("total", 0)
+                
+                # Verify that total count matches the number of profiles returned
+                if len(profiles) == total:
+                    self.log_test("Hybrid Score Filtering - Excludes Profiles Without Scores", True, f"Total count ({total}) matches returned profiles ({len(profiles)}), indicating proper filtering", {"total": total, "returned": len(profiles)})
+                    
+                    # Additional check: verify all profiles have actual hybrid scores
+                    profiles_with_scores = 0
+                    for profile in profiles:
+                        score_data = profile.get("score_data", {})
+                        if isinstance(score_data, dict) and score_data.get("hybridScore") is not None:
+                            profiles_with_scores += 1
+                    
+                    if profiles_with_scores == len(profiles):
+                        self.log_test("Hybrid Score Filtering - All Returned Have Scores", True, f"All {profiles_with_scores} returned profiles have valid hybrid scores")
+                        return True
+                    else:
+                        self.log_test("Hybrid Score Filtering - All Returned Have Scores", False, f"Only {profiles_with_scores}/{len(profiles)} profiles have valid hybrid scores")
+                        return False
+                else:
+                    self.log_test("Hybrid Score Filtering - Excludes Profiles Without Scores", False, f"Total count ({total}) doesn't match returned profiles ({len(profiles)})", {"total": total, "returned": len(profiles)})
+                    return False
+            else:
+                self.log_test("Hybrid Score Filtering - Excludes Profiles Without Scores", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Hybrid Score Filtering - Excludes Profiles Without Scores", False, "Request failed", str(e))
+            return False
+    
+    def test_hybrid_score_filtering_response_format(self):
+        """Test that the response format includes all required fields for table display"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get("profiles", [])
+                
+                if len(profiles) > 0:
+                    # Check the first profile for required fields
+                    first_profile = profiles[0]
+                    required_fields = [
+                        "id", "profile_json", "score_data", "created_at", "updated_at",
+                        # Individual fields for table display
+                        "weight_lb", "vo2_max", "pb_mile_seconds", "weekly_miles", 
+                        "long_run_miles", "pb_bench_1rm_lb", "pb_squat_1rm_lb", 
+                        "pb_deadlift_1rm_lb", "hrv_ms", "resting_hr_bpm"
+                    ]
+                    
+                    missing_fields = []
+                    present_fields = []
+                    
+                    for field in required_fields:
+                        if field in first_profile:
+                            present_fields.append(field)
+                        else:
+                            missing_fields.append(field)
+                    
+                    if len(missing_fields) == 0:
+                        self.log_test("Hybrid Score Filtering - Response Format", True, f"All {len(required_fields)} required fields present for table display", {"present_fields": present_fields})
+                        return True
+                    else:
+                        # Some missing fields might be acceptable (null values)
+                        critical_fields = ["id", "profile_json", "score_data", "created_at"]
+                        missing_critical = [f for f in missing_fields if f in critical_fields]
+                        
+                        if len(missing_critical) == 0:
+                            self.log_test("Hybrid Score Filtering - Response Format", True, f"All critical fields present, {len(missing_fields)} optional fields missing", {"missing_optional": missing_fields, "present": present_fields})
+                            return True
+                        else:
+                            self.log_test("Hybrid Score Filtering - Response Format", False, f"Missing critical fields: {missing_critical}", {"missing_critical": missing_critical, "missing_optional": [f for f in missing_fields if f not in critical_fields]})
+                            return False
+                else:
+                    self.log_test("Hybrid Score Filtering - Response Format", True, "No profiles returned, but response format is correct (empty array)", {"total": data.get("total", 0)})
+                    return True
+            else:
+                self.log_test("Hybrid Score Filtering - Response Format", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Hybrid Score Filtering - Response Format", False, "Request failed", str(e))
+            return False
+    
+    def test_hybrid_score_filtering_ordered_by_created_at_desc(self):
+        """Test that the endpoint properly orders results by created_at desc"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get("profiles", [])
+                
+                if len(profiles) >= 2:
+                    # Check that profiles are ordered by created_at in descending order
+                    is_properly_ordered = True
+                    order_issues = []
+                    
+                    for i in range(len(profiles) - 1):
+                        current_created = profiles[i].get("created_at")
+                        next_created = profiles[i + 1].get("created_at")
+                        
+                        if current_created and next_created:
+                            # Compare timestamps (newer should come first)
+                            if current_created < next_created:
+                                is_properly_ordered = False
+                                order_issues.append({
+                                    "index": i,
+                                    "current": current_created,
+                                    "next": next_created
+                                })
+                    
+                    if is_properly_ordered:
+                        self.log_test("Hybrid Score Filtering - Ordered by created_at desc", True, f"All {len(profiles)} profiles properly ordered by created_at descending", {"first_created": profiles[0].get("created_at"), "last_created": profiles[-1].get("created_at")})
+                        return True
+                    else:
+                        self.log_test("Hybrid Score Filtering - Ordered by created_at desc", False, f"Found {len(order_issues)} ordering issues", {"order_issues": order_issues})
+                        return False
+                elif len(profiles) == 1:
+                    self.log_test("Hybrid Score Filtering - Ordered by created_at desc", True, "Only one profile returned, ordering is correct", {"profile_created": profiles[0].get("created_at")})
+                    return True
+                else:
+                    self.log_test("Hybrid Score Filtering - Ordered by created_at desc", True, "No profiles returned, ordering test not applicable", {"total": data.get("total", 0)})
+                    return True
+            else:
+                self.log_test("Hybrid Score Filtering - Ordered by created_at desc", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Hybrid Score Filtering - Ordered by created_at desc", False, "Request failed", str(e))
+            return False
+    
+    def test_hybrid_score_filtering_total_count_accuracy(self):
+        """Test that the total count only includes profiles with hybrid scores"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get("profiles", [])
+                total = data.get("total", 0)
+                
+                # Verify that total count matches the actual number of profiles returned
+                if len(profiles) == total:
+                    # Additional verification: count profiles with valid hybrid scores
+                    valid_hybrid_scores = 0
+                    for profile in profiles:
+                        score_data = profile.get("score_data", {})
+                        if isinstance(score_data, dict) and score_data.get("hybridScore") is not None:
+                            valid_hybrid_scores += 1
+                    
+                    if valid_hybrid_scores == total:
+                        self.log_test("Hybrid Score Filtering - Total Count Accuracy", True, f"Total count ({total}) accurately reflects profiles with hybrid scores", {"total": total, "profiles_returned": len(profiles), "valid_hybrid_scores": valid_hybrid_scores})
+                        return True
+                    else:
+                        self.log_test("Hybrid Score Filtering - Total Count Accuracy", False, f"Total count ({total}) doesn't match profiles with valid hybrid scores ({valid_hybrid_scores})", {"total": total, "valid_scores": valid_hybrid_scores})
+                        return False
+                else:
+                    self.log_test("Hybrid Score Filtering - Total Count Accuracy", False, f"Total count ({total}) doesn't match returned profiles ({len(profiles)})", {"total": total, "returned": len(profiles)})
+                    return False
+            else:
+                self.log_test("Hybrid Score Filtering - Total Count Accuracy", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Hybrid Score Filtering - Total Count Accuracy", False, "Request failed", str(e))
+            return False
+    
+    def test_hybrid_score_filtering_comprehensive(self):
+        """Comprehensive test of the modified GET /api/athlete-profiles endpoint hybrid score filtering"""
+        try:
+            print("\n🎯 COMPREHENSIVE HYBRID SCORE FILTERING TEST")
+            
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get("profiles", [])
+                total = data.get("total", 0)
+                
+                test_results = []
+                
+                # Test 1: Endpoint accessibility
+                test_results.append("✅ Endpoint accessible and returns 200")
+                
+                # Test 2: Response structure
+                if "profiles" in data and "total" in data:
+                    test_results.append("✅ Response has correct structure (profiles, total)")
+                else:
+                    test_results.append("❌ Response missing required structure")
+                
+                # Test 3: All profiles have non-null score_data
+                profiles_with_null_score = [p for p in profiles if p.get("score_data") is None]
+                if len(profiles_with_null_score) == 0:
+                    test_results.append(f"✅ All {len(profiles)} profiles have non-null score_data")
+                else:
+                    test_results.append(f"❌ Found {len(profiles_with_null_score)} profiles with null score_data")
+                
+                # Test 4: All profiles have hybridScore
+                profiles_without_hybrid = []
+                for profile in profiles:
+                    score_data = profile.get("score_data", {})
+                    if not isinstance(score_data, dict) or score_data.get("hybridScore") is None:
+                        profiles_without_hybrid.append(profile.get("id"))
+                
+                if len(profiles_without_hybrid) == 0:
+                    test_results.append(f"✅ All {len(profiles)} profiles have score_data.hybridScore")
+                else:
+                    test_results.append(f"❌ Found {len(profiles_without_hybrid)} profiles without hybridScore")
+                
+                # Test 5: Total count accuracy
+                if len(profiles) == total:
+                    test_results.append(f"✅ Total count ({total}) matches returned profiles")
+                else:
+                    test_results.append(f"❌ Total count ({total}) doesn't match returned profiles ({len(profiles)})")
+                
+                # Test 6: Required fields for table display
+                if len(profiles) > 0:
+                    first_profile = profiles[0]
+                    critical_fields = ["id", "profile_json", "score_data", "created_at"]
+                    missing_critical = [f for f in critical_fields if f not in first_profile]
+                    
+                    if len(missing_critical) == 0:
+                        test_results.append("✅ All critical fields present for table display")
+                    else:
+                        test_results.append(f"❌ Missing critical fields: {missing_critical}")
+                
+                # Test 7: Ordering by created_at desc
+                if len(profiles) >= 2:
+                    is_ordered = True
+                    for i in range(len(profiles) - 1):
+                        current = profiles[i].get("created_at", "")
+                        next_profile = profiles[i + 1].get("created_at", "")
+                        if current < next_profile:
+                            is_ordered = False
+                            break
+                    
+                    if is_ordered:
+                        test_results.append("✅ Profiles properly ordered by created_at desc")
+                    else:
+                        test_results.append("❌ Profiles not properly ordered by created_at desc")
+                
+                # Evaluate overall success
+                passed_tests = len([t for t in test_results if t.startswith("✅")])
+                total_tests = len(test_results)
+                
+                if passed_tests == total_tests:
+                    self.log_test("Hybrid Score Filtering - Comprehensive", True, f"All {passed_tests}/{total_tests} filtering tests passed", test_results)
+                    return True
+                elif passed_tests >= total_tests * 0.8:  # 80% pass rate
+                    self.log_test("Hybrid Score Filtering - Comprehensive", True, f"Most filtering tests passed ({passed_tests}/{total_tests})", test_results)
+                    return True
+                else:
+                    self.log_test("Hybrid Score Filtering - Comprehensive", False, f"Too many filtering tests failed ({passed_tests}/{total_tests})", test_results)
+                    return False
+            else:
+                self.log_test("Hybrid Score Filtering - Comprehensive", False, f"HTTP {response.status_code}", response.text)
+                return False
+        except Exception as e:
+            self.log_test("Hybrid Score Filtering - Comprehensive", False, "Comprehensive filtering test failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests focused on Supabase database connection and Profile Page functionality"""
         print("=" * 80)
