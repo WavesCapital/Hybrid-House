@@ -1111,7 +1111,10 @@ const HybridInterviewFlow = () => {
                 <div className="flex-1 h-3 bg-gray-800 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-[#08F0FF] rounded-full transition-all duration-300"
-                    style={{ width: `${progress}%` }}
+                    style={{ 
+                      width: `${progress}%`,
+                      boxShadow: '0 0 12px #08F0FF, 0 0 24px #08F0FF40'
+                    }}
                   ></div>
                 </div>
                 <span className="text-sm font-semibold min-w-[50px] text-right" style={{ color: 'var(--txt)' }}>
