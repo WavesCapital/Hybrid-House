@@ -197,7 +197,7 @@ const HybridInterviewFlow = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Force interview start when on interview page - complete fix
+  // Force interview start when on interview page - proper OpenAI integration
   useEffect(() => {
     console.log('🔍 INTERVIEW PAGE EFFECT - Debug:', {
       isInterviewPage,
@@ -209,9 +209,9 @@ const HybridInterviewFlow = () => {
 
     // If we're on the interview page and don't have a session, create one
     if (isInterviewPage && !sessionId && !loading) {
-      console.log('🚀 STARTING INTERVIEW SESSION');
+      console.log('🚀 STARTING INTERVIEW SESSION WITH OPENAI');
       
-      const startInterview = async () => {
+      const startProperInterview = async () => {
         if (isLoading) {
           console.log('Already loading, skipping...');
           return;
@@ -221,14 +221,12 @@ const HybridInterviewFlow = () => {
         
         try {
           if (user && session) {
-            // Authenticated user - use real backend
-            console.log('⚡ Starting authenticated interview with backend...');
+            // Authenticated user - use backend with OpenAI Responses API
+            console.log('⚡ Starting authenticated interview with OpenAI backend...');
             
             const response = await axios.post(
               `${BACKEND_URL}/api/hybrid-interview/start`,
-              {
-                user_id: user?.id
-              },
+              {},
               {
                 headers: {
                   'Authorization': `Bearer ${session?.access_token}`,
@@ -237,85 +235,61 @@ const HybridInterviewFlow = () => {
               }
             );
             
-            console.log('✅ Backend interview response:', response.data);
+            console.log('✅ OpenAI Backend response:', response.data);
             
-            if (response.data.success) {
-              const newSessionId = response.data.session_id;
-              setSessionId(newSessionId);
+            if (response.data.session_id) {
+              setSessionId(response.data.session_id);
               
-              // If there's an initial message from the backend, use it
-              if (response.data.initial_message) {
-                setMessages([{
-                  role: 'assistant',
-                  content: response.data.initial_message
-                }]);
-              } else {
-                // Start with first question
-                setMessages([{
-                  role: 'assistant',  
-                  content: "Welcome to your Hybrid Athlete Assessment! 🏋️‍♂️\n\nThis 11-question interview will build your personalized athlete profile and calculate your hybrid score.\n\n**Question 1 of 11:**\nWhat is your first name?"
-                }]);
+              // Set messages from OpenAI response
+              if (response.data.messages && response.data.messages.length > 0) {
+                setMessages(response.data.messages);
+                setCurrentIndex(response.data.current_index || 0);
               }
               
               toast({
                 title: "Interview Started! 🚀",
-                description: "Your authenticated assessment is ready!",
+                description: "Your AI-powered assessment is ready!",
                 duration: 2000,
               });
               
+              console.log('✅ OpenAI interview started with session:', response.data.session_id);
             } else {
-              throw new Error('Backend session creation failed');
+              throw new Error('No session ID returned from backend');
             }
           } else {
-            // Unauthenticated user - create demo session (original behavior)
-            console.log('⚡ Starting demo interview for unauthenticated user...');
-            
-            const demoSessionId = `demo-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-            setSessionId(demoSessionId);
-            
-            // Start with the first question immediately
-            setMessages([{
-              role: 'assistant',
-              content: "Welcome to your Hybrid Athlete Assessment! 🏋️‍♂️\n\nThis 11-question interview will build your personalized athlete profile and calculate your hybrid score.\n\n**Question 1 of 11:**\nWhat is your first name?"
-            }]);
-            
-            toast({
-              title: "Interview Started! 🚀",
-              description: "Demo assessment ready! Sign up after completion to save your results.",
-              duration: 3000,
-            });
+            // Unauthenticated user - redirect to auth first
+            console.log('❌ User not authenticated - redirecting to auth');
+            localStorage.setItem('postAuthRedirect', '/hybrid-interview');
+            navigate('/auth?mode=signup');
+            return;
           }
           
         } catch (error) {
-          console.error('❌ Error starting interview:', error);
+          console.error('❌ Error starting OpenAI interview:', error);
           
-          // Fallback: Always create a working demo session
-          console.log('🔄 Creating fallback demo session...');
-          const fallbackSessionId = `fallback-${Date.now()}`;
-          setSessionId(fallbackSessionId);
-          
-          setMessages([{
-            role: 'assistant',
-            content: "Welcome to your Hybrid Athlete Assessment! 🏋️‍♂️\n\nThis 11-question interview will build your personalized athlete profile and calculate your hybrid score.\n\n**Question 1 of 11:**\nWhat is your first name?"
-          }]);
-          
+          // Show error toast
           toast({
-            title: "Interview Started! 🚀",
-            description: "Assessment is ready!",
-            duration: 2000,
+            title: "Interview Start Failed",
+            description: "Please try again or sign up to continue.",
+            variant: "destructive",
+            duration: 5000,
           });
+          
+          // Redirect to auth as fallback
+          localStorage.setItem('postAuthRedirect', '/hybrid-interview');
+          navigate('/auth?mode=signup');
         } finally {
           setIsLoading(false);
         }
       };
       
-      // Start the interview after a delay to ensure page is loaded
-      const timeoutId = setTimeout(startInterview, 1000);
+      // Start the interview after a delay to ensure everything is loaded
+      const timeoutId = setTimeout(startProperInterview, 1000);
       
       // Cleanup timeout if component unmounts
       return () => clearTimeout(timeoutId);
     }
-  }, [isInterviewPage, sessionId, loading, isLoading, user, session, toast]);
+  }, [isInterviewPage, sessionId, loading, isLoading, user, session, toast, navigate]);
 
   // Handle starting interview with auth check
   const startInterview = async () => {
