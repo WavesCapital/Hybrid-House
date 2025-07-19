@@ -2126,10 +2126,10 @@ async def trigger_score_computation(profile_id: str, profile_json: dict):
 
 @api_router.get("/leaderboard")
 async def get_leaderboard():
-    """Get leaderboard with highest scores per athlete (by display_name)"""
+    """Get leaderboard with highest scores per athlete (by display_name) - public profiles only"""
     try:
-        # Get all athlete profiles with completed scores
-        profiles_result = supabase.table('athlete_profiles').select('*').not_.is_('score_data', 'null').execute()
+        # Get all PUBLIC athlete profiles with completed scores
+        profiles_result = supabase.table('athlete_profiles').select('*').not_.is_('score_data', 'null').eq('is_public', True).execute()
         
         if not profiles_result.data:
             return {
@@ -2144,6 +2144,10 @@ async def get_leaderboard():
             try:
                 profile_json = profile.get('profile_json', {})
                 score_data = profile.get('score_data', {})
+                
+                # Skip if profile is not marked as public (extra safety check)
+                if not profile.get('is_public', False):
+                    continue
                 
                 # Extract display_name and hybrid_score
                 display_name = profile_json.get('display_name', '')
