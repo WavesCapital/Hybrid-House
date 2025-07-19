@@ -957,6 +957,54 @@ async def update_athlete_profile(profile_id: str, profile_data: dict, user: dict
             detail=f"Error updating athlete profile: {str(e)}"
         )
 
+@api_router.put("/athlete-profile/{profile_id}/privacy")
+async def update_athlete_profile_privacy(profile_id: str, privacy_data: dict, user: dict = Depends(verify_jwt)):
+    """Update athlete profile privacy setting"""
+    try:
+        user_id = user['sub']
+        
+        # Validate that the profile belongs to the user
+        existing_profile = supabase.table('athlete_profiles').select('*').eq('id', profile_id).eq('user_id', user_id).execute()
+        
+        if not existing_profile.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Profile not found"
+            )
+        
+        # Extract is_public from request
+        is_public = privacy_data.get('is_public', False)
+        
+        # Update only the privacy setting
+        updated_data = {
+            "is_public": is_public,
+            "updated_at": datetime.utcnow().isoformat()
+        }
+        
+        update_result = supabase.table('athlete_profiles').update(updated_data).eq('id', profile_id).eq('user_id', user_id).execute()
+        
+        if not update_result.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to update profile privacy"
+            )
+        
+        return {
+            "success": True,
+            "message": f"Profile privacy updated to {'public' if is_public else 'private'}",
+            "profile_id": profile_id,
+            "is_public": is_public
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error updating athlete profile privacy: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error updating athlete profile privacy: {str(e)}"
+        )
+
 @api_router.delete("/athlete-profile/{profile_id}")
 async def delete_athlete_profile(profile_id: str, user: dict = Depends(verify_jwt)):
     """Delete an athlete profile"""
