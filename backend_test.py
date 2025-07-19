@@ -6727,6 +6727,14 @@ class BackendTester:
             self.test_default_privacy_settings,
             self.test_privacy_system_comprehensive,
             
+            # 9. Delete Athlete Profile Tests (CURRENT REVIEW REQUEST)
+            self.test_delete_athlete_profile_endpoint_exists,
+            self.test_delete_athlete_profile_authentication_required,
+            self.test_delete_athlete_profile_not_found,
+            self.test_delete_athlete_profile_user_ownership_validation,
+            self.test_delete_athlete_profile_error_responses,
+            self.test_delete_athlete_profile_endpoint_comprehensive,
+            
             # Additional supporting tests
             self.test_api_root,
             self.test_supabase_connection,
