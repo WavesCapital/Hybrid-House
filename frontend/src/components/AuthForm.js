@@ -30,17 +30,16 @@ export default function AuthForm() {
       const postAuthRedirect = localStorage.getItem('postAuthRedirect');
       
       if (postAuthRedirect) {
+        console.log('Redirecting to stored path:', postAuthRedirect);
         // Clear the stored redirect
         localStorage.removeItem('postAuthRedirect');
-        // Redirect to the intended page (e.g., /hybrid-interview)
-        setTimeout(() => {
-          navigate(postAuthRedirect, { replace: true });
-        }, 1000);
+        // Redirect immediately without timeout for better reliability
+        navigate(postAuthRedirect, { replace: true });
       } else {
-        // Default redirect to home
+        // Default redirect to home with short delay
         setTimeout(() => {
           navigate('/', { replace: true });
-        }, 1000);
+        }, 500);
       }
     }
   }, [user, navigate]);
