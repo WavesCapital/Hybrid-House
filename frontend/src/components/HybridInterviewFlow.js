@@ -980,7 +980,7 @@ const HybridInterviewFlow = () => {
           </div>
         </>
       ) : isInterviewPage && !sessionId ? (
-        // Interview page without session - show loading/starting state
+        // Interview page without session - show loading/starting state with fallback button
         <div className="min-h-screen flex items-center justify-center" style={{ background: '#0E0E11' }}>
           <div className="glass-card max-w-md w-full mx-6 p-12 text-center">
             <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#08F0FF] to-[#FF2DDE] rounded-full mx-auto mb-6">
@@ -992,6 +992,23 @@ const HybridInterviewFlow = () => {
             <p className="mb-8 leading-relaxed" style={{ color: 'var(--muted)' }}>
               We're setting up your personalized hybrid athlete assessment. This will just take a moment.
             </p>
+            
+            {/* Fallback button in case auto-start fails */}
+            <Button 
+              onClick={() => {
+                console.log('🔄 MANUAL SESSION CREATION');
+                const manualSessionId = `manual-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                setSessionId(manualSessionId);
+                toast({
+                  title: "Interview Started! 🚀",
+                  description: "Your hybrid athlete assessment is ready!",
+                  duration: 2000,
+                });
+              }}
+              className="neon-button mt-4"
+            >
+              Start Interview Now
+            </Button>
           </div>
         </div>
       ) : (
