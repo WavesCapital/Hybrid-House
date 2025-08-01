@@ -35,6 +35,26 @@ const Leaderboard = () => {
       athlete.score >= scoreRange[0] && athlete.score <= scoreRange[1]
     );
     
+    // Age range filter
+    filtered = filtered.filter(athlete => {
+      const age = athlete.age;
+      return age >= ageRange[0] && age <= ageRange[1];
+    });
+    
+    // Gender filter
+    if (genderFilter !== 'All') {
+      filtered = filtered.filter(athlete => 
+        athlete.gender && athlete.gender.toLowerCase() === genderFilter.toLowerCase()
+      );
+    }
+    
+    // Country filter
+    if (countryFilter !== 'All') {
+      filtered = filtered.filter(athlete => 
+        athlete.country && athlete.country.toLowerCase() === countryFilter.toLowerCase()
+      );
+    }
+    
     // Search filter
     if (searchQuery.trim()) {
       filtered = filtered.filter(athlete =>
