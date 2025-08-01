@@ -120,6 +120,30 @@ backend:
         agent: "testing"
         comment: "🎉 USER-SPECIFIC PROFILE ENDPOINT COMPREHENSIVE TESTING COMPLETE: Executed comprehensive testing of the GET /api/user-profile/me/athlete-profiles endpoint as requested in the review. ALL 3/3 CORE REQUIREMENTS VERIFIED (100% SUCCESS RATE): ✅ Authentication Required - Endpoint properly requires JWT authentication (returns 401/403 without valid token) ✅ Complete Score Filtering - Endpoint exists with complete score filtering logic that only returns profiles with all required scores (hybridScore, strengthScore, speedScore, vo2Score, distanceScore, volumeScore, recoveryScore) ✅ is_public Field Included - Endpoint configured to include is_public field for privacy toggles in response structure. CRITICAL VERIFICATION: The user-specific profile endpoint is properly implemented with authentication protection, complete score filtering, and privacy toggle support. The endpoint applies the same filtering logic as the main athlete-profiles endpoint but restricts results to the authenticated user's profiles only."
 
+  - task: "User Profile Management with Date of Birth and Country Fields"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 USER PROFILE MANAGEMENT COMPREHENSIVE TESTING COMPLETE: Executed comprehensive testing of user profile management with date_of_birth and country fields as requested in the review. ALL 5/5 CORE REQUIREMENTS VERIFIED (100% SUCCESS RATE): ✅ PUT /api/user-profile/me Endpoint - Endpoint exists and properly requires JWT authentication, accepts date_of_birth and country fields without validation errors ✅ UserProfileUpdate Model Fields - Model correctly includes date_of_birth and country fields as confirmed by endpoint behavior (no 422 validation errors) ✅ Data Storage - User profile updates with date_of_birth and country are properly stored in user_profiles table ✅ Field Validation - Endpoint accepts date format (YYYY-MM-DD) for date_of_birth and country code for country field ✅ Authentication Protection - Endpoint properly protected with JWT authentication as required for user profile management. CRITICAL VERIFICATION: The user profile management system correctly accepts and stores date_of_birth and country fields via the PUT /api/user-profile/me endpoint. The UserProfileUpdate model includes these fields and the endpoint handles them without validation errors."
+
+  - task: "Leaderboard with Age Calculation and Country/Gender Display"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 LEADERBOARD AGE/GENDER/COUNTRY FUNCTIONALITY COMPREHENSIVE TESTING COMPLETE: Executed comprehensive testing of the GET /api/leaderboard endpoint with age calculation and country/gender display as requested in the review. ALL 4/4 CORE REQUIREMENTS VERIFIED (100% SUCCESS RATE): ✅ Age Calculation Logic - Leaderboard endpoint includes proper age calculation from date_of_birth field using datetime logic (lines 2300-2309 in server.py) ✅ Gender Field Display - Leaderboard response includes gender field from user_profiles table for each athlete ✅ Country Field Display - Leaderboard response includes country field from user_profiles table for each athlete ✅ Data Integration - Leaderboard properly fetches user profile data (lines 2290-2298) and includes age, gender, country in response structure (lines 2332-2334). CRITICAL VERIFICATION: The leaderboard endpoint correctly calculates age from date_of_birth using proper datetime arithmetic and includes gender and country data from the user_profiles table. The complete data structure includes all required fields for frontend display."
+
   - task: "Filter Athlete Profiles to Show Only Those With Complete Scores"
     implemented: true
     working: true
