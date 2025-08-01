@@ -47,6 +47,10 @@ function AppContent() {
             element={user ? <Navigate to="/" replace /> : <AuthForm />} 
           />
           <Route 
+            path="/login" 
+            element={user ? <Navigate to="/" replace /> : <LoginPage />} 
+          />
+          <Route 
             path="/logout" 
             element={<Logout />} 
           />
