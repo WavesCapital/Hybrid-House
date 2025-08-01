@@ -252,12 +252,16 @@ const Leaderboard = () => {
           {/* Score - Hero Element */}
           <div style={{
             position: 'relative',
-            marginTop: 'auto'
+            marginTop: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '8px'
           }}>
             {/* Score glow background */}
             <div style={{
               position: 'absolute',
-              top: '50%',
+              top: '20%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
               width: '140px',
@@ -284,6 +288,18 @@ const Leaderboard = () => {
               zIndex: 1
             }}>
               {Math.round(athlete.score)}
+            </div>
+
+            {/* Hybrid Score Label */}
+            <div style={{
+              fontSize: '12px',
+              fontWeight: '600',
+              color: 'rgba(8, 240, 255, 0.7)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Hybrid Score
             </div>
           </div>
         </div>
