@@ -126,7 +126,7 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
@@ -137,6 +137,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "🎉 HYBRID SCORE FILTERING COMPREHENSIVE TESTING COMPLETE: Executed comprehensive testing of the modified GET /api/athlete-profiles endpoint as requested in the review. ALL 8/8 TESTS PASSED (100% SUCCESS RATE): ✅ Endpoint Exists - GET /api/athlete-profiles endpoint exists and returns proper structure with 12 profiles ✅ Non-null Score Data - All 12 returned profiles have non-null score_data (no profiles with null score_data found) ✅ HybridScore Exists - All 12 returned profiles have score_data.hybridScore (not null/undefined) ✅ Excludes Profiles Without Scores - Total count (12) matches returned profiles (12), indicating proper filtering excludes profiles without hybrid scores ✅ Response Format - All 15 required fields present for table display (id, profile_json, score_data, created_at, updated_at, weight_lb, vo2_max, pb_mile_seconds, weekly_miles, long_run_miles, pb_bench_1rm_lb, pb_squat_1rm_lb, pb_deadlift_1rm_lb, hrv_ms, resting_hr_bpm) ✅ Ordered by created_at desc - All 12 profiles properly ordered by created_at descending (newest first) ✅ Total Count Accuracy - Total count (12) accurately reflects only profiles with hybrid scores ✅ Comprehensive Test - All 7/7 filtering requirements verified. CRITICAL VERIFICATION: The endpoint successfully filters out any profiles that don't have completed hybrid scores, ensuring the Hybrid Score History table only shows assessments with actual score data. The filtering logic works correctly with database query .not_.is_('score_data', 'null') and additional hybridScore validation."
+      - working: true
+        agent: "testing"
+        comment: "🎉 COMPLETE SCORE FILTERING VERIFICATION COMPLETE: Executed additional testing of the complete score filtering functionality as requested in the review. CRITICAL SUCCESS: ✅ Complete Score Filtering - GET /api/athlete-profiles returns 8 profiles, all with complete score data including all required sub-scores (hybridScore, strengthScore, speedScore, vo2Score, distanceScore, volumeScore, recoveryScore) ✅ Score Data Structure - All returned profiles have non-null score_data with all required score fields present ✅ is_public Field - All profiles include is_public field for privacy toggle functionality ✅ Filtering Logic - Only profiles with ALL required scores are included, profiles with missing sub-scores are properly excluded. VERIFICATION: The complete score filtering is working perfectly, ensuring only profiles with comprehensive score data are displayed in the Hybrid Score History table."
 
   - task: "Fix Leaderboard Integration with Privacy Toggles"
     implemented: true
