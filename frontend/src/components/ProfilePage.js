@@ -1749,6 +1749,49 @@ const ProfilePage = () => {
                     </div>
                     
                     <div>
+                      <label className="block text-sm font-medium text-secondary mb-2">Date of Birth</label>
+                      <Input
+                        type="date"
+                        value={profileForm.date_of_birth}
+                        onChange={(e) => setProfileForm({...profileForm, date_of_birth: e.target.value})}
+                        className="neon-input"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-secondary mb-2">Country</label>
+                      <select
+                        value={profileForm.country}
+                        onChange={(e) => setProfileForm({...profileForm, country: e.target.value})}
+                        className="neon-input w-full"
+                      >
+                        <option value="">Select country</option>
+                        <option value="US">🇺🇸 United States</option>
+                        <option value="CA">🇨🇦 Canada</option>
+                        <option value="GB">🇬🇧 United Kingdom</option>
+                        <option value="AU">🇦🇺 Australia</option>
+                        <option value="NZ">🇳🇿 New Zealand</option>
+                        <option value="DE">🇩🇪 Germany</option>
+                        <option value="FR">🇫🇷 France</option>
+                        <option value="IT">🇮🇹 Italy</option>
+                        <option value="ES">🇪🇸 Spain</option>
+                        <option value="NL">🇳🇱 Netherlands</option>
+                        <option value="SE">🇸🇪 Sweden</option>
+                        <option value="NO">🇳🇴 Norway</option>
+                        <option value="DK">🇩🇰 Denmark</option>
+                        <option value="JP">🇯🇵 Japan</option>
+                        <option value="KR">🇰🇷 South Korea</option>
+                        <option value="CN">🇨🇳 China</option>
+                        <option value="IN">🇮🇳 India</option>
+                        <option value="BR">🇧🇷 Brazil</option>
+                        <option value="MX">🇲🇽 Mexico</option>
+                        <option value="AR">🇦🇷 Argentina</option>
+                        <option value="ZA">🇿🇦 South Africa</option>
+                        <option value="OTHER">🌍 Other</option>
+                      </select>
+                    </div>
+                    
+                    <div>
                       <label className="block text-sm font-medium text-secondary mb-2">Website</label>
                       <Input
                         type="url"
