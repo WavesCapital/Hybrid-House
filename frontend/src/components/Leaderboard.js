@@ -16,8 +16,11 @@ const Leaderboard = () => {
   // Filter states
   const [scoreRange, setScoreRange] = useState([0, 100]);
   const [genderFilter, setGenderFilter] = useState('All');
+  const [ageRange, setAgeRange] = useState([18, 65]);
+  const [countryFilter, setCountryFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDragging, setIsDragging] = useState(false);
+  const [isAgeRangeDragging, setIsAgeRangeDragging] = useState('');
 
   useEffect(() => {
     fetchLeaderboard();
