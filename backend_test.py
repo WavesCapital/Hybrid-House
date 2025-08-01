@@ -8126,8 +8126,33 @@ class BackendTester:
             self.test_age_calculation_logic
         ]
         
-        passed = 0
-        failed = 0
+        # Run AUTO-SAVE PROFILE DEBUG TESTS first (HIGH PRIORITY)
+        print("\n" + "=" * 60)
+        print("🚨 PRIORITY: AUTO-SAVE PROFILE DEBUG TESTS")
+        print("=" * 60)
+        
+        auto_save_passed = 0
+        auto_save_failed = 0
+        
+        for test in auto_save_tests:
+            try:
+                if test():
+                    auto_save_passed += 1
+                else:
+                    auto_save_failed += 1
+            except Exception as e:
+                print(f"❌ FAIL: {test.__name__} - Exception: {str(e)}")
+                auto_save_failed += 1
+        
+        print(f"\n🔍 AUTO-SAVE DEBUG RESULTS: {auto_save_passed}/{auto_save_passed + auto_save_failed} tests passed")
+        
+        # Continue with other tests
+        print("\n" + "=" * 60)
+        print("🔄 CONTINUING WITH OTHER BACKEND TESTS")
+        print("=" * 60)
+        
+        passed = auto_save_passed
+        failed = auto_save_failed
         
         for test in tests:
             try:
