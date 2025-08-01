@@ -10,13 +10,8 @@ import uuid
 from supabase import create_client, Client
 
 # Database connection
-SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_KEY = os.getenv('SUPABASE_ANON_KEY') 
-
-if not SUPABASE_URL or not SUPABASE_KEY:
-    print("❌ Missing Supabase environment variables")
-    print("Please set SUPABASE_URL and SUPABASE_ANON_KEY in your environment")
-    sys.exit(1)
+SUPABASE_URL = "https://uevqwbdumouoghymcqtc.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVldnF3YmR1bW91b2doeW1jcXRjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjI0MTEzMiwiZXhwIjoyMDY3ODE3MTMyfQ.QOCIAHCh6HwEMMEfanM8GGUna4-3NdXHW0qsy7qKUvM"
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
