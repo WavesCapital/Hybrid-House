@@ -1731,7 +1731,7 @@ const ProfilePage = () => {
                 </div>
               </div>
 
-              {user && userProfile ? (
+              {user && (userProfile || !isLoadingProfiles) ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Personal Info */}
                   <div className="space-y-4">
