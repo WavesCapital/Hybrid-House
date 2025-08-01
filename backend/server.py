@@ -2239,7 +2239,7 @@ async def get_leaderboard():
                 # Get hybrid score
                 hybrid_score = None
                 if isinstance(score_data, dict):
-                    hybrid_score = score_data.get('hybrid_score')
+                    hybrid_score = score_data.get('hybridScore')  # Fixed: use camelCase
                 
                 # Skip if no valid score
                 if hybrid_score is None:
