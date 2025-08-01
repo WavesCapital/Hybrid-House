@@ -663,27 +663,65 @@ async def upload_avatar(file: UploadFile = File(...), user: dict = Depends(verif
 
 @api_router.get("/user-profile/me/athlete-profiles")
 async def get_my_athlete_profiles(user: dict = Depends(verify_jwt)):
-    """Get all athlete profiles for the current user"""
+    """Get all athlete profiles for the current user with complete scores only"""
     try:
         user_id = user.get('sub')
         
-        # Get user profile first
-        user_profile_result = supabase.table('user_profiles').select('id').eq('user_id', user_id).execute()
+        # Get athlete profiles linked to this user with complete scores
+        profiles_result = supabase.table('athlete_profiles').select('*').eq('user_id', user_id).not_.is_('score_data', 'null').order('created_at', desc=True).execute()
         
-        if not user_profile_result.data:
+        if not profiles_result.data:
             return {
                 "profiles": [],
                 "total": 0
             }
         
-        user_profile_id = user_profile_result.data[0]['id']
-        
-        # Get athlete profiles linked to this user
-        profiles_result = supabase.table('athlete_profiles').select('*').eq('user_profile_id', user_profile_id).order('created_at', desc=True).execute()
+        # Format the profiles for frontend and filter for profiles with COMPLETE score data
+        formatted_profiles = []
+        for profile in profiles_result.data:
+            score_data = profile.get('score_data', None)
+            
+            # Only include profiles that have score_data with ALL required scores
+            if score_data and isinstance(score_data, dict):
+                required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
+                
+                # Check if all required scores exist and are not null/0
+                has_all_scores = True
+                for score_field in required_scores:
+                    score_value = score_data.get(score_field)
+                    if score_value is None or score_value == 0:
+                        has_all_scores = False
+                        break
+                
+                # Only include profiles with complete score data
+                if has_all_scores:
+                    formatted_profile = {
+                        "id": profile['id'],
+                        "profile_json": profile.get('profile_json', {}),
+                        "score_data": score_data,
+                        "completed_at": profile.get('completed_at'),
+                        "created_at": profile.get('created_at'),
+                        "updated_at": profile.get('updated_at'),
+                        # Include individual fields for the table
+                        "weight_lb": profile.get('weight_lb'),
+                        "vo2_max": profile.get('vo2_max'),
+                        "resting_hr": profile.get('resting_hr'),
+                        "hrv": profile.get('hrv'),
+                        "pb_mile_seconds": profile.get('pb_mile_seconds'),
+                        "weekly_miles": profile.get('weekly_miles'),
+                        "long_run_miles": profile.get('long_run_miles'),
+                        "pb_bench_1rm_lb": profile.get('pb_bench_1rm_lb'),
+                        "pb_squat_1rm_lb": profile.get('pb_squat_1rm_lb'),
+                        "pb_deadlift_1rm_lb": profile.get('pb_deadlift_1rm_lb'),
+                        "hrv_ms": profile.get('hrv_ms'),
+                        "resting_hr_bpm": profile.get('resting_hr_bpm'),
+                        "is_public": profile.get('is_public', False)
+                    }
+                    formatted_profiles.append(formatted_profile)
         
         return {
-            "profiles": profiles_result.data,
-            "total": len(profiles_result.data)
+            "profiles": formatted_profiles,
+            "total": len(formatted_profiles)
         }
         
     except HTTPException:
