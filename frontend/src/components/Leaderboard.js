@@ -132,20 +132,20 @@ const Leaderboard = () => {
     
     const configs = {
       1: { 
-        width: '220px', 
-        height: '200px', 
+        width: '240px', 
+        height: '260px', 
         borderColor: '#FFD700', // Gold
         trophyIcon: '🥇'
       },
       2: { 
         width: '200px', 
-        height: '180px', 
+        height: '220px', 
         borderColor: '#B0B0B0', // Silver
         trophyIcon: '🥈'
       },
       3: { 
         width: '200px', 
-        height: '180px', 
+        height: '220px', 
         borderColor: '#CD7F32', // Bronze
         trophyIcon: '🥉'
       }
@@ -157,16 +157,20 @@ const Leaderboard = () => {
       width: config.width,
       height: config.height,
       background: '#15161A',
-      borderRadius: '8px',
-      borderTop: `2px solid ${config.borderColor}`,
+      borderRadius: '12px',
+      borderTop: `3px solid ${config.borderColor}`,
       position: 'relative',
       cursor: 'pointer',
       transition: 'all 0.35s ease',
-      boxShadow: 'inset 0 1px 3px rgba(0, 0, 0, 0.3)',
+      boxShadow: `
+        0 8px 24px -8px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05)
+      `,
       opacity: 0,
       transform: 'translateY(20px)',
       animation: `minimalCardRise 350ms ease-out forwards`,
-      animationDelay: `${(position - 1) * 80}ms`
+      animationDelay: `${(position - 1) * 80}ms`,
+      border: '1px solid rgba(255, 255, 255, 0.06)'
     };
 
     return (
@@ -174,21 +178,30 @@ const Leaderboard = () => {
         className="minimal-podium-card"
         style={cardStyle}
         onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-3px)';
-          e.currentTarget.style.borderTopColor = config.borderColor + 'DD'; // 30% brighter
+          e.currentTarget.style.transform = 'translateY(-4px)';
+          e.currentTarget.style.boxShadow = `
+            0 12px 32px -8px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08),
+            0 0 0 1px ${config.borderColor}22
+          `;
+          e.currentTarget.style.borderTopColor = config.borderColor + 'FF';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = `
+            0 8px 24px -8px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05)
+          `;
           e.currentTarget.style.borderTopColor = config.borderColor;
         }}
       >
         {/* Trophy Icon */}
         <div style={{
           position: 'absolute',
-          top: '16px',
+          top: '20px',
           left: '50%',
           transform: 'translateX(-50%)',
-          fontSize: '24px',
+          fontSize: '28px',
           zIndex: 2
         }}>
           {config.trophyIcon}
@@ -196,66 +209,82 @@ const Leaderboard = () => {
 
         {/* Content Container */}
         <div style={{
-          padding: '20px',
+          padding: '24px 20px 28px 20px',
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
           textAlign: 'center',
-          marginTop: '16px'
+          paddingTop: '60px'
         }}>
-          {/* Avatar */}
+          {/* Avatar - Cleaner Design */}
           <div style={{
-            width: '56px',
-            height: '56px',
+            width: '64px',
+            height: '64px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
+            background: 'linear-gradient(135deg, #08F0FF 0%, #0AB8D4 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            marginBottom: '12px',
-            border: `1px solid ${config.borderColor}`
+            marginBottom: '20px',
+            border: `2px solid ${config.borderColor}`,
+            boxShadow: `
+              0 4px 12px rgba(8, 240, 255, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2)
+            `
           }}>
-            <User size={24} color="white" />
+            <User size={26} color="white" strokeWidth={2} />
           </div>
 
           {/* Name */}
           <div style={{
-            fontSize: '16px',
+            fontSize: '18px',
             fontWeight: '600',
             color: '#FFFFFF',
-            marginBottom: '4px',
-            fontFamily: 'Inter, sans-serif'
+            marginBottom: '6px',
+            fontFamily: 'Inter, sans-serif',
+            letterSpacing: '-0.01em'
           }}>
             {athlete.display_name}
           </div>
 
           {/* Label */}
           <div style={{
-            fontSize: '12px',
+            fontSize: '13px',
             fontWeight: '400',
             color: '#8D9299',
-            marginBottom: '16px'
+            marginBottom: '24px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em'
           }}>
             Hybrid Athlete
           </div>
 
-          {/* Hybrid Score */}
+          {/* Hybrid Score - Clean Layout */}
           <div style={{
-            fontSize: '32px',
-            fontWeight: '800',
-            color: '#08F0FF',
-            fontVariantNumeric: 'tabular-nums',
-            fontFamily: 'Inter, sans-serif'
+            display: 'flex',
+            alignItems: 'baseline',
+            justifyContent: 'center',
+            gap: '4px'
           }}>
-            {formatScore(athlete.score)}
             <span style={{
-              fontSize: '12px',
-              fontWeight: '400',
-              marginLeft: '4px',
-              color: '#8D9299'
-            }}>pts</span>
+              fontSize: '36px',
+              fontWeight: '800',
+              color: '#08F0FF',
+              fontVariantNumeric: 'tabular-nums',
+              fontFamily: 'Inter, sans-serif',
+              letterSpacing: '-0.02em'
+            }}>
+              {formatScore(athlete.score)}
+            </span>
+            <span style={{
+              fontSize: '14px',
+              fontWeight: '500',
+              color: '#8D9299',
+              marginBottom: '4px'
+            }}>
+              pts
+            </span>
           </div>
         </div>
       </div>
