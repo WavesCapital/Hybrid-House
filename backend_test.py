@@ -8274,18 +8274,18 @@ class BackendTester:
 if __name__ == "__main__":
     tester = BackendTester()
     
-    # Run privacy system tests specifically as requested in the review
-    print("🎯 RUNNING PRIVACY SYSTEM TESTS AS REQUESTED IN REVIEW")
-    print("Testing privacy functionality after successful database migration")
+    # Run user profile management and leaderboard data flow tests as requested in the review
+    print("🎯 RUNNING USER PROFILE MANAGEMENT AND LEADERBOARD DATA FLOW TESTS")
+    print("Testing user profile updates with date_of_birth/country and leaderboard age/gender/country display")
     print("=" * 80)
     
-    passed, failed = tester.run_privacy_system_tests()
+    passed, failed = tester.run_all_tests()
     
     if failed == 0:
-        print("\n🎉 ALL PRIVACY SYSTEM TESTS PASSED!")
-        print("✅ Privacy system is fully operational after database migration")
+        print("\n🎉 ALL USER PROFILE AND LEADERBOARD TESTS PASSED!")
+        print("✅ User profile management and leaderboard data flow working correctly")
         exit(0)
     else:
-        print(f"\n⚠️  {failed} PRIVACY SYSTEM TESTS FAILED")
-        print("❌ Privacy system needs attention")
+        print(f"\n⚠️  {failed} USER PROFILE AND LEADERBOARD TESTS FAILED")
+        print("❌ User profile management and leaderboard data flow needs attention")
         exit(1)
