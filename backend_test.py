@@ -7862,9 +7862,9 @@ class BackendTester:
             return False
 
     def run_all_tests(self):
-        """Run all backend tests focused on privacy toggle functionality and user-specific profile endpoints"""
+        """Run all backend tests focused on user profile management and leaderboard data flow"""
         print("=" * 80)
-        print("🚀 TESTING PRIVACY TOGGLE FUNCTIONALITY AND USER-SPECIFIC PROFILE ENDPOINTS")
+        print("🚀 TESTING USER PROFILE MANAGEMENT AND LEADERBOARD DATA FLOW")
         print("=" * 80)
         
         # Privacy toggle and user-specific profile endpoint tests as requested in review
