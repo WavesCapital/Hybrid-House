@@ -1741,7 +1741,7 @@ const ProfilePage = () => {
                       <label className="block text-sm font-medium text-secondary mb-2">Name</label>
                       <Input
                         type="text"
-                        value={profileForm.name}
+                        value={profileForm.name || ''}
                         onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
                         placeholder="Your full name"
                         className="neon-input"
