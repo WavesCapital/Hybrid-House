@@ -316,7 +316,8 @@ const Leaderboard = () => {
           {/* Score with Neon Effect */}
           <div style={{
             position: 'relative',
-            marginTop: 'auto'
+            marginTop: 'auto',
+            marginBottom: '8px'
           }}>
             {/* Score Glow Background */}
             <div style={{
@@ -338,14 +339,15 @@ const Leaderboard = () => {
               fontVariantNumeric: 'tabular-nums',
               fontFamily: 'Inter, sans-serif',
               letterSpacing: '-0.03em',
-              lineHeight: '1',
+              lineHeight: '1.1',
               textShadow: `
                 0 0 10px rgba(8, 240, 255, 0.6),
                 0 0 20px rgba(8, 240, 255, 0.3),
                 0 2px 4px rgba(0, 0, 0, 0.3)
               `,
               position: 'relative',
-              zIndex: 1
+              zIndex: 1,
+              paddingBottom: '4px'
             }}>
               {Math.round(athlete.score)}
             </div>
