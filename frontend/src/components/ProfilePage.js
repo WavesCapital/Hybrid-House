@@ -29,6 +29,8 @@ const ProfilePage = () => {
     location: '',
     website: '',
     gender: '',
+    date_of_birth: '',
+    country: '',
     units_preference: 'imperial',
     privacy_level: 'private'
   });
