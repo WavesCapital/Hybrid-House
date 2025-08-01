@@ -418,7 +418,7 @@ const Leaderboard = () => {
           {/* Floor Line */}
           <div style={{
             position: 'absolute',
-            bottom: '-12px',
+            bottom: '-20px',
             left: '50%',
             transform: 'translateX(-50%)',
             width: '70%',
@@ -426,7 +426,7 @@ const Leaderboard = () => {
             height: '6px',
             background: '#08F0FF',
             borderRadius: '3px',
-            zIndex: 1
+            zIndex: 0
           }} />
           
           {/* Podium Cards */}
