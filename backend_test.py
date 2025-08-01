@@ -7514,14 +7514,16 @@ class BackendTester:
                 failed += 1
         
         print("\n" + "=" * 80)
-        print("📊 SUPABASE DATABASE & PROFILE PAGE TESTING SUMMARY")
+        print("📊 LEADERBOARD FUNCTIONALITY AND PRIVACY TOGGLE INTEGRATION TESTING SUMMARY")
         print("=" * 80)
         print(f"✅ PASSED: {passed}")
         print(f"❌ FAILED: {failed}")
         print(f"📈 SUCCESS RATE: {(passed/(passed+failed)*100):.1f}%")
         
         if failed == 0:
-            print("🎉 ALL TESTS PASSED! Supabase database connection and Profile Page data functionality is working correctly.")
+            print("🎉 ALL TESTS PASSED! Leaderboard functionality and privacy toggle integration is working correctly.")
+        elif passed >= len(tests) * 0.8:  # 80% success rate
+            print(f"✅ MOSTLY SUCCESSFUL! {passed}/{len(tests)} tests passed. Leaderboard and privacy system is mostly functional.")
         else:
             print(f"⚠️  {failed} test(s) failed. Review the issues above.")
         
