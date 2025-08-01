@@ -44,22 +44,50 @@ def test_auto_save_profile_functionality():
     
     # Test 1: Without authentication (should return 401/403)
     print("\n1️⃣ Testing without authentication...")
-    response = session.put(f"{API_BASE_URL}/user-profile/me", json=test_payload)
-    
-    print(f"Status Code: {response.status_code}")
-    print(f"Headers: {dict(response.headers)}")
     
     try:
-        response_data = response.json()
-        print(f"Response: {json.dumps(response_data, indent=2)}")
-    except:
-        print(f"Response Text: {response.text}")
-    
-    if response.status_code in [401, 403]:
-        print("✅ PASS: Endpoint properly requires JWT authentication")
-        auth_test_passed = True
-    else:
-        print(f"❌ FAIL: Expected 401/403 but got {response.status_code}")
+        response = session.put(f"{API_BASE_URL}/user-profile/me", json=test_payload, headers={"Content-Type": "application/json"})
+        
+        print(f"Status Code: {response.status_code}")
+        print(f"Headers: {dict(response.headers)}")
+        
+        try:
+            response_data = response.json()
+            print(f"Response: {json.dumps(response_data, indent=2)}")
+        except:
+            print(f"Response Text: {response.text}")
+        
+        if response.status_code in [401, 403]:
+            print("✅ PASS: Endpoint properly requires JWT authentication")
+            auth_test_passed = True
+        elif response.status_code == 502:
+            print("⚠️  502 Error - Testing with curl to verify endpoint...")
+            # Test with curl as fallback
+            import subprocess
+            try:
+                curl_result = subprocess.run([
+                    'curl', '-X', 'PUT', 
+                    f"{API_BASE_URL}/user-profile/me",
+                    '-H', 'Content-Type: application/json',
+                    '-d', json.dumps(test_payload),
+                    '-s'
+                ], capture_output=True, text=True, timeout=10)
+                
+                print(f"Curl response: {curl_result.stdout}")
+                if '"detail":"Not authenticated"' in curl_result.stdout:
+                    print("✅ PASS: Endpoint works via curl - authentication required")
+                    auth_test_passed = True
+                else:
+                    print(f"❌ FAIL: Unexpected curl response")
+                    auth_test_passed = False
+            except Exception as e:
+                print(f"❌ FAIL: Curl test failed: {e}")
+                auth_test_passed = False
+        else:
+            print(f"❌ FAIL: Expected 401/403 but got {response.status_code}")
+            auth_test_passed = False
+    except Exception as e:
+        print(f"❌ FAIL: Request failed with exception: {e}")
         auth_test_passed = False
     
     # Test 2: Test with invalid token (should return 401)
