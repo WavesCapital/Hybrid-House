@@ -198,6 +198,18 @@ backend:
         agent: "testing"
         comment: "🎉 DELETE ATHLETE PROFILE ENDPOINT PRIVACY TOGGLE TESTING COMPLETE: Executed comprehensive testing of the DELETE /api/athlete-profile/{profile_id} endpoint as part of privacy toggle functionality review. ALL 2/2 AUTHENTICATION AND OWNERSHIP TESTS PASSED (100% SUCCESS RATE): ✅ Authentication Required - DELETE endpoint properly requires JWT authentication (returns 401/403 without valid token) ✅ Ownership Validation - DELETE endpoint has ownership validation that requires authentication to test fully, ensuring users can only delete their own profiles. CRITICAL VERIFICATION: The delete endpoint is properly integrated with the privacy toggle system and user-specific profile management. Users can only delete profiles they own, and the endpoint is properly protected with JWT authentication as required for privacy-sensitive operations."
 
+  - task: "Add Missing Country Column to User Profiles Table"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL DATABASE SCHEMA ISSUE CONFIRMED: Country column is MISSING from user_profiles table in Supabase database. EVIDENCE ANALYSIS: ✅ UserProfileUpdate Model Ready - Backend model includes 'country: Optional[str] = None' on line 428 of server.py, confirming backend is ready to handle country field ✅ Error Handling Logic Present - Backend has graceful error handling (lines 564-589) that catches 'column does not exist' errors, extracts problematic column name, and retries without that column ✅ Auto-Save Silently Failing - This explains why auto-save works for other fields but silently fails for country - backend catches the missing column error and skips the country field ✅ Review Request Matches - The specific error 'Could not find the country column of user_profiles in the schema cache' with code 'PGRST204' mentioned in review is a Supabase PostgREST error for missing columns. ROOT CAUSE: The user_profiles table in Supabase is missing the 'country' column. When users try to save country data via auto-save, the backend attempts to update the column, gets a PGRST204 error, then gracefully retries without the country field, making it appear that the save succeeded while actually skipping the country data. REQUIRED ACTION: Execute database migration 'ALTER TABLE user_profiles ADD COLUMN country TEXT;' in Supabase to add the missing column."
+
 frontend:
   - task: "Fix Privacy Toggle UI Functionality"
     implemented: true
