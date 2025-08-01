@@ -123,6 +123,18 @@ backend:
         agent: "testing"
         comment: "🎉 HYBRID SCORE FILTERING COMPREHENSIVE TESTING COMPLETE: Executed comprehensive testing of the modified GET /api/athlete-profiles endpoint as requested in the review. ALL 8/8 TESTS PASSED (100% SUCCESS RATE): ✅ Endpoint Exists - GET /api/athlete-profiles endpoint exists and returns proper structure with 12 profiles ✅ Non-null Score Data - All 12 returned profiles have non-null score_data (no profiles with null score_data found) ✅ HybridScore Exists - All 12 returned profiles have score_data.hybridScore (not null/undefined) ✅ Excludes Profiles Without Scores - Total count (12) matches returned profiles (12), indicating proper filtering excludes profiles without hybrid scores ✅ Response Format - All 15 required fields present for table display (id, profile_json, score_data, created_at, updated_at, weight_lb, vo2_max, pb_mile_seconds, weekly_miles, long_run_miles, pb_bench_1rm_lb, pb_squat_1rm_lb, pb_deadlift_1rm_lb, hrv_ms, resting_hr_bpm) ✅ Ordered by created_at desc - All 12 profiles properly ordered by created_at descending (newest first) ✅ Total Count Accuracy - Total count (12) accurately reflects only profiles with hybrid scores ✅ Comprehensive Test - All 7/7 filtering requirements verified. CRITICAL VERIFICATION: The endpoint successfully filters out any profiles that don't have completed hybrid scores, ensuring the Hybrid Score History table only shows assessments with actual score data. The filtering logic works correctly with database query .not_.is_('score_data', 'null') and additional hybridScore validation."
 
+  - task: "Fix Leaderboard Integration with Privacy Toggles"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ LEADERBOARD INTEGRATION FIXED: Fixed GET /api/leaderboard endpoint to use correct field names (hybridScore instead of hybrid_score) and proper score breakdown fields (strengthScore, speedScore, vo2Score, etc.). Updated leaderboard filtering to use same complete score validation as athlete-profiles endpoint - only profiles with all required scores are included. Enhanced display_name fallback logic to use first_name when available. This ensures privacy toggles work correctly and profiles appear/disappear from leaderboard when toggled."
+
   - task: "Delete Athlete Profile Endpoint"
     implemented: true
     working: true
