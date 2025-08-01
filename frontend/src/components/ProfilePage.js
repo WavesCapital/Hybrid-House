@@ -1851,8 +1851,13 @@ const ProfilePage = () => {
               ) : (
                 <div className="text-center py-12">
                   <div className="text-muted">
-                    Please log in to edit your profile
+                    {!user ? 'Please log in to edit your profile' : 'Loading your profile...'}
                   </div>
+                  {user && !userProfile && (
+                    <div className="text-xs text-muted mt-2">
+                      Debug: User is logged in but profile not loaded yet
+                    </div>
+                  )}
                 </div>
               )}
               
