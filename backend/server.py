@@ -2229,21 +2229,37 @@ async def get_leaderboard():
                 if not profile.get('is_public', False):
                     continue
                 
-                # Extract display_name and hybrid_score
+                # Only include profiles with complete scores (same as athlete-profiles endpoint)
+                if score_data and isinstance(score_data, dict):
+                    required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
+                    
+                    # Check if all required scores exist and are not null/0
+                    has_all_scores = True
+                    for score_field in required_scores:
+                        score_value = score_data.get(score_field)
+                        if score_value is None or score_value == 0:
+                            has_all_scores = False
+                            break
+                    
+                    # Skip profiles without complete scores
+                    if not has_all_scores:
+                        continue
+                else:
+                    continue
+                
+                # Extract display_name
                 display_name = profile_json.get('display_name', '')
                 if not display_name:
-                    # Fallback to email prefix if no display_name
-                    email = profile_json.get('email', '')
-                    display_name = email.split('@')[0] if email else f'User {profile.get("id", "")[:8]}'
+                    # Fallback to first_name or email prefix if no display_name
+                    first_name = profile_json.get('first_name', '')
+                    if first_name:
+                        display_name = first_name
+                    else:
+                        email = profile_json.get('email', '')
+                        display_name = email.split('@')[0] if email else f'User {profile.get("id", "")[:8]}'
                 
                 # Get hybrid score
-                hybrid_score = None
-                if isinstance(score_data, dict):
-                    hybrid_score = score_data.get('hybridScore')  # Fixed: use camelCase
-                
-                # Skip if no valid score
-                if hybrid_score is None:
-                    continue
+                hybrid_score = score_data.get('hybridScore')
                 
                 # Keep only highest score per display_name
                 if display_name not in athlete_scores or hybrid_score > athlete_scores[display_name]['score']:
