@@ -133,21 +133,21 @@ const Leaderboard = () => {
     const configs = {
       1: { 
         width: '280px', 
-        height: '320px', 
+        height: '350px', 
         borderColor: '#FFD700', // Gold
         trophyIcon: '🏆',
         glowColor: '#08F0FF'
       },
       2: { 
         width: '240px', 
-        height: '300px', 
+        height: '330px', 
         borderColor: '#B0B0B0', // Silver
         trophyIcon: '🥈',
         glowColor: '#08F0FF'
       },
       3: { 
         width: '240px', 
-        height: '300px', 
+        height: '330px', 
         borderColor: '#CD7F32', // Bronze
         trophyIcon: '🥉',
         glowColor: '#08F0FF'
