@@ -7861,6 +7861,200 @@ class BackendTester:
             self.log_test("Age Calculation Logic", False, "Age calculation logic test failed", str(e))
             return False
 
+    def test_auto_save_profile_debug(self):
+        """Debug the 500 error occurring when auto-saving profile changes - PUT /api/user-profile/me"""
+        try:
+            # Test with the exact sample data from the review request
+            auto_save_test_data = {
+                "name": "Debug Auto-Save Test",
+                "display_name": "Updated Display Name", 
+                "location": "New York, NY",
+                "website": "",
+                "gender": "",
+                "date_of_birth": "",
+                "country": "",
+                "units_preference": "imperial",
+                "privacy_level": "private"
+            }
+            
+            print(f"\n🔍 DEBUGGING AUTO-SAVE PROFILE ENDPOINT")
+            print(f"Testing PUT /api/user-profile/me with sample data:")
+            print(f"Data: {json.dumps(auto_save_test_data, indent=2)}")
+            
+            # Test without authentication first (should return 401/403)
+            response = self.session.put(f"{API_BASE_URL}/user-profile/me", json=auto_save_test_data)
+            
+            print(f"Response Status: {response.status_code}")
+            print(f"Response Headers: {dict(response.headers)}")
+            
+            try:
+                response_data = response.json()
+                print(f"Response Body: {json.dumps(response_data, indent=2)}")
+            except:
+                print(f"Response Text: {response.text}")
+            
+            if response.status_code in [401, 403]:
+                self.log_test("Auto-Save Profile Debug - Authentication Required", True, "PUT /api/user-profile/me properly requires JWT authentication")
+                
+                # Now test individual field combinations to identify problematic fields
+                field_tests = [
+                    {"name": "Test Name"},
+                    {"display_name": "Test Display"},
+                    {"location": "Test Location"},
+                    {"website": ""},
+                    {"gender": ""},
+                    {"date_of_birth": ""},
+                    {"country": ""},
+                    {"units_preference": "imperial"},
+                    {"privacy_level": "private"},
+                    # Test combinations
+                    {"name": "Test", "display_name": "Test Display"},
+                    {"location": "NYC", "country": "US"},
+                    {"units_preference": "imperial", "privacy_level": "private"}
+                ]
+                
+                print(f"\n🧪 TESTING INDIVIDUAL FIELD COMBINATIONS:")
+                for i, field_data in enumerate(field_tests):
+                    test_response = self.session.put(f"{API_BASE_URL}/user-profile/me", json=field_data)
+                    print(f"Test {i+1} - Fields {list(field_data.keys())}: HTTP {test_response.status_code}")
+                    
+                    if test_response.status_code == 500:
+                        try:
+                            error_data = test_response.json()
+                            print(f"  500 Error Details: {error_data}")
+                        except:
+                            print(f"  500 Error Text: {test_response.text}")
+                
+                return True
+            elif response.status_code == 500:
+                try:
+                    error_data = response.json()
+                    self.log_test("Auto-Save Profile Debug - 500 Error Identified", False, f"PUT /api/user-profile/me returning 500 error: {error_data.get('detail', 'Unknown error')}", error_data)
+                    
+                    # Check if it's a validation error
+                    if "validation" in str(error_data).lower():
+                        print(f"🚨 VALIDATION ERROR DETECTED")
+                        print(f"This suggests the UserProfileUpdate model has validation issues with the provided fields")
+                    
+                    # Check if it's a database error
+                    elif "database" in str(error_data).lower() or "column" in str(error_data).lower():
+                        print(f"🚨 DATABASE ERROR DETECTED")
+                        print(f"This suggests missing columns in the user_profiles table")
+                    
+                    return False
+                except:
+                    self.log_test("Auto-Save Profile Debug - 500 Error Identified", False, f"PUT /api/user-profile/me returning 500 error with non-JSON response", response.text)
+                    return False
+            else:
+                self.log_test("Auto-Save Profile Debug - Unexpected Response", False, f"Expected 401/403 or 500, got HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Auto-Save Profile Debug", False, "Auto-save profile debug test failed", str(e))
+            return False
+    
+    def test_user_profile_update_model_validation(self):
+        """Test UserProfileUpdate model validation with various field combinations"""
+        try:
+            print(f"\n🔍 TESTING USERPROFILEUPDATE MODEL VALIDATION")
+            
+            # Test different field combinations that might cause validation errors
+            test_cases = [
+                # Basic fields
+                {"name": "John Doe"},
+                {"display_name": "JohnD"},
+                {"location": "New York, NY"},
+                
+                # Empty string fields (might cause validation issues)
+                {"website": ""},
+                {"gender": ""},
+                {"date_of_birth": ""},
+                {"country": ""},
+                
+                # Enum-like fields
+                {"units_preference": "imperial"},
+                {"units_preference": "metric"},
+                {"privacy_level": "private"},
+                {"privacy_level": "public"},
+                
+                # Invalid enum values (should cause validation errors)
+                {"units_preference": "invalid_unit"},
+                {"privacy_level": "invalid_privacy"},
+                
+                # Date format testing
+                {"date_of_birth": "1990-01-01"},
+                {"date_of_birth": "01/01/1990"},
+                {"date_of_birth": "invalid_date"},
+                
+                # URL validation
+                {"website": "https://example.com"},
+                {"website": "invalid_url"},
+                
+                # Complete auto-save data
+                {
+                    "name": "Debug Auto-Save Test",
+                    "display_name": "Updated Display Name", 
+                    "location": "New York, NY",
+                    "website": "",
+                    "gender": "",
+                    "date_of_birth": "",
+                    "country": "",
+                    "units_preference": "imperial",
+                    "privacy_level": "private"
+                }
+            ]
+            
+            validation_results = []
+            for i, test_data in enumerate(test_cases):
+                response = self.session.put(f"{API_BASE_URL}/user-profile/me", json=test_data)
+                
+                result = {
+                    "test_case": i + 1,
+                    "data": test_data,
+                    "status_code": response.status_code,
+                    "success": response.status_code in [401, 403]  # Expected for unauthenticated requests
+                }
+                
+                if response.status_code == 500:
+                    try:
+                        error_data = response.json()
+                        result["error"] = error_data
+                        print(f"❌ Test Case {i+1} - 500 Error: {list(test_data.keys())} -> {error_data.get('detail', 'Unknown')}")
+                    except:
+                        result["error"] = response.text
+                        print(f"❌ Test Case {i+1} - 500 Error: {list(test_data.keys())} -> {response.text}")
+                elif response.status_code == 422:
+                    try:
+                        error_data = response.json()
+                        result["validation_error"] = error_data
+                        print(f"⚠️  Test Case {i+1} - Validation Error: {list(test_data.keys())} -> {error_data}")
+                    except:
+                        result["validation_error"] = response.text
+                        print(f"⚠️  Test Case {i+1} - Validation Error: {list(test_data.keys())} -> {response.text}")
+                else:
+                    print(f"✅ Test Case {i+1} - Expected Response: {list(test_data.keys())} -> HTTP {response.status_code}")
+                
+                validation_results.append(result)
+            
+            # Analyze results
+            error_cases = [r for r in validation_results if r["status_code"] == 500]
+            validation_error_cases = [r for r in validation_results if r["status_code"] == 422]
+            success_cases = [r for r in validation_results if r["success"]]
+            
+            if error_cases:
+                self.log_test("UserProfileUpdate Model Validation", False, f"Found {len(error_cases)} cases causing 500 errors", error_cases)
+                return False
+            elif validation_error_cases:
+                self.log_test("UserProfileUpdate Model Validation", True, f"Found {len(validation_error_cases)} validation errors (expected for invalid data)", validation_error_cases)
+                return True
+            else:
+                self.log_test("UserProfileUpdate Model Validation", True, f"All {len(success_cases)} test cases handled correctly", success_cases)
+                return True
+                
+        except Exception as e:
+            self.log_test("UserProfileUpdate Model Validation", False, "Model validation test failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests focused on user profile management and leaderboard data flow"""
         print("=" * 80)
