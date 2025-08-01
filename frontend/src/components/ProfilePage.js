@@ -1860,7 +1860,7 @@ const ProfilePage = () => {
                       <Input
                         type="date"
                         value={profileForm.date_of_birth || ''}
-                        onChange={(e) => setProfileForm({...profileForm, date_of_birth: e.target.value})}
+                        onChange={(e) => handleProfileFormChange('date_of_birth', e.target.value)}
                         className="neon-input"
                       />
                     </div>
