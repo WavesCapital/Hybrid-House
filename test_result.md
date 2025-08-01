@@ -105,17 +105,20 @@
 user_problem_statement: "Add delete functionality to athlete profiles in the Hybrid Score History table on the /profile page. Users should be able to delete athlete profiles by clicking a small x button all the way to the right on the table."
 
 backend:
-  - task: "Filter Athlete Profiles to Show Only Those With Hybrid Scores"
+  - task: "Filter Athlete Profiles to Show Only Those With Complete Scores"
     implemented: true
     working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
         comment: "✅ HYBRID SCORE FILTERING IMPLEMENTED: Modified GET /api/athlete-profiles endpoint to only return profiles that have score_data with hybridScore. Added database query filter .not_.is_('score_data', 'null') and additional logic to filter profiles that have score_data and score_data.hybridScore. Updated endpoint documentation and included all individual profile fields for table display. This ensures the Hybrid Score History table only shows completed assessments with actual scores."
+      - working: true
+        agent: "main"
+        comment: "✅ COMPLETE SCORE FILTERING ENHANCED: Updated filtering logic to ensure only profiles with ALL required scores are shown. Now checks for hybridScore, strengthScore, speedScore, vo2Score, distanceScore, volumeScore, and recoveryScore. All scores must be non-null and non-zero to be included. This fixes the issue where profiles with only hybrid scores but missing sub-scores were being displayed in the table."
       - working: true
         agent: "testing"
         comment: "🎉 HYBRID SCORE FILTERING COMPREHENSIVE TESTING COMPLETE: Executed comprehensive testing of the modified GET /api/athlete-profiles endpoint as requested in the review. ALL 8/8 TESTS PASSED (100% SUCCESS RATE): ✅ Endpoint Exists - GET /api/athlete-profiles endpoint exists and returns proper structure with 12 profiles ✅ Non-null Score Data - All 12 returned profiles have non-null score_data (no profiles with null score_data found) ✅ HybridScore Exists - All 12 returned profiles have score_data.hybridScore (not null/undefined) ✅ Excludes Profiles Without Scores - Total count (12) matches returned profiles (12), indicating proper filtering excludes profiles without hybrid scores ✅ Response Format - All 15 required fields present for table display (id, profile_json, score_data, created_at, updated_at, weight_lb, vo2_max, pb_mile_seconds, weekly_miles, long_run_miles, pb_bench_1rm_lb, pb_squat_1rm_lb, pb_deadlift_1rm_lb, hrv_ms, resting_hr_bpm) ✅ Ordered by created_at desc - All 12 profiles properly ordered by created_at descending (newest first) ✅ Total Count Accuracy - Total count (12) accurately reflects only profiles with hybrid scores ✅ Comprehensive Test - All 7/7 filtering requirements verified. CRITICAL VERIFICATION: The endpoint successfully filters out any profiles that don't have completed hybrid scores, ensuring the Hybrid Score History table only shows assessments with actual score data. The filtering logic works correctly with database query .not_.is_('score_data', 'null') and additional hybridScore validation."
