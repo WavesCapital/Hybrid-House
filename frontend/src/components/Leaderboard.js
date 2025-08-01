@@ -788,9 +788,15 @@ const Leaderboard = () => {
                   </div>
                   
                   {/* Age, Sex, Country */}
-                  <div style={{ textAlign: 'center', color: '#8D9299', fontSize: '14px', fontVariantNumeric: 'tabular-nums' }}>--</div>
-                  <div style={{ textAlign: 'center', color: '#8D9299', fontSize: '14px' }}>--</div>
-                  <div style={{ textAlign: 'center', color: '#8D9299', fontSize: '14px' }}>--</div>
+                  <div style={{ textAlign: 'center', color: '#8D9299', fontSize: '14px', fontVariantNumeric: 'tabular-nums' }}>
+                    {athlete.age || '--'}
+                  </div>
+                  <div style={{ textAlign: 'center', color: '#8D9299', fontSize: '14px' }}>
+                    {athlete.gender || '--'}
+                  </div>
+                  <div style={{ textAlign: 'center', color: '#8D9299', fontSize: '14px' }}>
+                    {athlete.country ? getCountryFlag(athlete.country) : '--'}
+                  </div>
                   
                   {/* Hybrid Score */}
                   <div style={{
