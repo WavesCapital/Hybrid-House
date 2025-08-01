@@ -95,7 +95,7 @@ const Leaderboard = () => {
     });
     
     setFilteredData(filtered);
-  }, [leaderboardData, scoreRange, genderFilter, searchQuery, sortColumn, sortDirection]);
+  }, [leaderboardData, scoreRange, ageRange, genderFilter, countryFilter, searchQuery, sortColumn, sortDirection]);
 
   // Scroll listener for CTA
   useEffect(() => {
