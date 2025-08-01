@@ -108,6 +108,15 @@ const Leaderboard = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Get unique countries from leaderboard data
+  const getUniqueCountries = () => {
+    const countries = leaderboardData
+      .map(athlete => athlete.country)
+      .filter(country => country && country.trim())
+      .map(country => country.trim());
+    return [...new Set(countries)].sort();
+  };
+
   const fetchLeaderboard = async () => {
     try {
       setLoading(true);
