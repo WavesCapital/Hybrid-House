@@ -697,8 +697,57 @@ const HybridInterviewFlow = () => {
       {(!sessionId && !isInterviewPage) ? (
         // Landing Page - Always shown regardless of auth status
         <>
+          {/* Header with Login Button */}
+          <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gray-800">
+            <div className="container mx-auto px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <h3 className="text-xl font-bold" style={{ color: 'var(--neon-primary)' }}>
+                    Hybrid House
+                  </h3>
+                </div>
+                <div className="flex items-center space-x-4">
+                  {user ? (
+                    <div className="flex items-center space-x-3">
+                      <span className="text-sm" style={{ color: 'var(--muted)' }}>
+                        Welcome, {user.email?.split('@')[0]}
+                      </span>
+                      <button
+                        onClick={() => navigate('/profile')}
+                        className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-[#08F0FF] transition-colors text-sm"
+                      >
+                        Profile
+                      </button>
+                      <button
+                        onClick={() => navigate('/logout')}
+                        className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-red-500 transition-colors text-sm"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-3">
+                      <button
+                        onClick={() => navigate('/login')}
+                        className="px-4 py-2 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors text-sm font-medium"
+                      >
+                        Log In
+                      </button>
+                      <button
+                        onClick={() => navigate('/auth?mode=signup')}
+                        className="px-4 py-2 bg-[#08F0FF] rounded-lg text-black hover:shadow-lg transition-all text-sm font-medium"
+                      >
+                        Sign Up
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </header>
+          
           {/* Hero Section */}
-          <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+          <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ paddingTop: '80px' }}>
             {/* Background Radial Highlight */}
             <div 
               className="absolute inset-0 opacity-30"
