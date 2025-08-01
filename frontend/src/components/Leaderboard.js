@@ -581,8 +581,8 @@ const Leaderboard = () => {
         }}>
           {/* Score Range Slider */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <label style={{ color: '#8D9299', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>
-              Score 0-100
+            <label style={{ color: '#8D9299', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase', minWidth: '70px' }}>
+              Score: {scoreRange[1]}
             </label>
             <div style={{ position: 'relative' }}>
               <input
@@ -596,23 +596,26 @@ const Leaderboard = () => {
                 style={{
                   width: '120px',
                   height: '4px',
-                  background: '#08F0FF',
+                  background: `linear-gradient(to right, #08F0FF 0%, #08F0FF ${scoreRange[1]}%, rgba(255,255,255,0.1) ${scoreRange[1]}%, rgba(255,255,255,0.1) 100%)`,
                   outline: 'none',
                   borderRadius: '2px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  appearance: 'none'
                 }}
               />
               {isDragging && (
                 <div style={{
                   position: 'absolute',
                   top: '-30px',
-                  right: '0',
-                  background: '#FF2DDE',
-                  color: 'white',
+                  left: `${scoreRange[1]}%`,
+                  transform: 'translateX(-50%)',
+                  background: '#08F0FF',
+                  color: '#000',
                   padding: '4px 8px',
                   borderRadius: '4px',
                   fontSize: '12px',
-                  fontWeight: '600'
+                  fontWeight: '600',
+                  whiteSpace: 'nowrap'
                 }}>
                   {scoreRange[1]}
                 </div>
@@ -620,28 +623,150 @@ const Leaderboard = () => {
             </div>
           </div>
 
+          {/* Age Range Filter */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <label style={{ color: '#8D9299', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase', minWidth: '70px' }}>
+              Age: {ageRange[0]}-{ageRange[1]}
+            </label>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="range"
+                  min="18"
+                  max="65"
+                  value={ageRange[0]}
+                  onMouseDown={() => setIsAgeRangeDragging('min')}
+                  onMouseUp={() => setIsAgeRangeDragging('')}
+                  onChange={(e) => {
+                    const newMin = parseInt(e.target.value);
+                    if (newMin <= ageRange[1]) {
+                      setAgeRange([newMin, ageRange[1]]);
+                    }
+                  }}
+                  style={{
+                    width: '80px',
+                    height: '4px',
+                    background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) 100%)`,
+                    outline: 'none',
+                    borderRadius: '2px',
+                    cursor: 'pointer',
+                    appearance: 'none'
+                  }}
+                />
+                {isAgeRangeDragging === 'min' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-30px',
+                    left: '0',
+                    background: '#B96DFF',
+                    color: '#000',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                    fontWeight: '600'
+                  }}>
+                    {ageRange[0]}
+                  </div>
+                )}
+              </div>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="range"
+                  min="18"
+                  max="65"
+                  value={ageRange[1]}
+                  onMouseDown={() => setIsAgeRangeDragging('max')}
+                  onMouseUp={() => setIsAgeRangeDragging('')}
+                  onChange={(e) => {
+                    const newMax = parseInt(e.target.value);
+                    if (newMax >= ageRange[0]) {
+                      setAgeRange([ageRange[0], newMax]);
+                    }
+                  }}
+                  style={{
+                    width: '80px',
+                    height: '4px',
+                    background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) 100%)`,
+                    outline: 'none',
+                    borderRadius: '2px',
+                    cursor: 'pointer',
+                    appearance: 'none'
+                  }}
+                />
+                {isAgeRangeDragging === 'max' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-30px',
+                    right: '0',
+                    background: '#B96DFF',
+                    color: '#000',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                    fontWeight: '600'
+                  }}>
+                    {ageRange[1]}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* Gender Pills */}
           <div style={{ display: 'flex', gap: '4px' }}>
+            <span style={{ color: '#8D9299', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase', marginRight: '8px', display: 'flex', alignItems: 'center' }}>
+              Gender:
+            </span>
             {['All', 'Male', 'Female'].map(gender => (
               <button
                 key={gender}
                 onClick={() => setGenderFilter(gender)}
                 style={{
-                  padding: '8px 16px',
-                  borderRadius: '20px',
+                  padding: '6px 12px',
+                  borderRadius: '16px',
                   border: 'none',
-                  fontSize: '12px',
+                  fontSize: '11px',
                   fontWeight: '600',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   textTransform: 'uppercase',
-                  background: genderFilter === gender ? 'rgba(8, 240, 255, 0.85)' : 'rgba(255, 255, 255, 0.1)',
+                  background: genderFilter === gender ? 'rgba(255, 45, 222, 0.85)' : 'rgba(255, 255, 255, 0.1)',
                   color: genderFilter === gender ? '#000' : '#8D9299'
                 }}
               >
                 {gender}
               </button>
             ))}
+          </div>
+
+          {/* Country Dropdown */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <label style={{ color: '#8D9299', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>
+              Country:
+            </label>
+            <select
+              value={countryFilter}
+              onChange={(e) => setCountryFilter(e.target.value)}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#FFFFFF',
+                fontSize: '12px',
+                fontWeight: '600',
+                outline: 'none',
+                cursor: 'pointer',
+                textTransform: 'uppercase'
+              }}
+            >
+              <option value="All" style={{ background: '#1A1B1F', color: '#FFFFFF' }}>All Countries</option>
+              {getUniqueCountries().map(country => (
+                <option key={country} value={country} style={{ background: '#1A1B1F', color: '#FFFFFF' }}>
+                  {country}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Search Input */}
@@ -659,7 +784,7 @@ const Leaderboard = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
-                width: '260px',
+                width: '200px',
                 padding: '8px 12px 8px 36px',
                 borderRadius: '8px',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -671,6 +796,47 @@ const Leaderboard = () => {
               }}
             />
           </div>
+
+          {/* Active Filters Count */}
+          {(genderFilter !== 'All' || countryFilter !== 'All' || searchQuery || scoreRange[1] < 100 || ageRange[0] > 18 || ageRange[1] < 65) && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '4px 12px',
+              background: 'rgba(8, 240, 255, 0.1)',
+              border: '1px solid rgba(8, 240, 255, 0.3)',
+              borderRadius: '16px',
+              fontSize: '11px',
+              fontWeight: '600',
+              color: '#08F0FF',
+              textTransform: 'uppercase'
+            }}>
+              <Filter size={12} />
+              {filteredData.length} / {leaderboardData.length} Athletes
+              <button
+                onClick={() => {
+                  setScoreRange([0, 100]);
+                  setAgeRange([18, 65]);
+                  setGenderFilter('All');
+                  setCountryFilter('All');
+                  setSearchQuery('');
+                }}
+                style={{
+                  background: 'rgba(8, 240, 255, 0.2)',
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '2px 6px',
+                  color: '#08F0FF',
+                  fontSize: '10px',
+                  cursor: 'pointer',
+                  fontWeight: '600'
+                }}
+              >
+                Clear All
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
