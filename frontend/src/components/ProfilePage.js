@@ -1932,8 +1932,8 @@ const ProfilePage = () => {
                     <div>
                       <label className="block text-sm font-medium text-secondary mb-2">Units</label>
                       <select
-                        value={profileForm.units_preference}
-                        onChange={(e) => setProfileForm({...profileForm, units_preference: e.target.value})}
+                        value={profileForm.units_preference || 'imperial'}
+                        onChange={(e) => handleProfileFormChange('units_preference', e.target.value)}
                         className="neon-input w-full"
                       >
                         <option value="imperial">Imperial</option>
