@@ -1968,25 +1968,22 @@ const ProfilePage = () => {
                 </div>
               )}
               
-              {user && userProfile && (
-                <div className="mt-8 flex justify-end">
-                  <Button 
-                    onClick={handleUpdateProfile}
-                    disabled={isLoadingProfiles}
-                    className="neon-button min-w-[180px]"
-                  >
-                    {isLoadingProfiles ? (
+              {/* Auto-save indicator */}
+              {user && (userProfile || !isLoadingProfiles) && (
+                <div className="mt-6 flex justify-center">
+                  <div className="flex items-center space-x-2 text-sm">
+                    {isAutoSaving ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                        Saving...
+                        <div className="w-4 h-4 border-2 border-[#08F0FF] border-t-transparent rounded-full animate-spin"></div>
+                        <span style={{ color: 'var(--neon-primary)' }}>Saving changes...</span>
                       </>
                     ) : (
                       <>
-                        <Save className="w-4 h-4 mr-2" />
-                        Save Profile
+                        <CheckCircle className="w-4 h-4" style={{ color: 'var(--recovery)' }} />
+                        <span style={{ color: 'var(--muted)' }}>Changes saved automatically</span>
                       </>
                     )}
-                  </Button>
+                  </div>
                 </div>
               )}
             </div>
