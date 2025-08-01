@@ -529,6 +529,78 @@ const ProfilePage = () => {
     }
   }, [cancelEditing]);
 
+  // Auto-save profile form with debouncing
+  const autoSaveProfile = useCallback(async (formData) => {
+    if (!user || !session) {
+      console.log('No user or session for auto-save');
+      return;
+    }
+
+    try {
+      setIsAutoSaving(true);
+      
+      const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, formData, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      setUserProfile(response.data.profile);
+      
+      // Show subtle success indication
+      toast({
+        title: "Saved",
+        description: "Profile updated automatically",
+        variant: "default",
+        duration: 2000,
+      });
+      
+    } catch (error) {
+      console.error('Error auto-saving profile:', error);
+      
+      let errorMessage = "Auto-save failed";
+      if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.response?.status === 401) {
+        errorMessage = "Authentication required. Please sign in again.";
+      }
+      
+      toast({
+        title: "Auto-save Error",
+        description: errorMessage,
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setIsAutoSaving(false);
+    }
+  }, [user, session, BACKEND_URL, toast]);
+
+  // Debounced auto-save function
+  const debouncedAutoSave = useCallback((formData) => {
+    // Clear existing timeout
+    if (autoSaveTimeout) {
+      clearTimeout(autoSaveTimeout);
+    }
+
+    // Set new timeout
+    const timeoutId = setTimeout(() => {
+      autoSaveProfile(formData);
+    }, 1500); // Wait 1.5 seconds after user stops typing
+
+    setAutoSaveTimeout(timeoutId);
+  }, [autoSaveProfile, autoSaveTimeout]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimeout) {
+        clearTimeout(autoSaveTimeout);
+      }
+    };
+  }, [autoSaveTimeout]);
+
   // Legacy profile form update function (for the edit profile form)
   const handleUpdateProfile = useCallback(async () => {
     if (!user || !session) {
