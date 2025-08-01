@@ -7455,68 +7455,48 @@ class BackendTester:
             return False
 
     def run_all_tests(self):
-        """Run all backend tests focused on Supabase database connection and Profile Page functionality"""
+        """Run all backend tests focused on leaderboard functionality and privacy toggle integration"""
         print("=" * 80)
-        print("🚀 TESTING SUPABASE DATABASE CONNECTION AND PROFILE PAGE DATA FUNCTIONALITY")
+        print("🚀 TESTING LEADERBOARD FUNCTIONALITY AND PRIVACY TOGGLE INTEGRATION")
         print("=" * 80)
         
-        # Core Supabase and Profile Page tests as requested in review
+        # Core leaderboard and privacy integration tests as requested in review
         tests = [
-            # 1. Database Connection Test
-            self.test_supabase_database_connection,
-            
-            # 2. Profile Data Retrieval
-            self.test_profile_data_retrieval,
-            
-            # 3. Individual Profile Access
-            self.test_individual_profile_access,
-            
-            # 4. Data Structure Validation
-            self.test_data_structure_validation,
-            
-            # 5. Score Data Availability
-            self.test_score_data_availability,
-            
-            # 6. Database Write Operations
-            self.test_database_write_operations_post_profiles,
-            self.test_database_write_operations_post_score,
-            
-            # 7. Leaderboard API Tests (NEW)
-            self.test_leaderboard_endpoint_structure,
-            self.test_leaderboard_entry_format,
-            self.test_leaderboard_highest_scores_per_display_name,
-            self.test_leaderboard_ranking_system,
-            self.test_leaderboard_with_actual_database_data,
-            self.test_leaderboard_error_handling_no_data,
-            
-            # 8. Privacy Functionality Tests (REVIEW REQUEST)
-            self.test_privacy_update_endpoint_exists,
-            self.test_leaderboard_endpoint_exists,
-            self.test_migration_endpoint_exists,
-            self.test_default_privacy_settings,
-            self.test_privacy_system_comprehensive,
-            
-            # 9. Delete Athlete Profile Tests (CURRENT REVIEW REQUEST)
-            self.test_delete_athlete_profile_endpoint_exists,
-            self.test_delete_athlete_profile_authentication_required,
-            self.test_delete_athlete_profile_not_found,
-            self.test_delete_athlete_profile_user_ownership_validation,
-            self.test_delete_athlete_profile_error_responses,
-            self.test_delete_athlete_profile_endpoint_comprehensive,
-            
-            # 10. Hybrid Score Filtering Tests (CURRENT REVIEW REQUEST)
-            self.test_hybrid_score_filtering_endpoint_exists,
-            self.test_hybrid_score_filtering_non_null_score_data,
-            self.test_hybrid_score_filtering_hybrid_score_exists,
-            self.test_hybrid_score_filtering_excludes_profiles_without_scores,
-            self.test_hybrid_score_filtering_response_format,
-            self.test_hybrid_score_filtering_ordered_by_created_at_desc,
-            self.test_hybrid_score_filtering_total_count_accuracy,
-            self.test_hybrid_score_filtering_comprehensive,
-            
-            # Additional supporting tests
+            # 1. Core System Health
             self.test_api_root,
             self.test_supabase_connection,
+            
+            # 2. Leaderboard Endpoint Tests (REVIEW REQUEST)
+            self.test_leaderboard_endpoint_structure,
+            self.test_leaderboard_privacy_filtering,
+            self.test_leaderboard_complete_scores,
+            self.test_leaderboard_field_names,
+            self.test_leaderboard_rankings_and_scores,
+            self.test_display_name_fallback_logic,
+            
+            # 3. Privacy Update Endpoint Tests (REVIEW REQUEST)
+            self.test_privacy_update_endpoint_functionality,
+            self.test_privacy_update_endpoint_exists,
+            
+            # 4. Privacy System Integration Tests
+            self.test_default_privacy_settings,
+            self.test_migration_endpoint_exists,
+            self.test_privacy_system_comprehensive,
+            
+            # 5. Comprehensive Integration Test
+            self.test_leaderboard_privacy_integration_comprehensive,
+            
+            # 6. Supporting Database Tests
+            self.test_supabase_database_connection,
+            self.test_profile_data_retrieval,
+            self.test_individual_profile_access,
+            self.test_score_data_availability,
+            
+            # 7. Hybrid Score Filtering Tests (SUPPORTING)
+            self.test_hybrid_score_filtering_endpoint_exists,
+            self.test_hybrid_score_filtering_comprehensive,
+            
+            # 8. JWT Configuration
             self.test_jwt_secret_configuration
         ]
         
