@@ -1733,9 +1733,17 @@ const ProfilePage = () => {
 
               {user && (userProfile || !isLoadingProfiles) ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Personal Info */}
-                  <div className="space-y-4">
-                    <h4 className="text-lg font-semibold text-primary">Personal Info</h4>
+                  {!userProfile && isLoadingProfiles && (
+                    <div className="col-span-full text-center py-4">
+                      <div className="text-muted">Loading your profile...</div>
+                    </div>
+                  )}
+                  
+                  {userProfile && (
+                    <>
+                      {/* Personal Info */}
+                      <div className="space-y-4">
+                        <h4 className="text-lg font-semibold text-primary">Personal Info</h4>
                     
                     <div>
                       <label className="block text-sm font-medium text-secondary mb-2">Name</label>
