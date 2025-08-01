@@ -876,7 +876,7 @@ async def create_public_athlete_profile(profile_data: dict):
 
 @api_router.get("/athlete-profiles")
 async def get_user_athlete_profiles():
-    """Get athlete profiles with hybrid scores only"""
+    """Get athlete profiles with complete hybrid scores only"""
     try:
         # Get athlete profiles that have score_data (hybrid scores only)
         profiles_result = supabase.table('athlete_profiles').select('*').not_.is_('score_data', 'null').order('created_at', desc=True).execute()
@@ -887,36 +887,48 @@ async def get_user_athlete_profiles():
                 "total": 0
             }
         
-        # Format the profiles for frontend and filter for profiles with hybridScore
+        # Format the profiles for frontend and filter for profiles with COMPLETE score data
         formatted_profiles = []
         for profile in profiles_result.data:
             score_data = profile.get('score_data', None)
             
-            # Only include profiles that have score_data with hybridScore
-            if score_data and isinstance(score_data, dict) and score_data.get('hybridScore'):
-                formatted_profile = {
-                    "id": profile['id'],
-                    "profile_json": profile.get('profile_json', {}),
-                    "score_data": score_data,
-                    "completed_at": profile.get('completed_at'),
-                    "created_at": profile.get('created_at'),
-                    "updated_at": profile.get('updated_at'),
-                    # Include individual fields for the table
-                    "weight_lb": profile.get('weight_lb'),
-                    "vo2_max": profile.get('vo2_max'),
-                    "resting_hr": profile.get('resting_hr'),
-                    "hrv": profile.get('hrv'),
-                    "pb_mile_seconds": profile.get('pb_mile_seconds'),
-                    "weekly_miles": profile.get('weekly_miles'),
-                    "long_run_miles": profile.get('long_run_miles'),
-                    "pb_bench_1rm_lb": profile.get('pb_bench_1rm_lb'),
-                    "pb_squat_1rm_lb": profile.get('pb_squat_1rm_lb'),
-                    "pb_deadlift_1rm_lb": profile.get('pb_deadlift_1rm_lb'),
-                    "hrv_ms": profile.get('hrv_ms'),
-                    "resting_hr_bpm": profile.get('resting_hr_bpm'),
-                    "is_public": profile.get('is_public', False)
-                }
-                formatted_profiles.append(formatted_profile)
+            # Only include profiles that have score_data with ALL required scores
+            if score_data and isinstance(score_data, dict):
+                required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
+                
+                # Check if all required scores exist and are not null/0
+                has_all_scores = True
+                for score_field in required_scores:
+                    score_value = score_data.get(score_field)
+                    if score_value is None or score_value == 0:
+                        has_all_scores = False
+                        break
+                
+                # Only include profiles with complete score data
+                if has_all_scores:
+                    formatted_profile = {
+                        "id": profile['id'],
+                        "profile_json": profile.get('profile_json', {}),
+                        "score_data": score_data,
+                        "completed_at": profile.get('completed_at'),
+                        "created_at": profile.get('created_at'),
+                        "updated_at": profile.get('updated_at'),
+                        # Include individual fields for the table
+                        "weight_lb": profile.get('weight_lb'),
+                        "vo2_max": profile.get('vo2_max'),
+                        "resting_hr": profile.get('resting_hr'),
+                        "hrv": profile.get('hrv'),
+                        "pb_mile_seconds": profile.get('pb_mile_seconds'),
+                        "weekly_miles": profile.get('weekly_miles'),
+                        "long_run_miles": profile.get('long_run_miles'),
+                        "pb_bench_1rm_lb": profile.get('pb_bench_1rm_lb'),
+                        "pb_squat_1rm_lb": profile.get('pb_squat_1rm_lb'),
+                        "pb_deadlift_1rm_lb": profile.get('pb_deadlift_1rm_lb'),
+                        "hrv_ms": profile.get('hrv_ms'),
+                        "resting_hr_bpm": profile.get('resting_hr_bpm'),
+                        "is_public": profile.get('is_public', False)
+                    }
+                    formatted_profiles.append(formatted_profile)
         
         return {
             "profiles": formatted_profiles,
