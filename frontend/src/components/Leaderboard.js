@@ -132,19 +132,19 @@ const Leaderboard = () => {
     
     const configs = {
       1: { 
-        width: '240px', 
-        height: '260px', 
+        width: '280px', 
+        height: '240px', 
         borderColor: '#FFD700', // Gold
         trophyIcon: '🥇'
       },
       2: { 
-        width: '200px', 
+        width: '240px', 
         height: '220px', 
         borderColor: '#B0B0B0', // Silver
         trophyIcon: '🥈'
       },
       3: { 
-        width: '200px', 
+        width: '240px', 
         height: '220px', 
         borderColor: '#CD7F32', // Bronze
         trophyIcon: '🥉'
@@ -157,7 +157,7 @@ const Leaderboard = () => {
       width: config.width,
       height: config.height,
       background: '#15161A',
-      borderRadius: '12px',
+      borderRadius: '16px',
       borderTop: `3px solid ${config.borderColor}`,
       position: 'relative',
       cursor: 'pointer',
@@ -201,7 +201,7 @@ const Leaderboard = () => {
           top: '20px',
           left: '50%',
           transform: 'translateX(-50%)',
-          fontSize: '28px',
+          fontSize: '32px',
           zIndex: 2
         }}>
           {config.trophyIcon}
@@ -209,79 +209,88 @@ const Leaderboard = () => {
 
         {/* Content Container */}
         <div style={{
-          padding: '24px 20px 28px 20px',
+          padding: '32px 28px 24px 28px',
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          justifyContent: 'space-between',
           textAlign: 'center',
-          paddingTop: '60px'
+          paddingTop: '70px'
         }}>
-          {/* Avatar - Cleaner Design */}
+          {/* Avatar */}
           <div style={{
-            width: '64px',
-            height: '64px',
+            width: '72px',
+            height: '72px',
             borderRadius: '50%',
             background: 'linear-gradient(135deg, #08F0FF 0%, #0AB8D4 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            marginBottom: '20px',
             border: `2px solid ${config.borderColor}`,
             boxShadow: `
               0 4px 12px rgba(8, 240, 255, 0.2),
               inset 0 1px 0 rgba(255, 255, 255, 0.2)
-            `
+            `,
+            flexShrink: 0
           }}>
-            <User size={26} color="white" strokeWidth={2} />
+            <User size={30} color="white" strokeWidth={2} />
           </div>
 
-          {/* Name */}
-          <div style={{
-            fontSize: '18px',
-            fontWeight: '600',
-            color: '#FFFFFF',
-            marginBottom: '6px',
-            fontFamily: 'Inter, sans-serif',
-            letterSpacing: '-0.01em'
+          {/* Name and Label Group */}
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center',
+            gap: '8px',
+            margin: '20px 0'
           }}>
-            {athlete.display_name}
+            <div style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: '#FFFFFF',
+              fontFamily: 'Inter, sans-serif',
+              letterSpacing: '-0.01em',
+              lineHeight: '1.2'
+            }}>
+              {athlete.display_name}
+            </div>
+
+            <div style={{
+              fontSize: '12px',
+              fontWeight: '500',
+              color: '#8D9299',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em'
+            }}>
+              Hybrid Athlete
+            </div>
           </div>
 
-          {/* Label */}
-          <div style={{
-            fontSize: '13px',
-            fontWeight: '400',
-            color: '#8D9299',
-            marginBottom: '24px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em'
-          }}>
-            Hybrid Athlete
-          </div>
-
-          {/* Hybrid Score - Clean Layout */}
+          {/* Score - Bottom Aligned */}
           <div style={{
             display: 'flex',
             alignItems: 'baseline',
             justifyContent: 'center',
-            gap: '4px'
+            gap: '6px',
+            marginTop: 'auto'
           }}>
             <span style={{
-              fontSize: '36px',
+              fontSize: '40px',
               fontWeight: '800',
               color: '#08F0FF',
               fontVariantNumeric: 'tabular-nums',
               fontFamily: 'Inter, sans-serif',
-              letterSpacing: '-0.02em'
+              letterSpacing: '-0.02em',
+              lineHeight: '1'
             }}>
               {formatScore(athlete.score)}
             </span>
             <span style={{
-              fontSize: '14px',
+              fontSize: '16px',
               fontWeight: '500',
               color: '#8D9299',
-              marginBottom: '4px'
+              marginBottom: '6px'
             }}>
               pts
             </span>
