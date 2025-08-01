@@ -8,7 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { 
   User, Calendar, Trophy, BarChart3, Plus, Target, Activity,
   Zap, RefreshCw, ArrowRight, Award, TrendingUp, Camera, 
-  Save, Edit, MapPin, Globe, Mail, Settings, Upload, X, Eye
+  Save, Edit, MapPin, Globe, Mail, Settings, Upload, X, Eye, CheckCircle
 } from 'lucide-react';
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
