@@ -585,21 +585,16 @@ const ProfilePage = () => {
 
   // Debounced auto-save function
   const debouncedAutoSave = useCallback((formData) => {
-    console.log('⏱️ debouncedAutoSave called with data:', formData);
-    
     // Clear existing timeout
     if (autoSaveTimeout) {
-      console.log('⏹️ Clearing existing timeout');
       clearTimeout(autoSaveTimeout);
     }
 
     // Set new timeout
     const timeoutId = setTimeout(() => {
-      console.log('🎯 Timeout triggered, calling autoSaveProfile');
       autoSaveProfile(formData);
     }, 1500); // Wait 1.5 seconds after user stops typing
 
-    console.log('⏰ Setting new timeout:', timeoutId);
     setAutoSaveTimeout(timeoutId);
   }, [autoSaveProfile]); // Remove autoSaveTimeout from dependency array
 
