@@ -531,14 +531,18 @@ const ProfilePage = () => {
 
   // Auto-save profile form with debouncing
   const autoSaveProfile = useCallback(async (formData) => {
+    console.log('💾 autoSaveProfile called with data:', formData);
+    
     if (!user || !session) {
-      console.log('No user or session for auto-save');
+      console.log('❌ No user or session for auto-save');
       return;
     }
 
     try {
+      console.log('🔄 Setting isAutoSaving to true');
       setIsAutoSaving(true);
       
+      console.log('📡 Making API call to save profile...');
       const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, formData, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
@@ -546,6 +550,7 @@ const ProfilePage = () => {
         }
       });
 
+      console.log('✅ Profile save successful:', response.data);
       setUserProfile(response.data.profile);
       
       // Show subtle success indication
@@ -557,7 +562,7 @@ const ProfilePage = () => {
       });
       
     } catch (error) {
-      console.error('Error auto-saving profile:', error);
+      console.error('❌ Error auto-saving profile:', error);
       
       let errorMessage = "Auto-save failed";
       if (error.response?.data?.detail) {
@@ -573,6 +578,7 @@ const ProfilePage = () => {
         duration: 3000,
       });
     } finally {
+      console.log('🏁 Setting isAutoSaving to false');
       setIsAutoSaving(false);
     }
   }, [user, session, BACKEND_URL, toast]);
