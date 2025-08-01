@@ -1902,8 +1902,8 @@ const ProfilePage = () => {
                       <label className="block text-sm font-medium text-secondary mb-2">Website</label>
                       <Input
                         type="url"
-                        value={profileForm.website}
-                        onChange={(e) => setProfileForm({...profileForm, website: e.target.value})}
+                        value={profileForm.website || ''}
+                        onChange={(e) => handleProfileFormChange('website', e.target.value)}
                         placeholder="https://yourwebsite.com"
                         className="neon-input"
                       />
