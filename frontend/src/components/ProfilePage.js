@@ -1706,6 +1706,11 @@ const ProfilePage = () => {
                       Please log in to edit your profile
                     </p>
                   )}
+                  {user && !userProfile && (
+                    <p className="text-sm text-secondary mt-2">
+                      Loading your profile data...
+                    </p>
+                  )}
                 </div>
               </div>
 
