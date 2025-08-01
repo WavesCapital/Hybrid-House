@@ -1848,8 +1848,8 @@ const ProfilePage = () => {
                       <label className="block text-sm font-medium text-secondary mb-2">Location</label>
                       <Input
                         type="text"
-                        value={profileForm.location}
-                        onChange={(e) => setProfileForm({...profileForm, location: e.target.value})}
+                        value={profileForm.location || ''}
+                        onChange={(e) => handleProfileFormChange('location', e.target.value)}
                         placeholder="City, Country"
                         className="neon-input"
                       />
