@@ -7916,7 +7916,14 @@ class BackendTester:
             self.test_hybrid_score_filtering_comprehensive,
             
             # 10. JWT Configuration
-            self.test_jwt_secret_configuration
+            self.test_jwt_secret_configuration,
+            
+            # 11. User Profile Management and Leaderboard Data Flow Tests (CURRENT REVIEW REQUEST)
+            self.test_user_profile_update_endpoint,
+            self.test_leaderboard_age_gender_country_data,
+            self.test_complete_data_flow_profile_to_leaderboard,
+            self.test_user_profile_model_fields,
+            self.test_age_calculation_logic
         ]
         
         passed = 0
