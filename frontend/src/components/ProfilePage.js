@@ -72,9 +72,21 @@ const ProfilePage = () => {
       try {
         setIsLoadingProfiles(true);
         
-        console.log('Fetching profiles without authentication...');
+        let response;
         
-        const response = await axios.get(`${BACKEND_URL}/api/athlete-profiles`);
+        if (user && session) {
+          // If authenticated, get user's own profiles
+          console.log('Fetching user-specific profiles...');
+          response = await axios.get(`${BACKEND_URL}/api/user-profile/me/athlete-profiles`, {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`
+            }
+          });
+        } else {
+          // If not authenticated, get all public profiles
+          console.log('Fetching all profiles without authentication...');
+          response = await axios.get(`${BACKEND_URL}/api/athlete-profiles`);
+        }
 
         console.log('Profile response received:', response.data);
         const profilesData = response.data.profiles || [];
@@ -205,7 +217,7 @@ const ProfilePage = () => {
     };
 
     fetchProfiles();
-  }, [toast]);
+  }, [toast, user, session]); // Added user and session as dependencies
 
   // Load user profile data
   useEffect(() => {
