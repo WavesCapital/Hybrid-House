@@ -603,10 +603,12 @@ const ProfilePage = () => {
 
   // Handle profile form field changes with auto-save
   const handleProfileFormChange = useCallback((fieldName, value) => {
+    console.log('🔧 handleProfileFormChange called:', fieldName, value);
     const updatedForm = { ...profileForm, [fieldName]: value };
     setProfileForm(updatedForm);
     
     // Trigger auto-save with debouncing
+    console.log('🚀 Triggering debouncedAutoSave with form:', updatedForm);
     debouncedAutoSave(updatedForm);
   }, [profileForm, debouncedAutoSave]);
 
