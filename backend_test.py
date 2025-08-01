@@ -7655,48 +7655,60 @@ class BackendTester:
             return False
 
     def run_all_tests(self):
-        """Run all backend tests focused on leaderboard functionality and privacy toggle integration"""
+        """Run all backend tests focused on privacy toggle functionality and user-specific profile endpoints"""
         print("=" * 80)
-        print("🚀 TESTING LEADERBOARD FUNCTIONALITY AND PRIVACY TOGGLE INTEGRATION")
+        print("🚀 TESTING PRIVACY TOGGLE FUNCTIONALITY AND USER-SPECIFIC PROFILE ENDPOINTS")
         print("=" * 80)
         
-        # Core leaderboard and privacy integration tests as requested in review
+        # Privacy toggle and user-specific profile endpoint tests as requested in review
         tests = [
             # 1. Core System Health
             self.test_api_root,
             self.test_supabase_connection,
             
-            # 2. Leaderboard Endpoint Tests (REVIEW REQUEST)
+            # 2. User-Specific Profile Endpoint Tests (REVIEW REQUEST)
+            self.test_user_specific_profile_endpoint_authentication,
+            self.test_user_specific_profile_endpoint_complete_score_filtering,
+            self.test_user_specific_profile_endpoint_is_public_field,
+            
+            # 3. Privacy Update Endpoint Tests (REVIEW REQUEST)
+            self.test_privacy_update_endpoint_authentication_required,
+            self.test_privacy_update_ownership_validation,
+            self.test_privacy_update_error_handling,
+            self.test_privacy_update_endpoint_functionality,
+            self.test_privacy_update_endpoint_exists,
+            
+            # 4. Privacy Status and Leaderboard Integration (REVIEW REQUEST)
+            self.test_privacy_status_affects_leaderboard_visibility,
             self.test_leaderboard_endpoint_structure,
             self.test_leaderboard_privacy_filtering,
+            
+            # 5. Delete Profile Endpoint Tests (REVIEW REQUEST)
+            self.test_delete_athlete_profile_endpoint_authentication,
+            self.test_delete_athlete_profile_ownership_validation,
+            
+            # 6. Supporting Privacy System Tests
+            self.test_default_privacy_settings,
+            self.test_migration_endpoint_exists,
+            self.test_privacy_system_comprehensive,
+            
+            # 7. Leaderboard and Privacy Integration Tests
             self.test_leaderboard_complete_scores,
             self.test_leaderboard_field_names,
             self.test_leaderboard_rankings_and_scores,
             self.test_display_name_fallback_logic,
             
-            # 3. Privacy Update Endpoint Tests (REVIEW REQUEST)
-            self.test_privacy_update_endpoint_functionality,
-            self.test_privacy_update_endpoint_exists,
-            
-            # 4. Privacy System Integration Tests
-            self.test_default_privacy_settings,
-            self.test_migration_endpoint_exists,
-            self.test_privacy_system_comprehensive,
-            
-            # 5. Comprehensive Integration Test
-            self.test_leaderboard_privacy_integration_comprehensive,
-            
-            # 6. Supporting Database Tests
+            # 8. Supporting Database Tests
             self.test_supabase_database_connection,
             self.test_profile_data_retrieval,
             self.test_individual_profile_access,
             self.test_score_data_availability,
             
-            # 7. Hybrid Score Filtering Tests (SUPPORTING)
+            # 9. Hybrid Score Filtering Tests (SUPPORTING)
             self.test_hybrid_score_filtering_endpoint_exists,
             self.test_hybrid_score_filtering_comprehensive,
             
-            # 8. JWT Configuration
+            # 10. JWT Configuration
             self.test_jwt_secret_configuration
         ]
         
