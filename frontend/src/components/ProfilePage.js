@@ -1869,7 +1869,7 @@ const ProfilePage = () => {
                       <label className="block text-sm font-medium text-secondary mb-2">Country</label>
                       <select
                         value={profileForm.country || ''}
-                        onChange={(e) => setProfileForm({...profileForm, country: e.target.value})}
+                        onChange={(e) => handleProfileFormChange('country', e.target.value)}
                         className="neon-input w-full"
                       >
                         <option value="">Select country</option>
