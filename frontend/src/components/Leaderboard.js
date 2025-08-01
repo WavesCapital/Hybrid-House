@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Medal, Award, User, TrendingUp, Activity, Search, Filter, ChevronDown } from 'lucide-react';
+import { Trophy, Medal, Award, User, TrendingUp, Activity, Search, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
@@ -10,17 +10,20 @@ const Leaderboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showCTA, setShowCTA] = useState(false);
+  const [sortColumn, setSortColumn] = useState('hybrid');
+  const [sortDirection, setSortDirection] = useState('desc');
   
   // Filter states
   const [scoreRange, setScoreRange] = useState([0, 100]);
   const [genderFilter, setGenderFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     fetchLeaderboard();
   }, []);
 
-  // Apply filters whenever data or filters change
+  // Apply filters and sorting
   useEffect(() => {
     let filtered = [...leaderboardData];
     
@@ -29,9 +32,6 @@ const Leaderboard = () => {
       athlete.score >= scoreRange[0] && athlete.score <= scoreRange[1]
     );
     
-    // Gender filter (if we had gender data)
-    // Note: Gender data not currently available in backend
-    
     // Search filter
     if (searchQuery.trim()) {
       filtered = filtered.filter(athlete =>
@@ -39,8 +39,40 @@ const Leaderboard = () => {
       );
     }
     
+    // Sort data
+    filtered.sort((a, b) => {
+      let aValue, bValue;
+      
+      if (sortColumn === 'hybrid') {
+        aValue = a.score;
+        bValue = b.score;
+      } else if (sortColumn === 'name') {
+        aValue = a.display_name;
+        bValue = b.display_name;
+      } else if (a.score_breakdown && b.score_breakdown) {
+        const scoreMap = {
+          'str': 'strengthScore',
+          'spd': 'speedScore',
+          'vo2': 'vo2Score',
+          'dist': 'distanceScore',
+          'vol': 'volumeScore',
+          'rec': 'recoveryScore'
+        };
+        aValue = a.score_breakdown[scoreMap[sortColumn]] || 0;
+        bValue = b.score_breakdown[scoreMap[sortColumn]] || 0;
+      } else {
+        return 0;
+      }
+      
+      if (typeof aValue === 'string') {
+        return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      }
+      
+      return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+    });
+    
     setFilteredData(filtered);
-  }, [leaderboardData, scoreRange, genderFilter, searchQuery]);
+  }, [leaderboardData, scoreRange, genderFilter, searchQuery, sortColumn, sortDirection]);
 
   // Scroll listener for CTA
   useEffect(() => {
@@ -86,38 +118,65 @@ const Leaderboard = () => {
     return Math.round(score * 10) / 10;
   };
 
-  const getPillarColor = (pillar) => {
-    const colors = {
-      strength: '#5CFF5C',
-      speed: '#FFA42D', 
-      vo2: '#B96DFF',
-      distance: '#16D7FF',
-      volume: '#F9F871',
-      recovery: '#2EFFC0'
-    };
-    return colors[pillar] || '#08F0FF';
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('desc');
+    }
   };
 
   const renderPodiumBlock = (athlete, position) => {
     if (!athlete) return null;
     
-    const heights = { 1: '220px', 2: '180px', 3: '180px' };
-    const widths = { 1: '240px', 2: '200px', 3: '200px' };
-    const positions = { 1: 'center', 2: 'left', 3: 'right' };
+    const configs = {
+      1: { 
+        width: '240px', 
+        height: '220px', 
+        glow: '#08F0FF',
+        trophyColor: '#FFD700',
+        trophyIcon: '🏆',
+        rimColor: '#08F0FF'
+      },
+      2: { 
+        width: '200px', 
+        height: '180px', 
+        glow: '#B0C4FF',
+        trophyColor: '#B0B0B0', 
+        trophyIcon: '🥈',
+        rimColor: '#B0C4FF'
+      },
+      3: { 
+        width: '200px', 
+        height: '180px', 
+        glow: '#FF9E59',
+        trophyColor: '#CD7F32',
+        trophyIcon: '🥉', 
+        rimColor: '#FF9E59'
+      }
+    };
+    
+    const config = configs[position];
     
     const podiumStyle = {
-      width: widths[position],
-      height: heights[position],
+      width: config.width,
+      height: config.height,
       background: 'linear-gradient(145deg, #15161A 0%, #1A1B20 100%)',
       borderRadius: '8px',
       position: 'relative',
       cursor: 'pointer',
-      transition: 'all 0.3s ease',
-      border: '1px solid rgba(8, 240, 255, 0.2)',
+      transition: 'all 0.45s cubic-bezier(0.2, 1.2, 0.3, 1)',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      borderTop: `2px solid ${config.rimColor}`,
       boxShadow: `
         0 12px 32px -24px rgba(0, 0, 0, 0.65),
-        inset 0 1px 0 rgba(8, 240, 255, 0.3)
-      `
+        0 0 20px ${config.glow}33
+      `,
+      animation: `podiumRise${position} 0.45s cubic-bezier(0.2, 1.2, 0.3, 1) forwards`,
+      animationDelay: `${(position - 1) * 80}ms`,
+      transform: 'translateY(40px)',
+      opacity: 0
     };
 
     const pillarData = athlete.score_breakdown ? [
@@ -134,31 +193,33 @@ const Leaderboard = () => {
         className="podium-block"
         style={podiumStyle}
         onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-4px) rotateX(6deg)';
           e.currentTarget.style.boxShadow = `
             0 16px 40px -20px rgba(0, 0, 0, 0.8),
-            inset 0 1px 0 rgba(8, 240, 255, 0.65),
-            0 0 20px rgba(8, 240, 255, 0.3)
+            0 0 30px ${config.glow}66
           `;
+          e.currentTarget.querySelector('.podium-avatar').style.borderColor = config.glow;
+          e.currentTarget.querySelector('.podium-avatar').style.filter = `drop-shadow(0 0 10px ${config.glow})`;
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0) rotateX(6deg)';
           e.currentTarget.style.boxShadow = `
             0 12px 32px -24px rgba(0, 0, 0, 0.65),
-            inset 0 1px 0 rgba(8, 240, 255, 0.3)
+            0 0 20px ${config.glow}33
           `;
+          e.currentTarget.querySelector('.podium-avatar').style.borderColor = config.glow;
+          e.currentTarget.querySelector('.podium-avatar').style.filter = 'none';
         }}
       >
-        {/* Medal/Rank Icon */}
+        {/* Trophy Icon */}
         <div style={{
           position: 'absolute',
           top: '16px',
           left: '50%',
           transform: 'translateX(-50%)',
-          fontSize: '24px',
-          zIndex: 2
+          fontSize: '28px',
+          zIndex: 2,
+          color: config.trophyColor
         }}>
-          {position === 1 ? '🏆' : position === 2 ? '🥈' : '🥉'}
+          {config.trophyIcon}
         </div>
 
         {/* Content Container */}
@@ -173,34 +234,38 @@ const Leaderboard = () => {
           marginTop: '20px'
         }}>
           {/* Avatar */}
-          <div style={{
-            width: '56px',
-            height: '56px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '12px',
-            border: '2px solid #08F0FF'
-          }}>
+          <div 
+            className="podium-avatar"
+            style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '12px',
+              border: `2px solid ${config.glow}`,
+              transition: 'all 0.3s ease'
+            }}
+          >
             <User size={24} color="white" />
           </div>
 
           {/* Name */}
           <div style={{
-            fontSize: '14px',
+            fontSize: '16px',
             fontWeight: '600',
-            color: '#F5FAFF',
+            color: '#FFFFFF',
             marginBottom: '4px',
             fontFamily: 'Inter, sans-serif'
           }}>
             {athlete.display_name}
           </div>
 
-          {/* Label */}
+          {/* Role */}
           <div style={{
-            fontSize: '12px',
+            fontSize: '13px',
             fontWeight: '400',
             color: '#8D9299',
             marginBottom: '16px'
@@ -210,12 +275,12 @@ const Leaderboard = () => {
 
           {/* Hybrid Score */}
           <div style={{
-            fontSize: '24px',
+            fontSize: '32px',
             fontWeight: '800',
             color: '#08F0FF',
-            textShadow: '0 0 10px rgba(8, 240, 255, 0.5)',
             marginBottom: '4px',
-            fontVariantNumeric: 'tabular-nums'
+            fontVariantNumeric: 'tabular-nums',
+            fontFamily: 'Inter, sans-serif'
           }}>
             {formatScore(athlete.score)}
             <span style={{
@@ -226,7 +291,7 @@ const Leaderboard = () => {
             }}>pts</span>
           </div>
 
-          {/* Mini Pillar Bars */}
+          {/* Pillar Micro-bars */}
           <div style={{
             display: 'flex',
             gap: '8px',
@@ -323,66 +388,126 @@ const Leaderboard = () => {
       {/* Hero Section with Podium */}
       <div style={{ 
         minHeight: '45vh',
-        background: 'radial-gradient(ellipse at center, rgba(8, 240, 255, 0.1) 0%, transparent 50%)',
         padding: '40px 20px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        position: 'relative'
       }}>
         {/* Hero Headlines */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <h1 style={{
             fontSize: '48px',
             fontWeight: '800',
-            color: '#F5FAFF',
-            marginBottom: '12px',
-            textShadow: '0 0 20px rgba(8, 240, 255, 0.3)'
+            marginBottom: '24px',
+            fontFamily: 'Inter, sans-serif'
           }}>
-            <span style={{ color: '#08F0FF' }}>Hybrid Athletes</span> Global Leaderboard
+            <span style={{
+              background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              filter: 'drop-shadow(0 0 10px rgba(8, 240, 255, 0.25))'
+            }}>Hybrid</span>
+            <span style={{ color: '#FFFFFF' }}> Athletes Global Leaderboard</span>
           </h1>
           <p style={{
             fontSize: '18px',
             color: '#8D9299',
-            marginBottom: '8px'
+            maxWidth: '620px',
+            margin: '0 auto 24px auto',
+            lineHeight: '1.5'
           }}>
             Real-time ranking of the world's strongest, fastest all-rounders.
           </p>
-          <p style={{
-            fontSize: '14px',
-            color: '#8D9299',
-            fontStyle: 'italic'
-          }}>
-            Earn your place on the podium—balance power with endurance.
-          </p>
         </div>
 
-        {/* Podium */}
+        {/* Podium with Floor Line */}
+        <div style={{ position: 'relative' }}>
+          {/* Floor Line */}
+          <div style={{
+            position: 'absolute',
+            bottom: '-20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '600px',
+            height: '6px',
+            background: '#08F0FF',
+            borderRadius: '3px',
+            zIndex: 1
+          }} />
+          
+          {/* Podium Blocks */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'end',
+            justifyContent: 'center',
+            gap: '20px',
+            marginBottom: '40px'
+          }}>
+            {/* Second Place */}
+            {podiumData[1] && renderPodiumBlock(podiumData[1], 2)}
+            
+            {/* First Place */}
+            {podiumData[0] && renderPodiumBlock(podiumData[0], 1)}
+            
+            {/* Third Place */}
+            {podiumData[2] && renderPodiumBlock(podiumData[2], 3)}
+          </div>
+          
+          {/* Podium Tagline */}
+          <div style={{
+            textAlign: 'center',
+            fontSize: '14px',
+            color: '#8D9299',
+            fontStyle: 'italic',
+            marginTop: '20px'
+          }}>
+            Earn your spot—balance deadlifts with distance.
+          </div>
+        </div>
+
+        {/* Total Athletes Badge */}
         <div style={{
+          position: 'absolute',
+          bottom: '60px',
+          right: '40px',
+          width: '140px',
+          height: '140px',
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
           display: 'flex',
-          alignItems: 'end',
+          alignItems: 'center',
           justifyContent: 'center',
-          gap: '20px',
-          transform: 'perspective(1000px)',
-          animation: 'podiumRise 0.8s ease-out'
+          flexDirection: 'column',
+          zIndex: 2
         }}>
-          {/* Second Place */}
-          {podiumData[1] && renderPodiumBlock(podiumData[1], 2)}
-          
-          {/* First Place */}
-          {podiumData[0] && renderPodiumBlock(podiumData[0], 1)}
-          
-          {/* Third Place */}
-          {podiumData[2] && renderPodiumBlock(podiumData[2], 3)}
+          <div style={{
+            fontSize: '32px',
+            fontWeight: '800',
+            color: '#FFFFFF',
+            fontFamily: 'Inter, sans-serif'
+          }}>
+            {leaderboardData.length}
+          </div>
+          <div style={{
+            fontSize: '12px',
+            color: '#FFFFFF',
+            textAlign: 'center',
+            opacity: 0.9
+          }}>
+            TOTAL<br/>ATHLETES
+          </div>
         </div>
       </div>
 
-      {/* Filters Bar */}
+      {/* Filters Bar - Sticky */}
       <div style={{
         position: 'sticky',
         top: '0',
         zIndex: 10,
-        background: 'rgba(21, 22, 26, 0.9)',
+        background: '#15161AEE',
         backdropFilter: 'blur(10px)',
         borderBottom: '1px solid #1F2025',
         padding: '16px 20px'
@@ -397,44 +522,61 @@ const Leaderboard = () => {
         }}>
           {/* Score Range Slider */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <label style={{ color: '#8D9299', fontSize: '14px', fontWeight: '500' }}>
+            <label style={{ color: '#8D9299', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>
               Score 0-100
             </label>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={scoreRange[1]}
-              onChange={(e) => setScoreRange([0, parseInt(e.target.value)])}
-              style={{
-                width: '120px',
-                height: '4px',
-                background: '#08F0FF',
-                outline: 'none',
-                opacity: '0.8',
-                borderRadius: '2px'
-              }}
-            />
-            <span style={{ color: '#08F0FF', fontSize: '14px', fontWeight: '600' }}>
-              {scoreRange[1]}
-            </span>
+            <div style={{ position: 'relative' }}>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={scoreRange[1]}
+                onMouseDown={() => setIsDragging(true)}
+                onMouseUp={() => setIsDragging(false)}
+                onChange={(e) => setScoreRange([0, parseInt(e.target.value)])}
+                style={{
+                  width: '120px',
+                  height: '4px',
+                  background: '#08F0FF',
+                  outline: 'none',
+                  borderRadius: '2px',
+                  cursor: 'pointer'
+                }}
+              />
+              {isDragging && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-30px',
+                  right: '0',
+                  background: '#FF2DDE',
+                  color: 'white',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  fontWeight: '600'
+                }}>
+                  {scoreRange[1]}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Gender Pills */}
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '4px' }}>
             {['All', 'Male', 'Female'].map(gender => (
               <button
                 key={gender}
                 onClick={() => setGenderFilter(gender)}
                 style={{
-                  padding: '6px 16px',
+                  padding: '8px 16px',
                   borderRadius: '20px',
                   border: 'none',
-                  fontSize: '14px',
-                  fontWeight: '500',
+                  fontSize: '12px',
+                  fontWeight: '600',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
-                  background: genderFilter === gender ? '#08F0FF' : 'rgba(255, 255, 255, 0.1)',
+                  textTransform: 'uppercase',
+                  background: genderFilter === gender ? 'rgba(8, 240, 255, 0.85)' : 'rgba(255, 255, 255, 0.1)',
                   color: genderFilter === gender ? '#000' : '#8D9299'
                 }}
               >
@@ -454,18 +596,19 @@ const Leaderboard = () => {
             }} />
             <input
               type="text"
-              placeholder="Search athletes..."
+              placeholder="Search athletes…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
-                width: '180px',
+                width: '260px',
                 padding: '8px 12px 8px 36px',
                 borderRadius: '8px',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 background: 'rgba(255, 255, 255, 0.05)',
-                color: '#F5FAFF',
+                color: '#FFFFFF',
                 fontSize: '14px',
-                outline: 'none'
+                outline: 'none',
+                fontFamily: 'Inter, sans-serif'
               }}
             />
           </div>
@@ -477,199 +620,224 @@ const Leaderboard = () => {
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
-          background: 'rgba(21, 22, 26, 0.6)',
-          backdropFilter: 'blur(10px)',
+          background: '#15161A',
           borderRadius: '16px',
-          border: '1px solid rgba(8, 240, 255, 0.2)',
-          borderBottom: '4px solid #08F0FF',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderBottom: '2px solid #08F0FF',
           overflow: 'hidden',
           boxShadow: '0 12px 32px -24px rgba(0, 0, 0, 0.65)'
         }}>
           {/* Table Header */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '60px 60px 200px 80px 80px 100px repeat(6, 80px) 120px',
+            gridTemplateColumns: '60px 200px 80px 80px 100px 100px repeat(6, 80px) 120px',
             padding: '16px 20px',
-            borderBottom: '2px solid #08F0FF',
-            background: 'rgba(8, 240, 255, 0.05)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            background: 'rgba(255, 255, 255, 0.02)',
             fontSize: '12px',
             fontWeight: '600',
-            color: '#8D9299',
             textTransform: 'uppercase',
-            letterSpacing: '0.5px'
+            letterSpacing: '0.5px',
+            fontFamily: 'Inter, sans-serif'
           }}>
-            <div>Rank</div>
-            <div></div>
-            <div>Name</div>
-            <div>Age</div>
-            <div>Sex</div>
-            <div>Country</div>
-            <div style={{ color: '#08F0FF' }}>Hybrid</div>
-            <div style={{ color: '#5CFF5C' }}>Str</div>
-            <div style={{ color: '#FFA42D' }}>Spd</div>
-            <div style={{ color: '#B96DFF' }}>VO₂</div>
-            <div style={{ color: '#16D7FF' }}>Dist</div>
-            <div style={{ color: '#F9F871' }}>Vol</div>
-            <div style={{ color: '#2EFFC0' }}>Rec</div>
-            <div>Last Updated</div>
+            <div style={{ color: '#8D9299', cursor: 'pointer' }} onClick={() => handleSort('rank')}>
+              RANK {sortColumn === 'rank' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+            </div>
+            <div style={{ color: '#8D9299', cursor: 'pointer' }} onClick={() => handleSort('name')}>
+              NAME {sortColumn === 'name' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+            </div>
+            <div style={{ color: '#8D9299' }}>AGE</div>
+            <div style={{ color: '#8D9299' }}>SEX</div>
+            <div style={{ color: '#8D9299' }}>COUNTRY</div>
+            <div style={{ color: sortColumn === 'hybrid' ? '#08F0FF' : '#8D9299', cursor: 'pointer' }} onClick={() => handleSort('hybrid')}>
+              HYBRID {sortColumn === 'hybrid' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+            </div>
+            <div style={{ color: '#5CFF5C', cursor: 'pointer' }} onClick={() => handleSort('str')}>
+              STR {sortColumn === 'str' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+            </div>
+            <div style={{ color: '#FFA42D', cursor: 'pointer' }} onClick={() => handleSort('spd')}>
+              SPD {sortColumn === 'spd' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+            </div>
+            <div style={{ color: '#B96DFF', cursor: 'pointer' }} onClick={() => handleSort('vo2')}>
+              VO₂ {sortColumn === 'vo2' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+            </div>
+            <div style={{ color: '#16D7FF', cursor: 'pointer' }} onClick={() => handleSort('dist')}>
+              DIST {sortColumn === 'dist' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+            </div>
+            <div style={{ color: '#F9F871', cursor: 'pointer' }} onClick={() => handleSort('vol')}>
+              VOL {sortColumn === 'vol' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+            </div>
+            <div style={{ color: '#2EFFC0', cursor: 'pointer' }} onClick={() => handleSort('rec')}>
+              REC {sortColumn === 'rec' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+            </div>
+            <div style={{ color: '#8D9299' }}>UPDATED</div>
           </div>
 
           {/* Table Body */}
-          {tableData.length === 0 ? (
+          {filteredData.length === 0 ? (
             <div style={{
               padding: '60px 20px',
               textAlign: 'center',
               color: '#8D9299'
             }}>
-              {filteredData.length === 0 && leaderboardData.length > 0 ? 
+              {leaderboardData.length > 0 ? 
                 "No athletes match those filters—try widening the range." :
                 "No athletes yet—be the first to complete the assessment!"
               }
             </div>
           ) : (
-            tableData.map((athlete, index) => (
-              <div
-                key={`${athlete.display_name}-${athlete.profile_id}`}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '60px 60px 200px 80px 80px 100px repeat(6, 80px) 120px',
-                  padding: '16px 20px',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                  transition: 'all 0.2s',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(8, 240, 255, 0.05)';
-                  e.currentTarget.style.borderLeft = '4px solid #08F0FF';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.borderLeft = 'none';
-                }}
-              >
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  fontSize: '16px',
-                  fontWeight: '700',
-                  color: '#F5FAFF'
-                }}>
-                  #{athlete.rank}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <div style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
-                    display: 'flex',
+            filteredData.map((athlete, index) => {
+              const isTopThree = index < 3;
+              const medalEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+              
+              return (
+                <div
+                  key={`${athlete.display_name}-${athlete.profile_id}`}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '60px 200px 80px 80px 100px 100px repeat(6, 80px) 120px',
+                    padding: '12px 20px',
+                    height: '48px',
                     alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <User size={16} color="white" />
-                  </div>
-                </div>
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center'
-                }}>
-                  <div style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#F5FAFF'
-                  }}>
-                    {athlete.display_name}
-                  </div>
-                  <div style={{
-                    fontSize: '12px',
-                    color: '#8D9299'
-                  }}>
-                    Hybrid Athlete
-                  </div>
-                </div>
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  color: '#8D9299',
-                  fontSize: '14px'
-                }}>
-                  --
-                </div>
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  color: '#8D9299',
-                  fontSize: '14px'
-                }}>
-                  --
-                </div>
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  color: '#8D9299',
-                  fontSize: '14px'
-                }}>
-                  --
-                </div>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '16px',
-                  fontWeight: '700',
-                  color: athlete.score >= 80 ? '#08F0FF' : '#F5FAFF',
-                  textShadow: athlete.score >= 80 ? '0 0 8px rgba(8, 240, 255, 0.5)' : 'none',
-                  fontVariantNumeric: 'tabular-nums'
-                }}>
-                  {formatScore(athlete.score)}
-                </div>
-                {/* Pillar Scores */}
-                {athlete.score_breakdown ? [
-                  athlete.score_breakdown.strengthScore,
-                  athlete.score_breakdown.speedScore,
-                  athlete.score_breakdown.vo2Score,
-                  athlete.score_breakdown.distanceScore,
-                  athlete.score_breakdown.volumeScore,
-                  athlete.score_breakdown.recoveryScore
-                ].map((score, idx) => (
-                  <div key={idx} style={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                    background: index % 2 === 1 ? 'rgba(255, 255, 255, 0.02)' : 'transparent',
+                    transition: 'all 0.2s',
+                    cursor: 'pointer',
+                    fontFamily: 'Inter, sans-serif'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(8, 240, 255, 0.04)';
+                    e.currentTarget.style.borderLeft = '3px solid #08F0FF';
+                    e.currentTarget.style.paddingLeft = '17px';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = index % 2 === 1 ? 'rgba(255, 255, 255, 0.02)' : 'transparent';
+                    e.currentTarget.style.borderLeft = 'none';
+                    e.currentTarget.style.paddingLeft = '20px';
+                  }}
+                >
+                  {/* Rank */}
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
                     justifyContent: 'center',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#F5FAFF',
+                    fontSize: '16px',
+                    fontWeight: isTopThree ? '800' : '600',
+                    color: '#FFFFFF',
                     fontVariantNumeric: 'tabular-nums'
                   }}>
-                    {score ? formatScore(score) : '--'}
+                    {medalEmoji && <span style={{ marginRight: '4px' }}>{medalEmoji}</span>}
+                    #{index + 1}
                   </div>
-                )) : Array(6).fill(0).map((_, idx) => (
-                  <div key={idx} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#8D9299'
-                  }}>--</div>
-                ))}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '12px',
-                  color: '#8D9299'
-                }}>
-                  {athlete.completed_at ? 
-                    new Date(athlete.completed_at).toLocaleDateString() : 
-                    '--'
-                  }
+                  
+                  {/* Avatar + Name */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <User size={16} color="white" />
+                    </div>
+                    <div>
+                      <div style={{
+                        fontSize: '14px',
+                        fontWeight: isTopThree ? '700' : '600',
+                        color: '#FFFFFF'
+                      }}>
+                        {athlete.display_name}
+                      </div>
+                      <div style={{
+                        fontSize: '11px',
+                        color: '#8D9299'
+                      }}>
+                        Hybrid Athlete
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Age, Sex, Country */}
+                  <div style={{ textAlign: 'center', color: '#8D9299', fontSize: '14px', fontVariantNumeric: 'tabular-nums' }}>--</div>
+                  <div style={{ textAlign: 'center', color: '#8D9299', fontSize: '14px' }}>--</div>
+                  <div style={{ textAlign: 'center', color: '#8D9299', fontSize: '14px' }}>--</div>
+                  
+                  {/* Hybrid Score */}
+                  <div style={{
+                    textAlign: 'center',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    color: athlete.score >= 80 ? '#08F0FF' : '#FFFFFF',
+                    fontVariantNumeric: 'tabular-nums'
+                  }}>
+                    {formatScore(athlete.score)}
+                  </div>
+                  
+                  {/* Pillar Scores with Hover Bars */}
+                  {athlete.score_breakdown ? [
+                    { score: athlete.score_breakdown.strengthScore, color: '#5CFF5C' },
+                    { score: athlete.score_breakdown.speedScore, color: '#FFA42D' },
+                    { score: athlete.score_breakdown.vo2Score, color: '#B96DFF' },
+                    { score: athlete.score_breakdown.distanceScore, color: '#16D7FF' },
+                    { score: athlete.score_breakdown.volumeScore, color: '#F9F871' },
+                    { score: athlete.score_breakdown.recoveryScore, color: '#2EFFC0' }
+                  ].map((pillar, idx) => (
+                    <div key={idx} style={{
+                      textAlign: 'center',
+                      position: 'relative'
+                    }}>
+                      <div style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: '#FFFFFF',
+                        fontVariantNumeric: 'tabular-nums'
+                      }}>
+                        {pillar.score ? formatScore(pillar.score) : '--'}
+                      </div>
+                      {pillar.score && (
+                        <div 
+                          className="pillar-hover-bar"
+                          style={{
+                            position: 'absolute',
+                            bottom: '-2px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            width: '36px',
+                            height: '4px',
+                            background: pillar.color,
+                            borderRadius: '2px',
+                            opacity: 0,
+                            transition: 'opacity 0.2s'
+                          }}
+                        />
+                      )}
+                    </div>
+                  )) : Array(6).fill(0).map((_, idx) => (
+                    <div key={idx} style={{
+                      textAlign: 'center',
+                      color: '#8D9299',
+                      fontSize: '14px'
+                    }}>--</div>
+                  ))}
+                  
+                  {/* Updated */}
+                  <div style={{
+                    textAlign: 'center',
+                    fontSize: '12px',
+                    color: '#8D9299',
+                    fontVariantNumeric: 'tabular-nums'
+                  }}>
+                    {athlete.completed_at ? 
+                      new Date(athlete.completed_at).toLocaleDateString() : 
+                      '--'
+                    }
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
 
@@ -684,35 +852,35 @@ const Leaderboard = () => {
         </div>
       </div>
 
-      {/* Sticky CTA Strip */}
+      {/* CTA Ribbon */}
       {showCTA && (
         <div style={{
           position: 'fixed',
           bottom: '0',
           left: '0',
           right: '0',
-          background: 'linear-gradient(90deg, #15161A 0%, #131417 100%)',
+          height: '72px',
+          background: 'linear-gradient(90deg, rgba(8, 240, 255, 0.08), rgba(255, 45, 222, 0.08))',
           borderTop: '1px solid rgba(8, 240, 255, 0.2)',
-          padding: '20px',
-          textAlign: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           zIndex: 20,
           animation: 'slideUp 0.3s ease-out'
         }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: '20px',
-            maxWidth: '1200px',
-            margin: '0 auto'
+            gap: '20px'
           }}>
             <h3 style={{
               fontSize: '18px',
               fontWeight: '700',
-              color: '#F5FAFF',
-              margin: '0'
+              color: '#FFFFFF',
+              margin: '0',
+              fontFamily: 'Inter, sans-serif'
             }}>
-              Think you can break into the Top 3?
+              Think you can crack the Top 3? ⇢ Start Hybrid Interview
             </h3>
             <button
               onClick={() => window.location.href = '/'}
@@ -720,38 +888,59 @@ const Leaderboard = () => {
                 background: '#08F0FF',
                 border: 'none',
                 borderRadius: '24px',
-                padding: '12px 32px',
+                height: '48px',
+                padding: '0 32px',
                 color: '#000',
                 fontSize: '16px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
-                textTransform: 'none'
+                fontFamily: 'Inter, sans-serif'
               }}
               onMouseEnter={(e) => {
                 e.target.style.background = '#FF2DDE';
-                e.target.style.transform = 'scale(1.05)';
               }}
               onMouseLeave={(e) => {
                 e.target.style.background = '#08F0FF';
-                e.target.style.transform = 'scale(1)';
               }}
             >
-              Start Hybrid Interview →
+              Start Now
             </button>
           </div>
         </div>
       )}
 
       <style jsx>{`
-        @keyframes podiumRise {
+        @keyframes podiumRise1 {
           0% {
-            opacity: 0.6;
-            transform: perspective(1000px) translateY(30px);
+            opacity: 0;
+            transform: translateY(40px);
           }
           100% {
             opacity: 1;
-            transform: perspective(1000px) translateY(0);
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes podiumRise2 {
+          0% {
+            opacity: 0;
+            transform: translateY(40px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes podiumRise3 {
+          0% {
+            opacity: 0;
+            transform: translateY(40px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
           }
         }
 
@@ -773,14 +962,46 @@ const Leaderboard = () => {
           }
         }
 
-        .podium-block {
-          transform: rotateX(6deg);
+        /* Hover effect for pillar bars */
+        div:hover .pillar-hover-bar {
+          opacity: 1 !important;
         }
 
-        /* Responsive adjustments */
+        /* Slider thumb styling */
+        input[type="range"]::-webkit-slider-thumb {
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #FF2DDE;
+          cursor: pointer;
+          transform: scale(1);
+          transition: transform 0.2s;
+        }
+
+        input[type="range"]:active::-webkit-slider-thumb {
+          transform: scale(1.1);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #FF2DDE;
+          cursor: pointer;
+          border: none;
+          transform: scale(1);
+          transition: transform 0.2s;
+        }
+
+        input[type="range"]:active::-moz-range-thumb {
+          transform: scale(1.1);
+        }
+
+        /* Responsive */
         @media (max-width: 1279px) {
           .podium-block {
-            transform: rotateX(6deg) scale(0.8);
+            transform: scale(0.85);
           }
         }
 
