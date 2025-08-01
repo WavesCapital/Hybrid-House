@@ -1752,7 +1752,7 @@ const ProfilePage = () => {
                       <label className="block text-sm font-medium text-secondary mb-2">Display Name</label>
                       <Input
                         type="text"
-                        value={profileForm.display_name}
+                        value={profileForm.display_name || ''}
                         onChange={(e) => setProfileForm({...profileForm, display_name: e.target.value})}
                         placeholder="Public display name"
                         className="neon-input"
