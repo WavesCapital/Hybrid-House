@@ -539,18 +539,25 @@ const ProfilePage = () => {
       setIsAutoSaving(true);
       
       // Filter out fields that may cause database column errors
-      // Only include fields that exist in the current database schema
+      // Convert empty strings to null for proper database handling
       const safeFormData = {
-        name: formData.name,
-        display_name: formData.display_name,
-        location: formData.location,
-        website: formData.website,
-        gender: formData.gender,
-        date_of_birth: formData.date_of_birth,
-        units_preference: formData.units_preference,
-        privacy_level: formData.privacy_level
+        name: formData.name || null,
+        display_name: formData.display_name || null,
+        location: formData.location || null,
+        website: formData.website || null,
+        gender: formData.gender || null,
+        date_of_birth: formData.date_of_birth || null, // Convert empty string to null
+        units_preference: formData.units_preference || 'imperial',
+        privacy_level: formData.privacy_level || 'private'
         // Temporarily exclude 'country' until database schema is updated
       };
+      
+      // Remove any fields that are still empty strings after conversion
+      Object.keys(safeFormData).forEach(key => {
+        if (safeFormData[key] === '') {
+          safeFormData[key] = null;
+        }
+      });
       
       const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, safeFormData, {
         headers: {
@@ -561,13 +568,10 @@ const ProfilePage = () => {
 
       setUserProfile(response.data.profile);
       
-      // Show success indication with warning if country was excluded
-      const hasCountry = formData.country && formData.country !== '';
+      // Show success indication
       toast({
         title: "Saved",
-        description: hasCountry 
-          ? "Profile updated (country field temporarily unavailable)" 
-          : "Profile updated automatically",
+        description: "Profile updated automatically",
         variant: "default",
         duration: 2000,
       });
