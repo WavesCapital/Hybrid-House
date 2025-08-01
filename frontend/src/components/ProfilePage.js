@@ -601,6 +601,15 @@ const ProfilePage = () => {
     };
   }, [autoSaveTimeout]);
 
+  // Handle profile form field changes with auto-save
+  const handleProfileFormChange = useCallback((fieldName, value) => {
+    const updatedForm = { ...profileForm, [fieldName]: value };
+    setProfileForm(updatedForm);
+    
+    // Trigger auto-save with debouncing
+    debouncedAutoSave(updatedForm);
+  }, [profileForm, debouncedAutoSave]);
+
   // Legacy profile form update function (for the edit profile form)
   const handleUpdateProfile = useCallback(async () => {
     if (!user || !session) {
