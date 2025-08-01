@@ -230,7 +230,7 @@ const Leaderboard = () => {
 
         {/* Content Container */}
         <div style={{
-          padding: '32px 24px 32px 24px',
+          padding: '32px 24px 40px 24px',
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
@@ -239,7 +239,8 @@ const Leaderboard = () => {
           textAlign: 'center',
           paddingTop: '80px',
           position: 'relative',
-          zIndex: 2
+          zIndex: 2,
+          boxSizing: 'border-box'
         }}>
           {/* Avatar with Enhanced Design */}
           <div style={{
