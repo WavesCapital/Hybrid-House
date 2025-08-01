@@ -1827,7 +1827,7 @@ const ProfilePage = () => {
                       <Input
                         type="text"
                         value={profileForm.name || ''}
-                        onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
+                        onChange={(e) => handleProfileFormChange('name', e.target.value)}
                         placeholder="Your full name"
                         className="neon-input"
                       />
