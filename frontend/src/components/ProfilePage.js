@@ -613,9 +613,20 @@ const ProfilePage = () => {
 
   // Update athlete profile privacy setting
   const updateProfilePrivacy = useCallback(async (profileId, isPublic) => {
-    if (!user || !session) return;
+    console.log('🔄 updateProfilePrivacy called:', { profileId, isPublic, user: !!user, session: !!session });
+    
+    if (!user || !session) {
+      console.error('❌ No user or session available for privacy update');
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to update privacy settings",
+        variant: "destructive",
+      });
+      return;
+    }
     
     try {
+      console.log('🚀 Starting privacy update request...');
       setUpdatingPrivacy(prev => ({ ...prev, [profileId]: true }));
       
       const response = await axios.put(
@@ -628,6 +639,8 @@ const ProfilePage = () => {
           }
         }
       );
+
+      console.log('✅ Privacy update response:', response.data);
 
       // Update the local state
       setProfiles(prevProfiles => 
@@ -644,10 +657,22 @@ const ProfilePage = () => {
         variant: "default",
       });
     } catch (error) {
-      console.error('Error updating privacy:', error);
+      console.error('❌ Error updating privacy:', error);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
+      
+      let errorMessage = "Failed to update privacy setting";
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        errorMessage = "Authentication required. Please sign in again.";
+      } else if (error.response?.status === 404) {
+        errorMessage = "Profile not found or you don't have permission to edit it.";
+      } else if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to update privacy setting",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
