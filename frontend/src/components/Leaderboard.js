@@ -388,95 +388,86 @@ const Leaderboard = () => {
       {/* Hero Section with Podium */}
       <div style={{ 
         minHeight: '45vh',
-        padding: '40px 20px',
+        padding: '96px 20px 40px 20px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         position: 'relative'
       }}>
-        {/* Hero Headlines */}
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+        {/* Title Block */}
+        <div style={{ textAlign: 'center', marginBottom: '56px' }}>
           <h1 style={{
             fontSize: '48px',
-            fontWeight: '800',
-            marginBottom: '24px',
-            fontFamily: 'Inter, sans-serif'
+            fontWeight: '700',
+            marginBottom: '40px',
+            fontFamily: 'Inter, sans-serif',
+            maxWidth: '780px',
+            lineHeight: '1.1'
           }}>
             <span style={{
               background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
-              filter: 'drop-shadow(0 0 10px rgba(8, 240, 255, 0.25))'
+              filter: 'drop-shadow(0 0 6px rgba(8, 240, 255, 0.15))'
             }}>Hybrid</span>
             <span style={{ color: '#FFFFFF' }}> Athletes Global Leaderboard</span>
           </h1>
           <p style={{
-            fontSize: '18px',
+            fontSize: '20px',
+            fontWeight: '400',
             color: '#8D9299',
-            maxWidth: '620px',
-            margin: '0 auto 24px auto',
+            margin: '0 auto 32px auto',
             lineHeight: '1.5'
           }}>
             Real-time ranking of the world's strongest, fastest all-rounders.
           </p>
         </div>
 
-        {/* Podium with Floor Line */}
-        <div style={{ position: 'relative' }}>
+        {/* Podium Area */}
+        <div style={{ position: 'relative', marginBottom: '40px' }}>
           {/* Floor Line */}
           <div style={{
             position: 'absolute',
-            bottom: '-20px',
+            bottom: '-12px',
             left: '50%',
             transform: 'translateX(-50%)',
-            width: '600px',
+            width: '70%',
+            maxWidth: '500px',
             height: '6px',
             background: '#08F0FF',
             borderRadius: '3px',
             zIndex: 1
           }} />
           
-          {/* Podium Blocks */}
+          {/* Podium Cards */}
           <div style={{
             display: 'flex',
             alignItems: 'end',
             justifyContent: 'center',
-            gap: '20px',
-            marginBottom: '40px'
+            gap: '32px'
           }}>
             {/* Second Place */}
-            {podiumData[1] && renderPodiumBlock(podiumData[1], 2)}
+            {podiumData[1] && renderMinimalPodiumCard(podiumData[1], 2)}
             
             {/* First Place */}
-            {podiumData[0] && renderPodiumBlock(podiumData[0], 1)}
+            {podiumData[0] && renderMinimalPodiumCard(podiumData[0], 1)}
             
             {/* Third Place */}
-            {podiumData[2] && renderPodiumBlock(podiumData[2], 3)}
-          </div>
-          
-          {/* Podium Tagline */}
-          <div style={{
-            textAlign: 'center',
-            fontSize: '14px',
-            color: '#8D9299',
-            fontStyle: 'italic',
-            marginTop: '20px'
-          }}>
-            Earn your spot—balance deadlifts with distance.
+            {podiumData[2] && renderMinimalPodiumCard(podiumData[2], 3)}
           </div>
         </div>
 
         {/* Total Athletes Badge */}
         <div style={{
           position: 'absolute',
-          bottom: '60px',
+          bottom: '32px',
           right: '40px',
-          width: '140px',
-          height: '140px',
+          width: '120px',
+          height: '120px',
           borderRadius: '50%',
-          background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
+          background: 'rgba(8, 240, 255, 0.85)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -484,20 +475,22 @@ const Leaderboard = () => {
           zIndex: 2
         }}>
           <div style={{
-            fontSize: '32px',
-            fontWeight: '800',
+            fontSize: '28px',
+            fontWeight: '700',
             color: '#FFFFFF',
             fontFamily: 'Inter, sans-serif'
           }}>
             {leaderboardData.length}
           </div>
           <div style={{
-            fontSize: '12px',
+            fontSize: '11px',
+            fontWeight: '400',
             color: '#FFFFFF',
             textAlign: 'center',
+            textTransform: 'uppercase',
             opacity: 0.9
           }}>
-            TOTAL<br/>ATHLETES
+            ATHLETES
           </div>
         </div>
       </div>
