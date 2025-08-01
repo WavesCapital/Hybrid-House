@@ -127,86 +127,59 @@ const Leaderboard = () => {
     }
   };
 
-  const renderPodiumBlock = (athlete, position) => {
+  const renderMinimalPodiumCard = (athlete, position) => {
     if (!athlete) return null;
     
     const configs = {
       1: { 
-        width: '240px', 
-        height: '220px', 
-        glow: '#08F0FF',
-        trophyColor: '#FFD700',
-        trophyIcon: '🏆',
-        rimColor: '#08F0FF'
+        width: '220px', 
+        height: '200px', 
+        borderColor: '#FFD700', // Gold
+        trophyIcon: '🥇'
       },
       2: { 
         width: '200px', 
         height: '180px', 
-        glow: '#B0C4FF',
-        trophyColor: '#B0B0B0', 
-        trophyIcon: '🥈',
-        rimColor: '#B0C4FF'
+        borderColor: '#B0B0B0', // Silver
+        trophyIcon: '🥈'
       },
       3: { 
         width: '200px', 
         height: '180px', 
-        glow: '#FF9E59',
-        trophyColor: '#CD7F32',
-        trophyIcon: '🥉', 
-        rimColor: '#FF9E59'
+        borderColor: '#CD7F32', // Bronze
+        trophyIcon: '🥉'
       }
     };
     
     const config = configs[position];
     
-    const podiumStyle = {
+    const cardStyle = {
       width: config.width,
       height: config.height,
-      background: 'linear-gradient(145deg, #15161A 0%, #1A1B20 100%)',
+      background: '#15161A',
       borderRadius: '8px',
+      borderTop: `2px solid ${config.borderColor}`,
       position: 'relative',
       cursor: 'pointer',
-      transition: 'all 0.45s cubic-bezier(0.2, 1.2, 0.3, 1)',
-      border: '1px solid rgba(255, 255, 255, 0.1)',
-      borderTop: `2px solid ${config.rimColor}`,
-      boxShadow: `
-        0 12px 32px -24px rgba(0, 0, 0, 0.65),
-        0 0 20px ${config.glow}33
-      `,
-      animation: `podiumRise${position} 0.45s cubic-bezier(0.2, 1.2, 0.3, 1) forwards`,
-      animationDelay: `${(position - 1) * 80}ms`,
-      transform: 'translateY(40px)',
-      opacity: 0
+      transition: 'all 0.35s ease',
+      boxShadow: 'inset 0 1px 3px rgba(0, 0, 0, 0.3)',
+      opacity: 0,
+      transform: 'translateY(20px)',
+      animation: `minimalCardRise 350ms ease-out forwards`,
+      animationDelay: `${(position - 1) * 80}ms`
     };
-
-    const pillarData = athlete.score_breakdown ? [
-      { name: 'Str', value: athlete.score_breakdown.strengthScore, color: '#5CFF5C' },
-      { name: 'Spd', value: athlete.score_breakdown.speedScore, color: '#FFA42D' },
-      { name: 'VO₂', value: athlete.score_breakdown.vo2Score, color: '#B96DFF' },
-      { name: 'Dist', value: athlete.score_breakdown.distanceScore, color: '#16D7FF' },
-      { name: 'Vol', value: athlete.score_breakdown.volumeScore, color: '#F9F871' },
-      { name: 'Rec', value: athlete.score_breakdown.recoveryScore, color: '#2EFFC0' }
-    ] : [];
 
     return (
       <div 
-        className="podium-block"
-        style={podiumStyle}
+        className="minimal-podium-card"
+        style={cardStyle}
         onMouseEnter={(e) => {
-          e.currentTarget.style.boxShadow = `
-            0 16px 40px -20px rgba(0, 0, 0, 0.8),
-            0 0 30px ${config.glow}66
-          `;
-          e.currentTarget.querySelector('.podium-avatar').style.borderColor = config.glow;
-          e.currentTarget.querySelector('.podium-avatar').style.filter = `drop-shadow(0 0 10px ${config.glow})`;
+          e.currentTarget.style.transform = 'translateY(-3px)';
+          e.currentTarget.style.borderTopColor = config.borderColor + 'DD'; // 30% brighter
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.boxShadow = `
-            0 12px 32px -24px rgba(0, 0, 0, 0.65),
-            0 0 20px ${config.glow}33
-          `;
-          e.currentTarget.querySelector('.podium-avatar').style.borderColor = config.glow;
-          e.currentTarget.querySelector('.podium-avatar').style.filter = 'none';
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.borderTopColor = config.borderColor;
         }}
       >
         {/* Trophy Icon */}
@@ -215,9 +188,8 @@ const Leaderboard = () => {
           top: '16px',
           left: '50%',
           transform: 'translateX(-50%)',
-          fontSize: '28px',
-          zIndex: 2,
-          color: config.trophyColor
+          fontSize: '24px',
+          zIndex: 2
         }}>
           {config.trophyIcon}
         </div>
@@ -231,24 +203,20 @@ const Leaderboard = () => {
           alignItems: 'center',
           justifyContent: 'center',
           textAlign: 'center',
-          marginTop: '20px'
+          marginTop: '16px'
         }}>
           {/* Avatar */}
-          <div 
-            className="podium-avatar"
-            style={{
-              width: '56px',
-              height: '56px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '12px',
-              border: `2px solid ${config.glow}`,
-              transition: 'all 0.3s ease'
-            }}
-          >
+          <div style={{
+            width: '56px',
+            height: '56px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '12px',
+            border: `1px solid ${config.borderColor}`
+          }}>
             <User size={24} color="white" />
           </div>
 
@@ -263,9 +231,9 @@ const Leaderboard = () => {
             {athlete.display_name}
           </div>
 
-          {/* Role */}
+          {/* Label */}
           <div style={{
-            fontSize: '13px',
+            fontSize: '12px',
             fontWeight: '400',
             color: '#8D9299',
             marginBottom: '16px'
@@ -278,7 +246,6 @@ const Leaderboard = () => {
             fontSize: '32px',
             fontWeight: '800',
             color: '#08F0FF',
-            marginBottom: '4px',
             fontVariantNumeric: 'tabular-nums',
             fontFamily: 'Inter, sans-serif'
           }}>
@@ -289,23 +256,6 @@ const Leaderboard = () => {
               marginLeft: '4px',
               color: '#8D9299'
             }}>pts</span>
-          </div>
-
-          {/* Pillar Micro-bars */}
-          <div style={{
-            display: 'flex',
-            gap: '8px',
-            marginTop: '12px'
-          }}>
-            {pillarData.map((pillar, idx) => (
-              <div key={idx} style={{
-                width: '60px',
-                height: '4px',
-                background: pillar.color,
-                borderRadius: '2px',
-                opacity: pillar.value ? 1 : 0.3
-              }} />
-            ))}
           </div>
         </div>
       </div>
