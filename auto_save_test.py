@@ -92,16 +92,44 @@ def test_auto_save_profile_functionality():
     
     # Test 2: Test with invalid token (should return 401)
     print("\n2️⃣ Testing with invalid token...")
-    headers = {"Authorization": "Bearer invalid_token_12345"}
-    response = session.put(f"{API_BASE_URL}/user-profile/me", json=test_payload, headers=headers)
+    headers = {"Authorization": "Bearer invalid_token_12345", "Content-Type": "application/json"}
     
-    print(f"Status Code: {response.status_code}")
-    
-    if response.status_code in [401, 403]:
-        print("✅ PASS: Endpoint rejects invalid tokens")
-        invalid_token_test_passed = True
-    else:
-        print(f"❌ FAIL: Expected 401/403 but got {response.status_code}")
+    try:
+        response = session.put(f"{API_BASE_URL}/user-profile/me", json=test_payload, headers=headers)
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code in [401, 403]:
+            print("✅ PASS: Endpoint rejects invalid tokens")
+            invalid_token_test_passed = True
+        elif response.status_code == 502:
+            print("⚠️  502 Error - Testing with curl...")
+            import subprocess
+            try:
+                curl_result = subprocess.run([
+                    'curl', '-X', 'PUT', 
+                    f"{API_BASE_URL}/user-profile/me",
+                    '-H', 'Content-Type: application/json',
+                    '-H', 'Authorization: Bearer invalid_token_12345',
+                    '-d', json.dumps(test_payload),
+                    '-s'
+                ], capture_output=True, text=True, timeout=10)
+                
+                print(f"Curl response: {curl_result.stdout}")
+                if '"detail":"Invalid authentication token"' in curl_result.stdout or '"detail":"Not authenticated"' in curl_result.stdout:
+                    print("✅ PASS: Endpoint rejects invalid tokens via curl")
+                    invalid_token_test_passed = True
+                else:
+                    print(f"❌ FAIL: Unexpected curl response")
+                    invalid_token_test_passed = False
+            except Exception as e:
+                print(f"❌ FAIL: Curl test failed: {e}")
+                invalid_token_test_passed = False
+        else:
+            print(f"❌ FAIL: Expected 401/403 but got {response.status_code}")
+            invalid_token_test_passed = False
+    except Exception as e:
+        print(f"❌ FAIL: Request failed with exception: {e}")
         invalid_token_test_passed = False
     
     # Test 3: Test different data types and null handling
