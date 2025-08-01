@@ -2253,12 +2253,12 @@ async def get_leaderboard():
                         'profile_id': profile.get('id'),
                         'completed_at': profile.get('completed_at'),
                         'score_breakdown': {
-                            'strength_score': score_data.get('strength_score'),
-                            'endurance_score': score_data.get('endurance_score'),
-                            'power_score': score_data.get('power_score'),
-                            'agility_score': score_data.get('agility_score'),
-                            'recovery_score': score_data.get('recovery_score'),
-                            'flexibility_score': score_data.get('flexibility_score')
+                            'strengthScore': score_data.get('strengthScore'),
+                            'speedScore': score_data.get('speedScore'),
+                            'vo2Score': score_data.get('vo2Score'),
+                            'distanceScore': score_data.get('distanceScore'),
+                            'volumeScore': score_data.get('volumeScore'),
+                            'recoveryScore': score_data.get('recoveryScore')
                         }
                     }
             except Exception as e:
