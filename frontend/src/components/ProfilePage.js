@@ -538,18 +538,17 @@ const ProfilePage = () => {
     try {
       setIsAutoSaving(true);
       
-      // Filter out fields that may cause database column errors
-      // Convert empty strings to null for proper database handling
+      // Include all fields including country (now that database column exists)
       const safeFormData = {
         name: formData.name || null,
         display_name: formData.display_name || null,
         location: formData.location || null,
         website: formData.website || null,
         gender: formData.gender || null,
-        date_of_birth: formData.date_of_birth || null, // Convert empty string to null
+        date_of_birth: formData.date_of_birth || null,
+        country: formData.country || null, // Now including country!
         units_preference: formData.units_preference || 'imperial',
         privacy_level: formData.privacy_level || 'private'
-        // Temporarily exclude 'country' until database schema is updated
       };
       
       // Remove any fields that are still empty strings after conversion
