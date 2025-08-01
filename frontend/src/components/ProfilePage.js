@@ -538,7 +538,21 @@ const ProfilePage = () => {
     try {
       setIsAutoSaving(true);
       
-      const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, formData, {
+      // Filter out fields that may cause database column errors
+      // Only include fields that exist in the current database schema
+      const safeFormData = {
+        name: formData.name,
+        display_name: formData.display_name,
+        location: formData.location,
+        website: formData.website,
+        gender: formData.gender,
+        date_of_birth: formData.date_of_birth,
+        units_preference: formData.units_preference,
+        privacy_level: formData.privacy_level
+        // Temporarily exclude 'country' until database schema is updated
+      };
+      
+      const response = await axios.put(`${BACKEND_URL}/api/user-profile/me`, safeFormData, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json'
@@ -547,10 +561,13 @@ const ProfilePage = () => {
 
       setUserProfile(response.data.profile);
       
-      // Show subtle success indication
+      // Show success indication with warning if country was excluded
+      const hasCountry = formData.country && formData.country !== '';
       toast({
         title: "Saved",
-        description: "Profile updated automatically",
+        description: hasCountry 
+          ? "Profile updated (country field temporarily unavailable)" 
+          : "Profile updated automatically",
         variant: "default",
         duration: 2000,
       });
