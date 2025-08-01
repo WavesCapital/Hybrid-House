@@ -266,8 +266,24 @@ const ProfilePage = () => {
         });
       } catch (error) {
         console.error('Error fetching user profile:', error);
+        console.log('Error details:', error.response?.data);
         console.log('User profile does not exist yet - will be created on first save');
         // User profile might not exist yet, which is fine
+        // Set default empty profile to allow form editing
+        const defaultProfile = {
+          name: '',
+          display_name: '',
+          location: '',
+          website: '',
+          gender: '',
+          date_of_birth: '',
+          country: '',
+          units_preference: 'imperial',
+          privacy_level: 'private'
+        };
+        setUserProfile(defaultProfile);
+        setProfileForm(defaultProfile);
+        setTempFieldValues(defaultProfile);
       }
     };
 
