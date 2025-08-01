@@ -590,7 +590,7 @@ const ProfilePage = () => {
     }, 1500); // Wait 1.5 seconds after user stops typing
 
     setAutoSaveTimeout(timeoutId);
-  }, [autoSaveProfile, autoSaveTimeout]);
+  }, [autoSaveProfile]); // Remove autoSaveTimeout from dependency array
 
   // Cleanup timeout on unmount
   useEffect(() => {
