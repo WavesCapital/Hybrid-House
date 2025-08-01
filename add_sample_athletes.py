@@ -40,8 +40,8 @@ def add_sample_athletes():
             },
             "weight_lb": 185,
             "vo2_max": 58.5,
-            "resting_hr": 48,
-            "hrv": 65,
+            "resting_hr_bpm": 48,
+            "hrv_ms": 65,
             "pb_mile_seconds": 285,  # 4:45
             "weekly_miles": 45,
             "long_run_miles": 18,
@@ -74,8 +74,8 @@ def add_sample_athletes():
             },
             "weight_lb": 135,
             "vo2_max": 62.0,
-            "resting_hr": 45,
-            "hrv": 72,
+            "resting_hr_bpm": 45,
+            "hrv_ms": 72,
             "pb_mile_seconds": 270,  # 4:30
             "weekly_miles": 55,
             "long_run_miles": 20,
@@ -108,8 +108,8 @@ def add_sample_athletes():
             },
             "weight_lb": 205,
             "vo2_max": 55.0,
-            "resting_hr": 52,
-            "hrv": 58,
+            "resting_hr_bpm": 52,
+            "hrv_ms": 58,
             "pb_mile_seconds": 295,  # 4:55
             "weekly_miles": 35,
             "long_run_miles": 15,
