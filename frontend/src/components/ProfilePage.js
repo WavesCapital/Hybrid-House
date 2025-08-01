@@ -34,6 +34,10 @@ const ProfilePage = () => {
     units_preference: 'imperial',
     privacy_level: 'private'
   });
+  
+  // Auto-save states
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [autoSaveTimeout, setAutoSaveTimeout] = useState(null);
   // Profile editing states - individual field management
   const [editingFields, setEditingFields] = useState({});
   const [savingFields, setSavingFields] = useState({});
