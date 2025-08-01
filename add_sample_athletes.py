@@ -21,6 +21,7 @@ def add_sample_athletes():
     sample_athletes = [
         {
             "id": str(uuid.uuid4()),
+            "user_id": "sample-user-alex-thunder",
             "profile_json": {
                 "display_name": "Alex Thunder",
                 "first_name": "Alex",
@@ -55,6 +56,7 @@ def add_sample_athletes():
         },
         {
             "id": str(uuid.uuid4()),
+            "user_id": "sample-user-maya-storm",
             "profile_json": {
                 "display_name": "Maya Storm",
                 "first_name": "Maya",
@@ -89,6 +91,7 @@ def add_sample_athletes():
         },
         {
             "id": str(uuid.uuid4()),
+            "user_id": "sample-user-iron-mike",
             "profile_json": {
                 "display_name": "Iron Mike",
                 "first_name": "Michael",
