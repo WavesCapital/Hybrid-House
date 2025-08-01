@@ -1944,8 +1944,8 @@ const ProfilePage = () => {
                     <div>
                       <label className="block text-sm font-medium text-secondary mb-2">Privacy</label>
                       <select
-                        value={profileForm.privacy_level}
-                        onChange={(e) => setProfileForm({...profileForm, privacy_level: e.target.value})}
+                        value={profileForm.privacy_level || 'private'}
+                        onChange={(e) => handleProfileFormChange('privacy_level', e.target.value)}
                         className="neon-input w-full"
                       >
                         <option value="private">Private</option>
