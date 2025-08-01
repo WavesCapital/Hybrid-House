@@ -1917,8 +1917,8 @@ const ProfilePage = () => {
                     <div>
                       <label className="block text-sm font-medium text-secondary mb-2">Gender</label>
                       <select
-                        value={profileForm.gender}
-                        onChange={(e) => setProfileForm({...profileForm, gender: e.target.value})}
+                        value={profileForm.gender || ''}
+                        onChange={(e) => handleProfileFormChange('gender', e.target.value)}
                         className="neon-input w-full"
                       >
                         <option value="">Select gender</option>
