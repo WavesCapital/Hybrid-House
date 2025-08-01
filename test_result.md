@@ -154,6 +154,18 @@ backend:
         comment: "🎉 DELETE ATHLETE PROFILE ENDPOINT COMPREHENSIVE TESTING COMPLETE: Executed comprehensive testing of the DELETE /api/athlete-profile/{profile_id} endpoint as requested in the review. ALL 5/5 CORE REQUIREMENTS VERIFIED (100% SUCCESS RATE): ✅ DELETE Endpoint Exists - Confirmed endpoint exists at lines 1008-1038 in server.py and properly requires JWT authentication using verify_jwt dependency ✅ User Ownership Validation - Endpoint validates user ownership by checking both profile_id and user_id in database query (line 1015: .eq('id', profile_id).eq('user_id', user_id)) ✅ Appropriate Error Messages - Returns 404 for profile not found/different user (lines 1017-1021), 401/403 for missing authentication, proper JSON error format with detail field ✅ Successful Deletion Response - Returns proper success message 'Profile deleted successfully' with profile_id (lines 1026-1029) ✅ Database Deletion Verification - Endpoint actually removes profile from database using Supabase delete operation (line 1024: supabase.table('athlete_profiles').delete().eq('id', profile_id).eq('user_id', user_id).execute()). CRITICAL VERIFICATION: Internal backend testing (localhost:8001) confirms DELETE endpoint works correctly and returns proper 401 'Not authenticated' response. External proxy/load balancer has DELETE method configuration issue (502 errors) but this is infrastructure-related, not backend implementation. The backend delete functionality is fully operational and meets all review requirements."
 
 frontend:
+  - task: "Fix Privacy Toggle UI Functionality"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ProfilePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PRIVACY TOGGLE UI FIXED: Enhanced updateProfilePrivacy function with comprehensive debugging and error handling. Updated profile fetching logic to use user-specific endpoint (/api/user-profile/me/athlete-profiles) when authenticated, ensuring users can only modify their own profiles. Added conditional rendering for privacy toggles - clickable for authenticated users viewing their own profiles, read-only for public viewing. Enhanced error messages for authentication and permission issues."
+
   - task: "Delete Button UI in Profile Table"
     implemented: true
     working: true
