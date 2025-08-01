@@ -105,6 +105,18 @@
 user_problem_statement: "Add delete functionality to athlete profiles in the Hybrid Score History table on the /profile page. Users should be able to delete athlete profiles by clicking a small x button all the way to the right on the table."
 
 backend:
+  - task: "Fix User-Specific Profile Endpoint with Complete Score Filtering"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ USER-SPECIFIC PROFILE ENDPOINT ENHANCED: Updated GET /api/user-profile/me/athlete-profiles to use user_id filtering instead of user_profile_id and apply same complete score filtering as main athlete-profiles endpoint. Only returns profiles with all required scores (hybridScore, strengthScore, speedScore, vo2Score, distanceScore, volumeScore, recoveryScore). Includes all individual fields for table display and is_public field for privacy toggles."
+
   - task: "Filter Athlete Profiles to Show Only Those With Complete Scores"
     implemented: true
     working: true
