@@ -132,25 +132,22 @@ const Leaderboard = () => {
     
     const configs = {
       1: { 
-        width: '280px', 
-        height: '350px', 
-        borderColor: '#FFD700', // Gold
+        width: '260px', 
+        height: '280px', 
         trophyIcon: '🏆',
-        glowColor: '#08F0FF'
+        trophyColor: '#FFD700'
       },
       2: { 
-        width: '240px', 
-        height: '330px', 
-        borderColor: '#B0B0B0', // Silver
+        width: '220px', 
+        height: '260px', 
         trophyIcon: '🥈',
-        glowColor: '#08F0FF'
+        trophyColor: '#C0C0C0'
       },
       3: { 
-        width: '240px', 
-        height: '330px', 
-        borderColor: '#CD7F32', // Bronze
+        width: '220px', 
+        height: '260px', 
         trophyIcon: '🥉',
-        glowColor: '#08F0FF'
+        trophyColor: '#CD7F32'
       }
     };
     
@@ -159,22 +156,21 @@ const Leaderboard = () => {
     const cardStyle = {
       width: config.width,
       height: config.height,
-      background: 'rgba(255, 255, 255, 0.03)',
+      background: 'rgba(255, 255, 255, 0.05)',
       backdropFilter: 'blur(20px)',
-      borderRadius: '20px',
-      border: '1px solid rgba(8, 240, 255, 0.2)',
+      borderRadius: '24px',
+      border: '1px solid rgba(8, 240, 255, 0.15)',
       position: 'relative',
       cursor: 'pointer',
       transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       boxShadow: `
-        0 20px 40px -20px rgba(0, 0, 0, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
         inset 0 1px 0 rgba(255, 255, 255, 0.1)
       `,
       opacity: 0,
-      transform: 'translateY(30px)',
-      animation: `minimalCardRise 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
-      animationDelay: `${(position - 1) * 120}ms`,
+      transform: 'translateY(40px)',
+      animation: `minimalCardRise 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
+      animationDelay: `${(position - 1) * 150}ms`,
       overflow: 'hidden'
     };
 
@@ -183,197 +179,125 @@ const Leaderboard = () => {
         className="minimal-podium-card"
         style={cardStyle}
         onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
+          e.currentTarget.style.transform = 'translateY(-12px) scale(1.03)';
           e.currentTarget.style.boxShadow = `
-            0 25px 50px -20px rgba(0, 0, 0, 0.6),
-            0 0 0 1px rgba(8, 240, 255, 0.3),
+            0 35px 70px -12px rgba(0, 0, 0, 0.4),
             inset 0 1px 0 rgba(255, 255, 255, 0.15),
-            0 0 30px rgba(8, 240, 255, 0.2)
+            0 0 40px rgba(8, 240, 255, 0.15)
           `;
-          e.currentTarget.style.border = '1px solid rgba(8, 240, 255, 0.4)';
+          e.currentTarget.style.border = '1px solid rgba(8, 240, 255, 0.25)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.transform = 'translateY(0) scale(1)';
           e.currentTarget.style.boxShadow = `
-            0 20px 40px -20px rgba(0, 0, 0, 0.4),
-            0 0 0 1px rgba(255, 255, 255, 0.05),
+            0 25px 50px -12px rgba(0, 0, 0, 0.25),
             inset 0 1px 0 rgba(255, 255, 255, 0.1)
           `;
-          e.currentTarget.style.border = '1px solid rgba(8, 240, 255, 0.2)';
+          e.currentTarget.style.border = '1px solid rgba(8, 240, 255, 0.15)';
         }}
       >
-        {/* Gradient Overlay */}
+        {/* Subtle gradient overlay */}
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
-          height: '60%',
-          background: `linear-gradient(180deg, rgba(8, 240, 255, 0.05) 0%, transparent 100%)`,
-          borderRadius: '20px 20px 0 0',
+          height: '40%',
+          background: `linear-gradient(180deg, rgba(8, 240, 255, 0.03) 0%, transparent 100%)`,
+          borderRadius: '24px 24px 0 0',
           zIndex: 1
         }} />
 
-        {/* Trophy Icon with Glow */}
+        {/* Trophy Icon */}
         <div style={{
           position: 'absolute',
-          top: '24px',
+          top: '32px',
           left: '50%',
           transform: 'translateX(-50%)',
-          fontSize: '36px',
+          fontSize: '40px',
           zIndex: 3,
-          filter: 'drop-shadow(0 0 10px rgba(255, 215, 0, 0.6))',
-          animation: 'trophyGlow 3s ease-in-out infinite alternate'
+          filter: `drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))`,
+          animation: position === 1 ? 'trophyGlow 4s ease-in-out infinite alternate' : 'none'
         }}>
           {config.trophyIcon}
         </div>
 
-        {/* Content Container */}
+        {/* Content Container - Clean and Spacious */}
         <div style={{
-          padding: '32px 24px 40px 24px',
+          padding: '40px 32px 36px 32px',
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
           textAlign: 'center',
-          paddingTop: '80px',
           position: 'relative',
           zIndex: 2,
-          boxSizing: 'border-box'
+          gap: '24px'
         }}>
-          {/* Avatar with Enhanced Design */}
+          {/* Name - Clean Typography */}
           <div style={{
-            width: '80px',
-            height: '80px',
-            borderRadius: '50%',
-            background: `
-              radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent 50%),
-              linear-gradient(135deg, #08F0FF 0%, #0066CC 50%, #003D7A 100%)
-            `,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: `2px solid ${config.glowColor}`,
-            boxShadow: `
-              0 0 20px rgba(8, 240, 255, 0.4),
-              inset 0 2px 4px rgba(255, 255, 255, 0.2),
-              0 8px 16px rgba(0, 0, 0, 0.2)
-            `,
-            flexShrink: 0,
-            position: 'relative',
-            overflow: 'hidden'
+            fontSize: '28px',
+            fontWeight: '700',
+            color: '#FFFFFF',
+            fontFamily: 'Inter, sans-serif',
+            letterSpacing: '-0.02em',
+            lineHeight: '1.1',
+            textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)',
+            marginTop: '80px'
           }}>
-            {/* Avatar Inner Glow */}
-            <div style={{
-              position: 'absolute',
-              top: '4px',
-              left: '4px',
-              right: '4px',
-              bottom: '4px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }} />
-            <User size={32} color="white" strokeWidth={2.5} style={{ position: 'relative', zIndex: 1 }} />
+            {athlete.display_name}
           </div>
 
-          {/* Name and Label Group */}
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center',
-            gap: '8px',
-            margin: '24px 0'
-          }}>
-            <div style={{
-              fontSize: '24px',
-              fontWeight: '700',
-              color: '#FFFFFF',
-              fontFamily: 'Inter, sans-serif',
-              letterSpacing: '-0.02em',
-              lineHeight: '1.2',
-              textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
-            }}>
-              {athlete.display_name}
-            </div>
-
-            <div style={{
-              fontSize: '12px',
-              fontWeight: '500',
-              color: 'rgba(141, 146, 153, 0.8)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              padding: '4px 12px',
-              background: 'rgba(8, 240, 255, 0.1)',
-              borderRadius: '12px',
-              border: '1px solid rgba(8, 240, 255, 0.2)'
-            }}>
-              Hybrid Athlete
-            </div>
-          </div>
-
-          {/* Score with Neon Effect */}
+          {/* Score - Hero Element */}
           <div style={{
             position: 'relative',
-            marginTop: 'auto',
-            marginBottom: '8px'
+            marginTop: 'auto'
           }}>
-            {/* Score Glow Background */}
+            {/* Score glow background */}
             <div style={{
               position: 'absolute',
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              width: '120px',
-              height: '60px',
-              background: 'radial-gradient(ellipse, rgba(8, 240, 255, 0.15) 0%, transparent 70%)',
-              borderRadius: '30px',
-              filter: 'blur(8px)'
+              width: '140px',
+              height: '80px',
+              background: 'radial-gradient(ellipse, rgba(8, 240, 255, 0.12) 0%, transparent 70%)',
+              borderRadius: '40px',
+              filter: 'blur(12px)'
             }} />
             
             <div style={{
-              fontSize: '48px',
+              fontSize: '56px',
               fontWeight: '900',
               color: '#08F0FF',
               fontVariantNumeric: 'tabular-nums',
               fontFamily: 'Inter, sans-serif',
-              letterSpacing: '-0.03em',
-              lineHeight: '1.1',
+              letterSpacing: '-0.04em',
+              lineHeight: '1',
               textShadow: `
-                0 0 10px rgba(8, 240, 255, 0.6),
-                0 0 20px rgba(8, 240, 255, 0.3),
-                0 2px 4px rgba(0, 0, 0, 0.3)
+                0 0 20px rgba(8, 240, 255, 0.6),
+                0 0 40px rgba(8, 240, 255, 0.3),
+                0 4px 8px rgba(0, 0, 0, 0.3)
               `,
               position: 'relative',
-              zIndex: 1,
-              paddingBottom: '4px'
+              zIndex: 1
             }}>
               {Math.round(athlete.score)}
             </div>
           </div>
         </div>
 
-        {/* Rank Badge */}
+        {/* Subtle bottom accent */}
         <div style={{
           position: 'absolute',
-          top: '16px',
-          right: '16px',
-          width: '28px',
-          height: '28px',
-          borderRadius: '50%',
-          background: `linear-gradient(135deg, ${config.borderColor}, ${config.borderColor}CC)`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '14px',
-          fontWeight: '700',
-          color: position === 1 ? '#000' : '#FFF',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-          zIndex: 3
-        }}>
-          {position}
-        </div>
+          bottom: 0,
+          left: '20%',
+          right: '20%',
+          height: '2px',
+          background: `linear-gradient(90deg, transparent 0%, ${config.trophyColor}40 50%, transparent 100%)`,
+          borderRadius: '1px'
+        }} />
       </div>
     );
   };
