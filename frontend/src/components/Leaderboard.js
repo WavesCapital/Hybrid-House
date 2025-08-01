@@ -118,6 +118,34 @@ const Leaderboard = () => {
     return Math.round(score * 10) / 10;
   };
 
+  const getCountryFlag = (countryCode) => {
+    const flags = {
+      'US': '🇺🇸',
+      'CA': '🇨🇦', 
+      'GB': '🇬🇧',
+      'AU': '🇦🇺',
+      'NZ': '🇳🇿',
+      'DE': '🇩🇪',
+      'FR': '🇫🇷',
+      'IT': '🇮🇹',
+      'ES': '🇪🇸',
+      'NL': '🇳🇱',
+      'SE': '🇸🇪',
+      'NO': '🇳🇴',
+      'DK': '🇩🇰',
+      'JP': '🇯🇵',
+      'KR': '🇰🇷',
+      'CN': '🇨🇳',
+      'IN': '🇮🇳',
+      'BR': '🇧🇷',
+      'MX': '🇲🇽',
+      'AR': '🇦🇷',
+      'ZA': '🇿🇦',
+      'OTHER': '🌍'
+    };
+    return flags[countryCode] || '🌍';
+  };
+
   const handleSort = (column) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
