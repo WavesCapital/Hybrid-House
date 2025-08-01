@@ -1783,7 +1783,7 @@ const ProfilePage = () => {
                     <div>
                       <label className="block text-sm font-medium text-secondary mb-2">Country</label>
                       <select
-                        value={profileForm.country}
+                        value={profileForm.country || ''}
                         onChange={(e) => setProfileForm({...profileForm, country: e.target.value})}
                         className="neon-input w-full"
                       >
