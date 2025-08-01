@@ -2263,6 +2263,7 @@ async def get_leaderboard():
             try:
                 profile_json = profile.get('profile_json', {})
                 score_data = profile.get('score_data', {})
+                user_id = profile.get('user_id')
                 
                 # Skip if profile is not marked as public (extra safety check)
                 if not profile.get('is_public', False):
@@ -2286,6 +2287,27 @@ async def get_leaderboard():
                 else:
                     continue
                 
+                # Get user profile data for age, gender, country
+                user_profile_data = {}
+                if user_id:
+                    try:
+                        user_profile_result = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
+                        if user_profile_result.data:
+                            user_profile_data = user_profile_result.data[0]
+                    except Exception as e:
+                        print(f"Error fetching user profile for user {user_id}: {e}")
+                
+                # Calculate age from date of birth
+                age = None
+                if user_profile_data.get('date_of_birth'):
+                    try:
+                        from datetime import datetime
+                        birth_date = datetime.strptime(user_profile_data['date_of_birth'], '%Y-%m-%d')
+                        today = datetime.now()
+                        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+                    except Exception as e:
+                        print(f"Error calculating age: {e}")
+                
                 # Extract display_name
                 display_name = profile_json.get('display_name', '')
                 if not display_name:
@@ -2307,6 +2329,9 @@ async def get_leaderboard():
                         'score': hybrid_score,
                         'profile_id': profile.get('id'),
                         'completed_at': profile.get('completed_at'),
+                        'age': age,
+                        'gender': user_profile_data.get('gender', ''),
+                        'country': user_profile_data.get('country', ''),
                         'score_breakdown': {
                             'strengthScore': score_data.get('strengthScore'),
                             'speedScore': score_data.get('speedScore'),
