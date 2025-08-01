@@ -706,7 +706,7 @@ const Leaderboard = () => {
               NAME {sortColumn === 'name' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
             </div>
             <div style={{ color: '#8D9299' }}>AGE</div>
-            <div style={{ color: '#8D9299' }}>SEX</div>
+            <div style={{ color: '#8D9299' }}>GENDER</div>
             <div style={{ color: '#8D9299' }}>COUNTRY</div>
             <div style={{ color: sortColumn === 'hybrid' ? '#08F0FF' : '#8D9299', cursor: 'pointer' }} onClick={() => handleSort('hybrid')}>
               HYBRID {sortColumn === 'hybrid' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
