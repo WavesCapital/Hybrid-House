@@ -549,34 +549,68 @@ async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict =
                 update_data[field] = value
         
         # Try to update existing profile first
-        result = supabase.table('user_profiles').update(update_data).eq('user_id', user_id).execute()
+        try:
+            result = supabase.table('user_profiles').update(update_data).eq('user_id', user_id).execute()
+            
+            if result.data:
+                print(f"✅ Profile updated successfully: {result.data[0]['id']}")
+                return {
+                    "message": "Profile updated successfully",
+                    "profile": result.data[0]
+                }
+        except Exception as update_error:
+            # Check if it's a missing column error
+            error_str = str(update_error)
+            if "column" in error_str.lower() and "does not exist" in error_str.lower():
+                print(f"⚠️  Column error detected: {update_error}")
+                
+                # Extract the problematic column name
+                import re
+                column_match = re.search(r"column.*?'(\w+)'.*?does not exist", error_str, re.IGNORECASE)
+                problematic_column = column_match.group(1) if column_match else "unknown"
+                
+                print(f"🔧 Retrying without problematic column: {problematic_column}")
+                
+                # Remove the problematic column and retry
+                filtered_update_data = {k: v for k, v in update_data.items() if k != problematic_column}
+                
+                try:
+                    result = supabase.table('user_profiles').update(filtered_update_data).eq('user_id', user_id).execute()
+                    
+                    if result.data:
+                        print(f"✅ Profile updated successfully (without {problematic_column}): {result.data[0]['id']}")
+                        return {
+                            "message": f"Profile updated successfully (field '{problematic_column}' skipped - column not available)",
+                            "profile": result.data[0],
+                            "warning": f"Field '{problematic_column}' was not saved due to missing database column"
+                        }
+                except Exception as retry_error:
+                    print(f"❌ Retry also failed: {retry_error}")
+                    raise retry_error
+            else:
+                # Re-raise if it's not a column error
+                raise update_error
         
-        if result.data:
-            print(f"✅ Profile updated successfully: {result.data[0]['id']}")
-            return {
-                "message": "Profile updated successfully",
-                "profile": result.data[0]
-            }
-        else:
-            # No profile exists, create a new one (upsert functionality)
-            print(f"🔄 No profile found for user {user_id}, creating new profile...")
-            
-            # Prepare create data with required fields
-            create_data = {
-                "user_id": user_id,
-                "email": user_email,
-                "name": user_email.split('@')[0],  # Default name
-                "display_name": user_email.split('@')[0],  # Default display name
-                "created_at": datetime.utcnow().isoformat(),
-                "updated_at": datetime.utcnow().isoformat()
-            }
-            
-            # Add the update fields to create data
-            create_data.update(update_data)
-            
-            print(f"📝 Creating profile with data: {create_data}")
-            
-            # Create new profile
+        # No profile exists, create a new one (upsert functionality)
+        print(f"🔄 No profile found for user {user_id}, creating new profile...")
+        
+        # Prepare create data with required fields
+        create_data = {
+            "user_id": user_id,
+            "email": user_email,
+            "name": user_email.split('@')[0],  # Default name
+            "display_name": user_email.split('@')[0],  # Default display name
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat()
+        }
+        
+        # Add the update fields to create data
+        create_data.update(update_data)
+        
+        print(f"📝 Creating profile with data: {create_data}")
+        
+        # Create new profile with error handling for missing columns
+        try:
             create_result = supabase.table('user_profiles').insert(create_data).execute()
             
             if create_result.data:
@@ -585,12 +619,41 @@ async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict =
                     "message": "Profile created successfully",
                     "profile": create_result.data[0]
                 }
+        except Exception as create_error:
+            # Check if it's a missing column error during creation
+            error_str = str(create_error)
+            if "column" in error_str.lower() and "does not exist" in error_str.lower():
+                print(f"⚠️  Column error during creation: {create_error}")
+                
+                # Extract the problematic column name
+                import re
+                column_match = re.search(r"column.*?'(\w+)'.*?does not exist", error_str, re.IGNORECASE)
+                problematic_column = column_match.group(1) if column_match else "unknown"
+                
+                print(f"🔧 Creating profile without problematic column: {problematic_column}")
+                
+                # Remove the problematic column and retry
+                filtered_create_data = {k: v for k, v in create_data.items() if k != problematic_column}
+                
+                create_result = supabase.table('user_profiles').insert(filtered_create_data).execute()
+                
+                if create_result.data:
+                    print(f"✅ Profile created successfully (without {problematic_column}): {create_result.data[0]['id']}")
+                    return {
+                        "message": f"Profile created successfully (field '{problematic_column}' skipped - column not available)",
+                        "profile": create_result.data[0],
+                        "warning": f"Field '{problematic_column}' was not saved due to missing database column"
+                    }
             else:
-                print(f"❌ Failed to create profile")
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Failed to create user profile"
-                )
+                # Re-raise if it's not a column error
+                raise create_error
+        
+        # If we get here, something went wrong
+        print(f"❌ Failed to create profile")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create user profile"
+        )
         
     except HTTPException:
         raise
