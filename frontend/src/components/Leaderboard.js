@@ -970,11 +970,20 @@ const Leaderboard = () => {
         @keyframes minimalCardRise {
           0% {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px);
           }
           100% {
             opacity: 1;
             transform: translateY(0);
+          }
+        }
+
+        @keyframes trophyGlow {
+          0% {
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+          }
+          100% {
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 30px rgba(255, 215, 0, 0.4));
           }
         }
 
