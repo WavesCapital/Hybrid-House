@@ -7867,6 +7867,12 @@ class BackendTester:
         print("🚀 TESTING USER PROFILE MANAGEMENT AND LEADERBOARD DATA FLOW")
         print("=" * 80)
         
+        # AUTO-SAVE PROFILE DEBUG TESTS (HIGH PRIORITY - REVIEW REQUEST)
+        auto_save_tests = [
+            self.test_auto_save_profile_debug,
+            self.test_user_profile_update_model_validation,
+        ]
+        
         # Privacy toggle and user-specific profile endpoint tests as requested in review
         tests = [
             # 1. Core System Health
