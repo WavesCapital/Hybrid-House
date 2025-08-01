@@ -854,32 +854,10 @@ const Leaderboard = () => {
       )}
 
       <style jsx>{`
-        @keyframes podiumRise1 {
+        @keyframes minimalCardRise {
           0% {
             opacity: 0;
-            transform: translateY(40px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes podiumRise2 {
-          0% {
-            opacity: 0;
-            transform: translateY(40px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes podiumRise3 {
-          0% {
-            opacity: 0;
-            transform: translateY(40px);
+            transform: translateY(20px);
           }
           100% {
             opacity: 1;
@@ -943,8 +921,8 @@ const Leaderboard = () => {
 
         /* Responsive */
         @media (max-width: 1279px) {
-          .podium-block {
-            transform: scale(0.85);
+          .minimal-podium-card {
+            transform: scale(0.9);
           }
         }
 
