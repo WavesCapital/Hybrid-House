@@ -247,6 +247,8 @@ const ProfilePage = () => {
           location: profile.location || '',
           website: profile.website || '',
           gender: profile.gender || '',
+          date_of_birth: profile.date_of_birth || '',
+          country: profile.country || '',
           units_preference: profile.units_preference || 'imperial',
           privacy_level: profile.privacy_level || 'private'
         });
