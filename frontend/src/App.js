@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AuthForm from './components/AuthForm';
+import LoginPage from './components/LoginPage';
 import AthleteProfile from './components/AthleteProfile';
 import InterviewFlow from './components/InterviewFlow';
 import HybridInterviewFlow from './components/HybridInterviewFlow';
