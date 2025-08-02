@@ -1046,6 +1046,325 @@ class BackendTester:
             self.log_test("Ranking System Comprehensive", False, "Ranking system comprehensive test failed", str(e))
             return False
 
+    # ===== LEADERBOARD RANKING SERVICE FIX TESTS =====
+    
+    def test_leaderboard_complete_data_structure(self):
+        """Test that leaderboard returns complete data with age, gender, country fields"""
+        try:
+            print("\n🎯 LEADERBOARD COMPLETE DATA STRUCTURE TEST 🎯")
+            print("=" * 60)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Leaderboard Complete Data Structure", False, "Leaderboard is empty - no athletes to test data structure", data)
+                    return False
+                
+                print(f"📊 Found {len(leaderboard)} athletes on leaderboard")
+                
+                # Test each athlete entry for required fields
+                required_fields = ['age', 'gender', 'country', 'country_flag']
+                score_fields = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
+                
+                all_athletes_complete = True
+                missing_data_athletes = []
+                
+                for i, athlete in enumerate(leaderboard):
+                    athlete_issues = []
+                    
+                    # Check required demographic fields
+                    for field in required_fields:
+                        if field not in athlete or athlete[field] is None:
+                            athlete_issues.append(f"missing {field}")
+                    
+                    # Check score data structure
+                    score_data = athlete.get('score_data', {})
+                    if not isinstance(score_data, dict):
+                        athlete_issues.append("invalid score_data structure")
+                    else:
+                        for score_field in score_fields:
+                            if score_field not in score_data or score_data[score_field] is None:
+                                athlete_issues.append(f"missing {score_field}")
+                    
+                    # Check age is valid number in expected range
+                    age = athlete.get('age')
+                    if age is not None:
+                        try:
+                            age_num = int(age)
+                            if age_num < 18 or age_num > 65:
+                                athlete_issues.append(f"age {age_num} outside filter range [18-65]")
+                        except (ValueError, TypeError):
+                            athlete_issues.append(f"invalid age format: {age}")
+                    
+                    if athlete_issues:
+                        all_athletes_complete = False
+                        missing_data_athletes.append({
+                            'rank': athlete.get('rank', i+1),
+                            'display_name': athlete.get('display_name', 'Unknown'),
+                            'issues': athlete_issues
+                        })
+                
+                if all_athletes_complete:
+                    # Show sample of complete data
+                    sample_athlete = leaderboard[0]
+                    sample_data = {
+                        'rank': sample_athlete.get('rank'),
+                        'display_name': sample_athlete.get('display_name'),
+                        'age': sample_athlete.get('age'),
+                        'gender': sample_athlete.get('gender'),
+                        'country': sample_athlete.get('country'),
+                        'country_flag': sample_athlete.get('country_flag'),
+                        'hybridScore': sample_athlete.get('score_data', {}).get('hybridScore'),
+                        'has_all_scores': all(sample_athlete.get('score_data', {}).get(field) is not None for field in score_fields)
+                    }
+                    
+                    self.log_test("Leaderboard Complete Data Structure", True, f"All {len(leaderboard)} athletes have complete data structure with age, gender, country fields", sample_data)
+                    return True
+                else:
+                    self.log_test("Leaderboard Complete Data Structure", False, f"{len(missing_data_athletes)} athletes missing required data", missing_data_athletes[:3])  # Show first 3 issues
+                    return False
+            else:
+                try:
+                    error_data = response.json()
+                    self.log_test("Leaderboard Complete Data Structure", False, f"HTTP {response.status_code}: {error_data}", error_data)
+                except:
+                    self.log_test("Leaderboard Complete Data Structure", False, f"HTTP {response.status_code}: {response.text}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Leaderboard Complete Data Structure", False, "Leaderboard complete data structure test failed", str(e))
+            return False
+    
+    def test_leaderboard_age_calculation_accuracy(self):
+        """Test that age is properly calculated from date_of_birth"""
+        try:
+            print("\n🎂 AGE CALCULATION ACCURACY TEST 🎂")
+            print("=" * 50)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Leaderboard Age Calculation Accuracy", False, "No athletes to test age calculation", data)
+                    return False
+                
+                # Test age calculation logic
+                valid_ages = []
+                invalid_ages = []
+                
+                for athlete in leaderboard:
+                    age = athlete.get('age')
+                    display_name = athlete.get('display_name', 'Unknown')
+                    
+                    if age is not None:
+                        try:
+                            age_num = int(age)
+                            if 18 <= age_num <= 100:  # Reasonable age range
+                                valid_ages.append({'name': display_name, 'age': age_num})
+                            else:
+                                invalid_ages.append({'name': display_name, 'age': age_num, 'issue': 'unreasonable age'})
+                        except (ValueError, TypeError):
+                            invalid_ages.append({'name': display_name, 'age': age, 'issue': 'invalid format'})
+                    else:
+                        invalid_ages.append({'name': display_name, 'age': None, 'issue': 'missing age'})
+                
+                if len(valid_ages) == len(leaderboard) and len(invalid_ages) == 0:
+                    age_range = f"{min(a['age'] for a in valid_ages)}-{max(a['age'] for a in valid_ages)}"
+                    self.log_test("Leaderboard Age Calculation Accuracy", True, f"All {len(valid_ages)} athletes have valid calculated ages (range: {age_range})", valid_ages[:3])
+                    return True
+                else:
+                    self.log_test("Leaderboard Age Calculation Accuracy", False, f"{len(invalid_ages)} athletes have invalid ages", {
+                        'valid_count': len(valid_ages),
+                        'invalid_count': len(invalid_ages),
+                        'invalid_examples': invalid_ages[:3]
+                    })
+                    return False
+            else:
+                self.log_test("Leaderboard Age Calculation Accuracy", False, f"Cannot test age calculation - HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Leaderboard Age Calculation Accuracy", False, "Age calculation accuracy test failed", str(e))
+            return False
+    
+    def test_leaderboard_frontend_filter_compatibility(self):
+        """Test that leaderboard data is compatible with frontend filtering (age range 18-65)"""
+        try:
+            print("\n🔍 FRONTEND FILTER COMPATIBILITY TEST 🔍")
+            print("=" * 50)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Leaderboard Frontend Filter Compatibility", False, "No athletes to test filter compatibility", data)
+                    return False
+                
+                # Test frontend filter compatibility
+                filterable_athletes = 0
+                filter_issues = []
+                
+                for athlete in leaderboard:
+                    display_name = athlete.get('display_name', 'Unknown')
+                    age = athlete.get('age')
+                    gender = athlete.get('gender')
+                    country = athlete.get('country')
+                    
+                    athlete_filterable = True
+                    athlete_issues = []
+                    
+                    # Age filter test (18-65 range)
+                    if age is None:
+                        athlete_filterable = False
+                        athlete_issues.append("missing age")
+                    else:
+                        try:
+                            age_num = int(age)
+                            if not (18 <= age_num <= 65):
+                                athlete_issues.append(f"age {age_num} outside filter range [18-65]")
+                        except (ValueError, TypeError):
+                            athlete_filterable = False
+                            athlete_issues.append(f"invalid age format: {age}")
+                    
+                    # Gender filter test
+                    if gender is None or gender == '':
+                        athlete_filterable = False
+                        athlete_issues.append("missing gender")
+                    
+                    # Country filter test
+                    if country is None or country == '':
+                        athlete_filterable = False
+                        athlete_issues.append("missing country")
+                    
+                    if athlete_filterable:
+                        filterable_athletes += 1
+                    else:
+                        filter_issues.append({
+                            'name': display_name,
+                            'issues': athlete_issues
+                        })
+                
+                if filterable_athletes == len(leaderboard):
+                    self.log_test("Leaderboard Frontend Filter Compatibility", True, f"All {len(leaderboard)} athletes are compatible with frontend filters", {
+                        'total_athletes': len(leaderboard),
+                        'filterable_athletes': filterable_athletes,
+                        'sample_data': {
+                            'age_range': f"{min(int(a.get('age', 0)) for a in leaderboard if a.get('age'))}-{max(int(a.get('age', 0)) for a in leaderboard if a.get('age'))}",
+                            'countries': list(set(a.get('country') for a in leaderboard if a.get('country'))),
+                            'genders': list(set(a.get('gender') for a in leaderboard if a.get('gender')))
+                        }
+                    })
+                    return True
+                else:
+                    self.log_test("Leaderboard Frontend Filter Compatibility", False, f"Only {filterable_athletes}/{len(leaderboard)} athletes are filterable", {
+                        'filterable_count': filterable_athletes,
+                        'total_count': len(leaderboard),
+                        'filter_issues': filter_issues[:3]
+                    })
+                    return False
+            else:
+                self.log_test("Leaderboard Frontend Filter Compatibility", False, f"Cannot test filter compatibility - HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Leaderboard Frontend Filter Compatibility", False, "Frontend filter compatibility test failed", str(e))
+            return False
+    
+    def test_leaderboard_score_data_completeness(self):
+        """Test that all score fields are properly rounded and complete"""
+        try:
+            print("\n📊 SCORE DATA COMPLETENESS TEST 📊")
+            print("=" * 50)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Leaderboard Score Data Completeness", False, "No athletes to test score completeness", data)
+                    return False
+                
+                required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
+                
+                complete_athletes = 0
+                incomplete_athletes = []
+                
+                for athlete in leaderboard:
+                    display_name = athlete.get('display_name', 'Unknown')
+                    score_data = athlete.get('score_data', {})
+                    
+                    if not isinstance(score_data, dict):
+                        incomplete_athletes.append({
+                            'name': display_name,
+                            'issue': 'invalid score_data structure'
+                        })
+                        continue
+                    
+                    missing_scores = []
+                    invalid_scores = []
+                    
+                    for score_field in required_scores:
+                        score_value = score_data.get(score_field)
+                        
+                        if score_value is None:
+                            missing_scores.append(score_field)
+                        else:
+                            try:
+                                score_num = float(score_value)
+                                # Check if score is properly rounded (1 decimal place)
+                                if abs(score_num - round(score_num, 1)) > 0.001:
+                                    invalid_scores.append(f"{score_field}: not properly rounded ({score_num})")
+                            except (ValueError, TypeError):
+                                invalid_scores.append(f"{score_field}: invalid format ({score_value})")
+                    
+                    if not missing_scores and not invalid_scores:
+                        complete_athletes += 1
+                    else:
+                        issues = []
+                        if missing_scores:
+                            issues.append(f"missing: {', '.join(missing_scores)}")
+                        if invalid_scores:
+                            issues.append(f"invalid: {', '.join(invalid_scores)}")
+                        
+                        incomplete_athletes.append({
+                            'name': display_name,
+                            'issues': issues
+                        })
+                
+                if complete_athletes == len(leaderboard):
+                    # Show sample score data
+                    sample_scores = leaderboard[0].get('score_data', {})
+                    sample_rounded = {k: v for k, v in sample_scores.items() if k in required_scores}
+                    
+                    self.log_test("Leaderboard Score Data Completeness", True, f"All {len(leaderboard)} athletes have complete and properly rounded scores", sample_rounded)
+                    return True
+                else:
+                    self.log_test("Leaderboard Score Data Completeness", False, f"Only {complete_athletes}/{len(leaderboard)} athletes have complete scores", {
+                        'complete_count': complete_athletes,
+                        'total_count': len(leaderboard),
+                        'incomplete_examples': incomplete_athletes[:3]
+                    })
+                    return False
+            else:
+                self.log_test("Leaderboard Score Data Completeness", False, f"Cannot test score completeness - HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Leaderboard Score Data Completeness", False, "Score data completeness test failed", str(e))
+            return False
+
     # ===== URGENT LEADERBOARD DEBUGGING TESTS =====
     
     def test_leaderboard_broken_urgent(self):
