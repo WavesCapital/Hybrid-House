@@ -10467,6 +10467,367 @@ class BackendTester:
             self.log_test("Leaderboard vs Database Comparison", False, "Comparison failed", str(e))
             return False
 
+    # ===== CRITICAL LEADERBOARD BUG INVESTIGATION TESTS =====
+    
+    def test_profile_creation_defaults(self):
+        """Test that new profiles default to public as expected"""
+        try:
+            print("\n🔍 PROFILE CREATION DEFAULTS TEST 🔍")
+            print("=" * 50)
+            
+            # Test the athlete-profiles endpoint to see existing profiles
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get('profiles', [])
+                
+                if not profiles:
+                    print("⚠️  No profiles found to analyze defaults")
+                    self.log_test("Profile Creation Defaults", True, "No profiles to analyze - endpoint working", data)
+                    return True
+                
+                # Analyze is_public values
+                public_count = len([p for p in profiles if p.get('is_public') == True])
+                private_count = len([p for p in profiles if p.get('is_public') == False])
+                null_count = len([p for p in profiles if p.get('is_public') is None])
+                
+                print(f"📊 Profile Privacy Analysis:")
+                print(f"   Public profiles: {public_count}")
+                print(f"   Private profiles: {private_count}")
+                print(f"   Null is_public: {null_count}")
+                print(f"   Total profiles: {len(profiles)}")
+                
+                # Check if all profiles are private (the bug)
+                if private_count == len(profiles) and public_count == 0:
+                    print("🚨 CRITICAL BUG CONFIRMED: All profiles are private despite backend defaults")
+                    print("💡 This explains why leaderboard is empty")
+                    self.log_test("Profile Creation Defaults", False, f"All {len(profiles)} profiles are private despite backend default True", {
+                        'public_count': public_count,
+                        'private_count': private_count,
+                        'null_count': null_count,
+                        'total': len(profiles)
+                    })
+                    return False
+                elif public_count > 0:
+                    print(f"✅ Found {public_count} public profiles - defaults working correctly")
+                    self.log_test("Profile Creation Defaults", True, f"Profile defaults working - {public_count} public, {private_count} private", {
+                        'public_count': public_count,
+                        'private_count': private_count,
+                        'total': len(profiles)
+                    })
+                    return True
+                else:
+                    print("⚠️  Mixed results - need further investigation")
+                    self.log_test("Profile Creation Defaults", False, "Mixed privacy results need investigation", {
+                        'public_count': public_count,
+                        'private_count': private_count,
+                        'null_count': null_count
+                    })
+                    return False
+            else:
+                print(f"❌ Cannot access athlete profiles: {response.status_code}")
+                self.log_test("Profile Creation Defaults", False, f"Cannot access profiles: {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            print(f"💥 Profile creation defaults test failed: {str(e)}")
+            self.log_test("Profile Creation Defaults", False, "Profile creation defaults test failed", str(e))
+            return False
+    
+    def test_database_migration_status(self):
+        """Test if database migration for is_public column was successful"""
+        try:
+            print("\n🗄️  DATABASE MIGRATION STATUS TEST 🗄️")
+            print("=" * 50)
+            
+            # Test the migration endpoint
+            response = self.session.post(f"{API_BASE_URL}/admin/migrate-privacy")
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Migration endpoint accessible")
+                print(f"📋 Migration status: {data}")
+                
+                if "already exists" in str(data).lower():
+                    print("✅ is_public column already exists in database")
+                    self.log_test("Database Migration Status", True, "is_public column exists in database", data)
+                    return True
+                elif "added successfully" in str(data).lower():
+                    print("✅ is_public column was just added to database")
+                    self.log_test("Database Migration Status", True, "is_public column added successfully", data)
+                    return True
+                else:
+                    print(f"⚠️  Unexpected migration response: {data}")
+                    self.log_test("Database Migration Status", True, "Migration endpoint working", data)
+                    return True
+            else:
+                try:
+                    error_data = response.json()
+                    if "does not exist" in str(error_data).lower() and "is_public" in str(error_data).lower():
+                        print("🚨 CRITICAL: is_public column does NOT exist in database")
+                        print("💡 This is the root cause of the leaderboard bug")
+                        self.log_test("Database Migration Status", False, "is_public column missing from database", error_data)
+                        return False
+                    else:
+                        print(f"❌ Migration endpoint error: {error_data}")
+                        self.log_test("Database Migration Status", False, f"Migration endpoint error: {error_data}", error_data)
+                        return False
+                except:
+                    print(f"❌ Migration endpoint error: {response.text}")
+                    self.log_test("Database Migration Status", False, f"Migration endpoint error: {response.text}", response.text)
+                    return False
+                    
+        except Exception as e:
+            print(f"💥 Database migration status test failed: {str(e)}")
+            self.log_test("Database Migration Status", False, "Database migration status test failed", str(e))
+            return False
+    
+    def test_leaderboard_empty_root_cause(self):
+        """Test to identify the root cause of empty leaderboard"""
+        try:
+            print("\n🔍 LEADERBOARD EMPTY ROOT CAUSE ANALYSIS 🔍")
+            print("=" * 60)
+            
+            # Step 1: Check if leaderboard endpoint works
+            leaderboard_response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if leaderboard_response.status_code != 200:
+                print(f"❌ Leaderboard endpoint failed: {leaderboard_response.status_code}")
+                self.log_test("Leaderboard Empty Root Cause", False, f"Leaderboard endpoint failed: {leaderboard_response.status_code}", leaderboard_response.text)
+                return False
+            
+            leaderboard_data = leaderboard_response.json()
+            leaderboard = leaderboard_data.get('leaderboard', [])
+            total_public = leaderboard_data.get('total_public_athletes', 0)
+            
+            print(f"📊 Leaderboard Results:")
+            print(f"   Entries on leaderboard: {len(leaderboard)}")
+            print(f"   Total public athletes: {total_public}")
+            
+            # Step 2: Check athlete profiles
+            profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if profiles_response.status_code != 200:
+                print(f"❌ Athlete profiles endpoint failed: {profiles_response.status_code}")
+                self.log_test("Leaderboard Empty Root Cause", False, f"Athlete profiles endpoint failed: {profiles_response.status_code}", profiles_response.text)
+                return False
+            
+            profiles_data = profiles_response.json()
+            all_profiles = profiles_data.get('profiles', [])
+            
+            # Analyze the data
+            profiles_with_scores = [p for p in all_profiles if p.get('score_data') and isinstance(p.get('score_data'), dict)]
+            public_profiles = [p for p in all_profiles if p.get('is_public') == True]
+            private_profiles = [p for p in all_profiles if p.get('is_public') == False]
+            
+            print(f"📈 Profile Analysis:")
+            print(f"   Total profiles: {len(all_profiles)}")
+            print(f"   Profiles with scores: {len(profiles_with_scores)}")
+            print(f"   Public profiles: {len(public_profiles)}")
+            print(f"   Private profiles: {len(private_profiles)}")
+            
+            # Determine root cause
+            if len(profiles_with_scores) == 0:
+                print("🔍 ROOT CAUSE: No profiles have score data")
+                self.log_test("Leaderboard Empty Root Cause", True, "Root cause identified: No profiles with scores", {
+                    'total_profiles': len(all_profiles),
+                    'scored_profiles': len(profiles_with_scores)
+                })
+                return True
+            elif len(public_profiles) == 0 and len(private_profiles) > 0:
+                print("🚨 ROOT CAUSE: All profiles are private despite backend defaults")
+                print("💡 SOLUTION NEEDED: Database migration to set existing profiles to public")
+                self.log_test("Leaderboard Empty Root Cause", False, "Root cause: All profiles private despite backend defaults", {
+                    'total_profiles': len(all_profiles),
+                    'scored_profiles': len(profiles_with_scores),
+                    'public_profiles': len(public_profiles),
+                    'private_profiles': len(private_profiles)
+                })
+                return False
+            elif len(public_profiles) > 0:
+                print("✅ Public profiles exist - leaderboard should work")
+                if len(leaderboard) == 0:
+                    print("🔍 ISSUE: Public profiles exist but leaderboard is empty - filtering problem")
+                    self.log_test("Leaderboard Empty Root Cause", False, "Public profiles exist but leaderboard empty - filtering issue", {
+                        'public_profiles': len(public_profiles),
+                        'leaderboard_entries': len(leaderboard)
+                    })
+                    return False
+                else:
+                    print("✅ Leaderboard working correctly")
+                    self.log_test("Leaderboard Empty Root Cause", True, "Leaderboard working correctly", {
+                        'public_profiles': len(public_profiles),
+                        'leaderboard_entries': len(leaderboard)
+                    })
+                    return True
+            else:
+                print("⚠️  Unclear root cause - need further investigation")
+                self.log_test("Leaderboard Empty Root Cause", False, "Unclear root cause", {
+                    'total_profiles': len(all_profiles),
+                    'scored_profiles': len(profiles_with_scores),
+                    'public_profiles': len(public_profiles),
+                    'private_profiles': len(private_profiles)
+                })
+                return False
+                
+        except Exception as e:
+            print(f"💥 Root cause analysis failed: {str(e)}")
+            self.log_test("Leaderboard Empty Root Cause", False, "Root cause analysis failed", str(e))
+            return False
+    
+    def test_migration_script_execution(self):
+        """Test the migration script to fix existing profiles"""
+        try:
+            print("\n🔧 MIGRATION SCRIPT EXECUTION TEST 🔧")
+            print("=" * 50)
+            
+            # First, check current state
+            profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if profiles_response.status_code != 200:
+                print(f"❌ Cannot access profiles for migration test: {profiles_response.status_code}")
+                self.log_test("Migration Script Execution", False, f"Cannot access profiles: {profiles_response.status_code}", profiles_response.text)
+                return False
+            
+            profiles_data = profiles_response.json()
+            all_profiles = profiles_data.get('profiles', [])
+            
+            # Count profiles with complete scores that should be public
+            profiles_with_complete_scores = []
+            for profile in all_profiles:
+                score_data = profile.get('score_data')
+                if score_data and isinstance(score_data, dict):
+                    # Check if it has hybridScore and is > 0
+                    hybrid_score = score_data.get('hybridScore', 0)
+                    if hybrid_score and hybrid_score > 0:
+                        profiles_with_complete_scores.append(profile)
+            
+            private_scored_profiles = [p for p in profiles_with_complete_scores if p.get('is_public') == False]
+            
+            print(f"📊 Migration Analysis:")
+            print(f"   Profiles with complete scores: {len(profiles_with_complete_scores)}")
+            print(f"   Private profiles with scores: {len(private_scored_profiles)}")
+            
+            if len(private_scored_profiles) == 0:
+                print("✅ No migration needed - all scored profiles are already public")
+                self.log_test("Migration Script Execution", True, "No migration needed - all scored profiles public", {
+                    'complete_scored_profiles': len(profiles_with_complete_scores),
+                    'private_scored_profiles': len(private_scored_profiles)
+                })
+                return True
+            else:
+                print(f"🔧 MIGRATION NEEDED: {len(private_scored_profiles)} scored profiles are private")
+                print("💡 These profiles should be set to public to appear on leaderboard")
+                
+                # Show the SQL that would be needed
+                print("\n📝 REQUIRED SQL MIGRATION:")
+                print("UPDATE athlete_profiles")
+                print("SET is_public = true")
+                print("WHERE score_data IS NOT NULL")
+                print("AND score_data::jsonb ? 'hybridScore'")
+                print("AND (score_data::jsonb->>'hybridScore')::numeric > 0;")
+                
+                self.log_test("Migration Script Execution", False, f"Migration needed for {len(private_scored_profiles)} scored profiles", {
+                    'complete_scored_profiles': len(profiles_with_complete_scores),
+                    'private_scored_profiles': len(private_scored_profiles),
+                    'sample_private_profile_ids': [p.get('id') for p in private_scored_profiles[:3]]
+                })
+                return False
+                
+        except Exception as e:
+            print(f"💥 Migration script test failed: {str(e)}")
+            self.log_test("Migration Script Execution", False, "Migration script test failed", str(e))
+            return False
+    
+    def test_profile_creation_path_analysis(self):
+        """Analyze different profile creation paths to find where defaults are overridden"""
+        try:
+            print("\n🛤️  PROFILE CREATION PATH ANALYSIS 🛤️")
+            print("=" * 50)
+            
+            # Test the public profile creation endpoint
+            print("🔍 Testing public profile creation endpoint...")
+            public_endpoint_response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json={
+                "profile_json": {"test": "data"},
+                "score_data": None
+            })
+            
+            if public_endpoint_response.status_code == 200:
+                print("✅ Public profile creation endpoint accessible")
+            else:
+                print(f"⚠️  Public profile creation endpoint: {public_endpoint_response.status_code}")
+            
+            # Test the authenticated profile creation endpoint (should fail without auth)
+            print("🔍 Testing authenticated profile creation endpoint...")
+            auth_endpoint_response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json={
+                "profile_json": {"test": "data"},
+                "score_data": None
+            })
+            
+            if auth_endpoint_response.status_code in [401, 403]:
+                print("✅ Authenticated profile creation endpoint properly protected")
+            else:
+                print(f"⚠️  Authenticated profile creation endpoint: {auth_endpoint_response.status_code}")
+            
+            # Analyze existing profiles to see creation patterns
+            profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if profiles_response.status_code == 200:
+                profiles_data = profiles_response.json()
+                all_profiles = profiles_data.get('profiles', [])
+                
+                # Look for patterns in profile creation
+                recent_profiles = sorted(all_profiles, key=lambda x: x.get('created_at', ''), reverse=True)[:10]
+                
+                print(f"📊 Recent Profile Analysis (last 10):")
+                for i, profile in enumerate(recent_profiles):
+                    is_public = profile.get('is_public')
+                    has_user_id = bool(profile.get('user_id'))
+                    created_at = profile.get('created_at', 'Unknown')[:10]  # Just date part
+                    
+                    print(f"   {i+1}. Created: {created_at}, Public: {is_public}, Has User: {has_user_id}")
+                
+                # Check if there's a pattern
+                all_private = all(p.get('is_public') == False for p in recent_profiles)
+                all_public = all(p.get('is_public') == True for p in recent_profiles)
+                
+                if all_private:
+                    print("🚨 PATTERN DETECTED: All recent profiles are private")
+                    print("💡 This suggests the default is being overridden somewhere")
+                    self.log_test("Profile Creation Path Analysis", False, "All recent profiles are private - default override detected", {
+                        'recent_profiles_analyzed': len(recent_profiles),
+                        'all_private': all_private
+                    })
+                    return False
+                elif all_public:
+                    print("✅ PATTERN: All recent profiles are public - defaults working")
+                    self.log_test("Profile Creation Path Analysis", True, "All recent profiles are public - defaults working", {
+                        'recent_profiles_analyzed': len(recent_profiles),
+                        'all_public': all_public
+                    })
+                    return True
+                else:
+                    print("📊 MIXED PATTERN: Some public, some private profiles")
+                    public_count = len([p for p in recent_profiles if p.get('is_public') == True])
+                    private_count = len([p for p in recent_profiles if p.get('is_public') == False])
+                    print(f"   Public: {public_count}, Private: {private_count}")
+                    self.log_test("Profile Creation Path Analysis", True, f"Mixed pattern: {public_count} public, {private_count} private", {
+                        'recent_profiles_analyzed': len(recent_profiles),
+                        'public_count': public_count,
+                        'private_count': private_count
+                    })
+                    return True
+            else:
+                print(f"❌ Cannot analyze profiles: {profiles_response.status_code}")
+                self.log_test("Profile Creation Path Analysis", False, f"Cannot analyze profiles: {profiles_response.status_code}", profiles_response.text)
+                return False
+                
+        except Exception as e:
+            print(f"💥 Profile creation path analysis failed: {str(e)}")
+            self.log_test("Profile Creation Path Analysis", False, "Profile creation path analysis failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests focused on authentication flow and user profile management"""
         print("=" * 80)
