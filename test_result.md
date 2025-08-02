@@ -252,6 +252,18 @@ backend:
         agent: "testing"
         comment: "🔍 LEADERBOARD DISPLAY NAME INVESTIGATION COMPLETE: Executed comprehensive investigation of the actual database data to understand why leaderboard shows 'Kyle' and 'Kyle Steinmeyer' instead of expected 'Kyle S'. CRITICAL FINDINGS: ✅ LEADERBOARD CURRENTLY WORKING - GET /api/leaderboard returns 1 entry with display_name: 'Kyle S' (score: 76.5, age: 29, gender: male, country: US) ✅ BACKEND IMPLEMENTATION CORRECT - The leaderboard endpoint is actually using user_profiles.display_name correctly and shows 'Kyle S' as expected ✅ DATA SOURCE ANALYSIS - Found 11 athlete profiles with complete scores, but leaderboard only shows 1 public profile ✅ PRIVACY FILTERING WORKING - Only profiles with is_public=true appear in leaderboard (currently 1 profile) ✅ USER PROFILES TABLE EXISTS - The backend successfully joins user_profiles table for display names ✅ DISPLAY NAME FALLBACK LOGIC - When profile_json.display_name is 'N/A' or missing, the system correctly uses user_profiles.display_name ('Kyle S') ✅ COMPARISON VERIFIED - Leaderboard shows 'Kyle S' while profile_json shows first_name: 'Kyle', confirming the backend correctly prioritizes user_profiles data. CONCLUSION: The leaderboard display name functionality is working correctly. The backend properly uses user_profiles.display_name and shows 'Kyle S' as expected. The issue mentioned in the review request may have been resolved by previous fixes, or the user may be looking at cached/outdated data. The backend implementation correctly prioritizes user_profiles.display_name over profile_json data."
 
+  - task: "Critical Leaderboard Bug Investigation"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL LEADERBOARD BUG IDENTIFIED: Comprehensive investigation reveals the root cause of empty leaderboard despite multiple public scores existing. DATABASE AUDIT FINDINGS: All 12 profiles with complete scores are set to is_public=false (private), explaining why leaderboard shows empty despite having scored profiles. PRIVACY INVESTIGATION: Default setting verification shows new profiles incorrectly defaulting to private (10/10 recent profiles). Privacy change investigation detected 'unusually high private profile ratio' with 0 public vs 12 private profiles. RANKING SERVICE STATUS: Working correctly - filtering logic is accurate but there are no public profiles to display. ROOT CAUSE: Default privacy setting is incorrectly set to private instead of public, and profiles are not randomly going private - they're being created as private by default. SOLUTION NEEDED: (1) Fix default privacy setting to public in profile creation, (2) Provide migration to update existing profiles to public, (3) Ensure privacy toggle functionality works for users to control visibility. CRITICAL TESTS EXECUTED: ✅ Database Audit is_public Values - Found 0 public profiles with scores vs 12 private profiles with scores ✅ Ranking Service Bug Check - Service working correctly, no public profiles to show ❌ Privacy Change Investigation - Detected unusually high private profile ratio ❌ Default Setting Verification - New profiles defaulting to private instead of public ✅ Leaderboard vs Database Comparison - Both correctly show empty (no public profiles)"
+
 frontend:
   - task: "Fix Privacy Toggle UI Functionality"
     implemented: true
