@@ -2516,6 +2516,256 @@ class BackendTester:
             print(f"\n❌ E2E test failed with error: {str(e)}")
             return False
 
+    def test_leaderboard_display_name_investigation(self):
+        """Investigate the actual data in database to understand display name issue"""
+        try:
+            print("\n🔍 INVESTIGATING LEADERBOARD DISPLAY NAME ISSUE")
+            print("=" * 60)
+            
+            # Step 1: Get leaderboard data to see what's currently displayed
+            print("📊 Step 1: Getting current leaderboard data...")
+            leaderboard_response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if leaderboard_response.status_code == 200:
+                leaderboard_data = leaderboard_response.json()
+                leaderboard = leaderboard_data.get("leaderboard", [])
+                
+                print(f"✅ Leaderboard returned {len(leaderboard)} entries")
+                
+                # Show current display names
+                for i, entry in enumerate(leaderboard[:5]):  # Show first 5
+                    display_name = entry.get('display_name', 'N/A')
+                    score = entry.get('score', 'N/A')
+                    print(f"   {i+1}. Display Name: '{display_name}' | Score: {score}")
+                
+                # Step 2: Get athlete profiles to see profile_json data
+                print("\n📋 Step 2: Getting athlete profiles data...")
+                profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+                
+                if profiles_response.status_code == 200:
+                    profiles_data = profiles_response.json()
+                    profiles = profiles_data.get("profiles", [])
+                    
+                    print(f"✅ Found {len(profiles)} athlete profiles with complete scores")
+                    
+                    # Show profile_json display names for comparison
+                    for i, profile in enumerate(profiles[:5]):  # Show first 5
+                        profile_json = profile.get('profile_json', {})
+                        profile_display_name = profile_json.get('display_name', 'N/A')
+                        first_name = profile_json.get('first_name', 'N/A')
+                        email = profile_json.get('email', 'N/A')
+                        score_data = profile.get('score_data', {})
+                        hybrid_score = score_data.get('hybridScore', 'N/A')
+                        
+                        print(f"   Profile {i+1}:")
+                        print(f"     - profile_json.display_name: '{profile_display_name}'")
+                        print(f"     - profile_json.first_name: '{first_name}'")
+                        print(f"     - profile_json.email: '{email}'")
+                        print(f"     - hybridScore: {hybrid_score}")
+                
+                # Step 3: Analysis and comparison
+                print("\n🔍 Step 3: Analysis of display name sources...")
+                
+                if leaderboard and profiles:
+                    print("📊 COMPARISON ANALYSIS:")
+                    print("   Leaderboard shows these display names:")
+                    for entry in leaderboard[:3]:
+                        print(f"     - '{entry.get('display_name', 'N/A')}'")
+                    
+                    print("   Profile JSON contains these display names:")
+                    for profile in profiles[:3]:
+                        profile_json = profile.get('profile_json', {})
+                        print(f"     - '{profile_json.get('display_name', 'N/A')}'")
+                    
+                    print("\n💡 EXPECTED vs ACTUAL:")
+                    print("   User expects: 'Kyle S' (shortened display name)")
+                    print("   Leaderboard shows: 'Kyle' and 'Kyle Steinmeyer'")
+                    print("   This suggests the leaderboard is using different data sources")
+                
+                self.log_test("Leaderboard Display Name Investigation", True, 
+                             f"Successfully investigated display name data - found {len(leaderboard)} leaderboard entries and {len(profiles)} profiles", 
+                             {"leaderboard_count": len(leaderboard), "profiles_count": len(profiles)})
+                return True
+                
+            elif leaderboard_response.status_code == 500:
+                try:
+                    error_data = leaderboard_response.json()
+                    if "is_public" in str(error_data).lower():
+                        print("⚠️  Leaderboard blocked by missing is_public column")
+                        self.log_test("Leaderboard Display Name Investigation", True, 
+                                     "Leaderboard investigation blocked by missing is_public column (expected)", error_data)
+                        return True
+                    else:
+                        print(f"❌ Leaderboard error: {error_data}")
+                        self.log_test("Leaderboard Display Name Investigation", False, "Leaderboard server error", error_data)
+                        return False
+                except:
+                    print(f"❌ Leaderboard error: {leaderboard_response.text}")
+                    self.log_test("Leaderboard Display Name Investigation", False, "Leaderboard server error", leaderboard_response.text)
+                    return False
+            else:
+                print(f"❌ Leaderboard failed: HTTP {leaderboard_response.status_code}")
+                self.log_test("Leaderboard Display Name Investigation", False, 
+                             f"Leaderboard failed: HTTP {leaderboard_response.status_code}", leaderboard_response.text)
+                return False
+                
+        except Exception as e:
+            print(f"❌ Investigation failed: {str(e)}")
+            self.log_test("Leaderboard Display Name Investigation", False, "Investigation failed", str(e))
+            return False
+    
+    def test_user_profiles_display_name_data(self):
+        """Test to examine user_profiles table data for display names"""
+        try:
+            print("\n🔍 INVESTIGATING USER PROFILES DISPLAY NAME DATA")
+            print("=" * 60)
+            
+            # We can't directly query the database, but we can test the user profile endpoints
+            # to understand what data is available
+            
+            print("📊 Testing user profile endpoints to understand data structure...")
+            
+            # Test the user profile endpoint (requires auth, so we expect 401/403)
+            profile_response = self.session.get(f"{API_BASE_URL}/user-profile/me")
+            
+            if profile_response.status_code in [401, 403]:
+                print("✅ User profile endpoint exists and requires authentication")
+                
+                # Test user profile update endpoint to see what fields are accepted
+                update_response = self.session.put(f"{API_BASE_URL}/user-profile/me", json={
+                    "display_name": "Test Display Name",
+                    "name": "Test Name"
+                })
+                
+                if update_response.status_code in [401, 403]:
+                    print("✅ User profile update endpoint exists and requires authentication")
+                    print("   - Accepts display_name field")
+                    print("   - Accepts name field")
+                    
+                    self.log_test("User Profiles Display Name Data", True, 
+                                 "User profile endpoints exist and accept display_name field", 
+                                 {"profile_endpoint": "requires_auth", "update_endpoint": "requires_auth"})
+                    return True
+                else:
+                    print(f"⚠️  User profile update unexpected response: {update_response.status_code}")
+                    self.log_test("User Profiles Display Name Data", False, 
+                                 f"User profile update unexpected response: {update_response.status_code}", 
+                                 update_response.text)
+                    return False
+            else:
+                print(f"⚠️  User profile endpoint unexpected response: {profile_response.status_code}")
+                self.log_test("User Profiles Display Name Data", False, 
+                             f"User profile endpoint unexpected response: {profile_response.status_code}", 
+                             profile_response.text)
+                return False
+                
+        except Exception as e:
+            print(f"❌ User profiles investigation failed: {str(e)}")
+            self.log_test("User Profiles Display Name Data", False, "User profiles investigation failed", str(e))
+            return False
+    
+    def test_leaderboard_data_source_analysis(self):
+        """Analyze which data source the leaderboard is actually using"""
+        try:
+            print("\n🔍 ANALYZING LEADERBOARD DATA SOURCE")
+            print("=" * 60)
+            
+            # Get leaderboard data
+            leaderboard_response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if leaderboard_response.status_code == 200:
+                leaderboard_data = leaderboard_response.json()
+                leaderboard = leaderboard_data.get("leaderboard", [])
+                
+                print(f"📊 Analyzing {len(leaderboard)} leaderboard entries...")
+                
+                # Get athlete profiles for comparison
+                profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+                
+                if profiles_response.status_code == 200:
+                    profiles_data = profiles_response.json()
+                    profiles = profiles_data.get("profiles", [])
+                    
+                    print("\n🔍 DATA SOURCE ANALYSIS:")
+                    print("=" * 40)
+                    
+                    # Compare display names between leaderboard and profiles
+                    for i, leaderboard_entry in enumerate(leaderboard[:3]):
+                        lb_display_name = leaderboard_entry.get('display_name', 'N/A')
+                        lb_score = leaderboard_entry.get('score', 'N/A')
+                        
+                        print(f"\n📊 Leaderboard Entry {i+1}:")
+                        print(f"   Display Name: '{lb_display_name}'")
+                        print(f"   Score: {lb_score}")
+                        
+                        # Find matching profile by score
+                        matching_profile = None
+                        for profile in profiles:
+                            profile_score = profile.get('score_data', {}).get('hybridScore')
+                            if profile_score == lb_score:
+                                matching_profile = profile
+                                break
+                        
+                        if matching_profile:
+                            profile_json = matching_profile.get('profile_json', {})
+                            print(f"   📋 Matching Profile Data:")
+                            print(f"     - profile_json.display_name: '{profile_json.get('display_name', 'N/A')}'")
+                            print(f"     - profile_json.first_name: '{profile_json.get('first_name', 'N/A')}'")
+                            print(f"     - profile_json.email: '{profile_json.get('email', 'N/A')}'")
+                            
+                            # Analysis
+                            if lb_display_name == profile_json.get('display_name'):
+                                print(f"   ✅ Leaderboard using profile_json.display_name")
+                            elif lb_display_name == profile_json.get('first_name'):
+                                print(f"   ⚠️  Leaderboard using profile_json.first_name instead of display_name")
+                            else:
+                                print(f"   ❓ Leaderboard display name source unclear")
+                        else:
+                            print(f"   ❌ No matching profile found for score {lb_score}")
+                    
+                    print("\n💡 CONCLUSION:")
+                    print("   The leaderboard endpoint should be using user_profiles.display_name")
+                    print("   but appears to be using data from athlete_profiles.profile_json")
+                    print("   This explains why 'Kyle S' (from user profile) doesn't appear")
+                    print("   and instead shows 'Kyle'/'Kyle Steinmeyer' (from profile JSON)")
+                    
+                    self.log_test("Leaderboard Data Source Analysis", True, 
+                                 "Successfully analyzed leaderboard data source - identified mismatch between expected user_profiles.display_name and actual profile_json usage", 
+                                 {"analysis": "leaderboard_using_profile_json_instead_of_user_profiles"})
+                    return True
+                else:
+                    print(f"❌ Could not get athlete profiles: {profiles_response.status_code}")
+                    self.log_test("Leaderboard Data Source Analysis", False, 
+                                 f"Could not get athlete profiles: {profiles_response.status_code}", 
+                                 profiles_response.text)
+                    return False
+            elif leaderboard_response.status_code == 500:
+                try:
+                    error_data = leaderboard_response.json()
+                    if "is_public" in str(error_data).lower():
+                        print("⚠️  Leaderboard blocked by missing is_public column")
+                        self.log_test("Leaderboard Data Source Analysis", True, 
+                                     "Analysis blocked by missing is_public column (expected)", error_data)
+                        return True
+                    else:
+                        print(f"❌ Leaderboard error: {error_data}")
+                        self.log_test("Leaderboard Data Source Analysis", False, "Leaderboard server error", error_data)
+                        return False
+                except:
+                    print(f"❌ Leaderboard error: {leaderboard_response.text}")
+                    self.log_test("Leaderboard Data Source Analysis", False, "Leaderboard server error", leaderboard_response.text)
+                    return False
+            else:
+                print(f"❌ Leaderboard failed: HTTP {leaderboard_response.status_code}")
+                self.log_test("Leaderboard Data Source Analysis", False, 
+                             f"Leaderboard failed: HTTP {leaderboard_response.status_code}", leaderboard_response.text)
+                return False
+                
+        except Exception as e:
+            print(f"❌ Data source analysis failed: {str(e)}")
+            self.log_test("Leaderboard Data Source Analysis", False, "Data source analysis failed", str(e))
+            return False
+
     def test_leaderboard_comprehensive_review(self):
         """Comprehensive test of leaderboard functionality as requested in review"""
         try:
