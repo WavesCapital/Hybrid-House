@@ -2397,56 +2397,57 @@ async def get_profile_ranking(profile_id: str):
 
 @api_router.post("/admin/migrate-privacy")
 async def migrate_privacy_column():
-    """Admin endpoint to add is_public column to athlete_profiles table"""
+    """Migrate privacy column and set all scored profiles to PUBLIC by default"""
     try:
-        print("🔄 Starting privacy column migration...")
-        
-        # First check if column already exists by trying to select it
+        # Check if column already exists
         try:
-            test_query = supabase.table('athlete_profiles').select('id, is_public').limit(1).execute()
-            print("✅ is_public column already exists!")
-            
-            # Update any NULL values to FALSE
-            all_profiles = supabase.table('athlete_profiles').select('id').execute()
-            update_count = 0
-            
-            for profile in all_profiles.data:
-                try:
-                    supabase.table('athlete_profiles').update({'is_public': False}).eq('id', profile['id']).execute()
-                    update_count += 1
-                except:
-                    pass
-            
-            return {
-                "success": True,
-                "message": "Privacy column already exists and has been updated",
-                "updated_profiles": update_count,
-                "column_exists": True
-            }
-            
-        except Exception as column_check:
-            error_msg = str(column_check).lower()
-            if "does not exist" in error_msg or "42703" in error_msg:
-                print("❌ Column does not exist - providing manual instructions...")
-                
-                return {
-                    "success": False,
-                    "message": "is_public column does not exist and cannot be added via API",
-                    "column_exists": False,
-                    "instructions": "Run this SQL in your Supabase Dashboard SQL Editor",
-                    "required_sql": "ALTER TABLE athlete_profiles ADD COLUMN is_public BOOLEAN DEFAULT FALSE; UPDATE athlete_profiles SET is_public = FALSE WHERE is_public IS NULL;",
-                    "error_details": str(column_check)
-                }
+            # Test query to see if column exists
+            test_result = supabase.table('athlete_profiles').select('is_public').limit(1).execute()
+            column_exists = True
+        except Exception as e:
+            if "does not exist" in str(e).lower() and "is_public" in str(e).lower():
+                column_exists = False
             else:
-                raise column_check
+                raise e
         
+        if not column_exists:
+            # Add the column with default value
+            supabase.rpc('exec_sql', {
+                'sql': 'ALTER TABLE athlete_profiles ADD COLUMN is_public BOOLEAN DEFAULT true;'
+            }).execute()
+            
+            # Set all existing profiles with complete scores to PUBLIC (not private)
+            supabase.rpc('exec_sql', {
+                'sql': '''
+                UPDATE athlete_profiles 
+                SET is_public = true 
+                WHERE score_data IS NOT NULL 
+                AND score_data::jsonb ? 'hybridScore'
+                AND (score_data::jsonb->>'hybridScore')::numeric > 0;
+                '''
+            }).execute()
+            
+            return {"message": "Privacy column added successfully and all scored profiles set to PUBLIC"}
+        else:
+            # Column exists, just update all scored profiles to be PUBLIC
+            update_result = supabase.rpc('exec_sql', {
+                'sql': '''
+                UPDATE athlete_profiles 
+                SET is_public = true 
+                WHERE score_data IS NOT NULL 
+                AND score_data::jsonb ? 'hybridScore'
+                AND (score_data::jsonb->>'hybridScore')::numeric > 0;
+                '''
+            }).execute()
+            
+            return {"message": "Privacy column already exists. All scored profiles updated to PUBLIC"}
+            
     except Exception as e:
-        print(f"❌ Migration endpoint failed: {e}")
-        return {
-            "success": False,
-            "message": f"Migration check failed: {str(e)}",
-            "error_details": str(e)
-        }
+        print(f"Error migrating privacy column: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error migrating privacy column: {str(e)}"
+        )
 
 app.include_router(api_router)
 
