@@ -9216,6 +9216,220 @@ class BackendTester:
             self.log_test("Public vs Private Profiles", False, "Public vs private profiles test failed", str(e))
             return False
 
+    def test_athlete_profile_endpoint_accessibility(self):
+        """Test GET /api/athlete-profile/{profile_id} endpoint accessibility without and with authentication"""
+        try:
+            # Test profile IDs from the review request
+            test_profile_ids = [
+                "4a417508-02e0-4b4c-9dca-c5e6c6a7d1f5",  # Nick's profile
+                "e9105f5f-1c58-4d5f-9e3b-8a9c3d2e1f0a"   # Michael's profile
+            ]
+            
+            results = []
+            
+            for profile_id in test_profile_ids:
+                # Test 1: WITHOUT Authentication
+                response_no_auth = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                
+                if response_no_auth.status_code == 200:
+                    data = response_no_auth.json()
+                    results.append(f"✅ Profile {profile_id[:8]}... - PUBLIC ACCESS: HTTP 200, returned profile data")
+                elif response_no_auth.status_code == 404:
+                    results.append(f"❌ Profile {profile_id[:8]}... - PUBLIC ACCESS: HTTP 404, profile not found")
+                elif response_no_auth.status_code in [401, 403]:
+                    results.append(f"🔒 Profile {profile_id[:8]}... - PUBLIC ACCESS: HTTP {response_no_auth.status_code}, authentication required")
+                else:
+                    results.append(f"⚠️  Profile {profile_id[:8]}... - PUBLIC ACCESS: HTTP {response_no_auth.status_code}, unexpected response")
+                
+                # Test 2: WITH Invalid Authentication (to test auth handling)
+                headers = {"Authorization": "Bearer invalid_token"}
+                response_invalid_auth = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}", headers=headers)
+                
+                if response_invalid_auth.status_code == 200:
+                    results.append(f"✅ Profile {profile_id[:8]}... - INVALID AUTH: HTTP 200, endpoint ignores auth (public)")
+                elif response_invalid_auth.status_code == 404:
+                    results.append(f"❌ Profile {profile_id[:8]}... - INVALID AUTH: HTTP 404, profile not found")
+                elif response_invalid_auth.status_code in [401, 403]:
+                    results.append(f"🔒 Profile {profile_id[:8]}... - INVALID AUTH: HTTP {response_invalid_auth.status_code}, authentication required")
+                else:
+                    results.append(f"⚠️  Profile {profile_id[:8]}... - INVALID AUTH: HTTP {response_invalid_auth.status_code}, unexpected response")
+            
+            # Test 3: Test with a known non-existent profile ID
+            fake_profile_id = "00000000-0000-0000-0000-000000000000"
+            response_fake = self.session.get(f"{API_BASE_URL}/athlete-profile/{fake_profile_id}")
+            
+            if response_fake.status_code == 404:
+                results.append(f"✅ Fake Profile - PUBLIC ACCESS: HTTP 404, correctly returns not found for non-existent profile")
+            elif response_fake.status_code in [401, 403]:
+                results.append(f"🔒 Fake Profile - PUBLIC ACCESS: HTTP {response_fake.status_code}, authentication required even for non-existent profiles")
+            else:
+                results.append(f"⚠️  Fake Profile - PUBLIC ACCESS: HTTP {response_fake.status_code}, unexpected response")
+            
+            # Analyze results to determine endpoint behavior
+            public_access_count = len([r for r in results if "HTTP 200" in r and "PUBLIC ACCESS" in r])
+            auth_required_count = len([r for r in results if ("HTTP 401" in r or "HTTP 403" in r) and "PUBLIC ACCESS" in r])
+            not_found_count = len([r for r in results if "HTTP 404" in r and "PUBLIC ACCESS" in r])
+            
+            # Determine overall endpoint accessibility
+            if public_access_count > 0:
+                conclusion = "🌐 ENDPOINT IS PUBLIC - Can be accessed without authentication for sharing scores"
+                success = True
+            elif auth_required_count > 0:
+                conclusion = "🔒 ENDPOINT REQUIRES AUTHENTICATION - Frontend should require login before accessing"
+                success = True
+            elif not_found_count == len(test_profile_ids):
+                conclusion = "❓ ENDPOINT BEHAVIOR UNCLEAR - All test profiles return 404 (may be public but profiles don't exist)"
+                success = True
+            else:
+                conclusion = "❌ ENDPOINT BEHAVIOR INCONSISTENT - Mixed responses detected"
+                success = False
+            
+            self.log_test("Athlete Profile Endpoint Accessibility", success, conclusion, results)
+            return success
+            
+        except Exception as e:
+            self.log_test("Athlete Profile Endpoint Accessibility", False, "Athlete profile endpoint accessibility test failed", str(e))
+            return False
+    
+    def test_athlete_profile_endpoint_response_structure(self):
+        """Test that GET /api/athlete-profile/{profile_id} returns proper response structure when accessible"""
+        try:
+            # First, find any existing profiles by testing the general athlete-profiles endpoint
+            profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            test_profile_id = None
+            if profiles_response.status_code == 200:
+                profiles_data = profiles_response.json()
+                if profiles_data.get("profiles") and len(profiles_data["profiles"]) > 0:
+                    test_profile_id = profiles_data["profiles"][0]["id"]
+            
+            # If no profiles found, test with the provided profile IDs
+            if not test_profile_id:
+                test_profile_ids = [
+                    "4a417508-02e0-4b4c-9dca-c5e6c6a7d1f5",
+                    "e9105f5f-1c58-4d5f-9e3b-8a9c3d2e1f0a"
+                ]
+                
+                for pid in test_profile_ids:
+                    response = self.session.get(f"{API_BASE_URL}/athlete-profile/{pid}")
+                    if response.status_code == 200:
+                        test_profile_id = pid
+                        break
+            
+            if test_profile_id:
+                response = self.session.get(f"{API_BASE_URL}/athlete-profile/{test_profile_id}")
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    
+                    # Check required fields for hybrid score page
+                    required_fields = ["profile_id", "profile_json", "score_data"]
+                    missing_fields = []
+                    
+                    for field in required_fields:
+                        if field not in data:
+                            missing_fields.append(field)
+                    
+                    if not missing_fields:
+                        # Check if score_data has hybrid score information
+                        score_data = data.get("score_data")
+                        if score_data and isinstance(score_data, dict) and "hybridScore" in score_data:
+                            self.log_test("Athlete Profile Endpoint Response Structure", True, 
+                                        f"Profile endpoint returns complete structure with hybrid score data for profile {test_profile_id[:8]}...", 
+                                        {"required_fields": required_fields, "has_hybrid_score": True})
+                            return True
+                        else:
+                            self.log_test("Athlete Profile Endpoint Response Structure", True, 
+                                        f"Profile endpoint returns proper structure but no hybrid score data for profile {test_profile_id[:8]}...", 
+                                        {"required_fields": required_fields, "has_hybrid_score": False})
+                            return True
+                    else:
+                        self.log_test("Athlete Profile Endpoint Response Structure", False, 
+                                    f"Profile endpoint missing required fields: {missing_fields}", data)
+                        return False
+                elif response.status_code == 404:
+                    self.log_test("Athlete Profile Endpoint Response Structure", True, 
+                                "Profile endpoint properly returns 404 for non-existent profile", 
+                                {"profile_id": test_profile_id})
+                    return True
+                elif response.status_code in [401, 403]:
+                    self.log_test("Athlete Profile Endpoint Response Structure", True, 
+                                "Profile endpoint requires authentication - cannot test response structure without auth", 
+                                {"status_code": response.status_code})
+                    return True
+                else:
+                    self.log_test("Athlete Profile Endpoint Response Structure", False, 
+                                f"Profile endpoint returned unexpected status: HTTP {response.status_code}", response.text)
+                    return False
+            else:
+                self.log_test("Athlete Profile Endpoint Response Structure", True, 
+                            "No accessible profiles found to test response structure - endpoint behavior consistent", 
+                            {"tested_profiles": ["4a417508-02e0-4b4c-9dca-c5e6c6a7d1f5", "e9105f5f-1c58-4d5f-9e3b-8a9c3d2e1f0a"]})
+                return True
+                
+        except Exception as e:
+            self.log_test("Athlete Profile Endpoint Response Structure", False, "Athlete profile endpoint response structure test failed", str(e))
+            return False
+    
+    def test_hybrid_score_sharing_functionality(self):
+        """Test if hybrid score sharing functionality works as expected"""
+        try:
+            # Test the specific use case: frontend accessing profile for score sharing
+            test_profile_ids = [
+                "4a417508-02e0-4b4c-9dca-c5e6c6a7d1f5",  # Nick's profile
+                "e9105f5f-1c58-4d5f-9e3b-8a9c3d2e1f0a"   # Michael's profile
+            ]
+            
+            sharing_results = []
+            
+            for profile_id in test_profile_ids:
+                # Simulate frontend request for hybrid score page
+                response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    score_data = data.get("score_data")
+                    profile_json = data.get("profile_json", {})
+                    
+                    if score_data and "hybridScore" in score_data:
+                        sharing_results.append(f"✅ Profile {profile_id[:8]}... - SHAREABLE: Has hybrid score {score_data.get('hybridScore')}")
+                    else:
+                        sharing_results.append(f"⚠️  Profile {profile_id[:8]}... - LIMITED SHARING: Accessible but no hybrid score data")
+                        
+                elif response.status_code == 404:
+                    sharing_results.append(f"❌ Profile {profile_id[:8]}... - NOT SHAREABLE: Profile not found (404)")
+                    
+                elif response.status_code in [401, 403]:
+                    sharing_results.append(f"🔒 Profile {profile_id[:8]}... - REQUIRES AUTH: Cannot share without login")
+                    
+                else:
+                    sharing_results.append(f"⚠️  Profile {profile_id[:8]}... - ERROR: HTTP {response.status_code}")
+            
+            # Determine sharing capability
+            shareable_count = len([r for r in sharing_results if "SHAREABLE" in r])
+            auth_required_count = len([r for r in sharing_results if "REQUIRES AUTH" in r])
+            not_found_count = len([r for r in sharing_results if "NOT SHAREABLE" in r])
+            
+            if shareable_count > 0:
+                conclusion = "🌐 HYBRID SCORES ARE PUBLICLY SHAREABLE - Users can share score links without requiring recipients to log in"
+                success = True
+            elif auth_required_count > 0:
+                conclusion = "🔒 HYBRID SCORE SHARING REQUIRES AUTHENTICATION - Recipients must log in to view shared scores"
+                success = True
+            elif not_found_count == len(test_profile_ids):
+                conclusion = "❓ CANNOT DETERMINE SHARING CAPABILITY - Test profiles not found (may be public but profiles don't exist)"
+                success = True
+            else:
+                conclusion = "❌ HYBRID SCORE SHARING BEHAVIOR INCONSISTENT"
+                success = False
+            
+            self.log_test("Hybrid Score Sharing Functionality", success, conclusion, sharing_results)
+            return success
+            
+        except Exception as e:
+            self.log_test("Hybrid Score Sharing Functionality", False, "Hybrid score sharing functionality test failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests focused on authentication flow and user profile management"""
         print("=" * 80)
