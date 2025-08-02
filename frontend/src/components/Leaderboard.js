@@ -876,7 +876,7 @@ const Leaderboard = () => {
             <div style={{ color: '#8D9299', textAlign: 'center' }}>COUNTRY</div>
             <div style={{ color: sortColumn === 'hybrid' ? '#08F0FF' : '#8D9299', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
                  onClick={() => handleSort('hybrid')}
-                 className="tooltip-container">
+                 className="score-tooltip-container">
               HYBRID {sortColumn === 'hybrid' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
               <div className="score-tooltip">
                 <div style={{fontWeight: '700', marginBottom: '8px', color: '#08F0FF'}}>Hybrid Score</div>
