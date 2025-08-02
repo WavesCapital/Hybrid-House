@@ -489,23 +489,6 @@ const HybridScoreResults = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl" style={{ paddingTop: '100px' }}>
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold neo-primary">Your Hybrid Score</h1>
-            <p className="neo-text-secondary">
-              Complete analysis for {profileData?.first_name || 'your profile'}
-            </p>
-          </div>
-          
-          <div className="flex space-x-3">
-            <Button onClick={handleShare} className="neo-btn-secondary" size="sm">
-              <Share2 className="h-4 w-4 mr-2" />
-              Share Score
-            </Button>
-          </div>
-        </div>
-
         {/* Score Display */}
         <div className="space-y-8">
           {/* Hybrid Score Section */}
@@ -519,7 +502,7 @@ const HybridScoreResults = () => {
                 Your overall hybrid-fitness score on a 0-100 scale
               </p>
               
-              {/* Leaderboard Position */}
+              {/* Leaderboard Position and Buttons */}
               {leaderboardPosition && totalAthletes && (
                 <div className="mb-6">
                   <div className="flex items-center justify-center space-x-2 mb-4">
@@ -528,13 +511,19 @@ const HybridScoreResults = () => {
                       Ranked #{leaderboardPosition} out of {totalAthletes} athletes
                     </span>
                   </div>
-                  <Button 
-                    onClick={() => navigate('/leaderboard')} 
-                    className="neo-btn-secondary"
-                    size="sm"
-                  >
-                    🏆 View Leaderboard
-                  </Button>
+                  <div className="flex items-center justify-center space-x-3">
+                    <Button 
+                      onClick={() => navigate('/leaderboard')} 
+                      className="neo-btn-secondary"
+                      size="sm"
+                    >
+                      View Leaderboard
+                    </Button>
+                    <Button onClick={handleShare} className="neo-btn-secondary" size="sm">
+                      <Share2 className="h-4 w-4 mr-2" />
+                      Share Score
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
