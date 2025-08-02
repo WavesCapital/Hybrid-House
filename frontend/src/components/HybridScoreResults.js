@@ -314,19 +314,23 @@ const HybridScoreResults = () => {
   // Fetch score data from Supabase
   useEffect(() => {
     const fetchScoreData = async () => {
-      if (!profileId || !session) return;
+      if (!profileId) return;
 
       try {
         setIsLoading(true);
         
+        const config = {};
+        // Add authentication headers if user is logged in
+        if (session) {
+          config.headers = {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          };
+        }
+        
         const response = await axios.get(
           `${BACKEND_URL}/api/athlete-profile/${profileId}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${session.access_token}`,
-              'Content-Type': 'application/json',
-            },
-          }
+          config
         );
 
         const { profile_json, score_data } = response.data;
