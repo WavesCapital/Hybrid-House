@@ -325,6 +325,8 @@ const HybridScoreResults = () => {
           setProfileData(profile_json);
           // Animate scores
           setTimeout(() => animateScores(score_data), 500);
+          // Fetch leaderboard position
+          fetchLeaderboardPosition(score_data.hybridScore);
         } else {
           toast({
             title: "Score data not found",
