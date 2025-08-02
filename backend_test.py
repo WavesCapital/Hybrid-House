@@ -1046,6 +1046,201 @@ class BackendTester:
             self.log_test("Ranking System Comprehensive", False, "Ranking system comprehensive test failed", str(e))
             return False
 
+    # ===== URGENT LEADERBOARD DEBUGGING TESTS =====
+    
+    def test_leaderboard_broken_urgent(self):
+        """URGENT: Test the broken leaderboard after ranking system implementation"""
+        try:
+            print("\n🚨 URGENT LEADERBOARD DEBUGGING 🚨")
+            print("=" * 60)
+            
+            # Test 1: Basic leaderboard endpoint accessibility
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            print(f"📊 Leaderboard endpoint status: {response.status_code}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"📈 Leaderboard data structure: {list(data.keys())}")
+                print(f"📊 Total entries: {data.get('total', 'N/A')}")
+                print(f"👥 Public athletes: {data.get('total_public_athletes', 'N/A')}")
+                
+                leaderboard = data.get('leaderboard', [])
+                if leaderboard:
+                    print(f"✅ Leaderboard has {len(leaderboard)} entries")
+                    print(f"🏆 Sample entry: {leaderboard[0] if leaderboard else 'None'}")
+                    self.log_test("Leaderboard Broken Urgent", True, f"Leaderboard working with {len(leaderboard)} entries", data)
+                    return True
+                else:
+                    print("❌ Leaderboard is empty - no results returned")
+                    metadata = data.get('ranking_metadata', {})
+                    if 'error' in metadata:
+                        print(f"🔥 Ranking service error: {metadata['error']}")
+                        self.log_test("Leaderboard Broken Urgent", False, f"Ranking service error: {metadata['error']}", metadata)
+                    else:
+                        print("⚠️  Empty leaderboard but no error - possible data filtering issue")
+                        self.log_test("Leaderboard Broken Urgent", False, "Empty leaderboard - possible data filtering issue", data)
+                    return False
+            else:
+                try:
+                    error_data = response.json()
+                    print(f"❌ Leaderboard endpoint error: {error_data}")
+                    self.log_test("Leaderboard Broken Urgent", False, f"HTTP {response.status_code}: {error_data}", error_data)
+                except:
+                    print(f"❌ Leaderboard endpoint error: {response.text}")
+                    self.log_test("Leaderboard Broken Urgent", False, f"HTTP {response.status_code}: {response.text}", response.text)
+                return False
+                
+        except Exception as e:
+            print(f"💥 Critical error testing leaderboard: {str(e)}")
+            self.log_test("Leaderboard Broken Urgent", False, "Critical error testing leaderboard", str(e))
+            return False
+    
+    def test_ranking_service_debug(self):
+        """Debug the ranking service implementation"""
+        try:
+            print("\n🔧 RANKING SERVICE DEBUG 🔧")
+            print("=" * 50)
+            
+            # Test ranking service by checking if it can connect to database
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                metadata = data.get('ranking_metadata', {})
+                
+                if 'error' in metadata:
+                    error_msg = metadata['error']
+                    print(f"🔥 Ranking service error detected: {error_msg}")
+                    
+                    # Check for common issues
+                    if "Supabase client not initialized" in error_msg:
+                        print("❌ ISSUE: Ranking service Supabase client not initialized")
+                        print("🔧 LIKELY CAUSE: Environment variable mismatch")
+                        print("💡 SOLUTION: Check SUPABASE_ANON_KEY vs SUPABASE_SERVICE_KEY")
+                        self.log_test("Ranking Service Debug", False, "Supabase client not initialized in ranking service", error_msg)
+                        return False
+                    elif "does not exist" in error_msg and "is_public" in error_msg:
+                        print("❌ ISSUE: is_public column missing from database")
+                        print("🔧 LIKELY CAUSE: Database migration not run")
+                        print("💡 SOLUTION: Run database migration to add is_public column")
+                        self.log_test("Ranking Service Debug", False, "is_public column missing from database", error_msg)
+                        return False
+                    else:
+                        print(f"❌ UNKNOWN ISSUE: {error_msg}")
+                        self.log_test("Ranking Service Debug", False, f"Unknown ranking service error: {error_msg}", error_msg)
+                        return False
+                else:
+                    print("✅ Ranking service working correctly")
+                    self.log_test("Ranking Service Debug", True, "Ranking service working correctly", metadata)
+                    return True
+            else:
+                print(f"❌ Cannot debug ranking service - leaderboard endpoint failed: {response.status_code}")
+                self.log_test("Ranking Service Debug", False, f"Cannot debug - leaderboard endpoint failed: {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            print(f"💥 Error debugging ranking service: {str(e)}")
+            self.log_test("Ranking Service Debug", False, "Error debugging ranking service", str(e))
+            return False
+    
+    def test_database_connectivity_ranking(self):
+        """Test database connectivity for ranking service"""
+        try:
+            print("\n🗄️  DATABASE CONNECTIVITY TEST 🗄️")
+            print("=" * 50)
+            
+            # Test if we can access athlete_profiles table
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get('profiles', [])
+                print(f"✅ Database accessible - found {len(profiles)} athlete profiles")
+                
+                # Check if any profiles have score data
+                profiles_with_scores = [p for p in profiles if p.get('score_data')]
+                print(f"📊 Profiles with scores: {len(profiles_with_scores)}")
+                
+                # Check if any profiles are public
+                public_profiles = [p for p in profiles if p.get('is_public') == True]
+                print(f"🌍 Public profiles: {len(public_profiles)}")
+                
+                if len(profiles_with_scores) == 0:
+                    print("⚠️  No profiles with score data - leaderboard will be empty")
+                    self.log_test("Database Connectivity Ranking", True, "Database accessible but no scored profiles", {
+                        'total_profiles': len(profiles),
+                        'scored_profiles': len(profiles_with_scores),
+                        'public_profiles': len(public_profiles)
+                    })
+                elif len(public_profiles) == 0:
+                    print("⚠️  No public profiles - leaderboard will be empty")
+                    self.log_test("Database Connectivity Ranking", True, "Database accessible but no public profiles", {
+                        'total_profiles': len(profiles),
+                        'scored_profiles': len(profiles_with_scores),
+                        'public_profiles': len(public_profiles)
+                    })
+                else:
+                    print("✅ Database has data for leaderboard")
+                    self.log_test("Database Connectivity Ranking", True, "Database accessible with leaderboard data", {
+                        'total_profiles': len(profiles),
+                        'scored_profiles': len(profiles_with_scores),
+                        'public_profiles': len(public_profiles)
+                    })
+                return True
+            else:
+                print(f"❌ Cannot access athlete_profiles table: {response.status_code}")
+                self.log_test("Database Connectivity Ranking", False, f"Cannot access athlete_profiles: {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            print(f"💥 Database connectivity test failed: {str(e)}")
+            self.log_test("Database Connectivity Ranking", False, "Database connectivity test failed", str(e))
+            return False
+    
+    def test_old_vs_new_logic_comparison(self):
+        """Compare old leaderboard logic with new ranking service logic"""
+        try:
+            print("\n🔄 OLD vs NEW LOGIC COMPARISON 🔄")
+            print("=" * 50)
+            
+            # Get current leaderboard result
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                print("✅ New ranking system endpoint accessible")
+                
+                # Check if we're getting the expected structure
+                expected_fields = ['leaderboard', 'total', 'total_public_athletes', 'ranking_metadata']
+                missing_fields = [field for field in expected_fields if field not in data]
+                
+                if missing_fields:
+                    print(f"❌ New system missing fields: {missing_fields}")
+                    self.log_test("Old vs New Logic Comparison", False, f"New system missing fields: {missing_fields}", data)
+                    return False
+                else:
+                    print("✅ New system has all expected fields")
+                    
+                    # Check if ranking metadata has error
+                    metadata = data.get('ranking_metadata', {})
+                    if 'error' in metadata:
+                        print(f"❌ New system has error: {metadata['error']}")
+                        self.log_test("Old vs New Logic Comparison", False, f"New system error: {metadata['error']}", metadata)
+                        return False
+                    else:
+                        print("✅ New system working without errors")
+                        self.log_test("Old vs New Logic Comparison", True, "New ranking system working correctly", data)
+                        return True
+            else:
+                print(f"❌ New ranking system endpoint failed: {response.status_code}")
+                self.log_test("Old vs New Logic Comparison", False, f"New system endpoint failed: {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            print(f"💥 Logic comparison test failed: {str(e)}")
+            self.log_test("Old vs New Logic Comparison", False, "Logic comparison test failed", str(e))
+            return False
+
     # ===== PRIVACY SYSTEM TESTS =====
     
     def test_privacy_update_endpoint_exists(self):
