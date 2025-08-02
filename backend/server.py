@@ -894,7 +894,7 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
                     **profile_data,
                     "user_id": user_id,
                     "user_profile_id": user_profile_id,
-                    "is_public": profile_data.get('is_public', False),  # Default to private
+                    "is_public": profile_data.get('is_public', True),  # Default to public
                     "created_at": datetime.utcnow().isoformat(),
                     "updated_at": datetime.utcnow().isoformat()
                 }
