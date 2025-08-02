@@ -84,17 +84,31 @@ class RankingService:
                                  'distanceScore', 'volumeScore', 'recoveryScore']
                 
                 if all(score in score_data for score in required_scores):
-                    # Extract display_name from user_profiles table first, fallback to profile_json
+                    # Extract display_name with enhanced fallback logic
                     display_name = user_profile_data.get('display_name', '')
                     if not display_name:
+                        # First fallback: try profile_json display_name
                         display_name = profile_json.get('display_name', '')
                         if not display_name:
-                            first_name = profile_json.get('first_name', '')
-                            if first_name:
+                            # Second fallback: try first_name + last_name combination
+                            first_name = profile_json.get('first_name', '').strip()
+                            last_name = profile_json.get('last_name', '').strip()
+                            if first_name and last_name:
+                                display_name = f"{first_name} {last_name}"
+                            elif first_name:
+                                # Third fallback: just first_name
                                 display_name = first_name
                             else:
+                                # Final fallback: email prefix
                                 email = profile_json.get('email', '')
                                 display_name = email.split('@')[0] if email else f'User {profile.get("id", "")[:8]}'
+                    
+                    # Handle case where display_name might be incomplete (like "Nick" instead of "Nick Bare")
+                    # If display_name exists but seems incomplete, enhance it with last_name if available
+                    if display_name and len(display_name.split()) == 1:  # Single word display name
+                        last_name = profile_json.get('last_name', '').strip()
+                        if last_name and last_name.lower() not in display_name.lower():
+                            display_name = f"{display_name} {last_name}"
                     
                     # Calculate age from date_of_birth
                     age = None
