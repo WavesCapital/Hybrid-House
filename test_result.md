@@ -158,7 +158,7 @@ backend:
 
   - task: "Leaderboard with Age Calculation and Country/Gender Display"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 1
     priority: "high"
@@ -176,6 +176,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "🚨 CRITICAL DATA STRUCTURE AUDIT COMPLETE - USER CLARIFICATION CONFIRMED CORRECT: Executed comprehensive investigation of the critical data structure audit as requested in the review request. USER CLARIFICATION VERIFIED: ✅ The user's clarification is 100% CORRECT - the ranking service is using WRONG join logic. DEFINITIVE FINDINGS: ❌ WRONG JOIN LOGIC CONFIRMED - Ranking service uses athlete_profiles.user_profile_id = user_profiles.id but should use athlete_profiles.user_id = user_profiles.user_id ✅ EVIDENCE FROM LEADERBOARD DATA - Nick Bare (profile_id: 4a417508-ccc8-482c-b917-8d84f018310e) appears on leaderboard with score 96.8 but has user_profile_id=NULL, age=NULL, gender=NULL, country=NULL ✅ PROOF JOIN WORKS WHEN CORRECT - Kyle S (profile_id: f16043c6-243d-4acf-a9b3-4b51b2ee15bd) has user_profile_id='dc2b65d8-1e5f-459d-b5c8-cb716deaf5d8' and shows complete demographic data (age: 29, gender: male, country: US) ✅ CODE ANALYSIS CONFIRMS - Server.py consistently uses athlete_profiles.user_id for all operations, but ranking_service.py uses athlete_profiles.user_profile_id (lines 65-72). ROOT CAUSE IDENTIFIED: The ranking service is selecting 'user_profile_id' from athlete_profiles table and joining with user_profiles.id, but it should select 'user_id' from athlete_profiles and join with user_profiles.user_id. CRITICAL FIX REQUIRED: Update /app/backend/ranking_service.py lines 49, 65, 69 to use 'user_id' instead of 'user_profile_id'. This explains why Nick appears on leaderboard but without demographic data - his profile has user_id set but user_profile_id is NULL."
+      - working: true
+        agent: "testing"
+        comment: "🎉 CRITICAL RANKING SERVICE FIX VERIFICATION COMPLETE: Executed comprehensive testing of the main agent's critical ranking service fix as requested in the review. MAJOR SUCCESS ACHIEVED: ✅ NICK BARE NOW SHOWS WITH COMPLETE DEMOGRAPHIC DATA - Display Name: 'Nick Bare', Rank: #1, Score: 96.8, Age: 35, Gender: male, Country: US, Country Flag: 🇺🇸 ✅ JOIN LOGIC FIX WORKING - The ranking service now correctly uses athlete_profiles.user_id = user_profiles.user_id join logic ✅ KYLE S ALSO HAS COMPLETE DATA - Age: 29, Gender: male, Country: US, Score: 76.5 ✅ DEDUPLICATION WORKING - Each user appears only once on leaderboard with their highest score ✅ PROPER RANKING - Leaderboard correctly sorted highest to lowest with sequential ranks. PARTIAL SUCCESS ANALYSIS: 2 out of 7 profiles (28.6%) have complete demographic data. The remaining 5 profiles ('Anonymous User' and 'Test User' entries) show age: None, gender: None, country: None because they don't have corresponding user_profiles entries in the database. ROOT CAUSE IDENTIFIED: The join logic fix is working correctly, but some athlete profiles were created without corresponding user_profiles entries. This is a data completeness issue, not a code issue. CONCLUSION: The critical ranking service fix is SUCCESSFUL for profiles that have user_profiles entries. Nick Bare now shows with complete demographic data as requested. The remaining profiles need user_profiles entries to be created."
 
   - task: "Filter Athlete Profiles to Show Only Those With Complete Scores"
     implemented: true
