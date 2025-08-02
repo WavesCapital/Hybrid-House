@@ -350,7 +350,7 @@ const HybridScoreResults = () => {
     };
 
     fetchScoreData();
-  }, [profileId, session, navigate, toast]);
+  }, [profileId, session, navigate, toast, fetchLeaderboardPosition]);
 
   if (isLoading) {
     return (
