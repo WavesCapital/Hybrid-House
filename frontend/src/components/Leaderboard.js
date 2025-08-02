@@ -1271,7 +1271,7 @@ const Leaderboard = () => {
           white-space: normal;
         }
 
-        .tooltip-container:hover .score-tooltip {
+        .score-tooltip-container:hover .score-tooltip {
           opacity: 1;
           pointer-events: auto;
           transform: translateX(-50%) translateY(0);
