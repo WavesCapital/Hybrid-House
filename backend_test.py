@@ -11609,7 +11609,12 @@ class BackendTester:
             self.test_database_migration_status,
             self.test_leaderboard_empty_root_cause,
             self.test_migration_script_execution,
-            self.test_profile_creation_path_analysis
+            self.test_profile_creation_path_analysis,
+            
+            # 15. NICK BARE INVESTIGATION AND DEDUPLICATION TESTS (CURRENT REVIEW REQUEST)
+            self.test_nick_bare_profile_investigation,
+            self.test_leaderboard_user_deduplication,
+            self.test_leaderboard_ranking_logic_comprehensive
         ]
         
         # Run AUTHENTICATION FLOW TESTS first (HIGH PRIORITY)
