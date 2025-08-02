@@ -105,6 +105,18 @@
 user_problem_statement: "Add delete functionality to athlete profiles in the Hybrid Score History table on the /profile page. Users should be able to delete athlete profiles by clicking a small x button all the way to the right on the table."
 
 backend:
+  - task: "GET /api/athlete-profile/{profile_id} Endpoint Authentication Testing"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 ATHLETE PROFILE ENDPOINT ACCESSIBILITY TESTING COMPLETE: Executed comprehensive testing of the GET /api/athlete-profile/{profile_id} endpoint as requested in the review. CRITICAL FINDINGS: ✅ ENDPOINT IS PUBLIC - The endpoint does NOT require authentication and can be accessed without JWT tokens for sharing hybrid scores ✅ ENDPOINT STRUCTURE CORRECT - Returns proper response structure with profile_id, profile_json, and score_data fields ✅ HYBRID SCORES ARE PUBLICLY SHAREABLE - Users can share score links without requiring recipients to log in ✅ 404 ERRORS EXPLAINED - The specific profile IDs mentioned in the review (4a417508-02e0-4b4c-9dca-c5e6c6a7d1f5, e9105f5f-1c58-4d5f-9e3b-8a9c3d2e1f0a) return 404 because they don't exist in the database, not because of authentication issues ✅ WORKING EXAMPLE - Tested with existing profile ID (4a417508-ccc8-482c-b917-8d84f018310e) and confirmed public access works correctly with HTTP 200 response. CONCLUSION: The endpoint is designed correctly for public hybrid score sharing. The frontend 404 errors are due to using non-existent profile IDs, not authentication requirements. The hybrid score page should be publicly shareable as intended."
+
   - task: "Fix User-Specific Profile Endpoint with Complete Score Filtering"
     implemented: true
     working: true
