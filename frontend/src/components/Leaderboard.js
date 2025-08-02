@@ -865,37 +865,37 @@ const Leaderboard = () => {
             letterSpacing: '0.5px',
             fontFamily: 'Inter, sans-serif'
           }}>
-            <div style={{ color: '#8D9299', cursor: 'pointer' }} onClick={() => handleSort('rank')}>
+            <div style={{ color: '#8D9299', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('rank')}>
               RANK {sortColumn === 'rank' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
             </div>
-            <div style={{ color: '#8D9299', cursor: 'pointer' }} onClick={() => handleSort('name')}>
+            <div style={{ color: '#8D9299', cursor: 'pointer', textAlign: 'left' }} onClick={() => handleSort('name')}>
               NAME {sortColumn === 'name' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
             </div>
-            <div style={{ color: '#8D9299' }}>AGE</div>
-            <div style={{ color: '#8D9299' }}>GENDER</div>
-            <div style={{ color: '#8D9299' }}>COUNTRY</div>
-            <div style={{ color: sortColumn === 'hybrid' ? '#08F0FF' : '#8D9299', cursor: 'pointer' }} onClick={() => handleSort('hybrid')}>
+            <div style={{ color: '#8D9299', textAlign: 'center' }}>AGE</div>
+            <div style={{ color: '#8D9299', textAlign: 'center' }}>GENDER</div>
+            <div style={{ color: '#8D9299', textAlign: 'center' }}>COUNTRY</div>
+            <div style={{ color: sortColumn === 'hybrid' ? '#08F0FF' : '#8D9299', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('hybrid')}>
               HYBRID {sortColumn === 'hybrid' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
             </div>
-            <div style={{ color: '#5CFF5C', cursor: 'pointer' }} onClick={() => handleSort('str')}>
+            <div style={{ color: '#5CFF5C', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('str')}>
               STR {sortColumn === 'str' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
             </div>
-            <div style={{ color: '#FFA42D', cursor: 'pointer' }} onClick={() => handleSort('spd')}>
+            <div style={{ color: '#FFA42D', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('spd')}>
               SPD {sortColumn === 'spd' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
             </div>
-            <div style={{ color: '#B96DFF', cursor: 'pointer' }} onClick={() => handleSort('vo2')}>
+            <div style={{ color: '#B96DFF', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('vo2')}>
               VO₂ {sortColumn === 'vo2' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
             </div>
-            <div style={{ color: '#16D7FF', cursor: 'pointer' }} onClick={() => handleSort('dist')}>
+            <div style={{ color: '#16D7FF', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('dist')}>
               DIST {sortColumn === 'dist' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
             </div>
-            <div style={{ color: '#F9F871', cursor: 'pointer' }} onClick={() => handleSort('vol')}>
+            <div style={{ color: '#F9F871', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('vol')}>
               VOL {sortColumn === 'vol' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
             </div>
-            <div style={{ color: '#2EFFC0', cursor: 'pointer' }} onClick={() => handleSort('rec')}>
+            <div style={{ color: '#2EFFC0', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('rec')}>
               REC {sortColumn === 'rec' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
             </div>
-            <div style={{ color: '#8D9299' }}>UPDATED</div>
+            <div style={{ color: '#8D9299', textAlign: 'center' }}>UPDATED</div>
           </div>
 
           {/* Table Body */}
