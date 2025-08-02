@@ -11147,6 +11147,358 @@ class BackendTester:
             self.log_test("Profile Creation Path Analysis", False, "Profile creation path analysis failed", str(e))
             return False
 
+    def test_nick_bare_profile_investigation(self):
+        """Investigate Nick Bare's missing profile and specific score IDs"""
+        try:
+            print("\n🔍 NICK BARE PROFILE INVESTIGATION 🔍")
+            print("=" * 60)
+            
+            # Test the specific profile IDs mentioned in the review
+            nick_profile_ids = [
+                "4a417508-ccc8-482c-b117-8d84f018310e",  # Primary ID from review
+                "4a417508-02e0-4b4c-9dca-c5e6c6a7d1f5",  # Alternative ID from review
+            ]
+            
+            nick_user_id = "ff6827a2-2b0b-4210-8bc6-e02cc8487752"
+            
+            found_profiles = []
+            missing_profiles = []
+            
+            print(f"🎯 Testing Nick Bare's profile IDs:")
+            for profile_id in nick_profile_ids:
+                print(f"   - {profile_id}")
+            print(f"🎯 Expected User ID: {nick_user_id}")
+            print()
+            
+            # Test each profile ID
+            for profile_id in nick_profile_ids:
+                try:
+                    response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                    
+                    if response.status_code == 200:
+                        profile_data = response.json()
+                        found_profiles.append({
+                            'profile_id': profile_id,
+                            'user_id': profile_data.get('profile_json', {}).get('user_id'),
+                            'display_name': profile_data.get('profile_json', {}).get('display_name'),
+                            'first_name': profile_data.get('profile_json', {}).get('first_name'),
+                            'has_score_data': bool(profile_data.get('score_data')),
+                            'hybrid_score': profile_data.get('score_data', {}).get('hybridScore') if profile_data.get('score_data') else None
+                        })
+                        print(f"✅ FOUND: {profile_id}")
+                        print(f"   Display Name: {profile_data.get('profile_json', {}).get('display_name', 'N/A')}")
+                        print(f"   First Name: {profile_data.get('profile_json', {}).get('first_name', 'N/A')}")
+                        print(f"   Has Score Data: {bool(profile_data.get('score_data'))}")
+                        if profile_data.get('score_data'):
+                            print(f"   Hybrid Score: {profile_data.get('score_data', {}).get('hybridScore', 'N/A')}")
+                    elif response.status_code == 404:
+                        missing_profiles.append(profile_id)
+                        print(f"❌ NOT FOUND: {profile_id} (HTTP 404)")
+                    else:
+                        print(f"⚠️  ERROR: {profile_id} (HTTP {response.status_code})")
+                        
+                except Exception as e:
+                    print(f"❌ EXCEPTION testing {profile_id}: {str(e)}")
+                    missing_profiles.append(profile_id)
+            
+            print()
+            
+            # Search for profiles by user ID
+            print(f"🔍 Searching for profiles with User ID: {nick_user_id}")
+            try:
+                # Get all profiles to search for the user ID
+                all_profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+                
+                if all_profiles_response.status_code == 200:
+                    all_profiles_data = all_profiles_response.json()
+                    profiles = all_profiles_data.get('profiles', [])
+                    
+                    user_profiles = []
+                    for profile in profiles:
+                        profile_json = profile.get('profile_json', {})
+                        if profile_json.get('user_id') == nick_user_id:
+                            user_profiles.append({
+                                'profile_id': profile.get('id'),
+                                'display_name': profile_json.get('display_name'),
+                                'first_name': profile_json.get('first_name'),
+                                'has_score_data': bool(profile.get('score_data')),
+                                'is_public': profile.get('is_public', False)
+                            })
+                    
+                    if user_profiles:
+                        print(f"✅ Found {len(user_profiles)} profiles for User ID {nick_user_id}:")
+                        for profile in user_profiles:
+                            print(f"   - Profile ID: {profile['profile_id']}")
+                            print(f"     Display Name: {profile['display_name']}")
+                            print(f"     First Name: {profile['first_name']}")
+                            print(f"     Has Score Data: {profile['has_score_data']}")
+                            print(f"     Is Public: {profile['is_public']}")
+                    else:
+                        print(f"❌ No profiles found for User ID {nick_user_id}")
+                else:
+                    print(f"⚠️  Could not search profiles (HTTP {all_profiles_response.status_code})")
+                    
+            except Exception as e:
+                print(f"❌ Error searching by user ID: {str(e)}")
+            
+            # Summary
+            print("\n📊 NICK BARE INVESTIGATION SUMMARY:")
+            print(f"   Found Profiles: {len(found_profiles)}")
+            print(f"   Missing Profiles: {len(missing_profiles)}")
+            
+            if found_profiles:
+                self.log_test("Nick Bare Profile Investigation", True, f"Found {len(found_profiles)} of Nick Bare's profiles", {
+                    'found_profiles': found_profiles,
+                    'missing_profiles': missing_profiles
+                })
+                return True
+            else:
+                self.log_test("Nick Bare Profile Investigation", False, f"Nick Bare's profiles not found - all {len(missing_profiles)} profile IDs return 404", {
+                    'missing_profiles': missing_profiles,
+                    'user_id_searched': nick_user_id
+                })
+                return False
+                
+        except Exception as e:
+            self.log_test("Nick Bare Profile Investigation", False, "Nick Bare profile investigation failed", str(e))
+            return False
+    
+    def test_leaderboard_user_deduplication(self):
+        """Test that leaderboard shows only ONE score per user (highest score)"""
+        try:
+            print("\n🎯 LEADERBOARD USER DEDUPLICATION TEST 🎯")
+            print("=" * 60)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Leaderboard User Deduplication", True, "Leaderboard is empty - no duplication possible", data)
+                    return True
+                
+                print(f"📊 Found {len(leaderboard)} entries on leaderboard")
+                
+                # Check for duplicate users by display_name
+                display_names = []
+                duplicate_users = []
+                user_entries = {}
+                
+                for i, entry in enumerate(leaderboard):
+                    display_name = entry.get('display_name', f'Unknown_{i}')
+                    user_profile_id = entry.get('user_profile_id')
+                    profile_id = entry.get('profile_id')
+                    score = entry.get('score', 0)
+                    
+                    # Track by display_name
+                    if display_name in display_names:
+                        duplicate_users.append({
+                            'display_name': display_name,
+                            'rank': entry.get('rank', i+1),
+                            'score': score,
+                            'profile_id': profile_id
+                        })
+                    else:
+                        display_names.append(display_name)
+                    
+                    # Track by user_profile_id for more accurate deduplication
+                    if user_profile_id:
+                        if user_profile_id in user_entries:
+                            user_entries[user_profile_id].append({
+                                'display_name': display_name,
+                                'rank': entry.get('rank', i+1),
+                                'score': score,
+                                'profile_id': profile_id
+                            })
+                        else:
+                            user_entries[user_profile_id] = [{
+                                'display_name': display_name,
+                                'rank': entry.get('rank', i+1),
+                                'score': score,
+                                'profile_id': profile_id
+                            }]
+                
+                # Find users with multiple entries
+                users_with_multiple_entries = {}
+                for user_profile_id, entries in user_entries.items():
+                    if len(entries) > 1:
+                        users_with_multiple_entries[user_profile_id] = entries
+                
+                print(f"🔍 Deduplication Analysis:")
+                print(f"   Total entries: {len(leaderboard)}")
+                print(f"   Unique display names: {len(display_names)}")
+                print(f"   Duplicate display names: {len(duplicate_users)}")
+                print(f"   Users with multiple entries: {len(users_with_multiple_entries)}")
+                
+                if duplicate_users:
+                    print(f"\n❌ DUPLICATE DISPLAY NAMES FOUND:")
+                    for dup in duplicate_users:
+                        print(f"   - {dup['display_name']} (Rank #{dup['rank']}, Score: {dup['score']})")
+                
+                if users_with_multiple_entries:
+                    print(f"\n❌ USERS WITH MULTIPLE ENTRIES:")
+                    for user_id, entries in users_with_multiple_entries.items():
+                        print(f"   User ID: {user_id}")
+                        for entry in entries:
+                            print(f"     - {entry['display_name']} (Rank #{entry['rank']}, Score: {entry['score']})")
+                        
+                        # Check if highest score is shown
+                        highest_score = max(entry['score'] for entry in entries)
+                        highest_entry = next(entry for entry in entries if entry['score'] == highest_score)
+                        print(f"     Highest Score: {highest_score} ({'✅ Correctly shown' if len(entries) == 1 else '❌ Multiple entries shown'})")
+                
+                # Determine if deduplication is working
+                if len(duplicate_users) == 0 and len(users_with_multiple_entries) == 0:
+                    self.log_test("Leaderboard User Deduplication", True, f"Perfect deduplication - {len(leaderboard)} unique users on leaderboard", {
+                        'total_entries': len(leaderboard),
+                        'unique_users': len(display_names)
+                    })
+                    return True
+                else:
+                    self.log_test("Leaderboard User Deduplication", False, f"Deduplication issues found - {len(duplicate_users)} duplicate names, {len(users_with_multiple_entries)} users with multiple entries", {
+                        'duplicate_display_names': duplicate_users,
+                        'users_with_multiple_entries': dict(list(users_with_multiple_entries.items())[:3])  # Show first 3
+                    })
+                    return False
+            else:
+                self.log_test("Leaderboard User Deduplication", False, f"Cannot test deduplication - HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Leaderboard User Deduplication", False, "Leaderboard user deduplication test failed", str(e))
+            return False
+    
+    def test_leaderboard_ranking_logic_comprehensive(self):
+        """Comprehensive test of leaderboard ranking and deduplication logic"""
+        try:
+            print("\n🏆 COMPREHENSIVE LEADERBOARD RANKING LOGIC TEST 🏆")
+            print("=" * 70)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                total_public_athletes = data.get('total_public_athletes', 0)
+                
+                print(f"📊 Leaderboard Analysis:")
+                print(f"   Total Public Athletes: {total_public_athletes}")
+                print(f"   Leaderboard Entries: {len(leaderboard)}")
+                
+                if not leaderboard:
+                    self.log_test("Comprehensive Leaderboard Ranking Logic", True, "Leaderboard is empty - ranking logic ready for data", {
+                        'total_public_athletes': total_public_athletes,
+                        'leaderboard_entries': len(leaderboard)
+                    })
+                    return True
+                
+                # Test 1: Ranking sequence
+                ranking_correct = True
+                for i, entry in enumerate(leaderboard):
+                    expected_rank = i + 1
+                    actual_rank = entry.get('rank')
+                    if actual_rank != expected_rank:
+                        ranking_correct = False
+                        print(f"❌ Ranking error at position {i}: expected rank {expected_rank}, got {actual_rank}")
+                        break
+                
+                # Test 2: Score ordering (descending)
+                score_order_correct = True
+                for i in range(1, len(leaderboard)):
+                    current_score = leaderboard[i].get('score', 0)
+                    previous_score = leaderboard[i-1].get('score', 0)
+                    if current_score > previous_score:
+                        score_order_correct = False
+                        print(f"❌ Score ordering error: position {i} has higher score ({current_score}) than position {i-1} ({previous_score})")
+                        break
+                
+                # Test 3: User deduplication
+                user_profile_ids = []
+                display_names = []
+                duplicate_users = 0
+                
+                for entry in leaderboard:
+                    user_profile_id = entry.get('user_profile_id')
+                    display_name = entry.get('display_name')
+                    
+                    if user_profile_id in user_profile_ids:
+                        duplicate_users += 1
+                        print(f"❌ Duplicate user_profile_id found: {user_profile_id}")
+                    else:
+                        user_profile_ids.append(user_profile_id)
+                    
+                    if display_name in display_names:
+                        print(f"⚠️  Duplicate display_name found: {display_name}")
+                    else:
+                        display_names.append(display_name)
+                
+                # Test 4: Data completeness
+                incomplete_entries = 0
+                required_fields = ['profile_id', 'display_name', 'score', 'rank']
+                
+                for i, entry in enumerate(leaderboard):
+                    missing_fields = [field for field in required_fields if field not in entry or entry[field] is None]
+                    if missing_fields:
+                        incomplete_entries += 1
+                        print(f"❌ Entry {i+1} missing fields: {missing_fields}")
+                
+                # Test 5: Score data structure
+                invalid_score_data = 0
+                for entry in leaderboard:
+                    score_data = entry.get('score_data', {})
+                    if not isinstance(score_data, dict):
+                        invalid_score_data += 1
+                    else:
+                        required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
+                        missing_scores = [score for score in required_scores if score not in score_data]
+                        if missing_scores:
+                            invalid_score_data += 1
+                
+                # Summary
+                issues = []
+                if not ranking_correct:
+                    issues.append("incorrect ranking sequence")
+                if not score_order_correct:
+                    issues.append("incorrect score ordering")
+                if duplicate_users > 0:
+                    issues.append(f"{duplicate_users} duplicate users")
+                if incomplete_entries > 0:
+                    issues.append(f"{incomplete_entries} incomplete entries")
+                if invalid_score_data > 0:
+                    issues.append(f"{invalid_score_data} invalid score data")
+                
+                print(f"\n📋 Test Results:")
+                print(f"   ✅ Ranking Sequence: {'✅ Correct' if ranking_correct else '❌ Incorrect'}")
+                print(f"   ✅ Score Ordering: {'✅ Correct' if score_order_correct else '❌ Incorrect'}")
+                print(f"   ✅ User Deduplication: {'✅ No duplicates' if duplicate_users == 0 else f'❌ {duplicate_users} duplicates'}")
+                print(f"   ✅ Data Completeness: {'✅ Complete' if incomplete_entries == 0 else f'❌ {incomplete_entries} incomplete'}")
+                print(f"   ✅ Score Data Structure: {'✅ Valid' if invalid_score_data == 0 else f'❌ {invalid_score_data} invalid'}")
+                
+                if not issues:
+                    self.log_test("Comprehensive Leaderboard Ranking Logic", True, f"All ranking logic tests passed for {len(leaderboard)} athletes", {
+                        'total_athletes': len(leaderboard),
+                        'ranking_correct': ranking_correct,
+                        'score_order_correct': score_order_correct,
+                        'no_duplicate_users': duplicate_users == 0,
+                        'data_complete': incomplete_entries == 0
+                    })
+                    return True
+                else:
+                    self.log_test("Comprehensive Leaderboard Ranking Logic", False, f"Ranking logic issues found: {', '.join(issues)}", {
+                        'issues': issues,
+                        'sample_entries': leaderboard[:3] if len(leaderboard) >= 3 else leaderboard
+                    })
+                    return False
+            else:
+                self.log_test("Comprehensive Leaderboard Ranking Logic", False, f"Cannot test ranking logic - HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Comprehensive Leaderboard Ranking Logic", False, "Comprehensive leaderboard ranking logic test failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests focused on authentication flow and user profile management"""
         print("=" * 80)
