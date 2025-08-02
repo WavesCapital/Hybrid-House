@@ -35,9 +35,11 @@ const Leaderboard = () => {
       athlete.score >= scoreRange[0] && athlete.score <= scoreRange[1]
     );
     
-    // Age range filter
+    // Age range filter - include athletes with null/undefined age
     filtered = filtered.filter(athlete => {
       const age = athlete.age;
+      // Include athletes with missing age data (null/undefined)
+      if (age === null || age === undefined) return true;
       return age >= ageRange[0] && age <= ageRange[1];
     });
     
