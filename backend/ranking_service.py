@@ -46,7 +46,7 @@ class RankingService:
             profiles_response = self.supabase.table('athlete_profiles')\
                 .select('''
                     id,
-                    user_profile_id,
+                    user_id,
                     profile_json,
                     score_data,
                     is_public,
