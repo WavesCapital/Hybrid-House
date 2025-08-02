@@ -257,9 +257,9 @@ backend:
 
   - task: "Nick Bare Profile Investigation and Leaderboard Deduplication Analysis"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/ranking_service.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "critical"
     needs_retesting: false
     status_history:
@@ -269,6 +269,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "🎉 NICK BARE DISPLAY NAME INVESTIGATION COMPLETE: Executed comprehensive investigation of Nick Bare's display name issue as requested in the review. CRITICAL FINDINGS CONFIRMED: ✅ NICK BARE IS VISIBLE ON LEADERBOARD - Nick Bare appears as #1 with score 96.8 (profile ID: 4a417508-ccc8-482c-b917-8d84f018310e) ✅ DISPLAY NAME ISSUE IDENTIFIED - The entry with score 96.8 exists but display_name is 'Nick' instead of 'Nick Bare' ✅ DEDUPLICATION WORKING - Each user now appears only once on the leaderboard (2 unique users, 0 duplicates found) ✅ PROPER RANKING - Leaderboard correctly sorted highest to lowest (Nick: 96.8, Kyle S: 76.5) with sequential ranks (1, 2). ROOT CAUSE ANALYSIS: The backend is correctly returning Nick Bare's profile with score 96.8 at rank #1, but the display_name field contains only 'Nick' instead of the full 'Nick Bare'. This explains why the frontend shows Kyle S as #1 - the frontend might be filtering or not recognizing 'Nick' as the expected 'Nick Bare'. SOLUTION: The display name fallback logic needs to be checked to ensure it properly extracts the full name from either user_profiles.display_name or profile_json.first_name + profile_json.last_name. The backend data is correct, but the display name is incomplete."
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL DATA INTEGRITY ISSUE DISCOVERED: Executed comprehensive investigation of Nick Bare's profile with user-provided ID c0a0de33-a2f8-40cd-b8db-d89f7a42d140. MAJOR FINDINGS: ❌ USER PROFILE LINKING BROKEN - Nick Bare's profile (4a417508-ccc8-482c-b917-8d84f018310e) has user_profile_id = NULL, meaning it's not linked to any user account ❌ TARGET USER ID NOT FOUND - The user-provided ID c0a0de33-a2f8-40cd-b8db-d89f7a42d140 does not exist in any athlete_profiles, suggesting either wrong ID or missing profile ❌ ALL PROFILES UNLINKED - Investigation reveals ALL 9 athlete profiles have user_id = NULL, meaning NO profiles are linked to user accounts ❌ MISSING DEMOGRAPHIC DATA - Nick's profile shows age=NULL, gender=NULL, country=NULL because there's no user_profiles table join ❌ INCOMPLETE DISPLAY NAME - Shows 'Nick' instead of 'Nick Bare' due to missing user_profiles.display_name. ROOT CAUSE: Complete breakdown of user profile linking system. Athlete profiles exist but are orphaned from user accounts. This explains why the user can't find their profile and why demographic data is missing. CRITICAL IMPACT: Users cannot manage their profiles, privacy toggles don't work, and leaderboard lacks demographic filtering data. URGENT ACTION NEEDED: Fix user profile linking system to connect athlete_profiles.user_id with user_profiles.user_id."
 
   - task: "Critical Frontend-Backend Disconnect Investigation"
     implemented: true
