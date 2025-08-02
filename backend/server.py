@@ -2341,6 +2341,60 @@ async def get_leaderboard():
             }
         }
 
+@api_router.get("/ranking/{profile_id}")
+async def get_profile_ranking(profile_id: str):
+    """Get ranking information for a specific profile"""
+    try:
+        # Get the profile's score data
+        profile_response = supabase.table('athlete_profiles')\
+            .select('score_data, user_profile_id')\
+            .eq('id', profile_id)\
+            .execute()
+        
+        if not profile_response.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Profile not found"
+            )
+        
+        profile = profile_response.data[0]
+        score_data = profile.get('score_data', {})
+        
+        if not score_data or not score_data.get('hybridScore'):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Profile does not have complete score data"
+            )
+        
+        user_hybrid_score = score_data['hybridScore']
+        
+        # Calculate ranking using ranking service
+        position, total_athletes = ranking_service.calculate_hybrid_ranking(
+            user_hybrid_score, profile_id
+        )
+        
+        # Get user percentile
+        percentile = ranking_service.get_user_percentile(user_hybrid_score)
+        
+        return {
+            "profile_id": profile_id,
+            "hybrid_score": user_hybrid_score,
+            "ranking": {
+                "position": position,
+                "total_athletes": total_athletes,
+                "percentile": percentile
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error getting profile ranking: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error getting profile ranking: {str(e)}"
+        )
+
 @api_router.post("/admin/migrate-privacy")
 async def migrate_privacy_column():
     """Admin endpoint to add is_public column to athlete_profiles table"""
