@@ -2371,16 +2371,19 @@ async def get_leaderboard():
                     except Exception as e:
                         print(f"Error calculating age: {e}")
                 
-                # Extract display_name
-                display_name = profile_json.get('display_name', '')
+                # Extract display_name from user_profiles table (not profile_json)
+                display_name = user_profile_data.get('display_name', '')
                 if not display_name:
-                    # Fallback to first_name or email prefix if no display_name
-                    first_name = profile_json.get('first_name', '')
-                    if first_name:
-                        display_name = first_name
-                    else:
-                        email = profile_json.get('email', '')
-                        display_name = email.split('@')[0] if email else f'User {profile.get("id", "")[:8]}'
+                    # Fallback to profile_json display_name if user_profiles doesn't have it
+                    display_name = profile_json.get('display_name', '')
+                    if not display_name:
+                        # Further fallback to first_name or email prefix if no display_name
+                        first_name = profile_json.get('first_name', '')
+                        if first_name:
+                            display_name = first_name
+                        else:
+                            email = profile_json.get('email', '')
+                            display_name = email.split('@')[0] if email else f'User {profile.get("id", "")[:8]}'
                 
                 # Get hybrid score
                 hybrid_score = score_data.get('hybridScore')
