@@ -278,31 +278,51 @@ const HybridScoreResults = () => {
   }, []);
 
   // Fetch leaderboard position
+  // Fetch leaderboard position using enhanced ranking service
   const fetchLeaderboardPosition = useCallback(async (userHybridScore, userProfileId) => {
     try {
+      // Try to get ranking from the dedicated ranking endpoint first
+      const rankingResponse = await axios.get(`${BACKEND_URL}/api/ranking/${userProfileId}`);
+      
+      if (rankingResponse.status === 200 && rankingResponse.data.ranking) {
+        const ranking = rankingResponse.data.ranking;
+        setLeaderboardPosition(ranking.position);
+        setTotalAthletes(ranking.total_athletes);
+        return;
+      }
+    } catch (error) {
+      // If ranking endpoint fails, fall back to leaderboard endpoint
+      console.log('Ranking endpoint failed, falling back to leaderboard calculation');
+    }
+    
+    try {
+      // Fallback: Use enhanced leaderboard endpoint
       const response = await axios.get(`${BACKEND_URL}/api/leaderboard`);
+      
       if (response.data.leaderboard) {
         const leaderboard = response.data.leaderboard;
+        const totalPublicAthletes = response.data.total_public_athletes || leaderboard.length;
         
-        // Find user's actual position in the leaderboard
+        // Check if user is on public leaderboard
         const userPosition = leaderboard.findIndex(athlete => athlete.profile_id === userProfileId);
         
         if (userPosition !== -1) {
-          // User is on the public leaderboard, show their actual rank (1-based)
+          // User is on public leaderboard - show actual position
           setLeaderboardPosition(userPosition + 1);
-          setTotalAthletes(leaderboard.length);
+          setTotalAthletes(totalPublicAthletes);
         } else {
-          // User is not on the public leaderboard (likely private profile)
-          // Calculate where they would rank if they were public
-          let wouldBePosition = 1;
+          // User is private - calculate hypothetical position
+          let hypotheticalPosition = 1;
           for (const athlete of leaderboard) {
             if (athlete.score > userHybridScore) {
-              wouldBePosition++;
+              hypotheticalPosition++;
+            } else {
+              break; // Since leaderboard is sorted, we can break early
             }
           }
           // Show their hypothetical position among all public athletes + themselves
-          setLeaderboardPosition(wouldBePosition);
-          setTotalAthletes(leaderboard.length + 1); // Include them in the total count
+          setLeaderboardPosition(hypotheticalPosition);
+          setTotalAthletes(totalPublicAthletes + 1); // Include user in total count
         }
       }
     } catch (error) {
