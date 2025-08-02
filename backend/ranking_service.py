@@ -62,14 +62,14 @@ class RankingService:
                 return []
             
             # Get user profile data for age, gender, country information
-            user_profile_ids = [profile['user_profile_id'] for profile in profiles if profile.get('user_profile_id')]
+            user_ids = [profile['user_id'] for profile in profiles if profile.get('user_id')]
             
             user_profiles_response = self.supabase.table('user_profiles')\
-                .select('id, display_name, date_of_birth, gender, country')\
-                .in_('id', user_profile_ids)\
+                .select('user_id, display_name, date_of_birth, gender, country')\
+                .in_('user_id', user_ids)\
                 .execute()
             
-            user_profiles_map = {profile['id']: profile for profile in user_profiles_response.data}
+            user_profiles_map = {profile['user_id']: profile for profile in user_profiles_response.data}
             
             leaderboard_data = []
             
