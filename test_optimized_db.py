@@ -10,7 +10,7 @@ import uuid
 from datetime import datetime
 
 # API configuration
-API_BASE_URL = "https://4bd8e144-ae56-4215-936b-bad36309defc.preview.emergentagent.com/api"
+API_BASE_URL = "https://0451bc2d-1c22-4d4c-b2f6-5a8a4c8b61cf.preview.emergentagent.com/api"
 
 def test_optimized_database_structure():
     """Test the complete optimized database structure"""
