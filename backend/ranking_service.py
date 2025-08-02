@@ -76,8 +76,8 @@ class RankingService:
             for profile in profiles:
                 score_data = profile.get('score_data', {})
                 profile_json = profile.get('profile_json', {})
-                user_profile_id = profile.get('user_profile_id')
-                user_profile_data = user_profiles_map.get(user_profile_id, {})
+                user_id = profile.get('user_id')
+                user_profile_data = user_profiles_map.get(user_id, {})
                 
                 # Ensure all required scores are present
                 required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 
