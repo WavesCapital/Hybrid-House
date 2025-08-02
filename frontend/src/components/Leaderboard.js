@@ -1241,6 +1241,55 @@ const Leaderboard = () => {
           }
         }
 
+        /* Score Tooltip Styles */
+        .tooltip-container {
+          position: relative;
+        }
+
+        .score-tooltip {
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          margin-top: 8px;
+          padding: 12px 16px;
+          background: rgba(21, 22, 26, 0.95);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(8, 240, 255, 0.3);
+          border-radius: 8px;
+          color: #FFFFFF;
+          font-size: 12px;
+          line-height: 1.4;
+          white-space: nowrap;
+          z-index: 1000;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+          transform: translateX(-50%) translateY(-4px);
+          width: 280px;
+          white-space: normal;
+        }
+
+        .tooltip-container:hover .score-tooltip {
+          opacity: 1;
+          pointer-events: auto;
+          transform: translateX(-50%) translateY(0);
+        }
+
+        .score-tooltip::before {
+          content: '';
+          position: absolute;
+          top: -6px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 0;
+          height: 0;
+          border-left: 6px solid transparent;
+          border-right: 6px solid transparent;
+          border-bottom: 6px solid rgba(8, 240, 255, 0.3);
+        }
+
         /* Slider thumb styling */
         input[type="range"]::-webkit-slider-thumb {
           appearance: none;
@@ -1284,6 +1333,10 @@ const Leaderboard = () => {
             flex-direction: column;
             align-items: center;
             gap: 16px;
+          }
+          
+          .score-tooltip {
+            width: 240px;
           }
         }
       `}</style>
