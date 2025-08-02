@@ -176,14 +176,14 @@ class RankingService:
             # Sort by hybrid score (highest to lowest) and deduplicate users
             leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
             
-            # Deduplicate users - show only highest score per user_profile_id
+            # Deduplicate users - show only highest score per user_id
             seen_users = set()
             deduplicated_data = []
             
             for entry in leaderboard_data:
-                user_profile_id = entry.get('user_profile_id')
-                if user_profile_id not in seen_users:
-                    seen_users.add(user_profile_id)
+                user_id = entry.get('user_id')
+                if user_id not in seen_users:
+                    seen_users.add(user_id)
                     deduplicated_data.append(entry)
                 # Skip entries for users we've already seen (they have lower scores due to sorting)
             
