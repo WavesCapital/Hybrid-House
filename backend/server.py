@@ -1105,7 +1105,7 @@ async def update_athlete_profile_privacy(profile_id: str, privacy_data: dict, us
             )
         
         # Extract is_public from request
-        is_public = privacy_data.get('is_public', False)
+        is_public = privacy_data.get('is_public', True)
         
         # Update only the privacy setting
         updated_data = {
