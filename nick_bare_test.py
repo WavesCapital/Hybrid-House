@@ -7,8 +7,8 @@ Tests the specific user clarification about Nick Bare's profile linking
 import requests
 import json
 
-# Use localhost for testing
-API_BASE_URL = "http://127.0.0.1:8001/api"
+# Use external URL for testing
+API_BASE_URL = "https://0451bc2d-1c22-4d4c-b2f6-5a8a4c8b61cf.preview.emergentagent.com/api"
 
 def test_nick_bare_critical_investigation():
     """CRITICAL: Investigate Nick Bare's profile linking and demographic data as per user clarification"""
