@@ -277,6 +277,29 @@ const HybridScoreResults = () => {
     });
   }, []);
 
+  // Fetch leaderboard position
+  const fetchLeaderboardPosition = useCallback(async (userHybridScore) => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/leaderboard`);
+      if (response.data.leaderboard) {
+        const leaderboard = response.data.leaderboard;
+        setTotalAthletes(leaderboard.length);
+        
+        // Find position based on score comparison
+        let position = 1;
+        for (const athlete of leaderboard) {
+          if (athlete.score > userHybridScore) {
+            position++;
+          }
+        }
+        setLeaderboardPosition(position);
+      }
+    } catch (error) {
+      console.error('Error fetching leaderboard position:', error);
+      // Don't show error to user, just leave position as null
+    }
+  }, []);
+
   // Fetch score data from Supabase
   useEffect(() => {
     const fetchScoreData = async () => {
