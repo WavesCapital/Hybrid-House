@@ -43,18 +43,24 @@ const Leaderboard = () => {
       return age >= ageRange[0] && age <= ageRange[1];
     });
     
-    // Gender filter
+    // Gender filter - include athletes with null/undefined gender when "All" is selected
     if (genderFilter !== 'All') {
-      filtered = filtered.filter(athlete => 
-        athlete.gender && athlete.gender.toLowerCase() === genderFilter.toLowerCase()
-      );
+      filtered = filtered.filter(athlete => {
+        const gender = athlete.gender;
+        // If gender is null/undefined, exclude from specific gender filters
+        if (!gender) return false;
+        return gender.toLowerCase() === genderFilter.toLowerCase();
+      });
     }
     
-    // Country filter
+    // Country filter - include athletes with null/undefined country when "All" is selected
     if (countryFilter !== 'All') {
-      filtered = filtered.filter(athlete => 
-        athlete.country && athlete.country.toLowerCase() === countryFilter.toLowerCase()
-      );
+      filtered = filtered.filter(athlete => {
+        const country = athlete.country;
+        // If country is null/undefined, exclude from specific country filters
+        if (!country) return false;
+        return country.toLowerCase() === countryFilter.toLowerCase();
+      });
     }
     
     // Search filter
