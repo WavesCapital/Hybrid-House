@@ -9283,6 +9283,12 @@ class BackendTester:
             self.test_leaderboard_data_structure_completeness,
             self.test_leaderboard_display_name_comparison,
             
+            # 7b. NEW: Leaderboard Ranking Bug Fix Tests (CURRENT REVIEW REQUEST)
+            self.test_leaderboard_ranking_bug_fix,
+            self.test_leaderboard_profile_id_structure,
+            self.test_leaderboard_sorting_verification,
+            self.test_public_vs_private_profiles,
+            
             # 8. Supporting Database Tests
             self.test_supabase_database_connection,
             self.test_profile_data_retrieval,
