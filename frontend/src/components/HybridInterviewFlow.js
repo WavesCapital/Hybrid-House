@@ -782,12 +782,6 @@ const HybridInterviewFlow = () => {
                       {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
                     </button>
                     <button 
-                      className="px-8 py-4 border border-gray-600 rounded-lg text-gray-300 hover:border-gray-400 transition-colors"
-                      onClick={() => navigate('/profile')}
-                    >
-                      {user ? 'View Profile' : 'See Sample Report'}
-                    </button>
-                    <button 
                       className="px-8 py-4 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors"
                       onClick={() => navigate('/leaderboard')}
                     >
