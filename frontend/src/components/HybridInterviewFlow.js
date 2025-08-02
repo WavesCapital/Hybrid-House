@@ -945,12 +945,12 @@ const HybridInterviewFlow = () => {
                 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {[
-                    { pillar: 'Strength', color: 'var(--strength)', description: 'Bench, squat & deadlift relative to body weight' },
-                    { pillar: 'Speed', color: 'var(--speed)', description: 'Fastest mile pace' },
-                    { pillar: 'VO₂ Max', color: 'var(--vo2)', description: 'Engine capacity straight from your watch' },
-                    { pillar: 'Distance', color: 'var(--distance)', description: 'Longest run (last 60 days)' },
-                    { pillar: 'Volume', color: 'var(--volume)', description: 'Weekly mileage signal' },
-                    { pillar: 'Recovery', color: 'var(--recovery)', description: 'HRV & resting HR stability' }
+                    { pillar: 'Strength', score: 78, color: 'var(--strength)', description: 'Power output from bench, squat & deadlift vs bodyweight' },
+                    { pillar: 'Speed', score: 92, color: 'var(--speed)', description: 'Mile PR performance vs elite standards' },
+                    { pillar: 'VO₂ Max', score: 85, color: 'var(--vo2)', description: 'Aerobic capacity measured or estimated from mile time' },
+                    { pillar: 'Distance', score: 67, color: 'var(--distance)', description: 'Peak single-session endurance (recent longest run)' },
+                    { pillar: 'Volume', score: 73, color: 'var(--volume)', description: 'Consistent training load via weekly mileage' },
+                    { pillar: 'Recovery', score: 89, color: 'var(--recovery)', description: 'Heart rate variability & resting HR optimization' }
                   ].map((item, index) => (
                     <div key={index} className="glass-card p-8 text-center">
                       <div className="pillar-ring relative mx-auto mb-6" style={{ color: item.color }}>
@@ -971,12 +971,12 @@ const HybridInterviewFlow = () => {
                             stroke="currentColor"
                             strokeWidth="8"
                             strokeLinecap="round"
-                            strokeDasharray={`${(85 / 100) * 408} 408`}
+                            strokeDasharray={`${(item.score / 100) * 408} 408`}
                             style={{ transition: 'stroke-dasharray 180ms linear' }}
                           />
                         </svg>
                         <div className="ring-value">
-                          <div className="ring-number" style={{ color: item.color }}>85</div>
+                          <div className="ring-number" style={{ color: item.color }}>{item.score}</div>
                           <div className="ring-label">{item.pillar}</div>
                         </div>
                       </div>
