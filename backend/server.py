@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 from openai import OpenAI
+from ranking_service import ranking_service
 import os
 import uuid
 import json
