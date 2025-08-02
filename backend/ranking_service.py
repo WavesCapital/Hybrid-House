@@ -43,7 +43,7 @@ class RankingService:
         
         try:
             # Get all public athlete profiles with complete scores
-            response = self.supabase.table('athlete_profiles')\
+            profiles_response = self.supabase.table('athlete_profiles')\
                 .select('''
                     id,
                     user_profile_id,
@@ -56,30 +56,105 @@ class RankingService:
                 .not_.is_('score_data', 'null')\
                 .execute()
             
-            profiles = response.data
+            profiles = profiles_response.data
+            
+            if not profiles:
+                return []
+            
+            # Get user profile data for age, gender, country information
+            user_profile_ids = [profile['user_profile_id'] for profile in profiles if profile.get('user_profile_id')]
+            
+            user_profiles_response = self.supabase.table('user_profiles')\
+                .select('id, display_name, date_of_birth, gender, country')\
+                .in_('id', user_profile_ids)\
+                .execute()
+            
+            user_profiles_map = {profile['id']: profile for profile in user_profiles_response.data}
+            
             leaderboard_data = []
             
             for profile in profiles:
                 score_data = profile.get('score_data', {})
                 profile_json = profile.get('profile_json', {})
+                user_profile_id = profile.get('user_profile_id')
+                user_profile_data = user_profiles_map.get(user_profile_id, {})
                 
                 # Ensure all required scores are present
                 required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 
                                  'distanceScore', 'volumeScore', 'recoveryScore']
                 
                 if all(score in score_data for score in required_scores):
+                    # Extract display_name from user_profiles table first, fallback to profile_json
+                    display_name = user_profile_data.get('display_name', '')
+                    if not display_name:
+                        display_name = profile_json.get('display_name', '')
+                        if not display_name:
+                            first_name = profile_json.get('first_name', '')
+                            if first_name:
+                                display_name = first_name
+                            else:
+                                email = profile_json.get('email', '')
+                                display_name = email.split('@')[0] if email else f'User {profile.get("id", "")[:8]}'
+                    
+                    # Calculate age from date_of_birth
+                    age = None
+                    date_of_birth = user_profile_data.get('date_of_birth')
+                    if date_of_birth:
+                        from datetime import datetime, date
+                        if isinstance(date_of_birth, str):
+                            try:
+                                birth_date = datetime.fromisoformat(date_of_birth.replace('Z', '+00:00')).date()
+                            except:
+                                birth_date = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
+                        else:
+                            birth_date = date_of_birth
+                        
+                        today = date.today()
+                        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+                    
+                    # Extract gender and country from user_profiles
+                    gender = user_profile_data.get('gender', '').lower() if user_profile_data.get('gender') else None
+                    country = user_profile_data.get('country', '') if user_profile_data.get('country') else None
+                    
+                    # Get country flag if available
+                    country_flag = None
+                    if country:
+                        country_flags = {
+                            'United States': '🇺🇸', 'USA': '🇺🇸', 'US': '🇺🇸',
+                            'Canada': '🇨🇦', 'CA': '🇨🇦',
+                            'United Kingdom': '🇬🇧', 'UK': '🇬🇧', 'GB': '🇬🇧',
+                            'Australia': '🇦🇺', 'AU': '🇦🇺',
+                            'Germany': '🇩🇪', 'DE': '🇩🇪',
+                            'France': '🇫🇷', 'FR': '🇫🇷',
+                            'Spain': '🇪🇸', 'ES': '🇪🇸',
+                            'Italy': '🇮🇹', 'IT': '🇮🇹',
+                            'Netherlands': '🇳🇱', 'NL': '🇳🇱',
+                            'Sweden': '🇸🇪', 'SE': '🇸🇪',
+                            'Norway': '🇳🇴', 'NO': '🇳🇴',
+                            'Denmark': '🇩🇰', 'DK': '🇩🇰',
+                            'Japan': '🇯🇵', 'JP': '🇯🇵',
+                            'South Korea': '🇰🇷', 'KR': '🇰🇷',
+                            'Brazil': '🇧🇷', 'BR': '🇧🇷',
+                            'Mexico': '🇲🇽', 'MX': '🇲🇽'
+                        }
+                        country_flag = country_flags.get(country, country)
+                    
                     leaderboard_data.append({
                         'profile_id': profile['id'],
                         'user_profile_id': profile['user_profile_id'],
-                        'display_name': profile_json.get('display_name', ''),
-                        'score': score_data['hybridScore'],
+                        'display_name': display_name,
+                        'score': round(score_data['hybridScore'], 1),
+                        'age': age,
+                        'gender': gender,
+                        'country': country,
+                        'country_flag': country_flag,
                         'score_breakdown': {
-                            'strengthScore': score_data['strengthScore'],
-                            'speedScore': score_data['speedScore'], 
-                            'vo2Score': score_data['vo2Score'],
-                            'distanceScore': score_data['distanceScore'],
-                            'volumeScore': score_data['volumeScore'],
-                            'recoveryScore': score_data['recoveryScore']
+                            'strengthScore': round(score_data['strengthScore'], 1),
+                            'speedScore': round(score_data['speedScore'], 1), 
+                            'vo2Score': round(score_data['vo2Score'], 1),
+                            'distanceScore': round(score_data['distanceScore'], 1),
+                            'volumeScore': round(score_data['volumeScore'], 1),
+                            'recoveryScore': round(score_data['recoveryScore'], 1)
                         },
                         'updated_at': profile['updated_at']
                     })
