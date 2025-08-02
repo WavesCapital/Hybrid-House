@@ -257,8 +257,8 @@ backend:
 
   - task: "Nick Bare Profile Investigation and Leaderboard Deduplication Analysis"
     implemented: true
-    working: false
-    file: "/app/backend/server.py"
+    working: true
+    file: "/app/backend/ranking_service.py"
     stuck_count: 0
     priority: "critical"
     needs_retesting: false
