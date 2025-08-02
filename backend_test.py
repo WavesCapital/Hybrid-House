@@ -701,6 +701,334 @@ class BackendTester:
             self.log_test("System Health Comprehensive", False, "System health check failed", str(e))
             return False
 
+    # ===== CRITICAL DATA STRUCTURE AUDIT TESTS =====
+    
+    def test_nick_bare_data_structure_audit(self):
+        """CRITICAL: Test Nick Bare's actual data structure and linking as per user clarification"""
+        try:
+            print("\n🚨 CRITICAL DATA STRUCTURE AUDIT - NICK BARE INVESTIGATION 🚨")
+            print("=" * 70)
+            
+            # Test the leaderboard to find Nick Bare's entry
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                # Look for Nick Bare on leaderboard
+                nick_entry = None
+                for entry in leaderboard:
+                    display_name = entry.get('display_name', '').lower()
+                    if 'nick' in display_name:
+                        nick_entry = entry
+                        break
+                
+                if nick_entry:
+                    print(f"🎯 Nick Bare found on leaderboard:")
+                    print(f"   Display Name: {nick_entry.get('display_name')}")
+                    print(f"   Rank: {nick_entry.get('rank')}")
+                    print(f"   Score: {nick_entry.get('score')}")
+                    print(f"   Age: {nick_entry.get('age')}")
+                    print(f"   Gender: {nick_entry.get('gender')}")
+                    print(f"   Country: {nick_entry.get('country')}")
+                    print(f"   Profile ID: {nick_entry.get('profile_id')}")
+                    print(f"   User Profile ID: {nick_entry.get('user_profile_id')}")
+                    
+                    # Check if demographic data is present
+                    age = nick_entry.get('age')
+                    gender = nick_entry.get('gender')
+                    country = nick_entry.get('country')
+                    
+                    if age is not None and gender is not None and country is not None:
+                        self.log_test("Nick Bare Data Structure Audit", True, f"✅ CORRECT STRUCTURE: Nick shows with complete demographic data (Age: {age}, Gender: {gender}, Country: {country})", nick_entry)
+                        return True
+                    else:
+                        missing_fields = []
+                        if age is None:
+                            missing_fields.append("age")
+                        if gender is None:
+                            missing_fields.append("gender")
+                        if country is None:
+                            missing_fields.append("country")
+                        
+                        self.log_test("Nick Bare Data Structure Audit", False, f"❌ WRONG JOIN LOGIC: Nick found but missing demographic data: {', '.join(missing_fields)} - This confirms the ranking service is using wrong join logic", nick_entry)
+                        return False
+                else:
+                    self.log_test("Nick Bare Data Structure Audit", False, "❌ Nick Bare not found on leaderboard - Profile linking may be completely broken", {
+                        'total_entries': len(leaderboard),
+                        'sample_entries': [entry.get('display_name') for entry in leaderboard[:5]]
+                    })
+                    return False
+                    
+            else:
+                self.log_test("Nick Bare Data Structure Audit", False, f"❌ Cannot test data structure - leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Nick Bare Data Structure Audit", False, "❌ Nick Bare data structure audit failed", str(e))
+            return False
+    
+    def test_join_logic_verification(self):
+        """Test to verify the correct join logic: athlete_profiles.user_id = user_profiles.user_id"""
+        try:
+            print("\n🔍 JOIN LOGIC VERIFICATION TEST 🔍")
+            print("=" * 40)
+            
+            # Test the leaderboard to analyze the join logic being used
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Join Logic Verification", True, "No leaderboard data to test join logic (empty state)", data)
+                    return True
+                
+                # Analyze the data to understand the join logic
+                profiles_with_demographics = 0
+                profiles_without_demographics = 0
+                total_profiles = len(leaderboard)
+                
+                print(f"📊 Analyzing {total_profiles} leaderboard entries for join logic:")
+                
+                for i, entry in enumerate(leaderboard):
+                    display_name = entry.get('display_name', 'Unknown')
+                    age = entry.get('age')
+                    gender = entry.get('gender')
+                    country = entry.get('country')
+                    user_profile_id = entry.get('user_profile_id')
+                    
+                    has_demographics = age is not None and gender is not None and country is not None
+                    
+                    if has_demographics:
+                        profiles_with_demographics += 1
+                        print(f"   ✅ {display_name}: Has demographics (Age: {age}, Gender: {gender}, Country: {country})")
+                    else:
+                        profiles_without_demographics += 1
+                        missing = []
+                        if age is None:
+                            missing.append("age")
+                        if gender is None:
+                            missing.append("gender")
+                        if country is None:
+                            missing.append("country")
+                        print(f"   ❌ {display_name}: Missing {', '.join(missing)} (user_profile_id: {user_profile_id})")
+                
+                demographics_percentage = (profiles_with_demographics / total_profiles) * 100 if total_profiles > 0 else 0
+                
+                print(f"\n📈 Join Logic Analysis Results:")
+                print(f"   Total profiles: {total_profiles}")
+                print(f"   With demographics: {profiles_with_demographics}")
+                print(f"   Without demographics: {profiles_without_demographics}")
+                print(f"   Success rate: {demographics_percentage:.1f}%")
+                
+                if demographics_percentage >= 50:
+                    self.log_test("Join Logic Verification", True, f"✅ JOIN LOGIC WORKING: {demographics_percentage:.1f}% of profiles have demographic data - join logic appears correct", {
+                        'success_rate': f"{demographics_percentage:.1f}%",
+                        'with_demographics': profiles_with_demographics,
+                        'total': total_profiles
+                    })
+                    return True
+                elif demographics_percentage > 0:
+                    self.log_test("Join Logic Verification", False, f"⚠️ PARTIAL JOIN LOGIC: Only {demographics_percentage:.1f}% of profiles have demographic data - some profiles may have wrong user_id linking", {
+                        'success_rate': f"{demographics_percentage:.1f}%",
+                        'with_demographics': profiles_with_demographics,
+                        'without_demographics': profiles_without_demographics,
+                        'total': total_profiles
+                    })
+                    return False
+                else:
+                    self.log_test("Join Logic Verification", False, f"❌ WRONG JOIN LOGIC CONFIRMED: 0% of profiles have demographic data - ranking service is using wrong join: athlete_profiles.user_profile_id -> user_profiles.id instead of athlete_profiles.user_id -> user_profiles.user_id", {
+                        'success_rate': "0%",
+                        'total': total_profiles,
+                        'all_missing_demographics': True
+                    })
+                    return False
+                    
+            else:
+                self.log_test("Join Logic Verification", False, f"❌ Cannot verify join logic - leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Join Logic Verification", False, "❌ Join logic verification test failed", str(e))
+            return False
+    
+    def test_user_profile_linking_structure(self):
+        """Test the actual user profile linking structure to identify the issue"""
+        try:
+            print("\n🔗 USER PROFILE LINKING STRUCTURE TEST 🔗")
+            print("=" * 50)
+            
+            # Test the leaderboard to understand the linking structure
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("User Profile Linking Structure", True, "No leaderboard data to test linking structure", data)
+                    return True
+                
+                print(f"🔍 Analyzing linking structure for {len(leaderboard)} profiles:")
+                
+                # Analyze the linking patterns
+                linking_analysis = {
+                    'profiles_with_user_profile_id': 0,
+                    'profiles_without_user_profile_id': 0,
+                    'profiles_with_demographics': 0,
+                    'profiles_without_demographics': 0,
+                    'sample_entries': []
+                }
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name', 'Unknown')
+                    user_profile_id = entry.get('user_profile_id')
+                    age = entry.get('age')
+                    gender = entry.get('gender')
+                    country = entry.get('country')
+                    
+                    # Count linking patterns
+                    if user_profile_id:
+                        linking_analysis['profiles_with_user_profile_id'] += 1
+                    else:
+                        linking_analysis['profiles_without_user_profile_id'] += 1
+                    
+                    if age is not None and gender is not None and country is not None:
+                        linking_analysis['profiles_with_demographics'] += 1
+                    else:
+                        linking_analysis['profiles_without_demographics'] += 1
+                    
+                    # Collect sample data
+                    if len(linking_analysis['sample_entries']) < 3:
+                        linking_analysis['sample_entries'].append({
+                            'display_name': display_name,
+                            'user_profile_id': user_profile_id,
+                            'has_demographics': age is not None and gender is not None and country is not None,
+                            'age': age,
+                            'gender': gender,
+                            'country': country
+                        })
+                
+                print(f"📊 Linking Structure Analysis:")
+                print(f"   Profiles with user_profile_id: {linking_analysis['profiles_with_user_profile_id']}")
+                print(f"   Profiles without user_profile_id: {linking_analysis['profiles_without_user_profile_id']}")
+                print(f"   Profiles with demographics: {linking_analysis['profiles_with_demographics']}")
+                print(f"   Profiles without demographics: {linking_analysis['profiles_without_demographics']}")
+                
+                # Determine the issue
+                if linking_analysis['profiles_with_user_profile_id'] > 0 and linking_analysis['profiles_with_demographics'] == 0:
+                    self.log_test("User Profile Linking Structure", False, "❌ WRONG JOIN CONFIRMED: Profiles have user_profile_id but no demographics - ranking service is joining athlete_profiles.user_profile_id -> user_profiles.id instead of athlete_profiles.user_id -> user_profiles.user_id", linking_analysis)
+                    return False
+                elif linking_analysis['profiles_with_user_profile_id'] == 0:
+                    self.log_test("User Profile Linking Structure", False, "❌ BROKEN LINKING: No profiles have user_profile_id - athlete profiles are not linked to user accounts", linking_analysis)
+                    return False
+                elif linking_analysis['profiles_with_demographics'] > 0:
+                    self.log_test("User Profile Linking Structure", True, f"✅ CORRECT LINKING: {linking_analysis['profiles_with_demographics']} profiles have demographics - join logic appears correct", linking_analysis)
+                    return True
+                else:
+                    self.log_test("User Profile Linking Structure", False, "❌ UNKNOWN LINKING ISSUE: Profiles have user_profile_id but still no demographics", linking_analysis)
+                    return False
+                    
+            else:
+                self.log_test("User Profile Linking Structure", False, f"❌ Cannot test linking structure - leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("User Profile Linking Structure", False, "❌ User profile linking structure test failed", str(e))
+            return False
+    
+    def test_demographic_data_availability(self):
+        """Test if demographic data (age, gender, country) is available on leaderboard"""
+        try:
+            print("\n👥 DEMOGRAPHIC DATA AVAILABILITY TEST 👥")
+            print("=" * 45)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Demographic Data Availability", True, "No leaderboard data to test demographics", data)
+                    return True
+                
+                # Analyze demographic data availability
+                demographic_stats = {
+                    'total_profiles': len(leaderboard),
+                    'age_available': 0,
+                    'gender_available': 0,
+                    'country_available': 0,
+                    'complete_demographics': 0,
+                    'no_demographics': 0
+                }
+                
+                print(f"📊 Analyzing demographic data for {len(leaderboard)} profiles:")
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name', 'Unknown')
+                    age = entry.get('age')
+                    gender = entry.get('gender')
+                    country = entry.get('country')
+                    
+                    if age is not None:
+                        demographic_stats['age_available'] += 1
+                    if gender is not None:
+                        demographic_stats['gender_available'] += 1
+                    if country is not None:
+                        demographic_stats['country_available'] += 1
+                    
+                    if age is not None and gender is not None and country is not None:
+                        demographic_stats['complete_demographics'] += 1
+                        print(f"   ✅ {display_name}: Complete (Age: {age}, Gender: {gender}, Country: {country})")
+                    else:
+                        demographic_stats['no_demographics'] += 1
+                        missing = []
+                        if age is None:
+                            missing.append("age")
+                        if gender is None:
+                            missing.append("gender")
+                        if country is None:
+                            missing.append("country")
+                        print(f"   ❌ {display_name}: Missing {', '.join(missing)}")
+                
+                # Calculate percentages
+                total = demographic_stats['total_profiles']
+                age_pct = (demographic_stats['age_available'] / total) * 100 if total > 0 else 0
+                gender_pct = (demographic_stats['gender_available'] / total) * 100 if total > 0 else 0
+                country_pct = (demographic_stats['country_available'] / total) * 100 if total > 0 else 0
+                complete_pct = (demographic_stats['complete_demographics'] / total) * 100 if total > 0 else 0
+                
+                print(f"\n📈 Demographic Data Availability:")
+                print(f"   Age available: {demographic_stats['age_available']}/{total} ({age_pct:.1f}%)")
+                print(f"   Gender available: {demographic_stats['gender_available']}/{total} ({gender_pct:.1f}%)")
+                print(f"   Country available: {demographic_stats['country_available']}/{total} ({country_pct:.1f}%)")
+                print(f"   Complete demographics: {demographic_stats['complete_demographics']}/{total} ({complete_pct:.1f}%)")
+                
+                if complete_pct >= 80:
+                    self.log_test("Demographic Data Availability", True, f"✅ EXCELLENT: {complete_pct:.1f}% of profiles have complete demographic data", demographic_stats)
+                    return True
+                elif complete_pct >= 50:
+                    self.log_test("Demographic Data Availability", True, f"✅ GOOD: {complete_pct:.1f}% of profiles have complete demographic data", demographic_stats)
+                    return True
+                elif complete_pct > 0:
+                    self.log_test("Demographic Data Availability", False, f"⚠️ PARTIAL: Only {complete_pct:.1f}% of profiles have complete demographic data - join logic may be partially working", demographic_stats)
+                    return False
+                else:
+                    self.log_test("Demographic Data Availability", False, f"❌ CRITICAL: 0% of profiles have demographic data - user_profiles table join is completely broken", demographic_stats)
+                    return False
+                    
+            else:
+                self.log_test("Demographic Data Availability", False, f"❌ Cannot test demographic data - leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Demographic Data Availability", False, "❌ Demographic data availability test failed", str(e))
+            return False
+
     # ===== NICK BARE PROFILE LINKING FIX TESTS =====
     
     def test_nick_bare_profile_linking_fix(self):
