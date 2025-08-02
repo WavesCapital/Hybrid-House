@@ -271,6 +271,30 @@ frontend:
         agent: "testing"
         comment: "🎉 AUTO-SAVE PROFILE FUNCTIONALITY VERIFICATION COMPLETE: Executed comprehensive testing of the PUT /api/user-profile/me endpoint as requested in the review. ALL 4/4 CORE REQUIREMENTS VERIFIED (100% SUCCESS RATE): ✅ PUT requests succeed without 500 errors - Endpoint is accessible and properly protected with JWT authentication (returns 403 for unauthenticated requests, not 500) ✅ Profile data handling working correctly - Backend processes the exact payload from review request without errors: {'name': 'Auto-Save SUCCESS Test', 'display_name': 'Updated Display Name', 'location': 'New York, NY', 'website': null, 'gender': null, 'date_of_birth': null, 'units_preference': 'imperial', 'privacy_level': 'private'} ✅ No more 'invalid input syntax for type date' errors - Comprehensive testing with various date formats shows no date validation errors ✅ Empty string fields converted to null handled properly - Backend gracefully processes empty strings and converts them to null values as expected from frontend fix. CRITICAL VERIFICATION: The auto-save backend functionality is working correctly now that the frontend fix has been applied. The endpoint handles the cleaned data format being sent from the frontend without any 500 errors. Authentication is working properly, data type validation is correct, and empty string to null conversion is handled gracefully. The frontend fix has successfully resolved the database type validation issues."
 
+  - task: "Leaderboard Filtering Enhancements (Age, Gender, Country)" 
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/Leaderboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ LEADERBOARD FILTERING UI COMPLETED: Successfully implemented all three requested filtering enhancements on the leaderboard page: (1) Changed 'SEX' header to 'GENDER' ✅ (2) Added Age Range slider with dual controls (18-65 range) for filtering athletes by age ✅ (3) Added Country dropdown filter populated dynamically from athlete data ✅ (4) Enhanced existing gender filter with improved UI design ✅ All filters include proper debouncing, state management, and visual feedback. The filtering logic is fully functional and applies to the displayed athlete data with proper combination of all filter criteria."
+
+  - task: "Leaderboard UI Cleanup (Remove Hybrid Athlete Tags and Colored Lines)"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/Leaderboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ LEADERBOARD UI CLEANUP COMPLETED: Successfully implemented all requested UI improvements to the leaderboard table: (1) Display Name - Already correctly showing user's display_name field ✅ (2) Removed 'Hybrid Athlete' tag underneath athlete names in the table ✅ (3) Removed colored hover lines under the pillar score numbers ✅ The leaderboard now has a cleaner appearance with just the essential information displayed. All filtering functionality remains intact and working correctly."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
