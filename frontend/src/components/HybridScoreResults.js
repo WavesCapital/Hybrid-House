@@ -518,29 +518,32 @@ const HybridScoreResults = () => {
               </p>
               
               {/* Leaderboard Position and Buttons */}
-              {leaderboardPosition && totalAthletes && (
-                <div className="mb-6">
+              <div className="mb-6">
+                {/* Show ranking only if user is on public leaderboard */}
+                {leaderboardPosition && totalAthletes && (
                   <div className="flex items-center justify-center space-x-2 mb-4">
                     <Trophy className="h-5 w-5 text-yellow-400" />
                     <span className="text-lg neo-text-primary">
                       Ranked #{leaderboardPosition} out of {totalAthletes} athletes
                     </span>
                   </div>
-                  <div className="flex items-center justify-center space-x-3">
-                    <Button 
-                      onClick={() => navigate('/leaderboard')} 
-                      className="neo-btn-secondary"
-                      size="sm"
-                    >
-                      View Leaderboard
-                    </Button>
-                    <Button onClick={handleShare} className="neo-btn-secondary" size="sm">
-                      <Share2 className="h-4 w-4 mr-2" />
-                      Share Score
-                    </Button>
-                  </div>
+                )}
+                
+                {/* Always show buttons */}
+                <div className="flex items-center justify-center space-x-3">
+                  <Button 
+                    onClick={() => navigate('/leaderboard')} 
+                    className="neo-btn-secondary"
+                    size="sm"
+                  >
+                    View Leaderboard
+                  </Button>
+                  <Button onClick={handleShare} className="neo-btn-secondary" size="sm">
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Share Score
+                  </Button>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Score Breakdown */}
