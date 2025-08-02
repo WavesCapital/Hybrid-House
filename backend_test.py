@@ -2502,6 +2502,180 @@ class BackendTester:
             self.log_test("Leaderboard Privacy Integration Comprehensive", False, "Comprehensive leaderboard privacy integration test failed", str(e))
             return False
     
+    def test_nick_bare_profile_investigation(self):
+        """CRITICAL: Investigate Nick Bare's profile linking issue as requested in review"""
+        try:
+            print("\n🔍 NICK BARE PROFILE INVESTIGATION 🔍")
+            print("=" * 60)
+            print("USER PROVIDED INFO:")
+            print("- Nick Bare exists in user_profiles table")
+            print("- user_profiles.id: c0a0de33-a2f8-40cd-b8db-d89f7a42d140")
+            print("- user_profiles.user_id: ff6827a2-2b0b-4210-8bc6-e02cc8487752")
+            print("- user_profiles.email: nickbare1@wavescapital.co")
+            print("=" * 60)
+            
+            # Step 1: Check leaderboard for Nick Bare
+            print("\n📊 STEP 1: Checking leaderboard for Nick Bare...")
+            leaderboard_response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            nick_on_leaderboard = False
+            nick_leaderboard_data = None
+            
+            if leaderboard_response.status_code == 200:
+                data = leaderboard_response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name', '').lower()
+                    if 'nick' in display_name:
+                        nick_on_leaderboard = True
+                        nick_leaderboard_data = entry
+                        print(f"✅ Found Nick on leaderboard: {entry}")
+                        break
+                
+                if not nick_on_leaderboard:
+                    print("❌ Nick Bare NOT found on leaderboard")
+                    print(f"📋 Current leaderboard has {len(leaderboard)} entries:")
+                    for i, entry in enumerate(leaderboard[:5]):  # Show first 5
+                        print(f"   {i+1}. {entry.get('display_name', 'Unknown')} - Score: {entry.get('score', 'N/A')}")
+            else:
+                print(f"❌ Cannot access leaderboard: HTTP {leaderboard_response.status_code}")
+            
+            # Step 2: Check athlete profiles for Nick Bare by email
+            print("\n👤 STEP 2: Searching athlete_profiles for Nick Bare by email...")
+            # We can't directly query the database, but we can check the athlete-profiles endpoint
+            profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            nick_athlete_profile = None
+            if profiles_response.status_code == 200:
+                profiles_data = profiles_response.json()
+                profiles = profiles_data.get('profiles', [])
+                
+                print(f"📋 Found {len(profiles)} athlete profiles with complete scores")
+                
+                for profile in profiles:
+                    profile_json = profile.get('profile_json', {})
+                    email = profile_json.get('email', '').lower()
+                    first_name = profile_json.get('first_name', '').lower()
+                    last_name = profile_json.get('last_name', '').lower()
+                    
+                    # Check for Nick Bare by email or name
+                    if (email == 'nickbare1@wavescapital.co' or 
+                        ('nick' in first_name and 'bare' in last_name)):
+                        nick_athlete_profile = profile
+                        print(f"✅ Found Nick's athlete profile:")
+                        print(f"   Profile ID: {profile.get('id')}")
+                        print(f"   Email: {email}")
+                        print(f"   Name: {first_name} {last_name}")
+                        print(f"   User ID: {profile.get('user_id', 'NULL')}")
+                        print(f"   Score: {profile.get('score_data', {}).get('hybridScore', 'N/A')}")
+                        print(f"   Is Public: {profile.get('is_public', 'N/A')}")
+                        break
+                
+                if not nick_athlete_profile:
+                    print("❌ Nick Bare's athlete profile NOT found in athlete-profiles endpoint")
+                    print("📋 Sample profiles found:")
+                    for i, profile in enumerate(profiles[:3]):  # Show first 3
+                        profile_json = profile.get('profile_json', {})
+                        print(f"   {i+1}. {profile_json.get('first_name', 'Unknown')} {profile_json.get('last_name', '')} - {profile_json.get('email', 'No email')}")
+            else:
+                print(f"❌ Cannot access athlete profiles: HTTP {profiles_response.status_code}")
+            
+            # Step 3: Test specific profile ID if found
+            if nick_athlete_profile:
+                print(f"\n🔍 STEP 3: Testing specific profile access...")
+                profile_id = nick_athlete_profile.get('id')
+                profile_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                
+                if profile_response.status_code == 200:
+                    profile_data = profile_response.json()
+                    print(f"✅ Profile {profile_id} is accessible")
+                    print(f"   Profile data keys: {list(profile_data.keys())}")
+                else:
+                    print(f"❌ Profile {profile_id} not accessible: HTTP {profile_response.status_code}")
+            
+            # Step 4: Analyze the linking issue
+            print(f"\n🔗 STEP 4: Analyzing user profile linking...")
+            
+            linking_issues = []
+            
+            if nick_athlete_profile:
+                athlete_user_id = nick_athlete_profile.get('user_id')
+                expected_user_id = 'ff6827a2-2b0b-4210-8bc6-e02cc8487752'
+                
+                if athlete_user_id is None:
+                    linking_issues.append("❌ CRITICAL: athlete_profiles.user_id is NULL")
+                elif athlete_user_id != expected_user_id:
+                    linking_issues.append(f"❌ CRITICAL: athlete_profiles.user_id mismatch - Found: {athlete_user_id}, Expected: {expected_user_id}")
+                else:
+                    linking_issues.append(f"✅ athlete_profiles.user_id matches expected: {athlete_user_id}")
+                
+                # Check if profile is public
+                is_public = nick_athlete_profile.get('is_public')
+                if is_public is False:
+                    linking_issues.append("❌ Profile is PRIVATE - won't appear on leaderboard")
+                elif is_public is True:
+                    linking_issues.append("✅ Profile is PUBLIC - should appear on leaderboard")
+                else:
+                    linking_issues.append(f"⚠️  Profile privacy status unclear: {is_public}")
+            else:
+                linking_issues.append("❌ CRITICAL: Nick's athlete profile not found at all")
+            
+            # Step 5: Summary and diagnosis
+            print(f"\n📋 INVESTIGATION SUMMARY:")
+            print("=" * 40)
+            
+            for issue in linking_issues:
+                print(f"   {issue}")
+            
+            # Determine if the issue is resolved
+            if nick_on_leaderboard and nick_athlete_profile:
+                athlete_user_id = nick_athlete_profile.get('user_id')
+                expected_user_id = 'ff6827a2-2b0b-4210-8bc6-e02cc8487752'
+                
+                if athlete_user_id == expected_user_id:
+                    self.log_test("Nick Bare Profile Investigation", True, 
+                                "✅ RESOLVED: Nick Bare found on leaderboard with correct user_id linking", {
+                                    'leaderboard_rank': nick_leaderboard_data.get('rank') if nick_leaderboard_data else 'N/A',
+                                    'leaderboard_score': nick_leaderboard_data.get('score') if nick_leaderboard_data else 'N/A',
+                                    'athlete_user_id': athlete_user_id,
+                                    'expected_user_id': expected_user_id,
+                                    'profile_id': nick_athlete_profile.get('id'),
+                                    'is_public': nick_athlete_profile.get('is_public')
+                                })
+                    return True
+                else:
+                    self.log_test("Nick Bare Profile Investigation", False, 
+                                f"❌ CRITICAL: User ID mismatch - athlete_profiles.user_id ({athlete_user_id}) != expected ({expected_user_id})", {
+                                    'athlete_user_id': athlete_user_id,
+                                    'expected_user_id': expected_user_id,
+                                    'profile_found': True,
+                                    'on_leaderboard': nick_on_leaderboard
+                                })
+                    return False
+            elif nick_athlete_profile and not nick_on_leaderboard:
+                self.log_test("Nick Bare Profile Investigation", False, 
+                            "❌ CRITICAL: Nick's athlete profile exists but not on leaderboard - check privacy settings or ranking service", {
+                                'profile_found': True,
+                                'on_leaderboard': False,
+                                'is_public': nick_athlete_profile.get('is_public'),
+                                'user_id': nick_athlete_profile.get('user_id'),
+                                'profile_id': nick_athlete_profile.get('id')
+                            })
+                return False
+            else:
+                self.log_test("Nick Bare Profile Investigation", False, 
+                            "❌ CRITICAL: Nick Bare's athlete profile not found in system", {
+                                'profile_found': False,
+                                'on_leaderboard': nick_on_leaderboard,
+                                'total_profiles_checked': len(profiles) if 'profiles' in locals() else 0
+                            })
+                return False
+                
+        except Exception as e:
+            self.log_test("Nick Bare Profile Investigation", False, "Investigation failed", str(e))
+            return False
+
     def test_kendall_toole_personality_system(self):
         """Test if Kendall Toole personality system is properly configured"""
         try:
