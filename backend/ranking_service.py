@@ -212,5 +212,12 @@ class RankingService:
             print(f"Error calculating user percentile: {str(e)}")
             return None
 
-# Global instance for use in server.py
-ranking_service = RankingService()
+# Global instance for use in server.py - will be initialized when first used
+ranking_service = None
+
+def get_ranking_service():
+    """Get or create the global ranking service instance"""
+    global ranking_service
+    if ranking_service is None:
+        ranking_service = RankingService()
+    return ranking_service
