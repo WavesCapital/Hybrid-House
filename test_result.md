@@ -286,6 +286,18 @@ frontend:
         agent: "main"
         comment: "✅ LEADERBOARD FILTERING UI COMPLETED: Successfully implemented all three requested filtering enhancements on the leaderboard page: (1) Changed 'SEX' header to 'GENDER' ✅ (2) Added Age Range slider with dual controls (18-65 range) for filtering athletes by age ✅ (3) Added Country dropdown filter populated dynamically from athlete data ✅ (4) Enhanced existing gender filter with improved UI design ✅ All filters include proper debouncing, state management, and visual feedback. The filtering logic is fully functional and applies to the displayed athlete data with proper combination of all filter criteria."
 
+  - task: "Leaderboard Display Name Source Fix"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ LEADERBOARD DISPLAY NAME SOURCE FIXED: Modified the GET /api/leaderboard endpoint to correctly use the display_name column from the user_profiles table instead of from the profile_json field in athlete_profiles. Updated the fallback logic to prioritize user_profiles.display_name first, then fall back to profile_json.display_name, first_name, and email prefix as needed. Backend testing confirmed the fix is working correctly and the leaderboard now shows proper display names from user profile settings."
+
   - task: "Leaderboard UI Cleanup (Remove Hybrid Athlete Tags and Colored Lines)"
     implemented: true
     working: true
