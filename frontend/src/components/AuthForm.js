@@ -73,12 +73,39 @@ export default function AuthForm() {
           // Check if user is immediately logged in (no email confirmation)
           if (result.data?.session) {
             setMessage(postAuthRedirect ? 'Account created successfully! Redirecting to your interview...' : 'Account created successfully! Welcome to Hybrid House!');
+            
+            // Handle immediate redirect for successful signup with session
+            if (postAuthRedirect === '/hybrid-interview') {
+              console.log('Redirecting to interview page after successful signup');
+              localStorage.removeItem('postAuthRedirect');
+              setTimeout(() => {
+                navigate('/hybrid-interview', { replace: true });
+              }, 1500);
+            } else {
+              setTimeout(() => {
+                navigate('/', { replace: true });
+              }, 1500);
+            }
           } else {
-            // Email confirmation is still enabled
+            // Email confirmation is still enabled - handle redirect after confirmation
             setMessage('Account created! Please check your email and click the confirmation link to activate your account.');
           }
         } else {
+          // Login case
           setMessage(postAuthRedirect ? 'Welcome back! Redirecting to your interview...' : 'Welcome back! Redirecting...');
+          
+          // Handle immediate redirect for successful login
+          if (postAuthRedirect === '/hybrid-interview') {
+            console.log('Redirecting to interview page after successful login');
+            localStorage.removeItem('postAuthRedirect');
+            setTimeout(() => {
+              navigate('/hybrid-interview', { replace: true });
+            }, 1500);
+          } else {
+            setTimeout(() => {
+              navigate('/', { replace: true });
+            }, 1500);
+          }
         }
       }
     } catch (error) {
