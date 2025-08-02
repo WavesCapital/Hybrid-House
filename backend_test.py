@@ -10931,7 +10931,14 @@ class BackendTester:
             self.test_ranking_service_bug_check,
             self.test_privacy_change_investigation,
             self.test_default_setting_verification,
-            self.test_leaderboard_vs_database_comparison
+            self.test_leaderboard_vs_database_comparison,
+            
+            # 14. NEW CRITICAL LEADERBOARD BUG INVESTIGATION TESTS (REVIEW REQUEST)
+            self.test_profile_creation_defaults,
+            self.test_database_migration_status,
+            self.test_leaderboard_empty_root_cause,
+            self.test_migration_script_execution,
+            self.test_profile_creation_path_analysis
         ]
         
         # Run AUTHENTICATION FLOW TESTS first (HIGH PRIORITY)
