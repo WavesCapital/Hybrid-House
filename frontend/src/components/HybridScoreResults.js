@@ -283,7 +283,6 @@ const HybridScoreResults = () => {
       const response = await axios.get(`${BACKEND_URL}/api/leaderboard`);
       if (response.data.leaderboard) {
         const leaderboard = response.data.leaderboard;
-        setTotalAthletes(leaderboard.length);
         
         // Find user's actual position in the leaderboard
         const userPosition = leaderboard.findIndex(athlete => athlete.profile_id === userProfileId);
@@ -291,6 +290,7 @@ const HybridScoreResults = () => {
         if (userPosition !== -1) {
           // User is on the public leaderboard, show their actual rank (1-based)
           setLeaderboardPosition(userPosition + 1);
+          setTotalAthletes(leaderboard.length);
         } else {
           // User is not on the public leaderboard (likely private profile)
           // Calculate where they would rank if they were public
@@ -300,9 +300,9 @@ const HybridScoreResults = () => {
               wouldBePosition++;
             }
           }
-          // Don't show ranking if user is not on public leaderboard
-          setLeaderboardPosition(null);
-          setTotalAthletes(null);
+          // Show their hypothetical position among all public athletes + themselves
+          setLeaderboardPosition(wouldBePosition);
+          setTotalAthletes(leaderboard.length + 1); // Include them in the total count
         }
       }
     } catch (error) {
