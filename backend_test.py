@@ -9970,6 +9970,503 @@ class BackendTester:
             self.log_test("Hybrid Score Sharing Functionality", False, "Hybrid score sharing functionality test failed", str(e))
             return False
 
+    # ===== CRITICAL LEADERBOARD BUG INVESTIGATION TESTS =====
+    
+    def test_database_audit_is_public_values(self):
+        """CRITICAL: Audit actual is_public values in athlete_profiles table"""
+        try:
+            print("\n🔍 DATABASE AUDIT: is_public VALUES 🔍")
+            print("=" * 60)
+            
+            # Get all athlete profiles to audit is_public values
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get('profiles', [])
+                
+                print(f"📊 Total profiles found: {len(profiles)}")
+                
+                # Audit is_public values
+                public_profiles = []
+                private_profiles = []
+                missing_is_public = []
+                
+                for profile in profiles:
+                    profile_id = profile.get('id', 'unknown')
+                    is_public = profile.get('is_public')
+                    score_data = profile.get('score_data')
+                    has_complete_scores = bool(score_data and isinstance(score_data, dict) and 
+                                             all(score_data.get(field) for field in ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']))
+                    
+                    if is_public is None:
+                        missing_is_public.append({
+                            'id': profile_id,
+                            'has_scores': has_complete_scores
+                        })
+                    elif is_public == True:
+                        public_profiles.append({
+                            'id': profile_id,
+                            'has_scores': has_complete_scores,
+                            'hybrid_score': score_data.get('hybridScore') if score_data else None
+                        })
+                    elif is_public == False:
+                        private_profiles.append({
+                            'id': profile_id,
+                            'has_scores': has_complete_scores,
+                            'hybrid_score': score_data.get('hybridScore') if score_data else None
+                        })
+                
+                print(f"🌍 PUBLIC profiles (is_public=true): {len(public_profiles)}")
+                print(f"🔒 PRIVATE profiles (is_public=false): {len(private_profiles)}")
+                print(f"❓ MISSING is_public field: {len(missing_is_public)}")
+                
+                # Show sample data
+                if public_profiles:
+                    print(f"\n📋 Sample PUBLIC profiles:")
+                    for profile in public_profiles[:3]:
+                        print(f"  - ID: {profile['id'][:8]}... | Has Scores: {profile['has_scores']} | Hybrid Score: {profile['hybrid_score']}")
+                
+                if private_profiles:
+                    print(f"\n📋 Sample PRIVATE profiles:")
+                    for profile in private_profiles[:3]:
+                        print(f"  - ID: {profile['id'][:8]}... | Has Scores: {profile['has_scores']} | Hybrid Score: {profile['hybrid_score']}")
+                
+                # Count profiles with complete scores
+                public_with_scores = len([p for p in public_profiles if p['has_scores']])
+                private_with_scores = len([p for p in private_profiles if p['has_scores']])
+                
+                print(f"\n🎯 CRITICAL FINDINGS:")
+                print(f"   📊 Public profiles with complete scores: {public_with_scores}")
+                print(f"   📊 Private profiles with complete scores: {private_with_scores}")
+                print(f"   📊 Total profiles with complete scores: {public_with_scores + private_with_scores}")
+                
+                audit_results = {
+                    'total_profiles': len(profiles),
+                    'public_profiles': len(public_profiles),
+                    'private_profiles': len(private_profiles),
+                    'missing_is_public': len(missing_is_public),
+                    'public_with_scores': public_with_scores,
+                    'private_with_scores': private_with_scores,
+                    'sample_public': public_profiles[:3],
+                    'sample_private': private_profiles[:3]
+                }
+                
+                self.log_test("Database Audit is_public Values", True, f"Audit complete: {public_with_scores} public scored profiles, {private_with_scores} private scored profiles", audit_results)
+                return True
+                
+            else:
+                print(f"❌ Cannot access athlete profiles: HTTP {response.status_code}")
+                self.log_test("Database Audit is_public Values", False, f"Cannot access athlete profiles: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            print(f"💥 Database audit failed: {str(e)}")
+            self.log_test("Database Audit is_public Values", False, "Database audit failed", str(e))
+            return False
+    
+    def test_ranking_service_bug_check(self):
+        """CRITICAL: Debug the ranking service get_public_leaderboard_data() method"""
+        try:
+            print("\n🔧 RANKING SERVICE BUG CHECK 🔧")
+            print("=" * 60)
+            
+            # Test the leaderboard endpoint which uses ranking service
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                total_public = data.get('total_public_athletes', 0)
+                metadata = data.get('ranking_metadata', {})
+                
+                print(f"📊 Leaderboard returned {len(leaderboard)} entries")
+                print(f"👥 Total public athletes reported: {total_public}")
+                print(f"🔧 Ranking metadata: {list(metadata.keys())}")
+                
+                # Check for errors in metadata
+                if 'error' in metadata:
+                    print(f"🚨 RANKING SERVICE ERROR: {metadata['error']}")
+                    self.log_test("Ranking Service Bug Check", False, f"Ranking service error: {metadata['error']}", metadata)
+                    return False
+                
+                # Compare with direct database query
+                profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+                if profiles_response.status_code == 200:
+                    profiles_data = profiles_response.json()
+                    all_profiles = profiles_data.get('profiles', [])
+                    
+                    # Count what should be on leaderboard
+                    expected_public_scored = 0
+                    for profile in all_profiles:
+                        is_public = profile.get('is_public', False)
+                        score_data = profile.get('score_data')
+                        has_complete_scores = bool(score_data and isinstance(score_data, dict) and 
+                                                 all(score_data.get(field) for field in ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']))
+                        
+                        if is_public and has_complete_scores:
+                            expected_public_scored += 1
+                    
+                    print(f"\n🔍 COMPARISON:")
+                    print(f"   📊 Expected public scored profiles: {expected_public_scored}")
+                    print(f"   📊 Ranking service found: {total_public}")
+                    print(f"   📊 Leaderboard entries: {len(leaderboard)}")
+                    
+                    if expected_public_scored != total_public:
+                        print(f"🚨 MISMATCH: Expected {expected_public_scored} but ranking service found {total_public}")
+                        self.log_test("Ranking Service Bug Check", False, f"Ranking service filtering bug: expected {expected_public_scored}, got {total_public}", {
+                            'expected': expected_public_scored,
+                            'ranking_service_found': total_public,
+                            'leaderboard_entries': len(leaderboard)
+                        })
+                        return False
+                    elif expected_public_scored == 0:
+                        print("⚠️  No public scored profiles found - leaderboard correctly empty")
+                        self.log_test("Ranking Service Bug Check", True, "Ranking service correctly shows empty leaderboard - no public scored profiles", {
+                            'expected': expected_public_scored,
+                            'ranking_service_found': total_public
+                        })
+                        return True
+                    else:
+                        print("✅ Ranking service filtering logic is correct")
+                        self.log_test("Ranking Service Bug Check", True, f"Ranking service filtering correct: {total_public} public scored profiles", {
+                            'expected': expected_public_scored,
+                            'ranking_service_found': total_public,
+                            'leaderboard_entries': len(leaderboard)
+                        })
+                        return True
+                else:
+                    print("❌ Cannot compare with direct database query")
+                    self.log_test("Ranking Service Bug Check", False, "Cannot access athlete profiles for comparison", profiles_response.text)
+                    return False
+                    
+            else:
+                print(f"❌ Leaderboard endpoint failed: HTTP {response.status_code}")
+                try:
+                    error_data = response.json()
+                    print(f"🚨 Error details: {error_data}")
+                    self.log_test("Ranking Service Bug Check", False, f"Leaderboard endpoint failed: {response.status_code}", error_data)
+                except:
+                    self.log_test("Ranking Service Bug Check", False, f"Leaderboard endpoint failed: {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            print(f"💥 Ranking service bug check failed: {str(e)}")
+            self.log_test("Ranking Service Bug Check", False, "Ranking service bug check failed", str(e))
+            return False
+    
+    def test_privacy_change_investigation(self):
+        """CRITICAL: Look for processes that might be changing is_public values"""
+        try:
+            print("\n🕵️ PRIVACY CHANGE INVESTIGATION 🕵️")
+            print("=" * 60)
+            
+            # Get current state of profiles
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get('profiles', [])
+                
+                print(f"📊 Analyzing {len(profiles)} profiles for privacy patterns...")
+                
+                # Analyze privacy patterns
+                privacy_analysis = {
+                    'total_profiles': len(profiles),
+                    'public_count': 0,
+                    'private_count': 0,
+                    'null_privacy': 0,
+                    'recent_profiles': [],
+                    'old_profiles': []
+                }
+                
+                from datetime import datetime, timedelta
+                cutoff_date = datetime.now() - timedelta(days=7)  # Last 7 days
+                
+                for profile in profiles:
+                    is_public = profile.get('is_public')
+                    created_at = profile.get('created_at', '')
+                    profile_id = profile.get('id', 'unknown')
+                    
+                    # Count privacy values
+                    if is_public is True:
+                        privacy_analysis['public_count'] += 1
+                    elif is_public is False:
+                        privacy_analysis['private_count'] += 1
+                    else:
+                        privacy_analysis['null_privacy'] += 1
+                    
+                    # Categorize by age
+                    try:
+                        profile_date = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                        if profile_date > cutoff_date:
+                            privacy_analysis['recent_profiles'].append({
+                                'id': profile_id[:8] + '...',
+                                'is_public': is_public,
+                                'created_at': created_at
+                            })
+                        else:
+                            privacy_analysis['old_profiles'].append({
+                                'id': profile_id[:8] + '...',
+                                'is_public': is_public,
+                                'created_at': created_at
+                            })
+                    except:
+                        # If date parsing fails, treat as old
+                        privacy_analysis['old_profiles'].append({
+                            'id': profile_id[:8] + '...',
+                            'is_public': is_public,
+                            'created_at': created_at
+                        })
+                
+                print(f"\n📊 PRIVACY DISTRIBUTION:")
+                print(f"   🌍 Public (is_public=true): {privacy_analysis['public_count']}")
+                print(f"   🔒 Private (is_public=false): {privacy_analysis['private_count']}")
+                print(f"   ❓ Null/undefined: {privacy_analysis['null_privacy']}")
+                
+                print(f"\n📅 RECENT PROFILES (last 7 days): {len(privacy_analysis['recent_profiles'])}")
+                for profile in privacy_analysis['recent_profiles'][:5]:
+                    print(f"   - {profile['id']} | Public: {profile['is_public']} | Created: {profile['created_at'][:10]}")
+                
+                print(f"\n📅 OLDER PROFILES: {len(privacy_analysis['old_profiles'])}")
+                for profile in privacy_analysis['old_profiles'][:5]:
+                    print(f"   - {profile['id']} | Public: {profile['is_public']} | Created: {profile['created_at'][:10]}")
+                
+                # Check for suspicious patterns
+                recent_public = len([p for p in privacy_analysis['recent_profiles'] if p['is_public'] == True])
+                recent_private = len([p for p in privacy_analysis['recent_profiles'] if p['is_public'] == False])
+                old_public = len([p for p in privacy_analysis['old_profiles'] if p['is_public'] == True])
+                old_private = len([p for p in privacy_analysis['old_profiles'] if p['is_public'] == False])
+                
+                print(f"\n🔍 PATTERN ANALYSIS:")
+                print(f"   📊 Recent profiles - Public: {recent_public}, Private: {recent_private}")
+                print(f"   📊 Older profiles - Public: {old_public}, Private: {old_private}")
+                
+                # Detect suspicious patterns
+                suspicious_patterns = []
+                
+                if privacy_analysis['private_count'] > privacy_analysis['public_count'] * 2:
+                    suspicious_patterns.append("Unusually high private profile ratio")
+                
+                if recent_private > recent_public and len(privacy_analysis['recent_profiles']) > 0:
+                    suspicious_patterns.append("Recent profiles defaulting to private")
+                
+                if privacy_analysis['null_privacy'] > 0:
+                    suspicious_patterns.append(f"{privacy_analysis['null_privacy']} profiles missing is_public field")
+                
+                if suspicious_patterns:
+                    print(f"\n🚨 SUSPICIOUS PATTERNS DETECTED:")
+                    for pattern in suspicious_patterns:
+                        print(f"   ⚠️  {pattern}")
+                    
+                    self.log_test("Privacy Change Investigation", False, f"Suspicious privacy patterns detected: {suspicious_patterns}", privacy_analysis)
+                    return False
+                else:
+                    print(f"\n✅ No suspicious privacy change patterns detected")
+                    self.log_test("Privacy Change Investigation", True, "No suspicious privacy change patterns detected", privacy_analysis)
+                    return True
+                    
+            else:
+                print(f"❌ Cannot access athlete profiles: HTTP {response.status_code}")
+                self.log_test("Privacy Change Investigation", False, f"Cannot access athlete profiles: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            print(f"💥 Privacy change investigation failed: {str(e)}")
+            self.log_test("Privacy Change Investigation", False, "Privacy change investigation failed", str(e))
+            return False
+    
+    def test_default_setting_verification(self):
+        """CRITICAL: Verify new profiles are actually set to public by default"""
+        try:
+            print("\n⚙️ DEFAULT SETTING VERIFICATION ⚙️")
+            print("=" * 60)
+            
+            # Get all profiles and check default settings
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                profiles = data.get('profiles', [])
+                
+                if not profiles:
+                    print("⚠️  No profiles found to analyze default settings")
+                    self.log_test("Default Setting Verification", True, "No profiles found to analyze", {'total_profiles': 0})
+                    return True
+                
+                # Sort profiles by creation date (newest first)
+                sorted_profiles = sorted(profiles, key=lambda x: x.get('created_at', ''), reverse=True)
+                
+                print(f"📊 Analyzing {len(sorted_profiles)} profiles for default privacy settings...")
+                
+                # Check the most recent profiles (likely to show current default behavior)
+                recent_profiles = sorted_profiles[:10]  # Last 10 profiles
+                
+                default_analysis = {
+                    'total_analyzed': len(recent_profiles),
+                    'public_by_default': 0,
+                    'private_by_default': 0,
+                    'null_privacy': 0,
+                    'sample_recent': []
+                }
+                
+                print(f"\n📋 RECENT PROFILES (showing default behavior):")
+                for i, profile in enumerate(recent_profiles):
+                    profile_id = profile.get('id', 'unknown')
+                    is_public = profile.get('is_public')
+                    created_at = profile.get('created_at', '')
+                    
+                    privacy_status = "PUBLIC" if is_public == True else "PRIVATE" if is_public == False else "NULL"
+                    print(f"   {i+1}. {profile_id[:8]}... | {privacy_status} | Created: {created_at[:19]}")
+                    
+                    default_analysis['sample_recent'].append({
+                        'id': profile_id[:8] + '...',
+                        'is_public': is_public,
+                        'created_at': created_at[:19]
+                    })
+                    
+                    if is_public == True:
+                        default_analysis['public_by_default'] += 1
+                    elif is_public == False:
+                        default_analysis['private_by_default'] += 1
+                    else:
+                        default_analysis['null_privacy'] += 1
+                
+                print(f"\n📊 DEFAULT BEHAVIOR ANALYSIS:")
+                print(f"   🌍 Defaulting to PUBLIC: {default_analysis['public_by_default']}")
+                print(f"   🔒 Defaulting to PRIVATE: {default_analysis['private_by_default']}")
+                print(f"   ❓ NULL privacy field: {default_analysis['null_privacy']}")
+                
+                # Determine if defaults are working correctly
+                if default_analysis['public_by_default'] > default_analysis['private_by_default']:
+                    print(f"✅ DEFAULT SETTING CORRECT: New profiles are defaulting to PUBLIC")
+                    self.log_test("Default Setting Verification", True, f"New profiles defaulting to public: {default_analysis['public_by_default']}/{default_analysis['total_analyzed']}", default_analysis)
+                    return True
+                elif default_analysis['private_by_default'] > default_analysis['public_by_default']:
+                    print(f"🚨 DEFAULT SETTING WRONG: New profiles are defaulting to PRIVATE")
+                    self.log_test("Default Setting Verification", False, f"New profiles defaulting to private: {default_analysis['private_by_default']}/{default_analysis['total_analyzed']}", default_analysis)
+                    return False
+                elif default_analysis['null_privacy'] > 0:
+                    print(f"🚨 DEFAULT SETTING BROKEN: New profiles have NULL privacy field")
+                    self.log_test("Default Setting Verification", False, f"New profiles have null privacy: {default_analysis['null_privacy']}/{default_analysis['total_analyzed']}", default_analysis)
+                    return False
+                else:
+                    print(f"⚠️  INCONCLUSIVE: Equal public/private defaults")
+                    self.log_test("Default Setting Verification", True, "Equal public/private defaults - inconclusive", default_analysis)
+                    return True
+                    
+            else:
+                print(f"❌ Cannot access athlete profiles: HTTP {response.status_code}")
+                self.log_test("Default Setting Verification", False, f"Cannot access athlete profiles: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            print(f"💥 Default setting verification failed: {str(e)}")
+            self.log_test("Default Setting Verification", False, "Default setting verification failed", str(e))
+            return False
+    
+    def test_leaderboard_vs_database_comparison(self):
+        """CRITICAL: Compare leaderboard results with direct database query"""
+        try:
+            print("\n🔍 LEADERBOARD vs DATABASE COMPARISON 🔍")
+            print("=" * 60)
+            
+            # Get leaderboard results
+            leaderboard_response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            # Get direct database results
+            profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if leaderboard_response.status_code == 200 and profiles_response.status_code == 200:
+                leaderboard_data = leaderboard_response.json()
+                profiles_data = profiles_response.json()
+                
+                leaderboard = leaderboard_data.get('leaderboard', [])
+                all_profiles = profiles_data.get('profiles', [])
+                
+                print(f"📊 Leaderboard shows: {len(leaderboard)} entries")
+                print(f"📊 Database has: {len(all_profiles)} total profiles")
+                
+                # Manual filtering to see what should be on leaderboard
+                should_be_on_leaderboard = []
+                
+                for profile in all_profiles:
+                    is_public = profile.get('is_public', False)
+                    score_data = profile.get('score_data')
+                    
+                    # Check if has complete scores
+                    has_complete_scores = False
+                    if score_data and isinstance(score_data, dict):
+                        required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
+                        has_complete_scores = all(score_data.get(field) for field in required_scores)
+                    
+                    if is_public and has_complete_scores:
+                        should_be_on_leaderboard.append({
+                            'id': profile.get('id', 'unknown')[:8] + '...',
+                            'hybrid_score': score_data.get('hybridScore'),
+                            'is_public': is_public,
+                            'has_complete_scores': has_complete_scores
+                        })
+                
+                print(f"📊 Should be on leaderboard: {len(should_be_on_leaderboard)} profiles")
+                
+                if should_be_on_leaderboard:
+                    print(f"\n📋 PROFILES THAT SHOULD BE ON LEADERBOARD:")
+                    for profile in should_be_on_leaderboard:
+                        print(f"   - {profile['id']} | Score: {profile['hybrid_score']} | Public: {profile['is_public']}")
+                
+                if leaderboard:
+                    print(f"\n📋 PROFILES ACTUALLY ON LEADERBOARD:")
+                    for entry in leaderboard:
+                        print(f"   - Rank {entry.get('rank', '?')} | Score: {entry.get('score', '?')} | Name: {entry.get('display_name', '?')}")
+                
+                # Compare results
+                expected_count = len(should_be_on_leaderboard)
+                actual_count = len(leaderboard)
+                
+                print(f"\n🔍 COMPARISON RESULTS:")
+                print(f"   📊 Expected on leaderboard: {expected_count}")
+                print(f"   📊 Actually on leaderboard: {actual_count}")
+                
+                if expected_count == actual_count:
+                    if expected_count == 0:
+                        print(f"✅ CORRECT: Both show empty leaderboard (no public scored profiles)")
+                        self.log_test("Leaderboard vs Database Comparison", True, "Leaderboard correctly empty - no public scored profiles", {
+                            'expected': expected_count,
+                            'actual': actual_count,
+                            'should_be_on_leaderboard': should_be_on_leaderboard
+                        })
+                    else:
+                        print(f"✅ CORRECT: Leaderboard shows expected {expected_count} profiles")
+                        self.log_test("Leaderboard vs Database Comparison", True, f"Leaderboard correctly shows {expected_count} profiles", {
+                            'expected': expected_count,
+                            'actual': actual_count,
+                            'should_be_on_leaderboard': should_be_on_leaderboard
+                        })
+                    return True
+                else:
+                    print(f"🚨 MISMATCH: Expected {expected_count} but leaderboard shows {actual_count}")
+                    self.log_test("Leaderboard vs Database Comparison", False, f"Leaderboard mismatch: expected {expected_count}, got {actual_count}", {
+                        'expected': expected_count,
+                        'actual': actual_count,
+                        'should_be_on_leaderboard': should_be_on_leaderboard,
+                        'actual_leaderboard': leaderboard
+                    })
+                    return False
+                    
+            else:
+                print(f"❌ Cannot compare - Leaderboard: {leaderboard_response.status_code}, Profiles: {profiles_response.status_code}")
+                self.log_test("Leaderboard vs Database Comparison", False, f"Cannot access endpoints - Leaderboard: {leaderboard_response.status_code}, Profiles: {profiles_response.status_code}", {
+                    'leaderboard_error': leaderboard_response.text if leaderboard_response.status_code != 200 else None,
+                    'profiles_error': profiles_response.text if profiles_response.status_code != 200 else None
+                })
+                return False
+                
+        except Exception as e:
+            print(f"💥 Leaderboard vs database comparison failed: {str(e)}")
+            self.log_test("Leaderboard vs Database Comparison", False, "Comparison failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests focused on authentication flow and user profile management"""
         print("=" * 80)
