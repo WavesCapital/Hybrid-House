@@ -11802,6 +11802,156 @@ class BackendTester:
             self.log_test("Comprehensive Leaderboard Ranking Logic", False, "Comprehensive leaderboard ranking logic test failed", str(e))
             return False
 
+    def test_nick_bare_display_name_investigation(self):
+        """Investigate Nick Bare's display name issue as requested in review"""
+        try:
+            print("\n🔍 NICK BARE DISPLAY NAME INVESTIGATION 🔍")
+            print("=" * 60)
+            
+            # Step 1: Get the exact leaderboard response
+            print("📊 Step 1: Getting leaderboard response...")
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code != 200:
+                self.log_test("Nick Bare Display Name Investigation", False, f"Cannot get leaderboard - HTTP {response.status_code}", response.text)
+                return False
+            
+            data = response.json()
+            leaderboard = data.get('leaderboard', [])
+            
+            if not leaderboard:
+                self.log_test("Nick Bare Display Name Investigation", False, "Leaderboard is empty - cannot investigate Nick Bare", data)
+                return False
+            
+            print(f"✅ Found {len(leaderboard)} entries on leaderboard")
+            
+            # Step 2: Show the first 2 entries as requested
+            print("\n📋 Step 2: First 2 leaderboard entries:")
+            for i, entry in enumerate(leaderboard[:2]):
+                print(f"  #{i+1}: {entry.get('display_name', 'NO_NAME')} - Score: {entry.get('score', 'NO_SCORE')}")
+                print(f"       Profile ID: {entry.get('profile_id', 'NO_ID')}")
+                print(f"       User Profile ID: {entry.get('user_profile_id', 'NO_USER_ID')}")
+            
+            # Step 3: Look for Nick Bare specifically
+            print("\n🎯 Step 3: Searching for Nick Bare...")
+            nick_bare_entries = []
+            score_96_8_entries = []
+            
+            for entry in leaderboard:
+                display_name = entry.get('display_name', '').lower()
+                score = entry.get('score', 0)
+                
+                # Look for Nick Bare by name
+                if 'nick' in display_name and 'bare' in display_name:
+                    nick_bare_entries.append(entry)
+                
+                # Look for entries with score 96.8
+                if abs(score - 96.8) < 0.1:
+                    score_96_8_entries.append(entry)
+            
+            print(f"🔍 Found {len(nick_bare_entries)} entries with 'Nick Bare' in display name")
+            print(f"🔍 Found {len(score_96_8_entries)} entries with score ~96.8")
+            
+            # Step 4: Detailed analysis of findings
+            investigation_results = {
+                'total_leaderboard_entries': len(leaderboard),
+                'first_entry': leaderboard[0] if leaderboard else None,
+                'second_entry': leaderboard[1] if len(leaderboard) > 1 else None,
+                'nick_bare_entries_found': len(nick_bare_entries),
+                'score_96_8_entries_found': len(score_96_8_entries),
+                'nick_bare_details': nick_bare_entries,
+                'score_96_8_details': score_96_8_entries
+            }
+            
+            # Step 5: Check if there's an entry with score 96.8
+            if score_96_8_entries:
+                print(f"\n✅ Found entry with score 96.8:")
+                for entry in score_96_8_entries:
+                    print(f"   Display Name: '{entry.get('display_name', 'EMPTY')}'")
+                    print(f"   Rank: {entry.get('rank', 'NO_RANK')}")
+                    print(f"   Score: {entry.get('score', 'NO_SCORE')}")
+                    print(f"   Profile ID: {entry.get('profile_id', 'NO_ID')}")
+                    
+                    # Check if display name is empty, null, or different
+                    display_name = entry.get('display_name', '')
+                    if not display_name or display_name.strip() == '':
+                        print(f"   ⚠️  ISSUE: Display name is EMPTY")
+                    elif display_name.lower() == 'n/a':
+                        print(f"   ⚠️  ISSUE: Display name is 'N/A'")
+                    elif 'nick' not in display_name.lower() or 'bare' not in display_name.lower():
+                        print(f"   ⚠️  ISSUE: Display name doesn't contain 'Nick Bare'")
+                    else:
+                        print(f"   ✅ Display name looks correct")
+            else:
+                print(f"\n❌ NO entry found with score 96.8")
+            
+            # Step 6: Check if Nick Bare entries exist but with different scores
+            if nick_bare_entries:
+                print(f"\n✅ Found Nick Bare entries:")
+                for entry in nick_bare_entries:
+                    print(f"   Display Name: '{entry.get('display_name', 'EMPTY')}'")
+                    print(f"   Rank: {entry.get('rank', 'NO_RANK')}")
+                    print(f"   Score: {entry.get('score', 'NO_SCORE')}")
+                    print(f"   Profile ID: {entry.get('profile_id', 'NO_ID')}")
+            else:
+                print(f"\n❌ NO entries found with 'Nick Bare' in display name")
+            
+            # Step 7: Analyze the top entry (what frontend shows as #1)
+            if leaderboard:
+                top_entry = leaderboard[0]
+                print(f"\n🏆 Current #1 on leaderboard:")
+                print(f"   Display Name: '{top_entry.get('display_name', 'EMPTY')}'")
+                print(f"   Score: {top_entry.get('score', 'NO_SCORE')}")
+                print(f"   Profile ID: {top_entry.get('profile_id', 'NO_ID')}")
+                
+                if top_entry.get('display_name', '').lower() == 'kyle s':
+                    print(f"   ✅ Matches review description - frontend shows Kyle S as #1")
+                else:
+                    print(f"   ⚠️  Different from review description")
+            
+            # Step 8: Final assessment
+            nick_bare_visible = len(nick_bare_entries) > 0
+            nick_bare_is_first = nick_bare_entries and nick_bare_entries[0].get('rank') == 1
+            score_96_8_exists = len(score_96_8_entries) > 0
+            score_96_8_is_first = score_96_8_entries and score_96_8_entries[0].get('rank') == 1
+            
+            if score_96_8_exists and not nick_bare_visible:
+                # Score 96.8 exists but no Nick Bare name - display name issue
+                display_name_issue = score_96_8_entries[0].get('display_name', '')
+                self.log_test("Nick Bare Display Name Investigation", True, 
+                    f"✅ DISPLAY NAME ISSUE CONFIRMED: Entry with score 96.8 exists but display_name is '{display_name_issue}' instead of 'Nick Bare'", 
+                    investigation_results)
+                return True
+            elif nick_bare_visible and not score_96_8_exists:
+                # Nick Bare exists but wrong score
+                nick_score = nick_bare_entries[0].get('score', 0)
+                self.log_test("Nick Bare Display Name Investigation", True, 
+                    f"✅ SCORE MISMATCH CONFIRMED: Nick Bare found but score is {nick_score} instead of 96.8", 
+                    investigation_results)
+                return True
+            elif nick_bare_visible and score_96_8_exists:
+                # Both exist - check if they're the same entry
+                if nick_bare_entries[0].get('profile_id') == score_96_8_entries[0].get('profile_id'):
+                    self.log_test("Nick Bare Display Name Investigation", True, 
+                        f"✅ NICK BARE FOUND CORRECTLY: Nick Bare is visible with score 96.8 at rank {nick_bare_entries[0].get('rank')}", 
+                        investigation_results)
+                    return True
+                else:
+                    self.log_test("Nick Bare Display Name Investigation", True, 
+                        f"✅ MULTIPLE ENTRIES: Nick Bare and score 96.8 are different entries - data inconsistency", 
+                        investigation_results)
+                    return True
+            else:
+                # Neither exists
+                self.log_test("Nick Bare Display Name Investigation", True, 
+                    f"✅ NICK BARE MISSING: Neither Nick Bare name nor score 96.8 found on leaderboard", 
+                    investigation_results)
+                return True
+                
+        except Exception as e:
+            self.log_test("Nick Bare Display Name Investigation", False, "Investigation failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests focused on authentication flow and user profile management"""
         print("=" * 80)
