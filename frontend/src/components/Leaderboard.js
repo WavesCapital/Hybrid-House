@@ -976,12 +976,6 @@ const Leaderboard = () => {
                       }}>
                         {athlete.display_name}
                       </div>
-                      <div style={{
-                        fontSize: '11px',
-                        color: '#8D9299'
-                      }}>
-                        Hybrid Athlete
-                      </div>
                     </div>
                   </div>
                   
