@@ -2411,36 +2411,49 @@ async def migrate_privacy_column():
                 raise e
         
         if not column_exists:
-            # Add the column with default value
-            supabase.rpc('exec_sql', {
-                'sql': 'ALTER TABLE athlete_profiles ADD COLUMN is_public BOOLEAN DEFAULT true;'
-            }).execute()
-            
-            # Set all existing profiles with complete scores to PUBLIC (not private)
-            supabase.rpc('exec_sql', {
-                'sql': '''
-                UPDATE athlete_profiles 
-                SET is_public = true 
-                WHERE score_data IS NOT NULL 
-                AND score_data::jsonb ? 'hybridScore'
-                AND (score_data::jsonb->>'hybridScore')::numeric > 0;
-                '''
-            }).execute()
-            
-            return {"message": "Privacy column added successfully and all scored profiles set to PUBLIC"}
+            return {
+                "success": False,
+                "message": "is_public column does not exist in athlete_profiles table",
+                "required_sql": "ALTER TABLE athlete_profiles ADD COLUMN is_public BOOLEAN DEFAULT false;",
+                "instructions": "Please run the SQL command manually in Supabase SQL editor, then run this migration again."
+            }
         else:
-            # Column exists, just update all scored profiles to be PUBLIC
-            update_result = supabase.rpc('exec_sql', {
-                'sql': '''
-                UPDATE athlete_profiles 
-                SET is_public = true 
-                WHERE score_data IS NOT NULL 
-                AND score_data::jsonb ? 'hybridScore'
-                AND (score_data::jsonb->>'hybridScore')::numeric > 0;
-                '''
-            }).execute()
+            # Column exists, update all scored profiles to be PUBLIC using direct table operations
+            # First, get all profiles with complete scores
+            profiles_result = supabase.table('athlete_profiles').select('id, score_data').execute()
             
-            return {"message": "Privacy column already exists. All scored profiles updated to PUBLIC"}
+            if not profiles_result.data:
+                return {"message": "No profiles found to update"}
+            
+            # Filter profiles that have complete hybrid scores
+            profiles_to_update = []
+            for profile in profiles_result.data:
+                score_data = profile.get('score_data')
+                if score_data and isinstance(score_data, dict):
+                    hybrid_score = score_data.get('hybridScore')
+                    if hybrid_score and hybrid_score > 0:
+                        profiles_to_update.append(profile['id'])
+            
+            if not profiles_to_update:
+                return {"message": "No profiles with complete scores found to update"}
+            
+            # Update all profiles with complete scores to be public
+            updated_count = 0
+            for profile_id in profiles_to_update:
+                try:
+                    supabase.table('athlete_profiles').update({
+                        'is_public': True
+                    }).eq('id', profile_id).execute()
+                    updated_count += 1
+                except Exception as update_error:
+                    print(f"Error updating profile {profile_id}: {update_error}")
+                    continue
+            
+            return {
+                "message": f"Successfully updated {updated_count} profiles with complete scores to PUBLIC",
+                "profiles_updated": updated_count,
+                "total_profiles_checked": len(profiles_result.data)
+            }
             
     except Exception as e:
         print(f"Error migrating privacy column: {str(e)}")
