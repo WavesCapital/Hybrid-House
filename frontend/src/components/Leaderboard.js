@@ -952,7 +952,7 @@ const Leaderboard = () => {
             </div>
             <div style={{ color: '#F9F871', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
                  onClick={() => handleSort('vol')}
-                 className="tooltip-container">
+                 className="score-tooltip-container">
               VOL {sortColumn === 'vol' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
               <div className="score-tooltip">
                 <div style={{fontWeight: '700', marginBottom: '8px', color: '#F9F871'}}>Volume Score</div>
