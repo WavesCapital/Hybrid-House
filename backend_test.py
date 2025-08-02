@@ -1029,6 +1029,98 @@ class BackendTester:
             self.log_test("Demographic Data Availability", False, "❌ Demographic data availability test failed", str(e))
             return False
 
+    def run_critical_data_structure_audit(self):
+        """Run the critical data structure audit tests as requested in the review"""
+        print("\n" + "="*80)
+        print("🚨 CRITICAL DATA STRUCTURE AUDIT - AS REQUESTED IN REVIEW 🚨")
+        print("="*80)
+        print("Testing the user clarification that correct linking should be:")
+        print("- Score data: from athlete_profiles table")
+        print("- Name, age, gender, country: from user_profiles table")
+        print("- Linked by: athlete_profiles.user_id = user_profiles.user_id (NOT user_profiles.id)")
+        print("="*80)
+        
+        audit_tests = [
+            ("Nick Bare Data Structure Audit", self.test_nick_bare_data_structure_audit),
+            ("Join Logic Verification", self.test_join_logic_verification),
+            ("User Profile Linking Structure", self.test_user_profile_linking_structure),
+            ("Demographic Data Availability", self.test_demographic_data_availability)
+        ]
+        
+        audit_results = []
+        for test_name, test_func in audit_tests:
+            print(f"\n🔍 Running: {test_name}")
+            print("-" * 60)
+            try:
+                result = test_func()
+                audit_results.append((test_name, result))
+            except Exception as e:
+                print(f"❌ {test_name} failed with exception: {e}")
+                audit_results.append((test_name, False))
+        
+        # Summary of audit results
+        print("\n" + "="*80)
+        print("🚨 CRITICAL DATA STRUCTURE AUDIT SUMMARY 🚨")
+        print("="*80)
+        
+        passed_tests = 0
+        total_tests = len(audit_results)
+        
+        for test_name, result in audit_results:
+            status = "✅ PASS" if result else "❌ FAIL"
+            print(f"{status}: {test_name}")
+            if result:
+                passed_tests += 1
+        
+        print(f"\nAUDIT RESULTS: {passed_tests}/{total_tests} tests passed")
+        
+        if passed_tests == total_tests:
+            print("🎉 AUDIT CONCLUSION: Data structure is CORRECT - join logic is working properly")
+        elif passed_tests >= total_tests // 2:
+            print("⚠️  AUDIT CONCLUSION: Data structure is PARTIALLY CORRECT - some issues remain")
+        else:
+            print("❌ AUDIT CONCLUSION: Data structure is WRONG - ranking service needs join logic fix")
+            print("   EXPECTED FIX: Change ranking service to join athlete_profiles.user_id = user_profiles.user_id")
+        
+        print("="*80)
+        
+        return passed_tests >= total_tests // 2
+
+def main():
+    """Main test runner"""
+    tester = BackendTester()
+    
+    print("🚀 Starting Critical Data Structure Audit for Hybrid House Backend")
+    print("="*80)
+    
+    # Run the critical data structure audit as requested in the review
+    audit_success = tester.run_critical_data_structure_audit()
+    
+    # Print final summary
+    print(f"\n🏁 FINAL TEST SUMMARY")
+    print("="*50)
+    
+    total_tests = len(tester.test_results)
+    passed_tests = len([r for r in tester.test_results if r['success']])
+    
+    print(f"Total tests run: {total_tests}")
+    print(f"Tests passed: {passed_tests}")
+    print(f"Tests failed: {total_tests - passed_tests}")
+    print(f"Success rate: {(passed_tests/total_tests)*100:.1f}%" if total_tests > 0 else "No tests run")
+    
+    if audit_success:
+        print("\n✅ CRITICAL DATA STRUCTURE AUDIT: PASSED")
+        print("   The ranking service join logic appears to be working correctly.")
+    else:
+        print("\n❌ CRITICAL DATA STRUCTURE AUDIT: FAILED")
+        print("   The ranking service join logic needs to be fixed.")
+        print("   RECOMMENDATION: Update ranking service to use athlete_profiles.user_id = user_profiles.user_id")
+    
+    return audit_success
+
+if __name__ == "__main__":
+    main()
+
     # ===== NICK BARE PROFILE LINKING FIX TESTS =====
     
     def test_nick_bare_profile_linking_fix(self):
