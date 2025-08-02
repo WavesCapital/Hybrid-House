@@ -701,6 +701,191 @@ class BackendTester:
             self.log_test("System Health Comprehensive", False, "System health check failed", str(e))
             return False
 
+    # ===== NICK BARE PROFILE LINKING FIX TESTS =====
+    
+    def test_nick_bare_profile_linking_fix(self):
+        """Test that Nick Bare's profile is now properly linked and shows demographic data"""
+        try:
+            print("\n🎯 NICK BARE PROFILE LINKING FIX VERIFICATION 🎯")
+            print("=" * 60)
+            
+            # Test 1: Verify leaderboard shows Nick Bare with demographic data
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                # Look for Nick Bare on leaderboard
+                nick_found = False
+                nick_data = None
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name', '').lower()
+                    if 'nick' in display_name:
+                        nick_found = True
+                        nick_data = entry
+                        break
+                
+                if nick_found:
+                    rank = nick_data.get('rank')
+                    score = nick_data.get('score')
+                    age = nick_data.get('age')
+                    gender = nick_data.get('gender')
+                    country = nick_data.get('country')
+                    
+                    print(f"🎯 Nick Bare found on leaderboard:")
+                    print(f"   Rank: {rank}")
+                    print(f"   Display Name: {nick_data.get('display_name')}")
+                    print(f"   Score: {score}")
+                    print(f"   Age: {age}")
+                    print(f"   Gender: {gender}")
+                    print(f"   Country: {country}")
+                    
+                    # Check if demographic data is present
+                    has_demographics = age is not None and gender is not None and country is not None
+                    
+                    if has_demographics:
+                        self.log_test("Nick Bare Profile Linking Fix", True, f"Nick Bare shows with complete demographic data (Rank #{rank}, Score: {score}, Age: {age}, Gender: {gender}, Country: {country})", nick_data)
+                        return True
+                    else:
+                        missing_fields = []
+                        if age is None:
+                            missing_fields.append("age")
+                        if gender is None:
+                            missing_fields.append("gender")
+                        if country is None:
+                            missing_fields.append("country")
+                        
+                        self.log_test("Nick Bare Profile Linking Fix", False, f"Nick Bare found but missing demographic data: {', '.join(missing_fields)}", nick_data)
+                        return False
+                else:
+                    self.log_test("Nick Bare Profile Linking Fix", False, "Nick Bare not found on leaderboard", {
+                        'total_entries': len(leaderboard),
+                        'sample_entries': [entry.get('display_name') for entry in leaderboard[:5]]
+                    })
+                    return False
+                    
+            else:
+                try:
+                    error_data = response.json()
+                    self.log_test("Nick Bare Profile Linking Fix", False, f"Leaderboard API error: HTTP {response.status_code}", error_data)
+                except:
+                    self.log_test("Nick Bare Profile Linking Fix", False, f"Leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Nick Bare Profile Linking Fix", False, "Nick Bare profile linking test failed", str(e))
+            return False
+    
+    def test_orphaned_profiles_fix(self):
+        """Test that all orphaned profiles have been fixed"""
+        try:
+            print("\n🔍 ORPHANED PROFILES FIX VERIFICATION 🔍")
+            print("=" * 45)
+            
+            # Test the leaderboard to see how many profiles now have demographic data
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Orphaned Profiles Fix", True, "No profiles on leaderboard to test", data)
+                    return True
+                
+                # Count profiles with and without demographic data
+                profiles_with_demographics = 0
+                profiles_without_demographics = 0
+                
+                for entry in leaderboard:
+                    age = entry.get('age')
+                    gender = entry.get('gender')
+                    country = entry.get('country')
+                    
+                    if age is not None and gender is not None and country is not None:
+                        profiles_with_demographics += 1
+                    else:
+                        profiles_without_demographics += 1
+                
+                total_profiles = len(leaderboard)
+                demographics_percentage = (profiles_with_demographics / total_profiles) * 100 if total_profiles > 0 else 0
+                
+                print(f"📊 Demographic data analysis:")
+                print(f"   Total profiles: {total_profiles}")
+                print(f"   With demographics: {profiles_with_demographics}")
+                print(f"   Without demographics: {profiles_without_demographics}")
+                print(f"   Demographics coverage: {demographics_percentage:.1f}%")
+                
+                if profiles_with_demographics > 0:
+                    self.log_test("Orphaned Profiles Fix", True, f"Profile linking working - {profiles_with_demographics}/{total_profiles} profiles have demographic data ({demographics_percentage:.1f}%)", {
+                        'total': total_profiles,
+                        'with_demographics': profiles_with_demographics,
+                        'without_demographics': profiles_without_demographics
+                    })
+                    return True
+                else:
+                    self.log_test("Orphaned Profiles Fix", False, f"No profiles have demographic data - user profile joining may still be broken", {
+                        'total': total_profiles,
+                        'all_missing_demographics': True
+                    })
+                    return False
+                    
+            else:
+                self.log_test("Orphaned Profiles Fix", False, f"Cannot test orphaned profiles fix - leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Orphaned Profiles Fix", False, "Orphaned profiles fix test failed", str(e))
+            return False
+    
+    def test_nick_bare_display_name_fix(self):
+        """Test that Nick Bare shows with full display name 'Nick Bare' instead of just 'Nick'"""
+        try:
+            print("\n📝 NICK BARE DISPLAY NAME FIX VERIFICATION 📝")
+            print("=" * 50)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                # Look for Nick Bare
+                nick_found = False
+                nick_display_name = None
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name', '')
+                    if 'nick' in display_name.lower():
+                        nick_found = True
+                        nick_display_name = display_name
+                        break
+                
+                if nick_found:
+                    print(f"🎯 Nick found with display name: '{nick_display_name}'")
+                    
+                    if nick_display_name == "Nick Bare":
+                        self.log_test("Nick Bare Display Name Fix", True, f"Nick shows with full display name: '{nick_display_name}'", {'display_name': nick_display_name})
+                        return True
+                    else:
+                        self.log_test("Nick Bare Display Name Fix", False, f"Nick shows with incomplete display name: '{nick_display_name}' (expected 'Nick Bare')", {'display_name': nick_display_name})
+                        return False
+                else:
+                    self.log_test("Nick Bare Display Name Fix", False, "Nick Bare not found on leaderboard", {
+                        'leaderboard_entries': [entry.get('display_name') for entry in leaderboard]
+                    })
+                    return False
+                    
+            else:
+                self.log_test("Nick Bare Display Name Fix", False, f"Cannot test display name - leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Nick Bare Display Name Fix", False, "Nick Bare display name test failed", str(e))
+            return False
+
     # ===== NEW RANKING SYSTEM TESTS =====
     
     def test_enhanced_leaderboard_endpoint(self):
