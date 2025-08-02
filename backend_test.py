@@ -12067,7 +12067,10 @@ class BackendTester:
             # 15. NICK BARE INVESTIGATION AND DEDUPLICATION TESTS (CURRENT REVIEW REQUEST)
             self.test_nick_bare_profile_investigation,
             self.test_leaderboard_user_deduplication,
-            self.test_leaderboard_ranking_logic_comprehensive
+            self.test_leaderboard_ranking_logic_comprehensive,
+            
+            # 16. NICK BARE DISPLAY NAME INVESTIGATION (PRIORITY TEST - CURRENT REVIEW)
+            self.test_nick_bare_display_name_investigation
         ]
         
         # Run AUTHENTICATION FLOW TESTS first (HIGH PRIORITY)
