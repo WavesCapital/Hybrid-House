@@ -11952,6 +11952,185 @@ class BackendTester:
             self.log_test("Nick Bare Display Name Investigation", False, "Investigation failed", str(e))
             return False
 
+    def test_nick_bare_profile_investigation(self):
+        """CRITICAL: Investigate Nick Bare's profile data with specific user ID c0a0de33-a2f8-40cd-b8db-d89f7a42d140"""
+        try:
+            print("\n🔍 NICK BARE PROFILE INVESTIGATION 🔍")
+            print("=" * 60)
+            print("User provided Nick Bare's correct user_id: c0a0de33-a2f8-40cd-b8db-d89f7a42d140")
+            
+            # Step 1: Check user_profiles table for Nick Bare's entry
+            print("\n📋 STEP 1: Checking user_profiles table...")
+            
+            # We can't directly query the database, but we can check the leaderboard for Nick's data
+            leaderboard_response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if leaderboard_response.status_code != 200:
+                self.log_test("Nick Bare Profile Investigation", False, f"Cannot access leaderboard - HTTP {leaderboard_response.status_code}", leaderboard_response.text)
+                return False
+            
+            leaderboard_data = leaderboard_response.json()
+            leaderboard = leaderboard_data.get('leaderboard', [])
+            
+            # Step 2: Search for Nick Bare on leaderboard
+            print("\n🔍 STEP 2: Searching for Nick Bare on leaderboard...")
+            nick_entries = []
+            
+            for entry in leaderboard:
+                display_name = entry.get('display_name', '').lower()
+                if 'nick' in display_name:
+                    nick_entries.append({
+                        'display_name': entry.get('display_name'),
+                        'user_profile_id': entry.get('user_profile_id'),
+                        'profile_id': entry.get('profile_id'),
+                        'score': entry.get('score'),
+                        'rank': entry.get('rank'),
+                        'age': entry.get('age'),
+                        'gender': entry.get('gender'),
+                        'country': entry.get('country')
+                    })
+            
+            print(f"Found {len(nick_entries)} entries with 'nick' in display name:")
+            for i, entry in enumerate(nick_entries):
+                print(f"  {i+1}. {entry}")
+            
+            # Step 3: Check if the specific user_profile_id exists
+            print("\n🎯 STEP 3: Looking for user_profile_id c0a0de33-a2f8-40cd-b8db-d89f7a42d140...")
+            target_user_id = "c0a0de33-a2f8-40cd-b8db-d89f7a42d140"
+            target_entry = None
+            
+            for entry in leaderboard:
+                if entry.get('user_profile_id') == target_user_id:
+                    target_entry = entry
+                    break
+            
+            if target_entry:
+                print(f"✅ FOUND target user_profile_id on leaderboard:")
+                print(f"   Display Name: {target_entry.get('display_name')}")
+                print(f"   Score: {target_entry.get('score')}")
+                print(f"   Rank: {target_entry.get('rank')}")
+                print(f"   Age: {target_entry.get('age')}")
+                print(f"   Gender: {target_entry.get('gender')}")
+                print(f"   Country: {target_entry.get('country')}")
+                print(f"   Profile ID: {target_entry.get('profile_id')}")
+            else:
+                print(f"❌ Target user_profile_id {target_user_id} NOT FOUND on leaderboard")
+            
+            # Step 4: Check athlete_profiles endpoint for complete data
+            print("\n📊 STEP 4: Checking athlete_profiles endpoint...")
+            profiles_response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if profiles_response.status_code == 200:
+                profiles_data = profiles_response.json()
+                profiles = profiles_data.get('profiles', [])
+                
+                print(f"Found {len(profiles)} athlete profiles with complete scores")
+                
+                # Look for Nick Bare in athlete profiles
+                nick_profiles = []
+                target_profile = None
+                
+                for profile in profiles:
+                    profile_json = profile.get('profile_json', {})
+                    first_name = profile_json.get('first_name', '').lower()
+                    last_name = profile_json.get('last_name', '').lower()
+                    
+                    if 'nick' in first_name or ('nick' in first_name and 'bare' in last_name):
+                        nick_profiles.append({
+                            'profile_id': profile.get('id'),
+                            'user_id': profile.get('user_id'),
+                            'first_name': profile_json.get('first_name'),
+                            'last_name': profile_json.get('last_name'),
+                            'score': profile.get('score_data', {}).get('hybridScore'),
+                            'is_public': profile.get('is_public')
+                        })
+                    
+                    # Check if this profile belongs to our target user
+                    if profile.get('user_id') == target_user_id:
+                        target_profile = profile
+                
+                print(f"Found {len(nick_profiles)} Nick profiles in athlete_profiles:")
+                for i, profile in enumerate(nick_profiles):
+                    print(f"  {i+1}. {profile}")
+                
+                if target_profile:
+                    print(f"\n✅ FOUND athlete profile for target user_id:")
+                    profile_json = target_profile.get('profile_json', {})
+                    print(f"   Profile ID: {target_profile.get('id')}")
+                    print(f"   First Name: {profile_json.get('first_name')}")
+                    print(f"   Last Name: {profile_json.get('last_name')}")
+                    print(f"   Email: {profile_json.get('email')}")
+                    print(f"   Is Public: {target_profile.get('is_public')}")
+                    print(f"   Hybrid Score: {target_profile.get('score_data', {}).get('hybridScore')}")
+                else:
+                    print(f"❌ No athlete profile found for target user_id {target_user_id}")
+            else:
+                print(f"❌ Cannot access athlete-profiles endpoint - HTTP {profiles_response.status_code}")
+            
+            # Step 5: Test specific profile ID access
+            print("\n🔗 STEP 5: Testing profile ID access...")
+            
+            # Test the profile IDs mentioned in the review
+            test_profile_ids = [
+                "4a417508-ccc8-482c-b917-8d84f018310e",  # Previously found working
+                "4a417508-02e0-4b4c-9dca-c5e6c6a7d1f5",  # Mentioned in review as 404
+                "e9105f5f-1c58-4d5f-9e3b-8a9c3d2e1f0a"   # Mentioned in review as 404
+            ]
+            
+            for profile_id in test_profile_ids:
+                profile_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                print(f"   Profile {profile_id}: HTTP {profile_response.status_code}")
+                
+                if profile_response.status_code == 200:
+                    profile_data = profile_response.json()
+                    profile_json = profile_data.get('profile_json', {})
+                    print(f"     Name: {profile_json.get('first_name')} {profile_json.get('last_name')}")
+                    print(f"     Score: {profile_data.get('score_data', {}).get('hybridScore')}")
+            
+            # Step 6: Analysis and conclusions
+            print("\n📝 STEP 6: Analysis and Conclusions...")
+            
+            analysis = {
+                'nick_entries_on_leaderboard': len(nick_entries),
+                'target_user_id_found_on_leaderboard': target_entry is not None,
+                'target_user_display_name': target_entry.get('display_name') if target_entry else None,
+                'target_user_has_complete_profile': target_entry is not None and all([
+                    target_entry.get('display_name'),
+                    target_entry.get('age'),
+                    target_entry.get('gender')
+                ]) if target_entry else False,
+                'athlete_profile_exists_for_target_user': target_profile is not None if 'target_profile' in locals() else False,
+                'data_joining_working': target_entry is not None and target_entry.get('display_name') == 'Nick Bare'
+            }
+            
+            # Determine if this is working correctly
+            if analysis['target_user_id_found_on_leaderboard'] and analysis['target_user_has_complete_profile']:
+                if analysis['target_user_display_name'] == 'Nick Bare':
+                    self.log_test("Nick Bare Profile Investigation", True, 
+                                f"✅ Nick Bare profile found correctly with user_id {target_user_id}, display_name '{analysis['target_user_display_name']}', complete demographic data", 
+                                analysis)
+                    return True
+                else:
+                    self.log_test("Nick Bare Profile Investigation", False, 
+                                f"❌ Nick Bare profile found but display_name is '{analysis['target_user_display_name']}' instead of 'Nick Bare'", 
+                                analysis)
+                    return False
+            else:
+                issues = []
+                if not analysis['target_user_id_found_on_leaderboard']:
+                    issues.append("target user_id not found on leaderboard")
+                if not analysis['target_user_has_complete_profile']:
+                    issues.append("incomplete demographic data (missing display_name, age, or gender)")
+                
+                self.log_test("Nick Bare Profile Investigation", False, 
+                            f"❌ Nick Bare profile issues: {', '.join(issues)}", 
+                            analysis)
+                return False
+                
+        except Exception as e:
+            self.log_test("Nick Bare Profile Investigation", False, "Investigation failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests focused on authentication flow and user profile management"""
         print("=" * 80)
