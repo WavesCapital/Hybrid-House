@@ -439,7 +439,56 @@ const HybridScoreResults = () => {
         `}
       </style>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      {/* Header - Same as Home Page */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gray-800">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <h3 className="text-xl font-bold" style={{ color: 'var(--neon-primary)' }}>
+                Hybrid House
+              </h3>
+            </div>
+            <div className="flex items-center space-x-4">
+              {user ? (
+                <div className="flex items-center space-x-3">
+                  <span className="text-sm text-gray-300">
+                    {user.email}
+                  </span>
+                  <button
+                    onClick={() => navigate('/profile')}
+                    className="px-4 py-2 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors text-sm font-medium"
+                  >
+                    Profile
+                  </button>
+                  <button
+                    onClick={() => navigate('/logout')}
+                    className="px-4 py-2 bg-[#08F0FF] rounded-lg text-black hover:shadow-lg transition-all text-sm font-medium"
+                  >
+                    Log Out
+                  </button>
+                </div>
+              ) : (
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => navigate('/login')}
+                    className="px-4 py-2 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors text-sm font-medium"
+                  >
+                    Log In
+                  </button>
+                  <button
+                    onClick={() => navigate('/auth?mode=signup')}
+                    className="px-4 py-2 bg-[#08F0FF] rounded-lg text-black hover:shadow-lg transition-all text-sm font-medium"
+                  >
+                    Sign Up
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-8 max-w-4xl" style={{ paddingTop: '100px' }}>
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
