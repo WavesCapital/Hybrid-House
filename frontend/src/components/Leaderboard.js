@@ -874,26 +874,111 @@ const Leaderboard = () => {
             <div style={{ color: '#8D9299', textAlign: 'center' }}>AGE</div>
             <div style={{ color: '#8D9299', textAlign: 'center' }}>GENDER</div>
             <div style={{ color: '#8D9299', textAlign: 'center' }}>COUNTRY</div>
-            <div style={{ color: sortColumn === 'hybrid' ? '#08F0FF' : '#8D9299', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('hybrid')}>
+            <div style={{ color: sortColumn === 'hybrid' ? '#08F0FF' : '#8D9299', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                 onClick={() => handleSort('hybrid')}
+                 className="tooltip-container">
               HYBRID {sortColumn === 'hybrid' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+              <div className="score-tooltip">
+                <div style={{fontWeight: '700', marginBottom: '8px', color: '#08F0FF'}}>Hybrid Score</div>
+                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                  Final composite score combining all pillars:<br/>
+                  • 40% Strength Score<br/>
+                  • 40% Endurance Score<br/>
+                  • 10% Recovery Score<br/>
+                  • Balance Bonus (up to +10)<br/>
+                  • Data Completeness Penalty
+                </div>
+              </div>
             </div>
-            <div style={{ color: '#5CFF5C', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('str')}>
+            <div style={{ color: '#5CFF5C', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                 onClick={() => handleSort('str')}
+                 className="tooltip-container">
               STR {sortColumn === 'str' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+              <div className="score-tooltip">
+                <div style={{fontWeight: '700', marginBottom: '8px', color: '#5CFF5C'}}>Strength Score</div>
+                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                  Based on 1-RM ratios to bodyweight:<br/>
+                  • Bench: 1.5x (M), 1.0x (F)<br/>
+                  • Squat: 2.0x (M), 1.5x (F)<br/>
+                  • Deadlift: 2.4x (M), 1.8x (F)<br/>
+                  Average of available lifts vs targets
+                </div>
+              </div>
             </div>
-            <div style={{ color: '#FFA42D', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('spd')}>
+            <div style={{ color: '#FFA42D', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                 onClick={() => handleSort('spd')}
+                 className="tooltip-container">
               SPD {sortColumn === 'spd' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+              <div className="score-tooltip">
+                <div style={{fontWeight: '700', marginBottom: '8px', color: '#FFA42D'}}>Speed Score</div>
+                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                  Based on mile time performance:<br/>
+                  • Elite target: 5:30 (M), 6:15 (F)<br/>
+                  • Scoring cap: 330s (M), 375s (F)<br/>
+                  • Faster times = higher scores<br/>
+                  One of four endurance pillars
+                </div>
+              </div>
             </div>
-            <div style={{ color: '#B96DFF', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('vo2')}>
+            <div style={{ color: '#B96DFF', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                 onClick={() => handleSort('vo2')}
+                 className="tooltip-container">
               VO₂ {sortColumn === 'vo2' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+              <div className="score-tooltip">
+                <div style={{fontWeight: '700', marginBottom: '8px', color: '#B96DFF'}}>VO₂ Max Score</div>
+                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                  Aerobic fitness capacity:<br/>
+                  • Elite target: 70 (M), 60 (F)<br/>
+                  • Baseline: 30 ml/kg/min<br/>
+                  • Estimated from mile time if not provided<br/>
+                  One of four endurance pillars
+                </div>
+              </div>
             </div>
-            <div style={{ color: '#16D7FF', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('dist')}>
+            <div style={{ color: '#16D7FF', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                 onClick={() => handleSort('dist')}
+                 className="tooltip-container">
               DIST {sortColumn === 'dist' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+              <div className="score-tooltip">
+                <div style={{fontWeight: '700', marginBottom: '8px', color: '#16D7FF'}}>Distance Score</div>
+                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                  Longest single run capacity:<br/>
+                  • Half Marathon: 13.1 mi (60% max)<br/>
+                  • Full Marathon: 26.2 mi (80% max)<br/>
+                  • Ultra Distance: 50+ mi (100%)<br/>
+                  One of four endurance pillars
+                </div>
+              </div>
             </div>
-            <div style={{ color: '#F9F871', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('vol')}>
+            <div style={{ color: '#F9F871', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                 onClick={() => handleSort('vol')}
+                 className="tooltip-container">
               VOL {sortColumn === 'vol' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+              <div className="score-tooltip">
+                <div style={{fontWeight: '700', marginBottom: '8px', color: '#F9F871'}}>Volume Score</div>
+                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                  Weekly running volume:<br/>
+                  • Moderate: 20 miles (60% max)<br/>
+                  • High: 40 miles (80% max)<br/>
+                  • Elite: 50+ miles (100%)<br/>
+                  One of four endurance pillars
+                </div>
+              </div>
             </div>
-            <div style={{ color: '#2EFFC0', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('rec')}>
+            <div style={{ color: '#2EFFC0', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                 onClick={() => handleSort('rec')}
+                 className="tooltip-container">
               REC {sortColumn === 'rec' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+              <div className="score-tooltip">
+                <div style={{fontWeight: '700', marginBottom: '8px', color: '#2EFFC0'}}>Recovery Score</div>
+                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                  Recovery and health metrics:<br/>
+                  • 70% HRV (Heart Rate Variability)<br/>
+                  • 30% Resting Heart Rate<br/>
+                  • Higher HRV = better recovery<br/>
+                  • Lower RHR = better fitness
+                </div>
+              </div>
             </div>
             <div style={{ color: '#8D9299', textAlign: 'center' }}>UPDATED</div>
           </div>
