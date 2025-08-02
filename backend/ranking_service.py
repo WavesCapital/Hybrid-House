@@ -155,7 +155,7 @@ class RankingService:
                     
                     leaderboard_data.append({
                         'profile_id': profile['id'],
-                        'user_profile_id': profile['user_profile_id'],
+                        'user_id': profile['user_id'],
                         'display_name': display_name,
                         'score': round(score_data['hybridScore'], 1),
                         'age': age,
