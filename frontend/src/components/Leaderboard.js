@@ -1242,7 +1242,7 @@ const Leaderboard = () => {
         }
 
         /* Score Tooltip Styles */
-        .tooltip-container {
+        .score-tooltip-container {
           position: relative;
         }
 
