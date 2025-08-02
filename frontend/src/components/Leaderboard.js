@@ -1001,7 +1001,7 @@ const Leaderboard = () => {
                     {formatScore(athlete.score)}
                   </div>
                   
-                  {/* Pillar Scores with Hover Bars */}
+                  {/* Pillar Scores */}
                   {athlete.score_breakdown ? [
                     { score: athlete.score_breakdown.strengthScore, color: '#5CFF5C' },
                     { score: athlete.score_breakdown.speedScore, color: '#FFA42D' },
@@ -1011,8 +1011,7 @@ const Leaderboard = () => {
                     { score: athlete.score_breakdown.recoveryScore, color: '#2EFFC0' }
                   ].map((pillar, idx) => (
                     <div key={idx} style={{
-                      textAlign: 'center',
-                      position: 'relative'
+                      textAlign: 'center'
                     }}>
                       <div style={{
                         fontSize: '14px',
@@ -1022,23 +1021,6 @@ const Leaderboard = () => {
                       }}>
                         {pillar.score ? formatScore(pillar.score) : '--'}
                       </div>
-                      {pillar.score && (
-                        <div 
-                          className="pillar-hover-bar"
-                          style={{
-                            position: 'absolute',
-                            bottom: '-2px',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            width: '36px',
-                            height: '4px',
-                            background: pillar.color,
-                            borderRadius: '2px',
-                            opacity: 0,
-                            transition: 'opacity 0.2s'
-                          }}
-                        />
-                      )}
                     </div>
                   )) : Array(6).fill(0).map((_, idx) => (
                     <div key={idx} style={{
