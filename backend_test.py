@@ -9521,7 +9521,12 @@ class BackendTester:
             self.test_leaderboard_age_gender_country_data,
             self.test_complete_data_flow_profile_to_leaderboard,
             self.test_user_profile_model_fields,
-            self.test_age_calculation_logic
+            self.test_age_calculation_logic,
+            
+            # 12. NEW: Athlete Profile Endpoint Accessibility Tests (CURRENT REVIEW REQUEST)
+            self.test_athlete_profile_endpoint_accessibility,
+            self.test_athlete_profile_endpoint_response_structure,
+            self.test_hybrid_score_sharing_functionality
         ]
         
         # Run AUTHENTICATION FLOW TESTS first (HIGH PRIORITY)
