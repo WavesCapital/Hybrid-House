@@ -9,12 +9,21 @@ from typing import Dict, List, Optional, Tuple
 from datetime import datetime, date
 from supabase import create_client, Client
 import json
+from dotenv import load_dotenv
+from pathlib import Path
+
+# Load environment variables from the backend directory
+backend_dir = Path(__file__).parent
+load_dotenv(backend_dir / '.env')
 
 class RankingService:
     def __init__(self):
         # Initialize Supabase client using the same environment variables as server.py
         supabase_url = os.environ.get('SUPABASE_URL')
         supabase_key = os.environ.get('SUPABASE_SERVICE_KEY')  # Use SERVICE_KEY for backend operations
+        
+        print(f"🔧 RankingService init - URL exists: {bool(supabase_url)}")
+        print(f"🔧 RankingService init - Key exists: {bool(supabase_key)}")
         
         if supabase_url and supabase_key:
             try:
