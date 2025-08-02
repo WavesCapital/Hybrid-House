@@ -469,6 +469,25 @@ const HybridScoreResults = () => {
               <p className="text-xl neo-text-secondary max-w-2xl mx-auto mb-6">
                 Your overall hybrid-fitness score on a 0-100 scale
               </p>
+              
+              {/* Leaderboard Position */}
+              {leaderboardPosition && totalAthletes && (
+                <div className="mb-6">
+                  <div className="flex items-center justify-center space-x-2 mb-4">
+                    <Trophy className="h-5 w-5 text-yellow-400" />
+                    <span className="text-lg neo-text-primary">
+                      Ranked #{leaderboardPosition} out of {totalAthletes} athletes
+                    </span>
+                  </div>
+                  <Button 
+                    onClick={() => navigate('/leaderboard')} 
+                    className="neo-btn-secondary"
+                    size="sm"
+                  >
+                    🏆 View Leaderboard
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Score Breakdown */}
