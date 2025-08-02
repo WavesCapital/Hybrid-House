@@ -8225,6 +8225,12 @@ class BackendTester:
             self.test_leaderboard_rankings_and_scores,
             self.test_display_name_fallback_logic,
             
+            # 7a. NEW: Leaderboard Display Name Source Tests (REVIEW REQUEST)
+            self.test_leaderboard_display_name_source_verification,
+            self.test_leaderboard_fallback_logic_verification,
+            self.test_leaderboard_data_structure_completeness,
+            self.test_leaderboard_display_name_comparison,
+            
             # 8. Supporting Database Tests
             self.test_supabase_database_connection,
             self.test_profile_data_retrieval,
