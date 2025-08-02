@@ -10563,7 +10563,14 @@ class BackendTester:
             # 12. NEW: Athlete Profile Endpoint Accessibility Tests (CURRENT REVIEW REQUEST)
             self.test_athlete_profile_endpoint_accessibility,
             self.test_athlete_profile_endpoint_response_structure,
-            self.test_hybrid_score_sharing_functionality
+            self.test_hybrid_score_sharing_functionality,
+            
+            # 13. CRITICAL LEADERBOARD BUG INVESTIGATION TESTS (URGENT)
+            self.test_database_audit_is_public_values,
+            self.test_ranking_service_bug_check,
+            self.test_privacy_change_investigation,
+            self.test_default_setting_verification,
+            self.test_leaderboard_vs_database_comparison
         ]
         
         # Run AUTHENTICATION FLOW TESTS first (HIGH PRIORITY)
