@@ -2309,128 +2309,37 @@ async def trigger_score_computation(profile_id: str, profile_json: dict):
 
 @api_router.get("/leaderboard")
 async def get_leaderboard():
-    """Get leaderboard with highest scores per athlete (by display_name) - public profiles only"""
+    """Get leaderboard with enhanced ranking metadata"""
     try:
-        # Get all PUBLIC athlete profiles with completed scores
-        profiles_result = supabase.table('athlete_profiles').select('*').not_.is_('score_data', 'null').eq('is_public', True).execute()
-        
-        if not profiles_result.data:
-            return {
-                "leaderboard": [],
-                "total": 0
-            }
-        
-        # Process profiles to get highest score per display_name
-        athlete_scores = {}
-        
-        for profile in profiles_result.data:
-            try:
-                profile_json = profile.get('profile_json', {})
-                score_data = profile.get('score_data', {})
-                user_id = profile.get('user_id')
-                
-                # Skip if profile is not marked as public (extra safety check)
-                if not profile.get('is_public', False):
-                    continue
-                
-                # Only include profiles with complete scores (same as athlete-profiles endpoint)
-                if score_data and isinstance(score_data, dict):
-                    required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
-                    
-                    # Check if all required scores exist and are not null/0
-                    has_all_scores = True
-                    for score_field in required_scores:
-                        score_value = score_data.get(score_field)
-                        if score_value is None or score_value == 0:
-                            has_all_scores = False
-                            break
-                    
-                    # Skip profiles without complete scores
-                    if not has_all_scores:
-                        continue
-                else:
-                    continue
-                
-                # Get user profile data for age, gender, country
-                user_profile_data = {}
-                if user_id:
-                    try:
-                        user_profile_result = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
-                        if user_profile_result.data:
-                            user_profile_data = user_profile_result.data[0]
-                    except Exception as e:
-                        print(f"Error fetching user profile for user {user_id}: {e}")
-                
-                # Calculate age from date of birth
-                age = None
-                if user_profile_data.get('date_of_birth'):
-                    try:
-                        from datetime import datetime
-                        birth_date = datetime.strptime(user_profile_data['date_of_birth'], '%Y-%m-%d')
-                        today = datetime.now()
-                        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-                    except Exception as e:
-                        print(f"Error calculating age: {e}")
-                
-                # Extract display_name from user_profiles table (not profile_json)
-                display_name = user_profile_data.get('display_name', '')
-                if not display_name:
-                    # Fallback to profile_json display_name if user_profiles doesn't have it
-                    display_name = profile_json.get('display_name', '')
-                    if not display_name:
-                        # Further fallback to first_name or email prefix if no display_name
-                        first_name = profile_json.get('first_name', '')
-                        if first_name:
-                            display_name = first_name
-                        else:
-                            email = profile_json.get('email', '')
-                            display_name = email.split('@')[0] if email else f'User {profile.get("id", "")[:8]}'
-                
-                # Get hybrid score
-                hybrid_score = score_data.get('hybridScore')
-                
-                # Keep only highest score per display_name
-                if display_name not in athlete_scores or hybrid_score > athlete_scores[display_name]['score']:
-                    athlete_scores[display_name] = {
-                        'display_name': display_name,
-                        'score': hybrid_score,
-                        'profile_id': profile.get('id'),
-                        'completed_at': profile.get('completed_at'),
-                        'age': age,
-                        'gender': user_profile_data.get('gender', ''),
-                        'country': user_profile_data.get('country', ''),
-                        'score_breakdown': {
-                            'strengthScore': score_data.get('strengthScore'),
-                            'speedScore': score_data.get('speedScore'),
-                            'vo2Score': score_data.get('vo2Score'),
-                            'distanceScore': score_data.get('distanceScore'),
-                            'volumeScore': score_data.get('volumeScore'),
-                            'recoveryScore': score_data.get('recoveryScore')
-                        }
-                    }
-            except Exception as e:
-                print(f"Error processing profile {profile.get('id')}: {e}")
-                continue
-        
-        # Convert to list and sort by score (descending)
-        leaderboard = list(athlete_scores.values())
-        leaderboard.sort(key=lambda x: x['score'], reverse=True)
-        
-        # Add rankings
-        for i, entry in enumerate(leaderboard):
-            entry['rank'] = i + 1
+        # Use the new ranking service
+        leaderboard_data = ranking_service.get_public_leaderboard_data()
+        leaderboard_stats = ranking_service.get_leaderboard_stats()
         
         return {
-            "leaderboard": leaderboard,
-            "total": len(leaderboard)
+            "leaderboard": leaderboard_data,
+            "total": len(leaderboard_data),
+            "total_public_athletes": leaderboard_stats['total_public_athletes'],
+            "ranking_metadata": {
+                "score_range": leaderboard_stats['score_range'],
+                "avg_score": leaderboard_stats['avg_score'],
+                "percentile_breakpoints": leaderboard_stats['percentile_breakpoints'],
+                "last_updated": leaderboard_stats['last_updated']
+            }
         }
-        
     except Exception as e:
-        print(f"Error fetching leaderboard: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error fetching leaderboard: {str(e)}"
-        )
+        print(f"Error in get_leaderboard: {str(e)}")
+        return {
+            "leaderboard": [],
+            "total": 0,
+            "total_public_athletes": 0,
+            "ranking_metadata": {
+                "score_range": {"min": 0, "max": 0},
+                "avg_score": 0,
+                "percentile_breakpoints": {},
+                "last_updated": datetime.utcnow().isoformat(),
+                "error": str(e)
+            }
+        }
 
 @api_router.post("/admin/migrate-privacy")
 async def migrate_privacy_column():
