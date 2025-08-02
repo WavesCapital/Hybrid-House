@@ -14,7 +14,7 @@ class RankingService:
     def __init__(self):
         # Initialize Supabase client
         supabase_url = os.environ.get('SUPABASE_URL')
-        supabase_key = os.environ.get('SUPABASE_ANON_KEY')
+        supabase_key = os.environ.get('SUPABASE_SERVICE_KEY')  # Fixed: Use SERVICE_KEY instead of ANON_KEY
         if supabase_url and supabase_key:
             self.supabase: Client = create_client(supabase_url, supabase_key)
         else:
