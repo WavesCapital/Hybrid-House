@@ -9102,11 +9102,15 @@ class BackendTester:
                 failed += 1
         
         print("\n" + "=" * 80)
-        print("📊 PRIVACY TOGGLE FUNCTIONALITY AND USER-SPECIFIC PROFILE ENDPOINTS TESTING SUMMARY")
+        print("📊 AUTHENTICATION FLOW AND USER PROFILE MANAGEMENT TESTING SUMMARY")
         print("=" * 80)
         print(f"✅ PASSED: {passed}")
         print(f"❌ FAILED: {failed}")
         print(f"📈 SUCCESS RATE: {(passed/(passed+failed)*100):.1f}%")
+        print("\n🔍 BREAKDOWN:")
+        print(f"   🔐 Authentication Flow Tests: {auth_flow_passed}/{auth_flow_passed + auth_flow_failed}")
+        print(f"   💾 Auto-Save Profile Tests: {auto_save_passed}/{auto_save_passed + auto_save_failed}")
+        print(f"   🔧 Other Backend Tests: {passed - auth_flow_passed - auto_save_passed}/{failed + passed - auth_flow_passed - auto_save_passed - auth_flow_failed - auto_save_failed}")
         
         if failed == 0:
             print("🎉 ALL TESTS PASSED! Privacy toggle functionality and user-specific profile endpoints are working correctly.")
