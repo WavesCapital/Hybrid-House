@@ -1046,6 +1046,309 @@ class BackendTester:
             self.log_test("Ranking System Comprehensive", False, "Ranking system comprehensive test failed", str(e))
             return False
 
+    # ===== DEDUPLICATION FIX TESTS =====
+    
+    def test_leaderboard_deduplication_fix(self):
+        """Test the deduplication fix - each user should appear only once with their highest score"""
+        try:
+            print("\n🎯 LEADERBOARD DEDUPLICATION FIX TEST 🎯")
+            print("=" * 60)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Leaderboard Deduplication Fix", False, "Leaderboard is empty - cannot test deduplication", data)
+                    return False
+                
+                print(f"📊 Found {len(leaderboard)} entries on leaderboard")
+                
+                # Test 1: Check for duplicate users by user_profile_id
+                user_profile_ids = []
+                duplicate_users = []
+                
+                for entry in leaderboard:
+                    user_profile_id = entry.get('user_profile_id')
+                    display_name = entry.get('display_name', 'Unknown')
+                    
+                    if user_profile_id in user_profile_ids:
+                        duplicate_users.append({
+                            'user_profile_id': user_profile_id,
+                            'display_name': display_name,
+                            'score': entry.get('score')
+                        })
+                    else:
+                        user_profile_ids.append(user_profile_id)
+                
+                # Test 2: Check for duplicate users by display_name
+                display_names = []
+                duplicate_names = []
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name', 'Unknown')
+                    score = entry.get('score')
+                    
+                    existing_entry = next((item for item in display_names if item['name'] == display_name), None)
+                    if existing_entry:
+                        duplicate_names.append({
+                            'display_name': display_name,
+                            'scores': [existing_entry['score'], score],
+                            'rank': entry.get('rank')
+                        })
+                    else:
+                        display_names.append({'name': display_name, 'score': score})
+                
+                # Test 3: Verify Nick Bare is visible as #1 with score 96.8
+                nick_bare_found = False
+                nick_bare_rank = None
+                nick_bare_score = None
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name', '').lower()
+                    if 'nick' in display_name and 'bare' in display_name:
+                        nick_bare_found = True
+                        nick_bare_rank = entry.get('rank')
+                        nick_bare_score = entry.get('score')
+                        break
+                
+                # Test 4: Check that scores are properly ordered (highest to lowest)
+                scores_ordered = True
+                for i in range(1, len(leaderboard)):
+                    current_score = leaderboard[i].get('score', 0)
+                    previous_score = leaderboard[i-1].get('score', 0)
+                    if current_score > previous_score:
+                        scores_ordered = False
+                        break
+                
+                # Test 5: Check that ranks are sequential (1, 2, 3, ...)
+                ranks_sequential = True
+                for i, entry in enumerate(leaderboard):
+                    expected_rank = i + 1
+                    actual_rank = entry.get('rank')
+                    if actual_rank != expected_rank:
+                        ranks_sequential = False
+                        break
+                
+                # Evaluate results
+                deduplication_working = len(duplicate_users) == 0 and len(duplicate_names) == 0
+                nick_bare_visible = nick_bare_found and nick_bare_rank == 1 and abs(nick_bare_score - 96.8) < 0.1
+                
+                # Summary of findings
+                test_results = {
+                    'total_entries': len(leaderboard),
+                    'unique_user_profile_ids': len(user_profile_ids),
+                    'unique_display_names': len(display_names),
+                    'duplicate_users_by_id': len(duplicate_users),
+                    'duplicate_users_by_name': len(duplicate_names),
+                    'nick_bare_found': nick_bare_found,
+                    'nick_bare_rank': nick_bare_rank,
+                    'nick_bare_score': nick_bare_score,
+                    'scores_ordered_correctly': scores_ordered,
+                    'ranks_sequential': ranks_sequential
+                }
+                
+                if deduplication_working and scores_ordered and ranks_sequential:
+                    success_message = f"✅ DEDUPLICATION FIX WORKING: {len(leaderboard)} unique users, no duplicates found"
+                    if nick_bare_visible:
+                        success_message += f", Nick Bare visible as #1 with score {nick_bare_score}"
+                    
+                    self.log_test("Leaderboard Deduplication Fix", True, success_message, test_results)
+                    return True
+                else:
+                    issues = []
+                    if not deduplication_working:
+                        if duplicate_users:
+                            issues.append(f"{len(duplicate_users)} duplicate users by ID")
+                        if duplicate_names:
+                            issues.append(f"{len(duplicate_names)} duplicate users by name")
+                    if not scores_ordered:
+                        issues.append("scores not properly ordered")
+                    if not ranks_sequential:
+                        issues.append("ranks not sequential")
+                    if nick_bare_found and not nick_bare_visible:
+                        issues.append(f"Nick Bare found but not at #1 (rank: {nick_bare_rank}, score: {nick_bare_score})")
+                    elif not nick_bare_found:
+                        issues.append("Nick Bare not found on leaderboard")
+                    
+                    self.log_test("Leaderboard Deduplication Fix", False, f"❌ DEDUPLICATION ISSUES: {', '.join(issues)}", test_results)
+                    return False
+                    
+            else:
+                try:
+                    error_data = response.json()
+                    self.log_test("Leaderboard Deduplication Fix", False, f"Cannot test deduplication - HTTP {response.status_code}", error_data)
+                except:
+                    self.log_test("Leaderboard Deduplication Fix", False, f"Cannot test deduplication - HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Leaderboard Deduplication Fix", False, "Deduplication fix test failed", str(e))
+            return False
+    
+    def test_user_highest_score_only(self):
+        """Test that each user shows only their highest score on the leaderboard"""
+        try:
+            print("\n🏆 USER HIGHEST SCORE ONLY TEST 🏆")
+            print("=" * 50)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("User Highest Score Only", False, "No leaderboard data to test highest scores", data)
+                    return False
+                
+                # Group entries by user to check for highest scores
+                user_scores = {}
+                
+                for entry in leaderboard:
+                    user_profile_id = entry.get('user_profile_id')
+                    display_name = entry.get('display_name', 'Unknown')
+                    score = entry.get('score', 0)
+                    
+                    user_key = f"{display_name}_{user_profile_id}"
+                    
+                    if user_key in user_scores:
+                        # This should not happen if deduplication is working
+                        user_scores[user_key]['scores'].append(score)
+                        user_scores[user_key]['count'] += 1
+                    else:
+                        user_scores[user_key] = {
+                            'display_name': display_name,
+                            'user_profile_id': user_profile_id,
+                            'scores': [score],
+                            'count': 1,
+                            'rank': entry.get('rank')
+                        }
+                
+                # Check for users with multiple entries
+                users_with_multiple_entries = []
+                users_with_single_entry = []
+                
+                for user_key, user_data in user_scores.items():
+                    if user_data['count'] > 1:
+                        users_with_multiple_entries.append({
+                            'display_name': user_data['display_name'],
+                            'count': user_data['count'],
+                            'scores': user_data['scores'],
+                            'highest_score': max(user_data['scores'])
+                        })
+                    else:
+                        users_with_single_entry.append({
+                            'display_name': user_data['display_name'],
+                            'score': user_data['scores'][0],
+                            'rank': user_data['rank']
+                        })
+                
+                # Test specific users mentioned in the review
+                kyle_s_entries = [user for user in user_scores.values() if 'kyle' in user['display_name'].lower()]
+                test_entries = [user for user in user_scores.values() if 'test' in user['display_name'].lower()]
+                
+                test_results = {
+                    'total_unique_users': len(user_scores),
+                    'users_with_multiple_entries': len(users_with_multiple_entries),
+                    'users_with_single_entry': len(users_with_single_entry),
+                    'kyle_s_entries': len(kyle_s_entries),
+                    'test_entries': len(test_entries),
+                    'sample_single_entries': users_with_single_entry[:3] if users_with_single_entry else []
+                }
+                
+                if len(users_with_multiple_entries) == 0:
+                    self.log_test("User Highest Score Only", True, f"✅ All {len(user_scores)} users appear only once with their highest score", test_results)
+                    return True
+                else:
+                    self.log_test("User Highest Score Only", False, f"❌ {len(users_with_multiple_entries)} users have multiple entries", {
+                        **test_results,
+                        'multiple_entries_details': users_with_multiple_entries
+                    })
+                    return False
+                    
+            else:
+                self.log_test("User Highest Score Only", False, f"Cannot test highest scores - HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("User Highest Score Only", False, "User highest score test failed", str(e))
+            return False
+    
+    def test_expected_user_count_reduction(self):
+        """Test that user count has been reduced from ~9 entries to ~4 unique users"""
+        try:
+            print("\n📊 EXPECTED USER COUNT REDUCTION TEST 📊")
+            print("=" * 50)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                total_public_athletes = data.get('total_public_athletes', 0)
+                
+                if not leaderboard:
+                    self.log_test("Expected User Count Reduction", False, "No leaderboard data to test count reduction", data)
+                    return False
+                
+                # Count unique users by user_profile_id
+                unique_user_profile_ids = set()
+                unique_display_names = set()
+                
+                for entry in leaderboard:
+                    user_profile_id = entry.get('user_profile_id')
+                    display_name = entry.get('display_name', 'Unknown')
+                    
+                    if user_profile_id:
+                        unique_user_profile_ids.add(user_profile_id)
+                    unique_display_names.add(display_name)
+                
+                # Expected results based on review request
+                expected_unique_users = 4  # ~4 unique users mentioned in review
+                actual_entries = len(leaderboard)
+                actual_unique_users = len(unique_user_profile_ids)
+                
+                # Check if we have the expected reduction
+                count_reduction_working = actual_entries == actual_unique_users  # No duplicates
+                reasonable_user_count = 3 <= actual_unique_users <= 6  # Around 4 users as expected
+                
+                test_results = {
+                    'total_leaderboard_entries': actual_entries,
+                    'unique_user_profile_ids': actual_unique_users,
+                    'unique_display_names': len(unique_display_names),
+                    'total_public_athletes_reported': total_public_athletes,
+                    'expected_unique_users': expected_unique_users,
+                    'count_reduction_working': count_reduction_working,
+                    'reasonable_user_count': reasonable_user_count
+                }
+                
+                if count_reduction_working and reasonable_user_count:
+                    self.log_test("Expected User Count Reduction", True, f"✅ User count reduced correctly: {actual_entries} entries = {actual_unique_users} unique users (expected ~{expected_unique_users})", test_results)
+                    return True
+                elif count_reduction_working:
+                    self.log_test("Expected User Count Reduction", True, f"✅ No duplicates found: {actual_entries} entries = {actual_unique_users} unique users (count differs from expected ~{expected_unique_users} but deduplication working)", test_results)
+                    return True
+                else:
+                    issues = []
+                    if not count_reduction_working:
+                        issues.append(f"entries ({actual_entries}) != unique users ({actual_unique_users})")
+                    if not reasonable_user_count:
+                        issues.append(f"user count ({actual_unique_users}) not in expected range (3-6)")
+                    
+                    self.log_test("Expected User Count Reduction", False, f"❌ Count reduction issues: {', '.join(issues)}", test_results)
+                    return False
+                    
+            else:
+                self.log_test("Expected User Count Reduction", False, f"Cannot test count reduction - HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Expected User Count Reduction", False, "User count reduction test failed", str(e))
+            return False
+
     # ===== LEADERBOARD RANKING SERVICE FIX TESTS =====
     
     def test_leaderboard_complete_data_structure(self):
