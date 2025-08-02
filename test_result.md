@@ -158,9 +158,9 @@ backend:
 
   - task: "Leaderboard with Age Calculation and Country/Gender Display"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -170,6 +170,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "🎉 LEADERBOARD COMPREHENSIVE REVIEW TESTING COMPLETE: Executed comprehensive testing of the GET /api/leaderboard endpoint as requested in the review. ALL 9/9 CORE REQUIREMENTS VERIFIED (100% SUCCESS RATE): ✅ Endpoint Structure - GET /api/leaderboard returns proper structure with leaderboard array and total count ✅ Privacy Filtering - Only public profiles (is_public=true) are returned - currently 2 public profiles ✅ Complete Score Filtering - Only profiles with all required scores are included (hybridScore, strengthScore, speedScore, vo2Score, distanceScore, volumeScore, recoveryScore) ✅ Data Completeness - All athlete data includes age (29), gender (male), and country (US) fields ✅ Age Calculation - Age properly calculated from date_of_birth using datetime logic ✅ Expected Athletes - Found expected 2 athletes (Kyle and Kyle Steinmeyer) with proper data ✅ Ranking Logic - Rankings correctly assigned (1, 2, 3, etc.) ✅ Score Ordering - Scores correctly ordered descending (76.5, 75.5) ✅ Field Structure - All required fields present for frontend filtering functionality. CRITICAL VERIFICATION: The leaderboard functionality is working perfectly with real data from 2 athletes with complete age, gender, and country information. The backend implementation meets all review requirements for frontend filtering functionality."
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL LEADERBOARD RANKING SERVICE FIX INCOMPLETE: Executed comprehensive testing of the leaderboard ranking service fix as requested in the review. MAJOR ISSUE IDENTIFIED: ❌ MISSING DEMOGRAPHIC FIELDS - The leaderboard endpoint is NOT returning the required age, gender, country fields that frontend filtering expects. Current leaderboard response structure only includes: profile_id, user_profile_id, display_name, score, score_breakdown, updated_at, rank. MISSING FIELDS: age, gender, country, country_flag. ❌ FRONTEND FILTER INCOMPATIBILITY - All 12 athletes on leaderboard will be filtered out by frontend age range filter [18-65] because age field is missing/null. ❌ EMPTY DISPLAY NAMES - Many leaderboard entries have empty display_name fields, indicating fallback logic is not working properly. ROOT CAUSE: The ranking service is not joining with user_profiles table to fetch demographic data or the join is not including the required fields in the response. IMPACT: Frontend leaderboard filters will show 'No athletes match those filters' because all athletes are missing required demographic data. SOLUTION NEEDED: Update ranking service to include age (calculated from date_of_birth), gender, country, and country_flag fields in leaderboard response structure."
 
   - task: "Filter Athlete Profiles to Show Only Those With Complete Scores"
     implemented: true
