@@ -278,21 +278,32 @@ const HybridScoreResults = () => {
   }, []);
 
   // Fetch leaderboard position
-  const fetchLeaderboardPosition = useCallback(async (userHybridScore) => {
+  const fetchLeaderboardPosition = useCallback(async (userHybridScore, userProfileId) => {
     try {
       const response = await axios.get(`${BACKEND_URL}/api/leaderboard`);
       if (response.data.leaderboard) {
         const leaderboard = response.data.leaderboard;
         setTotalAthletes(leaderboard.length);
         
-        // Find position based on score comparison
-        let position = 1;
-        for (const athlete of leaderboard) {
-          if (athlete.score > userHybridScore) {
-            position++;
+        // Find user's actual position in the leaderboard
+        const userPosition = leaderboard.findIndex(athlete => athlete.profile_id === userProfileId);
+        
+        if (userPosition !== -1) {
+          // User is on the public leaderboard, show their actual rank (1-based)
+          setLeaderboardPosition(userPosition + 1);
+        } else {
+          // User is not on the public leaderboard (likely private profile)
+          // Calculate where they would rank if they were public
+          let wouldBePosition = 1;
+          for (const athlete of leaderboard) {
+            if (athlete.score > userHybridScore) {
+              wouldBePosition++;
+            }
           }
+          // Don't show ranking if user is not on public leaderboard
+          setLeaderboardPosition(null);
+          setTotalAthletes(null);
         }
-        setLeaderboardPosition(position);
       }
     } catch (error) {
       console.error('Error fetching leaderboard position:', error);
