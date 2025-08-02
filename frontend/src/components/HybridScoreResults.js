@@ -380,6 +380,10 @@ const HybridScoreResults = () => {
     <div className="min-h-screen" style={{ background: '#0A0B0C' }}>
       <style>
         {`
+        :root {
+          --neon-primary: #08F0FF;
+        }
+        
         .neo-card {
           background: linear-gradient(135deg, rgba(217, 217, 217, 0.1) 0%, rgba(159, 161, 163, 0.05) 100%);
           border: 1px solid rgba(217, 217, 217, 0.2);
