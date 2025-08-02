@@ -23,23 +23,25 @@ export default function AuthForm() {
     }
   }, []);
 
-  // Handle post-auth redirect
+  // Handle post-auth redirect only for email confirmation flow
   useEffect(() => {
     if (user) {
-      // Check if there's a stored post-auth redirect
+      // Check if there's a stored post-auth redirect (for email confirmation flow)
       const postAuthRedirect = localStorage.getItem('postAuthRedirect');
       
-      console.log('Post-auth redirect check:', { postAuthRedirect, user: user?.email });
+      console.log('Post-auth redirect check (email confirmation):', { postAuthRedirect, user: user?.email });
       
+      // Only redirect if we have a pending redirect (email confirmation case)
       if (postAuthRedirect === '/hybrid-interview') {
-        console.log('Redirecting to interview page after auth');
+        console.log('Redirecting to interview page after email confirmation');
         localStorage.removeItem('postAuthRedirect');
         // Small delay to ensure auth is fully processed
         setTimeout(() => {
           navigate('/hybrid-interview', { replace: true });
         }, 1000);
-      } else {
-        // Default redirect to home
+      } else if (postAuthRedirect) {
+        // Clear any other pending redirects and go to default
+        localStorage.removeItem('postAuthRedirect');
         setTimeout(() => {
           navigate('/', { replace: true });
         }, 1000);
