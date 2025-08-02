@@ -8958,8 +8958,19 @@ class BackendTester:
     def run_all_tests(self):
         """Run all backend tests focused on authentication flow and user profile management"""
         print("=" * 80)
-        print("🚀 TESTING USER PROFILE MANAGEMENT AND LEADERBOARD DATA FLOW")
+        print("🚀 TESTING AUTHENTICATION FLOW AND USER PROFILE MANAGEMENT")
         print("=" * 80)
+        
+        # AUTHENTICATION FLOW TESTS (HIGH PRIORITY - REVIEW REQUEST)
+        auth_flow_tests = [
+            self.test_signup_endpoint_exists,
+            self.test_user_profile_creation_endpoint,
+            self.test_user_profile_update_endpoint_auth,
+            self.test_authentication_flow_endpoints,
+            self.test_jwt_authentication_protection,
+            self.test_session_data_structure,
+            self.test_authentication_comprehensive,
+        ]
         
         # AUTO-SAVE PROFILE DEBUG TESTS (HIGH PRIORITY - REVIEW REQUEST)
         auto_save_tests = [
