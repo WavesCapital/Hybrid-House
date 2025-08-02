@@ -12249,7 +12249,10 @@ class BackendTester:
             self.test_leaderboard_ranking_logic_comprehensive,
             
             # 16. NICK BARE DISPLAY NAME INVESTIGATION (PRIORITY TEST - CURRENT REVIEW)
-            self.test_nick_bare_display_name_investigation
+            self.test_nick_bare_display_name_investigation,
+            
+            # 17. CRITICAL NICK BARE PROFILE INVESTIGATION (USER CLARIFICATION - URGENT)
+            self.test_nick_bare_critical_investigation
         ]
         
         # Run AUTHENTICATION FLOW TESTS first (HIGH PRIORITY)
