@@ -159,14 +159,25 @@ class RankingService:
                         'updated_at': profile['updated_at']
                     })
             
-            # Sort by hybrid score (highest to lowest)
+            # Sort by hybrid score (highest to lowest) and deduplicate users
             leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
             
-            # Add rank to each entry
-            for i, entry in enumerate(leaderboard_data):
+            # Deduplicate users - show only highest score per user_profile_id
+            seen_users = set()
+            deduplicated_data = []
+            
+            for entry in leaderboard_data:
+                user_profile_id = entry.get('user_profile_id')
+                if user_profile_id not in seen_users:
+                    seen_users.add(user_profile_id)
+                    deduplicated_data.append(entry)
+                # Skip entries for users we've already seen (they have lower scores due to sorting)
+            
+            # Add rank to each deduplicated entry
+            for i, entry in enumerate(deduplicated_data):
                 entry['rank'] = i + 1
             
-            return leaderboard_data
+            return deduplicated_data
             
         except Exception as e:
             raise Exception(f"Error fetching leaderboard data: {str(e)}")
