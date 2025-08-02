@@ -18,6 +18,8 @@ const HybridScoreResults = () => {
   const [profileData, setProfileData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [animatedScores, setAnimatedScores] = useState({});
+  const [leaderboardPosition, setLeaderboardPosition] = useState(null);
+  const [totalAthletes, setTotalAthletes] = useState(null);
   const { user, session } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
