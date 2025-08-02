@@ -8,7 +8,7 @@ import requests
 import json
 
 # Use local backend directly
-API_BASE_URL = "http://localhost:8001/api"
+API_BASE_URL = "http://0.0.0.0:8001/api"
 
 print(f"Testing backend at: {API_BASE_URL}")
 
