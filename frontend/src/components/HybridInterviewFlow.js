@@ -792,12 +792,6 @@ const HybridInterviewFlow = () => {
                   <p className="text-sm" style={{ color: 'var(--muted)' }}>
                     Backed by peer-reviewed concurrent-training studies and used by &gt;8,000 athletes.
                   </p>
-                  
-                  {!user && (
-                    <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                      <span className="text-yellow-400">⚡</span> No account needed to start, but you can save your progress by signing up!
-                    </p>
-                  )}
                 </div>
 
                 {/* Right Column - Hero Dial */}
