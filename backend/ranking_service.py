@@ -9,26 +9,23 @@ from typing import Dict, List, Optional, Tuple
 from datetime import datetime, date
 from supabase import create_client, Client
 import json
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
 
 class RankingService:
     def __init__(self):
-        # Initialize Supabase client
+        # Initialize Supabase client using the same environment variables as server.py
         supabase_url = os.environ.get('SUPABASE_URL')
         supabase_key = os.environ.get('SUPABASE_SERVICE_KEY')  # Use SERVICE_KEY for backend operations
         
-        print(f"🔧 RankingService init - URL: {supabase_url[:50] if supabase_url else 'None'}...")
-        print(f"🔧 RankingService init - Key: {supabase_key[:50] if supabase_key else 'None'}...")
-        
         if supabase_url and supabase_key:
-            self.supabase: Client = create_client(supabase_url, supabase_key)
-            print("✅ RankingService: Supabase client initialized successfully")
+            try:
+                self.supabase: Client = create_client(supabase_url, supabase_key)
+                print("✅ RankingService: Supabase client initialized successfully")
+            except Exception as e:
+                print(f"❌ RankingService: Failed to create Supabase client: {e}")
+                self.supabase = None
         else:
+            print(f"❌ RankingService: Missing environment variables - URL: {bool(supabase_url)}, Key: {bool(supabase_key)}")
             self.supabase = None
-            print("❌ RankingService: Failed to initialize Supabase client - missing environment variables")
     
     def get_public_leaderboard_data(self) -> List[Dict]:
         """Get all public profiles with complete scores for leaderboard"""
