@@ -9043,7 +9043,27 @@ class BackendTester:
             self.test_age_calculation_logic
         ]
         
-        # Run AUTO-SAVE PROFILE DEBUG TESTS first (HIGH PRIORITY)
+        # Run AUTHENTICATION FLOW TESTS first (HIGH PRIORITY)
+        print("\n" + "=" * 60)
+        print("🚨 PRIORITY: AUTHENTICATION FLOW BACKEND TESTS")
+        print("=" * 60)
+        
+        auth_flow_passed = 0
+        auth_flow_failed = 0
+        
+        for test in auth_flow_tests:
+            try:
+                if test():
+                    auth_flow_passed += 1
+                else:
+                    auth_flow_failed += 1
+            except Exception as e:
+                print(f"❌ FAIL: {test.__name__} - Exception: {str(e)}")
+                auth_flow_failed += 1
+        
+        print(f"\n🔍 AUTHENTICATION FLOW RESULTS: {auth_flow_passed}/{auth_flow_passed + auth_flow_failed} tests passed")
+        
+        # Run AUTO-SAVE PROFILE DEBUG TESTS second (HIGH PRIORITY)
         print("\n" + "=" * 60)
         print("🚨 PRIORITY: AUTO-SAVE PROFILE DEBUG TESTS")
         print("=" * 60)
@@ -9068,8 +9088,8 @@ class BackendTester:
         print("🔄 CONTINUING WITH OTHER BACKEND TESTS")
         print("=" * 60)
         
-        passed = auto_save_passed
-        failed = auto_save_failed
+        passed = auth_flow_passed + auto_save_passed
+        failed = auth_flow_failed + auto_save_failed
         
         for test in tests:
             try:
