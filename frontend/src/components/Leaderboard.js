@@ -1156,11 +1156,6 @@ const Leaderboard = () => {
           }
         }
 
-        /* Hover effect for pillar bars */
-        div:hover .pillar-hover-bar {
-          opacity: 1 !important;
-        }
-
         /* Slider thumb styling */
         input[type="range"]::-webkit-slider-thumb {
           appearance: none;
