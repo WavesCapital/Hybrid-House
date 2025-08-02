@@ -8,7 +8,7 @@ import requests
 import json
 
 # Use localhost for testing
-API_BASE_URL = "http://localhost:8001/api"
+API_BASE_URL = "http://127.0.0.1:8001/api"
 
 def test_nick_bare_critical_investigation():
     """CRITICAL: Investigate Nick Bare's profile linking and demographic data as per user clarification"""
