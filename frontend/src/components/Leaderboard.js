@@ -820,7 +820,7 @@ const Leaderboard = () => {
       </div>
 
       {/* Leaderboard Table */}
-      <div style={{ padding: '20px 16px' }}>
+      <div style={{ padding: '20px 16px', paddingBottom: '100px' }}>
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
