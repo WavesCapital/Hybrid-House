@@ -2437,7 +2437,7 @@ async def get_public_profile(user_id: str):
         # Process athlete profiles
         for profile in athlete_profiles_result.data:
             profile_data = {
-                'profile_id': profile['profile_id'],
+                'profile_id': profile['id'],  # Fixed: use 'id' instead of 'profile_id'
                 'created_at': profile['created_at'],
                 'hybrid_score': profile.get('hybrid_score', 0),
                 'score_data': profile.get('score_data', {}),
