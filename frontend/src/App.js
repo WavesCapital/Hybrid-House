@@ -80,6 +80,10 @@ function AppContent() {
             element={<ProfilePage />} 
           />
           <Route 
+            path="/athlete/:userId" 
+            element={<PublicProfileView />} 
+          />
+          <Route 
             path="/settings" 
             element={
               <ProtectedRoute>
