@@ -676,36 +676,36 @@ const HybridScoreResults = () => {
           {/* Hybrid Score Section */}
           <section className="space-y-8">
             <div className="text-center">
-              <h2 className="text-5xl font-bold neo-text-primary mb-4">Your Hybrid Score</h2>
-              <div className="text-8xl font-bold neo-primary mb-6" style={{ lineHeight: '1' }}>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold neo-text-primary mb-4">Your Hybrid Score</h2>
+              <div className="text-6xl sm:text-7xl lg:text-8xl font-bold neo-primary mb-4 sm:mb-6" style={{ lineHeight: '1' }}>
                 {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : hybridScoreValue}
               </div>
-              <p className="text-xl neo-text-secondary max-w-2xl mx-auto mb-6">
+              <p className="text-lg sm:text-xl neo-text-secondary max-w-2xl mx-auto mb-4 sm:mb-6 px-2">
                 Your overall hybrid-fitness score on a 0-100 scale
               </p>
               
               {/* Leaderboard Position and Buttons */}
-              <div className="mb-6">
+              <div className="mb-4 sm:mb-6">
                 {/* Show ranking only if user is on public leaderboard */}
                 {leaderboardPosition && totalAthletes && (
-                  <div className="flex items-center justify-center space-x-2 mb-4">
-                    <Trophy className="h-5 w-5 text-yellow-400" />
-                    <span className="text-lg neo-text-primary">
+                  <div className="flex items-center justify-center space-x-2 mb-3 sm:mb-4">
+                    <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400" />
+                    <span className="text-base sm:text-lg neo-text-primary">
                       Ranked #{leaderboardPosition} out of {totalAthletes} athletes
                     </span>
                   </div>
                 )}
                 
                 {/* Always show buttons */}
-                <div className="flex items-center justify-center space-x-3">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 px-4">
                   <Button 
                     onClick={() => navigate('/leaderboard')} 
-                    className="neo-btn-secondary"
+                    className="neo-btn-secondary w-full sm:w-auto"
                     size="sm"
                   >
                     View Leaderboard
                   </Button>
-                  <Button onClick={handleShare} className="neo-btn-secondary" size="sm">
+                  <Button onClick={handleShare} className="neo-btn-secondary w-full sm:w-auto" size="sm">
                     <Share2 className="h-4 w-4 mr-2" />
                     Share Score
                   </Button>
