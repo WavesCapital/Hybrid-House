@@ -875,16 +875,32 @@ const Leaderboard = () => {
                       justifyContent: 'space-between',
                       marginBottom: '4px'
                     }}>
-                      <div style={{
-                        fontSize: '16px',
-                        fontWeight: '700',
-                        color: '#FFFFFF',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap'
-                      }}>
+                      <button
+                        onClick={() => navigate(`/athlete/${athlete.user_id}`)}
+                        style={{
+                          fontSize: '16px',
+                          fontWeight: '700',
+                          color: '#FFFFFF',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          padding: '0',
+                          textDecoration: 'none',
+                          transition: 'color 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.color = '#08F0FF';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.color = '#FFFFFF';
+                        }}
+                      >
                         {athlete.display_name}
-                      </div>
+                      </button>
                       <div style={{
                         fontSize: '24px',
                         fontWeight: '700',
