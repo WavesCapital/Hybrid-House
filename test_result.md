@@ -428,7 +428,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "GET /api/athlete-profile/{profile_id} Endpoint Authentication Testing"
+    - "GET /api/public-profile/{user_id} Endpoint Testing"
     - "Add Missing Country Column to User Profiles Table"
     - "Privacy Toggle Functionality and User-Specific Profile Endpoints Testing Complete"
     - "All Backend API Endpoints Working Correctly"
