@@ -1860,15 +1860,15 @@ const ProfilePage = () => {
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-8 max-w-7xl space-y-8">
+      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8 max-w-7xl space-y-6 sm:space-y-8">
         
         {/* Main Section - Two Column Layout */}
         {/* Hero Row - Latest Hybrid Score (Left) + Generate New Score (Right) */}
-        <div className="hero-row flex gap-8">
+        <div className="hero-row flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8">
           
           {/* Latest Hybrid Score (Left Column - 60% width) */}
           <div className="w-full lg:w-[60%]">
-            <div className="glass-card p-6">
+            <div className="glass-card p-4 sm:p-6">
               <div className="flex items-center justify-center mb-3">
                 {profiles.length > 0 && profiles[0]?.score_data?.hybridScore ? (
                   <div className="radar-cluster-container">
