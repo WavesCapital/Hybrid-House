@@ -2642,6 +2642,7 @@ const ProfilePage = () => {
                   )}
                 </tbody>
               </table>
+              </div>
             </div>
             
             {profiles.length > 0 && (
