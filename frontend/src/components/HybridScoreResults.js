@@ -465,14 +465,160 @@ const HybridScoreResults = () => {
           
           .grid {
             grid-template-columns: 1fr;
+            gap: 1.5rem;
+          }
+          
+          .grid.grid-cols-1.lg\\:grid-cols-2 {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
           }
           
           .text-8xl {
-            font-size: 4rem;
+            font-size: 3.5rem;
+            line-height: 1;
           }
           
           .text-5xl {
             font-size: 2.5rem;
+            line-height: 1.1;
+          }
+          
+          .text-4xl {
+            font-size: 2rem;
+            line-height: 1.2;
+          }
+          
+          .text-3xl {
+            font-size: 1.875rem;
+            line-height: 1.2;
+          }
+          
+          .text-2xl {
+            font-size: 1.5rem;
+            line-height: 1.3;
+          }
+          
+          .text-xl {
+            font-size: 1.25rem;
+            line-height: 1.4;
+          }
+          
+          .text-lg {
+            font-size: 1.125rem;
+            line-height: 1.4;
+          }
+          
+          /* Mobile padding adjustments */
+          .p-12 {
+            padding: 2rem;
+          }
+          
+          .p-8 {
+            padding: 1.5rem;
+          }
+          
+          .p-6 {
+            padding: 1rem;
+          }
+          
+          .py-24 {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+          }
+          
+          .py-8 {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+          }
+          
+          .mb-16 {
+            margin-bottom: 2rem;
+          }
+          
+          .mb-8 {
+            margin-bottom: 1.5rem;
+          }
+          
+          .mb-6 {
+            margin-bottom: 1rem;
+          }
+          
+          /* Mobile button adjustments */
+          .flex.flex-col.sm\\:flex-row {
+            flex-direction: column;
+            gap: 1rem;
+          }
+          
+          .flex.items-center.justify-center.space-x-3 {
+            flex-direction: column;
+            gap: 0.75rem;
+          }
+          
+          .flex.items-center.justify-center.space-x-3 button {
+            width: 100%;
+            min-height: 44px;
+          }
+          
+          /* Mobile header adjustments */}
+          .px-6.py-4 {
+            padding: 0.75rem 1rem;
+          }
+          
+          .flex.items-center.space-x-4 {
+            gap: 0.5rem;
+          }
+          
+          .flex.items-center.space-x-3 button {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            min-height: 40px;
+            min-width: 60px;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .text-8xl {
+            font-size: 3rem;
+          }
+          
+          .text-5xl {
+            font-size: 2rem;
+          }
+          
+          .text-4xl {
+            font-size: 1.75rem;
+          }
+          
+          .text-3xl {
+            font-size: 1.5rem;
+          }
+          
+          .container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+          }
+          
+          .p-12 {
+            padding: 1.5rem;
+          }
+          
+          .p-8 {
+            padding: 1rem;
+          }
+          
+          .p-6 {
+            padding: 0.75rem;
+          }
+          
+          /* Very small screen header */
+          .flex.items-center.space-x-3 button {
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            min-width: 50px;
+          }
+          
+          .text-xl {
+            font-size: 1rem;
           }
         }
         `}
