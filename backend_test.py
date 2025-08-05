@@ -13543,6 +13543,165 @@ if __name__ == "__main__":
             self.log_test("Mobile Optimization Compatibility", False, "Mobile compatibility test failed", str(e))
             return False
 
+    def test_public_profile_endpoint(self):
+        """Test the new GET /api/public-profile/{user_id} endpoint"""
+        try:
+            print("\n🎯 PUBLIC PROFILE ENDPOINT TESTING 🎯")
+            print("=" * 50)
+            
+            # Test 1: Test with existing user_id (we'll use a known user from leaderboard)
+            print("📋 Step 1: Getting existing user_id from leaderboard...")
+            leaderboard_response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            existing_user_id = None
+            if leaderboard_response.status_code == 200:
+                leaderboard_data = leaderboard_response.json()
+                leaderboard = leaderboard_data.get('leaderboard', [])
+                if leaderboard:
+                    # Get the first user from leaderboard
+                    first_entry = leaderboard[0]
+                    existing_user_id = first_entry.get('user_id')  # This might be in the response
+                    print(f"   Found potential user_id from leaderboard: {existing_user_id}")
+            
+            # If we can't get user_id from leaderboard, try some known test user IDs
+            test_user_ids = [
+                "ff6827a2-2b0b-4210-8bc6-e02cc8487752",  # Nick Bare's user_id from review
+                "dc2b65d8-1e5f-459d-b5c8-cb716deaf5d8"   # Kyle's user_id from previous tests
+            ]
+            
+            if not existing_user_id:
+                existing_user_id = test_user_ids[0]
+                print(f"   Using test user_id: {existing_user_id}")
+            
+            # Test 2: Test with existing user_id
+            print(f"\n📋 Step 2: Testing with existing user_id: {existing_user_id}")
+            response = self.session.get(f"{API_BASE_URL}/public-profile/{existing_user_id}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                public_profile = data.get('public_profile', {})
+                
+                # Verify response structure
+                required_fields = ['user_id', 'display_name', 'location', 'country', 'age', 'gender', 'created_at', 'total_assessments', 'athlete_profiles']
+                missing_fields = []
+                
+                for field in required_fields:
+                    if field not in public_profile:
+                        missing_fields.append(field)
+                
+                if not missing_fields:
+                    print(f"   ✅ Response structure correct")
+                    print(f"   📊 Public Profile Data:")
+                    print(f"      User ID: {public_profile.get('user_id')}")
+                    print(f"      Display Name: {public_profile.get('display_name')}")
+                    print(f"      Location: {public_profile.get('location')}")
+                    print(f"      Country: {public_profile.get('country')}")
+                    print(f"      Age: {public_profile.get('age')}")
+                    print(f"      Gender: {public_profile.get('gender')}")
+                    print(f"      Total Assessments: {public_profile.get('total_assessments')}")
+                    
+                    # Check athlete profiles structure
+                    athlete_profiles = public_profile.get('athlete_profiles', [])
+                    print(f"      Athlete Profiles: {len(athlete_profiles)} profiles")
+                    
+                    if athlete_profiles:
+                        profile_fields_correct = True
+                        for i, profile in enumerate(athlete_profiles):
+                            required_profile_fields = ['profile_id', 'created_at', 'hybrid_score', 'score_data', 'profile_json']
+                            missing_profile_fields = []
+                            
+                            for field in required_profile_fields:
+                                if field not in profile:
+                                    missing_profile_fields.append(field)
+                            
+                            if missing_profile_fields:
+                                print(f"         ❌ Profile {i+1} missing fields: {missing_profile_fields}")
+                                profile_fields_correct = False
+                            else:
+                                print(f"         ✅ Profile {i+1}: Complete structure (Score: {profile.get('hybrid_score')})")
+                        
+                        if profile_fields_correct:
+                            self.log_test("Public Profile Endpoint - Existing User", True, f"✅ Endpoint returns correct structure with {len(athlete_profiles)} public athlete profiles", {
+                                'user_id': existing_user_id,
+                                'display_name': public_profile.get('display_name'),
+                                'total_assessments': public_profile.get('total_assessments'),
+                                'athlete_profiles_count': len(athlete_profiles)
+                            })
+                        else:
+                            self.log_test("Public Profile Endpoint - Existing User", False, "❌ Athlete profile structure incomplete", data)
+                    else:
+                        self.log_test("Public Profile Endpoint - Existing User", True, "✅ Endpoint returns correct structure with no public athlete profiles", {
+                            'user_id': existing_user_id,
+                            'display_name': public_profile.get('display_name'),
+                            'total_assessments': 0
+                        })
+                else:
+                    self.log_test("Public Profile Endpoint - Existing User", False, f"❌ Response missing required fields: {missing_fields}", data)
+                    
+            elif response.status_code == 404:
+                print(f"   ⚠️  User {existing_user_id} not found, trying alternative user IDs...")
+                # Try other test user IDs
+                found_working_user = False
+                for test_user_id in test_user_ids[1:]:
+                    print(f"   🔄 Trying user_id: {test_user_id}")
+                    test_response = self.session.get(f"{API_BASE_URL}/public-profile/{test_user_id}")
+                    if test_response.status_code == 200:
+                        print(f"   ✅ Found working user_id: {test_user_id}")
+                        found_working_user = True
+                        existing_user_id = test_user_id
+                        # Re-run the test with working user ID
+                        response = test_response
+                        data = response.json()
+                        public_profile = data.get('public_profile', {})
+                        self.log_test("Public Profile Endpoint - Existing User", True, f"✅ Endpoint works with user_id {test_user_id}", {
+                            'user_id': test_user_id,
+                            'display_name': public_profile.get('display_name'),
+                            'total_assessments': public_profile.get('total_assessments')
+                        })
+                        break
+                
+                if not found_working_user:
+                    self.log_test("Public Profile Endpoint - Existing User", False, f"❌ No working user_id found - all test user IDs return 404", {
+                        'tested_user_ids': test_user_ids,
+                        'all_returned_404': True
+                    })
+            else:
+                self.log_test("Public Profile Endpoint - Existing User", False, f"❌ Unexpected response: HTTP {response.status_code}", response.text)
+            
+            # Test 3: Test with non-existent user_id
+            print(f"\n📋 Step 3: Testing with non-existent user_id")
+            non_existent_user_id = "00000000-0000-0000-0000-000000000000"
+            response = self.session.get(f"{API_BASE_URL}/public-profile/{non_existent_user_id}")
+            
+            if response.status_code == 404:
+                try:
+                    error_data = response.json()
+                    if 'detail' in error_data and 'not found' in error_data['detail'].lower():
+                        self.log_test("Public Profile Endpoint - Non-existent User", True, "✅ Correctly returns 404 with proper error message", error_data)
+                    else:
+                        self.log_test("Public Profile Endpoint - Non-existent User", False, "❌ Returns 404 but error message format incorrect", error_data)
+                except:
+                    self.log_test("Public Profile Endpoint - Non-existent User", True, "✅ Correctly returns 404 (non-JSON response)")
+            else:
+                self.log_test("Public Profile Endpoint - Non-existent User", False, f"❌ Should return 404 but got HTTP {response.status_code}", response.text)
+            
+            # Test 4: Test with malformed user_id
+            print(f"\n📋 Step 4: Testing with malformed user_id")
+            malformed_user_id = "invalid-user-id"
+            response = self.session.get(f"{API_BASE_URL}/public-profile/{malformed_user_id}")
+            
+            if response.status_code in [400, 404, 422]:
+                self.log_test("Public Profile Endpoint - Malformed User ID", True, f"✅ Correctly handles malformed user_id with HTTP {response.status_code}")
+            else:
+                self.log_test("Public Profile Endpoint - Malformed User ID", False, f"❌ Should return 400/404/422 for malformed user_id but got HTTP {response.status_code}", response.text)
+            
+            print(f"\n✅ Public Profile Endpoint Testing Complete")
+            return True
+            
+        except Exception as e:
+            self.log_test("Public Profile Endpoint", False, "❌ Public profile endpoint test failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests for mobile optimization review"""
         print("🚀 Starting Backend API Tests for Mobile Optimization Review")
