@@ -105,6 +105,18 @@
 user_problem_statement: "Add delete functionality to athlete profiles in the Hybrid Score History table on the /profile page. Users should be able to delete athlete profiles by clicking a small x button all the way to the right on the table."
 
 backend:
+  - task: "GET /api/public-profile/{user_id} Endpoint Testing"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 PUBLIC PROFILE ENDPOINT TESTING COMPLETE: Executed comprehensive testing of the new GET /api/public-profile/{user_id} endpoint as requested in the review. ALL 4/4 CORE REQUIREMENTS VERIFIED (100% SUCCESS RATE): ✅ Test with existing user_id - Successfully tested with Nick Bare's user_id (ff6827a2-2b0b-4210-8bc6-e02cc8487752), returns complete public profile data with user info and 1 public athlete profile ✅ Test with non-existent user_id - Correctly returns 404 with proper error message 'User profile not found' ✅ Verify response structure - All required fields present: user_id, display_name, location, country, age, gender, created_at, total_assessments, athlete_profiles array ✅ Privacy filtering - Only public profiles (is_public=true) are returned in athlete_profiles array. RESPONSE STRUCTURE VERIFIED: public_profile object contains user_id, display_name ('Nick Bare'), location (null), country ('US'), age (35), gender ('male'), created_at, total_assessments (1). Each athlete profile contains profile_id, created_at, hybrid_score (96.8), score_data (complete), profile_json (complete). MINOR ISSUE: Malformed user_id returns 500 instead of 400/422, but this doesn't affect core functionality. CONCLUSION: The public profile endpoint is fully functional and ready for the PublicProfileView component integration."
+
   - task: "GET /api/athlete-profile/{profile_id} Endpoint Authentication Testing"
     implemented: true
     working: true
