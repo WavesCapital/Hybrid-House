@@ -2392,9 +2392,10 @@ const ProfilePage = () => {
               )}
             </div>
             
-            <div className="overflow-x-auto">
-              <table className="w-full score-archive-table">
-                {/* Sticky header with comprehensive columns */}
+            <div className="overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
+              <div className="min-w-[800px] px-4 sm:px-6 lg:px-8">
+                <table className="w-full score-archive-table">
+                  {/* Sticky header with comprehensive columns */}
                 <thead>
                   <tr>
                     <th className="text-left p-3 text-xs font-semibold text-secondary">Date</th>
