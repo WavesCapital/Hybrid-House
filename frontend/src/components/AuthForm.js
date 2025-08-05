@@ -118,7 +118,7 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ background: '#0A0B0C' }}>
+    <div className="min-h-screen flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8" style={{ background: '#0A0B0C' }}>
       <style jsx>{`
         .neo-text-primary {
           color: #D9D9D9;
@@ -145,6 +145,7 @@ export default function AuthForm() {
           padding: 12px 16px;
           font-size: 16px;
           transition: all 200ms cubic-bezier(0.4,0,0.2,1);
+          min-height: 44px;
         }
         .neo-input:focus {
           outline: none;
@@ -161,6 +162,7 @@ export default function AuthForm() {
           transition: all 200ms cubic-bezier(0.4,0,0.2,1);
           box-shadow: 0 0 12px rgba(121, 207, 247, 0.25);
           backdrop-filter: blur(8px);
+          min-height: 44px;
         }
         .neo-btn-primary:hover {
           background: rgba(121, 207, 247, 0.3);
@@ -178,24 +180,37 @@ export default function AuthForm() {
         .success-message {
           color: #85E26E;
         }
+        
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+          .neo-input {
+            font-size: 16px; /* Prevents zoom on iOS */
+            padding: 14px 16px;
+          }
+          
+          .neo-btn-primary {
+            padding: 14px 20px;
+            font-size: 16px;
+          }
+        }
       `}</style>
       
-      <div className="max-w-md w-full space-y-8">
+      <div className="max-w-md w-full space-y-6 sm:space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-5xl font-bold mb-4 neo-primary" style={{ lineHeight: '1.1' }}>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-3 sm:mb-4 neo-primary" style={{ lineHeight: '1.1' }}>
             Hybrid House
           </h1>
-          <h2 className="text-2xl font-semibold neo-text-primary mb-2">
+          <h2 className="text-xl sm:text-2xl font-semibold neo-text-primary mb-2">
             {isLogin ? 'Welcome back' : 'Join the community'}
           </h2>
-          <p className="neo-text-secondary">
+          <p className="neo-text-secondary text-sm sm:text-base">
             {isLogin ? 'Sign in to access your hybrid athlete profile' : 'Create your account to get started'}
           </p>
         </div>
         
         {/* Auth Card */}
-        <div className="neo-card rounded-xl p-8 space-y-6">
+        <div className="neo-card rounded-xl p-6 sm:p-8 space-y-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-semibold neo-text-primary mb-2">
@@ -251,7 +266,7 @@ export default function AuthForm() {
             <button
               type="submit"
               disabled={loading}
-              className="neo-btn-primary w-full py-3 text-lg font-semibold"
+              className="neo-btn-primary w-full py-3 text-base sm:text-lg font-semibold"
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
