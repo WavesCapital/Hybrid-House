@@ -2395,6 +2395,67 @@ async def get_profile_ranking(profile_id: str):
             detail=f"Error getting profile ranking: {str(e)}"
         )
 
+@api_router.get("/public-profile/{user_id}")
+async def get_public_profile(user_id: str):
+    """Get public profile information for a specific user"""
+    try:
+        # Get user profile (public info only)
+        user_profile_result = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
+        
+        if not user_profile_result.data:
+            raise HTTPException(status_code=404, detail="User profile not found")
+        
+        user_profile = user_profile_result.data[0]
+        
+        # Get public athlete profiles for this user
+        athlete_profiles_result = supabase.table('athlete_profiles').select('*').eq('user_id', user_id).eq('is_public', True).order('created_at', desc=True).execute()
+        
+        # Calculate age if date_of_birth is available
+        age = None
+        if user_profile.get('date_of_birth'):
+            try:
+                from datetime import datetime
+                birth_date = datetime.fromisoformat(user_profile['date_of_birth'].replace('Z', '+00:00'))
+                today = datetime.now()
+                age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+            except:
+                pass
+        
+        # Prepare public profile data
+        public_profile = {
+            'user_id': user_profile['user_id'],
+            'display_name': user_profile.get('display_name') or user_profile.get('name', 'Anonymous Athlete'),
+            'location': user_profile.get('location'),
+            'country': user_profile.get('country'),
+            'age': age,
+            'gender': user_profile.get('gender'),
+            'created_at': user_profile.get('created_at'),
+            'total_assessments': len(athlete_profiles_result.data),
+            'athlete_profiles': []
+        }
+        
+        # Process athlete profiles
+        for profile in athlete_profiles_result.data:
+            profile_data = {
+                'profile_id': profile['profile_id'],
+                'created_at': profile['created_at'],
+                'hybrid_score': profile.get('hybrid_score', 0),
+                'score_data': profile.get('score_data', {}),
+                'profile_json': profile.get('profile_json', {})
+            }
+            public_profile['athlete_profiles'].append(profile_data)
+        
+        return {
+            'public_profile': public_profile,
+            'success': True
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error getting public profile: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 @api_router.post("/admin/migrate-privacy")
 async def migrate_privacy_column():
     """Migrate privacy column and set all scored profiles to PUBLIC by default"""
