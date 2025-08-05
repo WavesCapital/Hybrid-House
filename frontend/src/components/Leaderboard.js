@@ -577,19 +577,19 @@ const Leaderboard = () => {
         background: '#15161AEE',
         backdropFilter: 'blur(10px)',
         borderBottom: '1px solid #1F2025',
-        padding: '16px 20px'
+        padding: '12px 16px'
       }}>
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
           display: 'flex',
           alignItems: 'center',
-          gap: '24px',
+          gap: '16px',
           flexWrap: 'wrap'
         }}>
           {/* Score Range Slider */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <label style={{ color: '#8D9299', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase', minWidth: '70px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '120px' }}>
+            <label style={{ color: '#8D9299', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', minWidth: '50px' }}>
               Score: {scoreRange[1]}
             </label>
             <div style={{ position: 'relative' }}>
@@ -602,7 +602,7 @@ const Leaderboard = () => {
                 onMouseUp={() => setIsDragging(false)}
                 onChange={(e) => setScoreRange([0, parseInt(e.target.value)])}
                 style={{
-                  width: '120px',
+                  width: '80px',
                   height: '4px',
                   background: `linear-gradient(to right, #08F0FF 0%, #08F0FF ${scoreRange[1]}%, rgba(255,255,255,0.1) ${scoreRange[1]}%, rgba(255,255,255,0.1) 100%)`,
                   outline: 'none',
@@ -621,7 +621,7 @@ const Leaderboard = () => {
                   color: '#000',
                   padding: '4px 8px',
                   borderRadius: '4px',
-                  fontSize: '12px',
+                  fontSize: '10px',
                   fontWeight: '600',
                   whiteSpace: 'nowrap'
                 }}>
@@ -631,98 +631,64 @@ const Leaderboard = () => {
             </div>
           </div>
 
-          {/* Age Range Filter */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <label style={{ color: '#8D9299', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase', minWidth: '70px' }}>
+          {/* Age Range Filter - Simplified for mobile */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '100px' }}>
+            <label style={{ color: '#8D9299', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', minWidth: '40px' }}>
               Age: {ageRange[0]}-{ageRange[1]}
             </label>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <div style={{ position: 'relative' }}>
-                <input
-                  type="range"
-                  min="18"
-                  max="65"
-                  value={ageRange[0]}
-                  onMouseDown={() => setIsAgeRangeDragging('min')}
-                  onMouseUp={() => setIsAgeRangeDragging('')}
-                  onChange={(e) => {
-                    const newMin = parseInt(e.target.value);
-                    if (newMin <= ageRange[1]) {
-                      setAgeRange([newMin, ageRange[1]]);
-                    }
-                  }}
-                  style={{
-                    width: '80px',
-                    height: '4px',
-                    background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) 100%)`,
-                    outline: 'none',
-                    borderRadius: '2px',
-                    cursor: 'pointer',
-                    appearance: 'none'
-                  }}
-                />
-                {isAgeRangeDragging === 'min' && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '-30px',
-                    left: '0',
-                    background: '#B96DFF',
-                    color: '#000',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    fontSize: '12px',
-                    fontWeight: '600'
-                  }}>
-                    {ageRange[0]}
-                  </div>
-                )}
-              </div>
-              <div style={{ position: 'relative' }}>
-                <input
-                  type="range"
-                  min="18"
-                  max="65"
-                  value={ageRange[1]}
-                  onMouseDown={() => setIsAgeRangeDragging('max')}
-                  onMouseUp={() => setIsAgeRangeDragging('')}
-                  onChange={(e) => {
-                    const newMax = parseInt(e.target.value);
-                    if (newMax >= ageRange[0]) {
-                      setAgeRange([ageRange[0], newMax]);
-                    }
-                  }}
-                  style={{
-                    width: '80px',
-                    height: '4px',
-                    background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) 100%)`,
-                    outline: 'none',
-                    borderRadius: '2px',
-                    cursor: 'pointer',
-                    appearance: 'none'
-                  }}
-                />
-                {isAgeRangeDragging === 'max' && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '-30px',
-                    right: '0',
-                    background: '#B96DFF',
-                    color: '#000',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    fontSize: '12px',
-                    fontWeight: '600'
-                  }}>
-                    {ageRange[1]}
-                  </div>
-                )}
-              </div>
+            <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+              <input
+                type="range"
+                min="18"
+                max="65"
+                value={ageRange[0]}
+                onMouseDown={() => setIsAgeRangeDragging('min')}
+                onMouseUp={() => setIsAgeRangeDragging('')}
+                onChange={(e) => {
+                  const newMin = parseInt(e.target.value);
+                  if (newMin <= ageRange[1]) {
+                    setAgeRange([newMin, ageRange[1]]);
+                  }
+                }}
+                style={{
+                  width: '50px',
+                  height: '4px',
+                  background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) 100%)`,
+                  outline: 'none',
+                  borderRadius: '2px',
+                  cursor: 'pointer',
+                  appearance: 'none'
+                }}
+              />
+              <input
+                type="range"
+                min="18"
+                max="65"
+                value={ageRange[1]}
+                onMouseDown={() => setIsAgeRangeDragging('max')}
+                onMouseUp={() => setIsAgeRangeDragging('')}
+                onChange={(e) => {
+                  const newMax = parseInt(e.target.value);
+                  if (newMax >= ageRange[0]) {
+                    setAgeRange([ageRange[0], newMax]);
+                  }
+                }}
+                style={{
+                  width: '50px',
+                  height: '4px',
+                  background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) 100%)`,
+                  outline: 'none',
+                  borderRadius: '2px',
+                  cursor: 'pointer',
+                  appearance: 'none'
+                }}
+              />
             </div>
           </div>
 
-          {/* Gender Pills */}
-          <div style={{ display: 'flex', gap: '4px' }}>
-            <span style={{ color: '#8D9299', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase', marginRight: '8px', display: 'flex', alignItems: 'center' }}>
+          {/* Gender Pills - Compact for mobile */}
+          <div style={{ display: 'flex', gap: '2px', alignItems: 'center' }}>
+            <span style={{ color: '#8D9299', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', marginRight: '4px' }}>
               Gender:
             </span>
             {['All', 'Male', 'Female'].map(gender => (
@@ -730,45 +696,47 @@ const Leaderboard = () => {
                 key={gender}
                 onClick={() => setGenderFilter(gender)}
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: '16px',
+                  padding: '4px 8px',
+                  borderRadius: '12px',
                   border: 'none',
-                  fontSize: '11px',
+                  fontSize: '10px',
                   fontWeight: '600',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   textTransform: 'uppercase',
                   background: genderFilter === gender ? 'rgba(255, 45, 222, 0.85)' : 'rgba(255, 255, 255, 0.1)',
-                  color: genderFilter === gender ? '#000' : '#8D9299'
+                  color: genderFilter === gender ? '#000' : '#8D9299',
+                  minHeight: '32px'
                 }}
               >
-                {gender}
+                {gender === 'All' ? 'All' : gender.charAt(0)}
               </button>
             ))}
           </div>
 
-          {/* Country Dropdown */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <label style={{ color: '#8D9299', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>
+          {/* Country Dropdown - Simplified */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <label style={{ color: '#8D9299', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
               Country:
             </label>
             <select
               value={countryFilter}
               onChange={(e) => setCountryFilter(e.target.value)}
               style={{
-                padding: '6px 12px',
-                borderRadius: '8px',
+                padding: '4px 8px',
+                borderRadius: '6px',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 background: 'rgba(255, 255, 255, 0.05)',
                 color: '#FFFFFF',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: '600',
                 outline: 'none',
                 cursor: 'pointer',
-                textTransform: 'uppercase'
+                textTransform: 'uppercase',
+                minHeight: '32px'
               }}
             >
-              <option value="All" style={{ background: '#1A1B1F', color: '#FFFFFF' }}>All Countries</option>
+              <option value="All" style={{ background: '#1A1B1F', color: '#FFFFFF' }}>All</option>
               {getUniqueCountries().map(country => (
                 <option key={country} value={country} style={{ background: '#1A1B1F', color: '#FFFFFF' }}>
                   {country}
@@ -777,30 +745,31 @@ const Leaderboard = () => {
             </select>
           </div>
 
-          {/* Search Input */}
-          <div style={{ position: 'relative', marginLeft: 'auto' }}>
-            <Search size={16} style={{
+          {/* Search Input - Hidden on mobile, shown as expandable button */}
+          <div style={{ position: 'relative', marginLeft: 'auto', display: window.innerWidth > 640 ? 'block' : 'none' }}>
+            <Search size={14} style={{
               position: 'absolute',
-              left: '12px',
+              left: '8px',
               top: '50%',
               transform: 'translateY(-50%)',
               color: '#8D9299'
             }} />
             <input
               type="text"
-              placeholder="Search athletes…"
+              placeholder="Search…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
-                width: '200px',
-                padding: '8px 12px 8px 36px',
-                borderRadius: '8px',
+                width: '120px',
+                padding: '6px 8px 6px 28px',
+                borderRadius: '6px',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 background: 'rgba(255, 255, 255, 0.05)',
                 color: '#FFFFFF',
-                fontSize: '14px',
+                fontSize: '12px',
                 outline: 'none',
-                fontFamily: 'Inter, sans-serif'
+                fontFamily: 'Inter, sans-serif',
+                minHeight: '32px'
               }}
             />
           </div>
@@ -810,18 +779,18 @@ const Leaderboard = () => {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '4px 12px',
+              gap: '6px',
+              padding: '2px 8px',
               background: 'rgba(8, 240, 255, 0.1)',
               border: '1px solid rgba(8, 240, 255, 0.3)',
-              borderRadius: '16px',
-              fontSize: '11px',
+              borderRadius: '12px',
+              fontSize: '10px',
               fontWeight: '600',
               color: '#08F0FF',
               textTransform: 'uppercase'
             }}>
-              <Filter size={12} />
-              {filteredData.length} / {leaderboardData.length} Athletes
+              <Filter size={10} />
+              {filteredData.length}/{leaderboardData.length}
               <button
                 onClick={() => {
                   setScoreRange([0, 100]);
@@ -833,15 +802,15 @@ const Leaderboard = () => {
                 style={{
                   background: 'rgba(8, 240, 255, 0.2)',
                   border: 'none',
-                  borderRadius: '12px',
-                  padding: '2px 6px',
+                  borderRadius: '8px',
+                  padding: '1px 4px',
                   color: '#08F0FF',
-                  fontSize: '10px',
+                  fontSize: '9px',
                   cursor: 'pointer',
                   fontWeight: '600'
                 }}
               >
-                Clear All
+                Clear
               </button>
             </div>
           )}
