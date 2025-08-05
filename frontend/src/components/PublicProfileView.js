@@ -18,7 +18,7 @@ const PublicProfileView = () => {
     try {
       setIsLoading(true);
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      const response = await axios.get(`${backendUrl}/public-profile/${userId}`);
+      const response = await axios.get(`${backendUrl}/api/public-profile/${userId}`);
       
       if (response.data.success && response.data.public_profile) {
         setPublicProfile(response.data.public_profile);
