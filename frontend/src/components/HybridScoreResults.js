@@ -819,22 +819,22 @@ const HybridScoreResults = () => {
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
               <Button
                 onClick={() => navigate('/profile')}
-                className="neo-btn-primary px-8 py-3"
+                className="neo-btn-primary px-6 sm:px-8 py-3"
               >
                 View All Scores
               </Button>
               <Button
                 onClick={() => navigate('/')}
-                className="neo-btn-secondary px-8 py-3"
+                className="neo-btn-secondary px-6 sm:px-8 py-3"
               >
                 Take Another Assessment
               </Button>
               <Button
                 onClick={() => navigate('/full-interview')}
-                className="neo-btn-secondary px-8 py-3"
+                className="neo-btn-secondary px-6 sm:px-8 py-3"
               >
                 Try Full Interview (55 Questions)
               </Button>
