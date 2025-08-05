@@ -869,44 +869,44 @@ const HybridInterviewFlow = () => {
               }}
             />
             
-            <div className="container mx-auto px-6 py-16">
-              <div className="grid lg:grid-cols-2 gap-16 items-center max-w-7xl mx-auto">
+            <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-16">
+              <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center max-w-7xl mx-auto">
                 {/* Left Column - Copy */}
-                <div className="space-y-8">
+                <div className="space-y-6 sm:space-y-8 text-center lg:text-left order-2 lg:order-1">
                   <div className="space-y-4">
-                    <h1 className="text-5xl lg:text-6xl font-bold leading-tight" style={{ color: 'var(--txt)' }}>
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight" style={{ color: 'var(--txt)' }}>
                       Build Muscle.<br />
                       Shave Minutes.<br />
                       <span style={{ color: 'var(--neon-primary)' }}>Know Your Score.</span>
                     </h1>
-                    <p className="text-xl lg:text-2xl leading-relaxed" style={{ color: 'var(--muted)' }}>
+                    <p className="text-lg sm:text-xl lg:text-2xl leading-relaxed px-4 sm:px-0" style={{ color: 'var(--muted)' }}>
                       The only 0-100 metric built for athletes who deadlift at dawn and hit tempo runs by dusk.
                     </p>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-4" style={{ position: 'relative', zIndex: 10 }}>
+                  <div className="flex flex-col sm:flex-row gap-4 px-4 sm:px-0" style={{ position: 'relative', zIndex: 10 }}>
                     <button 
                       onClick={startInterview}
                       disabled={isLoading}
-                      className="neon-button text-lg"
+                      className="neon-button text-base sm:text-lg w-full sm:w-auto"
                     >
                       {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
                     </button>
                     <button 
-                      className="px-8 py-4 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors"
+                      className="px-6 sm:px-8 py-3 sm:py-4 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors w-full sm:w-auto"
                       onClick={() => navigate('/leaderboard')}
                     >
                       🏆 Leaderboard
                     </button>
                   </div>
 
-                  <p className="text-sm" style={{ color: 'var(--muted)' }}>
+                  <p className="text-sm px-4 sm:px-0" style={{ color: 'var(--muted)' }}>
                     Backed by peer-reviewed concurrent-training studies and used by &gt;8,000 athletes.
                   </p>
                 </div>
 
                 {/* Right Column - Hero Dial */}
-                <div className="flex justify-center">
+                <div className="flex justify-center order-1 lg:order-2">
                   <div className="hero-dial relative">
                     <svg viewBox="0 0 280 280">
                       <circle
