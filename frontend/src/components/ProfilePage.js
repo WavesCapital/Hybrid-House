@@ -2340,15 +2340,15 @@ const ProfilePage = () => {
         <div className="space-y-12">{/* Reduced spacing: 48px desktop, 24px mobile */}
           
           {/* Hybrid Score History - Table Format */}
-          <div className="glass-card p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-primary flex items-center">
+          <div className="glass-card p-4 sm:p-6 lg:p-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
+              <h3 className="text-xl sm:text-2xl font-bold text-primary flex items-center">
                 Hybrid Score History
               </h3>
               
               {/* Privacy Controls */}
               {profiles.length > 0 && (
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                   <div className="text-sm text-secondary">
                     Leaderboard Visibility:
                   </div>
