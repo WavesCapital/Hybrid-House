@@ -1972,10 +1972,10 @@ const ProfilePage = () => {
 
           {/* Edit Profile (Right Column - 40% width) */}
           <div className="w-full lg:w-[40%]">
-            <div className="glass-card p-8">
-              <div className="flex items-center justify-between mb-8">
+            <div className="glass-card p-4 sm:p-6 lg:p-8">
+              <div className="flex items-center justify-between mb-6 sm:mb-8">
                 <div>
-                  <h3 className="text-2xl font-bold text-primary flex items-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-primary flex items-center">
                     Edit Profile
                   </h3>
                   {user && userProfile && (
@@ -1997,10 +1997,10 @@ const ProfilePage = () => {
               </div>
 
               {user && (userProfile || !isLoadingProfiles) ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-4 sm:gap-6">
                   {/* Personal Info */}
-                  <div className="space-y-4">
-                    <h4 className="text-lg font-semibold text-primary">Personal Info</h4>
+                  <div className="space-y-3 sm:space-y-4">
+                    <h4 className="text-base sm:text-lg font-semibold text-primary">Personal Info</h4>
                     
                     <div>
                       <label className="block text-sm font-medium text-secondary mb-2">Name</label>
