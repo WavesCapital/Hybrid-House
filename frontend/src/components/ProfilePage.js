@@ -1632,16 +1632,177 @@ const ProfilePage = () => {
           .mobile-fab { display: flex; }
         }
         
-        /* Responsive */
+        /* Mobile optimizations */
         @media (max-width: 1024px) {
+          .lg\\:space-y-16 > * + * { margin-top: 2rem; }
           .hero-row { flex-direction: column; }
           .main-grid { grid-template-columns: 1fr; }
         }
         
         @media (max-width: 768px) {
-          .neon-noir-canvas { padding: 16px; }
-          .hero-row { gap: 16px; }
-          .main-grid { gap: 16px; }
+          .neon-noir-canvas { padding: 1rem; }
+          .hero-row { gap: 1rem; flex-direction: column; }
+          .main-grid { gap: 1rem; grid-template-columns: 1fr; }
+          .space-y-16 > * + * { margin-top: 1.5rem; }
+          .md\\:space-y-8 > * + * { margin-top: 1.5rem; }
+          
+          /* Mobile header */
+          .px-6.py-4 {
+            padding: 0.75rem 1rem;
+          }
+          
+          .flex.items-center.space-x-4 {
+            gap: 0.5rem;
+          }
+          
+          .text-xl {
+            font-size: 1.125rem;
+          }
+          
+          .text-lg {
+            font-size: 1rem;
+          }
+          
+          /* Mobile radar cluster - convert to grid */
+          .cluster {
+            width: 100%;
+            height: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+          }
+          
+          .dial {
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            transform: none !important;
+          }
+          
+          .dial.big {
+            grid-column: 1 / -1;
+            justify-self: center;
+            width: 180px;
+            height: 180px;
+          }
+          
+          .dial.mini {
+            width: 100px;
+            height: 100px;
+            justify-self: center;
+          }
+          
+          .dial.big .score-number {
+            font-size: 2.5rem;
+          }
+          
+          .dial.mini .score-number {
+            font-size: 1rem;
+          }
+          
+          .dial.mini .score-label {
+            font-size: 0.625rem;
+          }
+          
+          .cluster-vignette {
+            display: none;
+          }
+          
+          /* Mobile glass cards */
+          .glass-card {
+            padding: 1rem;
+            margin: 0.5rem 0;
+          }
+          
+          /* Mobile forms */
+          .grid.grid-cols-1.lg\\:grid-cols-2 {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+          
+          .space-y-4 > * + * {
+            margin-top: 1rem;
+          }
+          
+          .space-y-6 > * + * {
+            margin-top: 1.5rem;
+          }
+          
+          /* Mobile table */
+          .score-archive-table {
+            min-width: 800px;
+            font-size: 0.875rem;
+          }
+          
+          .score-archive-table th:first-child,
+          .score-archive-table td:first-child {
+            position: sticky;
+            left: 0;
+            background: rgba(20, 20, 25, 0.95);
+            z-index: 5;
+          }
+          
+          .score-archive-table th:first-child {
+            z-index: 15;
+          }
+          
+          /* Mobile buttons */
+          .neon-button {
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .dial.big {
+            width: 160px;
+            height: 160px;
+          }
+          
+          .dial.mini {
+            width: 90px;
+            height: 90px;
+          }
+          
+          .dial.big .score-number {
+            font-size: 2rem;
+          }
+          
+          .dial.mini .score-number {
+            font-size: 0.875rem;
+          }
+          
+          .dial.mini .score-label {
+            font-size: 0.5rem;
+          }
+          
+          .glass-card {
+            padding: 0.75rem;
+          }
+          
+          .text-2xl {
+            font-size: 1.5rem;
+          }
+          
+          .text-xl {
+            font-size: 1.25rem;
+          }
+          
+          .text-lg {
+            font-size: 1.125rem;
+          }
+          
+          /* Very small screen adjustments */
+          .px-6.py-8 {
+            padding: 1rem;
+          }
+          
+          .container {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+          }
         }
         `}
       </style>
