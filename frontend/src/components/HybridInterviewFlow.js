@@ -665,10 +665,85 @@ const HybridInterviewFlow = () => {
           margin-bottom: 24px;
         }
 
+        /* Mobile Optimizations */
         @media (max-width: 768px) {
           .hero-dial {
-            width: 180px;
-            height: 180px;
+            width: 200px;
+            height: 200px;
+          }
+          
+          .hero-dial .score-number {
+            font-size: 3rem;
+          }
+          
+          .pillar-ring {
+            width: 100px;
+            height: 100px;
+          }
+          
+          .pillar-ring .ring-number {
+            font-size: 1.5rem;
+          }
+          
+          .pillar-ring .ring-label {
+            font-size: 0.75rem;
+          }
+          
+          .step-card {
+            padding: 20px;
+          }
+          
+          /* Mobile header improvements */
+          .container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+          }
+          
+          /* Mobile hero section */
+          .grid.lg\\:grid-cols-2 {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+          }
+          
+          /* Mobile typography */
+          .text-5xl.lg\\:text-6xl {
+            font-size: 2.5rem;
+            line-height: 1.1;
+          }
+          
+          .text-xl.lg\\:text-2xl {
+            font-size: 1.125rem;
+            line-height: 1.4;
+          }
+          
+          /* Mobile buttons */
+          .flex.flex-col.sm\\:flex-row {
+            flex-direction: column;
+            gap: 1rem;
+          }
+          
+          .neon-button {
+            width: 100%;
+            text-align: center;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+          }
+          
+          /* Mobile navigation */
+          .flex.items-center.space-x-3 {
+            gap: 0.5rem;
+          }
+          
+          .flex.items-center.space-x-3 button {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .hero-dial {
+            width: 160px;
+            height: 160px;
           }
           
           .hero-dial .score-number {
@@ -676,12 +751,51 @@ const HybridInterviewFlow = () => {
           }
           
           .pillar-ring {
-            width: 120px;
-            height: 120px;
+            width: 80px;
+            height: 80px;
+          }
+          
+          .pillar-ring .ring-number {
+            font-size: 1.25rem;
+          }
+          
+          .pillar-ring .ring-label {
+            font-size: 0.625rem;
+          }
+          
+          .text-5xl.lg\\:text-6xl {
+            font-size: 2rem;
           }
           
           .step-card {
-            padding: 24px;
+            padding: 1rem;
+          }
+          
+          .step-number {
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+          }
+          
+          /* Mobile header adjustments */
+          .px-6.py-4 {
+            padding: 0.75rem 1rem;
+          }
+          
+          .text-xl {
+            font-size: 1.125rem;
+          }
+          
+          /* Authority bar mobile */
+          .authority-logos {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+          }
+          
+          .authority-logos div {
+            font-size: 0.875rem;
           }
         }
 
