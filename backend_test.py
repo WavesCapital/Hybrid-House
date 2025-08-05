@@ -13544,206 +13544,64 @@ if __name__ == "__main__":
             return False
 
     def run_all_tests(self):
-        """Run all backend tests focused on authentication flow and user profile management"""
+        """Run all backend tests for mobile optimization review"""
+        print("🚀 Starting Backend API Tests for Mobile Optimization Review")
         print("=" * 80)
-        print("🚀 TESTING AUTHENTICATION FLOW AND USER PROFILE MANAGEMENT")
-        print("=" * 80)
         
-        # AUTHENTICATION FLOW TESTS (HIGH PRIORITY - REVIEW REQUEST)
-        auth_flow_tests = [
-            self.test_signup_endpoint_exists,
-            self.test_user_profile_creation_endpoint,
-            self.test_user_profile_update_endpoint_auth,
-            self.test_authentication_flow_endpoints,
-            self.test_jwt_authentication_protection,
-            self.test_session_data_structure,
-            self.test_authentication_comprehensive,
-        ]
-        
-        # AUTO-SAVE PROFILE DEBUG TESTS (HIGH PRIORITY - REVIEW REQUEST)
-        auto_save_tests = [
-            self.test_auto_save_profile_debug,
-            self.test_user_profile_update_model_validation,
-        ]
-        
-        # Privacy toggle and user-specific profile endpoint tests as requested in review
+        # Core system tests for mobile optimization review
         tests = [
-            # 1. Core System Health
-            self.test_api_root,
-            self.test_supabase_connection,
-            
-            # 2. User-Specific Profile Endpoint Tests (REVIEW REQUEST)
-            self.test_user_specific_profile_endpoint_authentication,
-            self.test_user_specific_profile_endpoint_complete_score_filtering,
-            self.test_user_specific_profile_endpoint_is_public_field,
-            
-            # 3. Privacy Update Endpoint Tests (REVIEW REQUEST)
-            self.test_privacy_update_endpoint_authentication_required,
-            self.test_privacy_update_ownership_validation,
-            self.test_privacy_update_error_handling,
-            self.test_privacy_update_endpoint_functionality,
-            self.test_privacy_update_endpoint_exists,
-            
-            # 4. Privacy Status and Leaderboard Integration (REVIEW REQUEST)
-            self.test_privacy_status_affects_leaderboard_visibility,
-            self.test_leaderboard_endpoint_structure,
-            self.test_leaderboard_privacy_filtering,
-            
-            # 5. Delete Profile Endpoint Tests (REVIEW REQUEST)
-            self.test_delete_athlete_profile_endpoint_authentication,
-            self.test_delete_athlete_profile_ownership_validation,
-            
-            # 6. Supporting Privacy System Tests
-            self.test_default_privacy_settings,
-            self.test_migration_endpoint_exists,
-            self.test_privacy_system_comprehensive,
-            
-            # 7. Leaderboard and Privacy Integration Tests
-            self.test_leaderboard_complete_scores,
-            self.test_leaderboard_field_names,
-            self.test_leaderboard_rankings_and_scores,
-            self.test_display_name_fallback_logic,
-            
-            # 7a. NEW: Leaderboard Display Name Source Tests (REVIEW REQUEST)
-            self.test_leaderboard_display_name_source_verification,
-            self.test_leaderboard_fallback_logic_verification,
-            self.test_leaderboard_data_structure_completeness,
-            self.test_leaderboard_display_name_comparison,
-            
-            # 7b. NEW: Leaderboard Ranking Bug Fix Tests (CURRENT REVIEW REQUEST)
-            self.test_leaderboard_ranking_bug_fix,
-            self.test_leaderboard_profile_id_structure,
-            self.test_leaderboard_sorting_verification,
-            self.test_public_vs_private_profiles,
-            
-            # 8. Supporting Database Tests
-            self.test_supabase_database_connection,
-            self.test_profile_data_retrieval,
-            self.test_individual_profile_access,
-            self.test_score_data_availability,
-            
-            # 9. Hybrid Score Filtering Tests (SUPPORTING)
-            self.test_hybrid_score_filtering_endpoint_exists,
-            self.test_hybrid_score_filtering_comprehensive,
-            
-            # 10. JWT Configuration
-            self.test_jwt_secret_configuration,
-            
-            # 11. User Profile Management and Leaderboard Data Flow Tests (CURRENT REVIEW REQUEST)
-            self.test_user_profile_update_endpoint,
-            self.test_leaderboard_age_gender_country_data,
-            self.test_complete_data_flow_profile_to_leaderboard,
-            self.test_user_profile_model_fields,
-            self.test_age_calculation_logic,
-            
-            # 12. NEW: Athlete Profile Endpoint Accessibility Tests (CURRENT REVIEW REQUEST)
-            self.test_athlete_profile_endpoint_accessibility,
-            self.test_athlete_profile_endpoint_response_structure,
-            self.test_hybrid_score_sharing_functionality,
-            
-            # 13. CRITICAL LEADERBOARD BUG INVESTIGATION TESTS (URGENT)
-            self.test_database_audit_is_public_values,
-            self.test_ranking_service_bug_check,
-            self.test_privacy_change_investigation,
-            self.test_default_setting_verification,
-            self.test_leaderboard_vs_database_comparison,
-            
-            # 14. NEW CRITICAL LEADERBOARD BUG INVESTIGATION TESTS (REVIEW REQUEST)
-            self.test_profile_creation_defaults,
-            self.test_database_migration_status,
-            self.test_leaderboard_empty_root_cause,
-            self.test_migration_script_execution,
-            self.test_profile_creation_path_analysis,
-            
-            # 15. NICK BARE INVESTIGATION AND DEDUPLICATION TESTS (CURRENT REVIEW REQUEST)
-            self.test_nick_bare_profile_investigation,
-            self.test_leaderboard_user_deduplication,
-            self.test_leaderboard_ranking_logic_comprehensive,
-            
-            # 16. NICK BARE DISPLAY NAME INVESTIGATION (PRIORITY TEST - CURRENT REVIEW)
-            self.test_nick_bare_display_name_investigation,
-            
-            # 17. CRITICAL NICK BARE PROFILE INVESTIGATION (USER CLARIFICATION - URGENT)
-            self.test_nick_bare_critical_investigation
+            ("API Root Endpoint", self.test_api_root),
+            ("Authentication Endpoints", self.test_authentication_endpoints),
+            ("User Profile Endpoints", self.test_user_profile_endpoints),
+            ("Athlete Profile Endpoints", self.test_athlete_profile_endpoints),
+            ("Leaderboard Endpoint", self.test_leaderboard_endpoint_comprehensive),
+            ("Ranking Endpoint", self.test_ranking_endpoint_comprehensive),
+            ("Interview Endpoints", self.test_interview_endpoints_comprehensive),
+            ("Data Integrity & Persistence", self.test_data_integrity_and_persistence),
+            ("Mobile Optimization Compatibility", self.test_mobile_optimization_compatibility),
+            ("Supabase Connection", self.test_supabase_connection),
+            ("CORS Configuration", self.test_cors_configuration),
+            ("JWT Secret Configuration", self.test_jwt_secret_configuration),
+            ("System Health Comprehensive", self.test_system_health_comprehensive)
         ]
         
-        # Run AUTHENTICATION FLOW TESTS first (HIGH PRIORITY)
-        print("\n" + "=" * 60)
-        print("🚨 PRIORITY: AUTHENTICATION FLOW BACKEND TESTS")
-        print("=" * 60)
+        # Run critical data structure audit if requested
+        import sys
+        if len(sys.argv) > 1 and sys.argv[1] == "--audit":
+            print("\n🚨 RUNNING CRITICAL DATA STRUCTURE AUDIT AS REQUESTED 🚨")
+            self.run_critical_data_structure_audit()
+            return
         
-        auth_flow_passed = 0
-        auth_flow_failed = 0
+        # Run all standard tests
+        passed = 0
+        total = len(tests)
         
-        for test in auth_flow_tests:
+        for test_name, test_func in tests:
+            print(f"\n🔍 Running: {test_name}")
+            print("-" * 60)
             try:
-                if test():
-                    auth_flow_passed += 1
-                else:
-                    auth_flow_failed += 1
-            except Exception as e:
-                print(f"❌ FAIL: {test.__name__} - Exception: {str(e)}")
-                auth_flow_failed += 1
-        
-        print(f"\n🔍 AUTHENTICATION FLOW RESULTS: {auth_flow_passed}/{auth_flow_passed + auth_flow_failed} tests passed")
-        
-        # Run AUTO-SAVE PROFILE DEBUG TESTS second (HIGH PRIORITY)
-        print("\n" + "=" * 60)
-        print("🚨 PRIORITY: AUTO-SAVE PROFILE DEBUG TESTS")
-        print("=" * 60)
-        
-        auto_save_passed = 0
-        auto_save_failed = 0
-        
-        for test in auto_save_tests:
-            try:
-                if test():
-                    auto_save_passed += 1
-                else:
-                    auto_save_failed += 1
-            except Exception as e:
-                print(f"❌ FAIL: {test.__name__} - Exception: {str(e)}")
-                auto_save_failed += 1
-        
-        print(f"\n🔍 AUTO-SAVE DEBUG RESULTS: {auto_save_passed}/{auto_save_passed + auto_save_failed} tests passed")
-        
-        # Continue with other tests
-        print("\n" + "=" * 60)
-        print("🔄 CONTINUING WITH OTHER BACKEND TESTS")
-        print("=" * 60)
-        
-        passed = auth_flow_passed + auto_save_passed
-        failed = auth_flow_failed + auto_save_failed
-        
-        for test in tests:
-            try:
-                if test():
+                if test_func():
                     passed += 1
-                else:
-                    failed += 1
             except Exception as e:
-                print(f"❌ FAIL: {test.__name__} - Exception: {str(e)}")
-                failed += 1
+                print(f"❌ {test_name} failed with exception: {e}")
         
-        print("\n" + "=" * 80)
-        print("📊 AUTHENTICATION FLOW AND USER PROFILE MANAGEMENT TESTING SUMMARY")
-        print("=" * 80)
-        print(f"✅ PASSED: {passed}")
-        print(f"❌ FAILED: {failed}")
-        print(f"📈 SUCCESS RATE: {(passed/(passed+failed)*100):.1f}%")
-        print("\n🔍 BREAKDOWN:")
-        print(f"   🔐 Authentication Flow Tests: {auth_flow_passed}/{auth_flow_passed + auth_flow_failed}")
-        print(f"   💾 Auto-Save Profile Tests: {auto_save_passed}/{auto_save_passed + auto_save_failed}")
-        print(f"   🔧 Other Backend Tests: {passed - auth_flow_passed - auto_save_passed}/{failed + passed - auth_flow_passed - auto_save_passed - auth_flow_failed - auto_save_failed}")
+        # Summary
+        print("\n" + "="*80)
+        print("📊 BACKEND API TEST SUMMARY - MOBILE OPTIMIZATION REVIEW")
+        print("="*80)
+        print(f"Tests passed: {passed}/{total}")
+        print(f"Success rate: {(passed/total)*100:.1f}%")
         
-        if failed == 0:
-            print("🎉 ALL TESTS PASSED! Privacy toggle functionality and user-specific profile endpoints are working correctly.")
-        elif passed >= len(tests) * 0.8:  # 80% success rate
-            print(f"✅ MOSTLY SUCCESSFUL! {passed}/{len(tests)} tests passed. Privacy toggle system is mostly functional.")
+        if passed == total:
+            print("🎉 ALL TESTS PASSED! Backend functionality maintained after mobile optimizations.")
+        elif passed >= total * 0.8:
+            print("✅ Most tests passed. Backend is mostly functional after mobile optimizations.")
         else:
-            print(f"⚠️  {failed} test(s) failed. Review the issues above.")
+            print("❌ Several tests failed. Mobile optimizations may have broken backend functionality.")
         
-        return passed, failed
+        print("="*80)
+        
+        return passed == total
 
     # ===== PRIVACY SYSTEM COMPREHENSIVE TESTS (POST-MIGRATION) =====
     
