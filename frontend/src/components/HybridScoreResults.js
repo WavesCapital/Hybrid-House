@@ -490,9 +490,6 @@ const HybridScoreResults = () => {
             <div className="flex items-center space-x-4">
               {user ? (
                 <div className="flex items-center space-x-3">
-                  <span className="text-sm text-gray-300">
-                    {user.email}
-                  </span>
                   <button
                     onClick={() => navigate('/profile')}
                     className="px-4 py-2 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors text-sm font-medium"
