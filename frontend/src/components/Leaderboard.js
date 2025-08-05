@@ -818,7 +818,7 @@ const Leaderboard = () => {
       </div>
 
       {/* Leaderboard Table */}
-      <div style={{ padding: '40px 20px' }}>
+      <div style={{ padding: '20px 16px' }}>
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
@@ -829,297 +829,400 @@ const Leaderboard = () => {
           overflow: 'hidden',
           boxShadow: '0 12px 32px -24px rgba(0, 0, 0, 0.65)'
         }}>
-          {/* Table Header */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '60px 200px 80px 80px 100px 100px repeat(6, 80px) 120px',
-            padding: '16px 20px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-            background: 'rgba(255, 255, 255, 0.02)',
-            fontSize: '12px',
-            fontWeight: '600',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            fontFamily: 'Inter, sans-serif'
-          }}>
-            <div style={{ color: '#8D9299', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('rank')}>
-              RANK {sortColumn === 'rank' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
-            </div>
-            <div style={{ color: '#8D9299', cursor: 'pointer', textAlign: 'left' }} onClick={() => handleSort('name')}>
-              NAME {sortColumn === 'name' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
-            </div>
-            <div style={{ color: '#8D9299', textAlign: 'center' }}>AGE</div>
-            <div style={{ color: '#8D9299', textAlign: 'center' }}>GENDER</div>
-            <div style={{ color: '#8D9299', textAlign: 'center' }}>COUNTRY</div>
-            <div style={{ color: sortColumn === 'hybrid' ? '#08F0FF' : '#8D9299', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
-                 onClick={() => handleSort('hybrid')}
-                 className="score-tooltip-container">
-              HYBRID {sortColumn === 'hybrid' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
-              <div className="score-tooltip">
-                <div style={{fontWeight: '700', marginBottom: '8px', color: '#08F0FF'}}>Hybrid Score</div>
-                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
-                  Final composite score combining all pillars:<br/>
-                  • 40% Strength Score<br/>
-                  • 40% Endurance Score<br/>
-                  • 10% Recovery Score<br/>
-                  • Balance Bonus (up to +10)<br/>
-                  • Data Completeness Penalty
-                </div>
+          {/* Mobile Card Layout for small screens */}
+          <div className="mobile-leaderboard" style={{ display: 'none' }}>
+            {filteredData.length === 0 ? (
+              <div style={{
+                textAlign: 'center',
+                padding: '40px 20px',
+                color: '#8D9299'
+              }}>
+                <TrendingUp size={48} style={{ margin: '0 auto 16px', color: '#08F0FF' }} />
+                <h3 style={{ color: '#FFFFFF', marginBottom: '8px' }}>No athletes match those filters</h3>
+                <p>Try adjusting your filters to see more results</p>
               </div>
-            </div>
-            <div style={{ color: '#5CFF5C', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
-                 onClick={() => handleSort('str')}
-                 className="score-tooltip-container">
-              STR {sortColumn === 'str' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
-              <div className="score-tooltip">
-                <div style={{fontWeight: '700', marginBottom: '8px', color: '#5CFF5C'}}>Strength Score</div>
-                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
-                  Based on 1-RM ratios to bodyweight:<br/>
-                  • Bench: 1.5x (M), 1.0x (F)<br/>
-                  • Squat: 2.0x (M), 1.5x (F)<br/>
-                  • Deadlift: 2.4x (M), 1.8x (F)<br/>
-                  Average of available lifts vs targets
-                </div>
-              </div>
-            </div>
-            <div style={{ color: '#FFA42D', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
-                 onClick={() => handleSort('spd')}
-                 className="score-tooltip-container">
-              SPD {sortColumn === 'spd' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
-              <div className="score-tooltip">
-                <div style={{fontWeight: '700', marginBottom: '8px', color: '#FFA42D'}}>Speed Score</div>
-                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
-                  Based on mile time performance:<br/>
-                  • Elite target: 5:30 (M), 6:15 (F)<br/>
-                  • Scoring cap: 330s (M), 375s (F)<br/>
-                  • Faster times = higher scores<br/>
-                  One of four endurance pillars
-                </div>
-              </div>
-            </div>
-            <div style={{ color: '#B96DFF', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
-                 onClick={() => handleSort('vo2')}
-                 className="score-tooltip-container">
-              VO₂ {sortColumn === 'vo2' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
-              <div className="score-tooltip">
-                <div style={{fontWeight: '700', marginBottom: '8px', color: '#B96DFF'}}>VO₂ Max Score</div>
-                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
-                  Aerobic fitness capacity:<br/>
-                  • Elite target: 70 (M), 60 (F)<br/>
-                  • Baseline: 30 ml/kg/min<br/>
-                  • Estimated from mile time if not provided<br/>
-                  One of four endurance pillars
-                </div>
-              </div>
-            </div>
-            <div style={{ color: '#16D7FF', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
-                 onClick={() => handleSort('dist')}
-                 className="score-tooltip-container">
-              DIST {sortColumn === 'dist' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
-              <div className="score-tooltip">
-                <div style={{fontWeight: '700', marginBottom: '8px', color: '#16D7FF'}}>Distance Score</div>
-                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
-                  Longest single run capacity:<br/>
-                  • Half Marathon: 13.1 mi (60% max)<br/>
-                  • Full Marathon: 26.2 mi (80% max)<br/>
-                  • Ultra Distance: 50+ mi (100%)<br/>
-                  One of four endurance pillars
-                </div>
-              </div>
-            </div>
-            <div style={{ color: '#F9F871', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
-                 onClick={() => handleSort('vol')}
-                 className="score-tooltip-container">
-              VOL {sortColumn === 'vol' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
-              <div className="score-tooltip">
-                <div style={{fontWeight: '700', marginBottom: '8px', color: '#F9F871'}}>Volume Score</div>
-                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
-                  Weekly running volume:<br/>
-                  • Moderate: 20 miles (60% max)<br/>
-                  • High: 40 miles (80% max)<br/>
-                  • Elite: 50+ miles (100%)<br/>
-                  One of four endurance pillars
-                </div>
-              </div>
-            </div>
-            <div style={{ color: '#2EFFC0', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
-                 onClick={() => handleSort('rec')}
-                 className="score-tooltip-container">
-              REC {sortColumn === 'rec' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
-              <div className="score-tooltip">
-                <div style={{fontWeight: '700', marginBottom: '8px', color: '#2EFFC0'}}>Recovery Score</div>
-                <div style={{fontSize: '12px', lineHeight: '1.4'}}>
-                  Recovery and health metrics:<br/>
-                  • 70% HRV (Heart Rate Variability)<br/>
-                  • 30% Resting Heart Rate<br/>
-                  • Higher HRV = better recovery<br/>
-                  • Lower RHR = better fitness
-                </div>
-              </div>
-            </div>
-            <div style={{ color: '#8D9299', textAlign: 'center' }}>UPDATED</div>
-          </div>
-
-          {/* Table Body */}
-          {filteredData.length === 0 ? (
-            <div style={{
-              padding: '60px 20px',
-              textAlign: 'center',
-              color: '#8D9299'
-            }}>
-              {leaderboardData.length > 0 ? 
-                "No athletes match those filters—try widening the range." :
-                "No athletes yet—be the first to complete the assessment!"
-              }
-            </div>
-          ) : (
-            filteredData.map((athlete, index) => {
-              const isTopThree = index < 3;
-              const medalEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
-              
-              return (
-                <div
-                  key={`${athlete.display_name}-${athlete.profile_id}`}
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '60px 200px 80px 80px 100px 100px repeat(6, 80px) 120px',
-                    padding: '12px 20px',
-                    height: '48px',
-                    alignItems: 'center',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                    background: index % 2 === 1 ? 'rgba(255, 255, 255, 0.02)' : 'transparent',
-                    transition: 'all 0.2s',
-                    cursor: 'pointer',
-                    fontFamily: 'Inter, sans-serif'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(8, 240, 255, 0.04)';
-                    e.currentTarget.style.borderLeft = '3px solid #08F0FF';
-                    e.currentTarget.style.paddingLeft = '17px';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = index % 2 === 1 ? 'rgba(255, 255, 255, 0.02)' : 'transparent';
-                    e.currentTarget.style.borderLeft = 'none';
-                    e.currentTarget.style.paddingLeft = '20px';
-                  }}
-                >
+            ) : (
+              filteredData.map((athlete, index) => (
+                <div key={athlete.profile_id || index} style={{
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}>
                   {/* Rank */}
-                  <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                  <div style={{
+                    minWidth: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: 'rgba(8, 240, 255, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '16px',
-                    fontWeight: isTopThree ? '800' : '600',
-                    color: '#FFFFFF',
-                    fontVariantNumeric: 'tabular-nums'
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    color: '#08F0FF'
                   }}>
-                    {medalEmoji && <span style={{ marginRight: '4px' }}>{medalEmoji}</span>}
-                    #{index + 1}
+                    {index + 1}
                   </div>
                   
-                  {/* Avatar + Name */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  {/* Main Info */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'space-between',
+                      marginBottom: '4px'
                     }}>
-                      <User size={16} color="white" />
-                    </div>
-                    <div>
                       <div style={{
-                        fontSize: '14px',
-                        fontWeight: isTopThree ? '700' : '600',
-                        color: '#FFFFFF'
+                        fontSize: '16px',
+                        fontWeight: '700',
+                        color: '#FFFFFF',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
                       }}>
                         {athlete.display_name}
                       </div>
+                      <div style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#08F0FF'
+                      }}>
+                        {formatScore(athlete.score)}
+                      </div>
                     </div>
+                    
+                    {/* Demographic info */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '12px',
+                      color: '#8D9299',
+                      marginBottom: '8px'
+                    }}>
+                      {athlete.age && <span>Age {athlete.age}</span>}
+                      {athlete.gender && <span>• {athlete.gender}</span>}
+                      {athlete.country && (
+                        <span>• {getCountryFlag(athlete.country)} {athlete.country}</span>
+                      )}
+                    </div>
+                    
+                    {/* Score breakdown - compact */}
+                    {athlete.score_breakdown && (
+                      <div style={{
+                        display: 'flex',
+                        gap: '8px',
+                        flexWrap: 'wrap'
+                      }}>
+                        {[
+                          { label: 'STR', value: athlete.score_breakdown.strengthScore, color: '#5CFF5C' },
+                          { label: 'SPD', value: athlete.score_breakdown.speedScore, color: '#FFA42D' },
+                          { label: 'VO₂', value: athlete.score_breakdown.vo2Score, color: '#B96DFF' },
+                          { label: 'REC', value: athlete.score_breakdown.recoveryScore, color: '#2EFFC0' }
+                        ].map(item => (
+                          <div key={item.label} style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '2px',
+                            fontSize: '10px',
+                            color: item.color
+                          }}>
+                            <span style={{ fontWeight: '600' }}>{item.label}</span>
+                            <span>{Math.round(item.value || 0)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          
+          {/* Desktop Table Layout */}
+          <div className="desktop-leaderboard" style={{ display: 'block' }}>
+            {/* Table Header */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '60px 200px 80px 80px 100px 100px repeat(6, 80px) 120px',
+              padding: '16px 20px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              background: 'rgba(255, 255, 255, 0.02)',
+              fontSize: '12px',
+              fontWeight: '600',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              <div style={{ color: '#8D9299', cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('rank')}>
+                RANK {sortColumn === 'rank' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+              </div>
+              <div style={{ color: '#8D9299', cursor: 'pointer', textAlign: 'left' }} onClick={() => handleSort('name')}>
+                NAME {sortColumn === 'name' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+              </div>
+              <div style={{ color: '#8D9299', textAlign: 'center' }}>AGE</div>
+              <div style={{ color: '#8D9299', textAlign: 'center' }}>GENDER</div>
+              <div style={{ color: '#8D9299', textAlign: 'center' }}>COUNTRY</div>
+              <div style={{ color: sortColumn === 'hybrid' ? '#08F0FF' : '#8D9299', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                   onClick={() => handleSort('hybrid')}
+                   className="score-tooltip-container">
+                HYBRID {sortColumn === 'hybrid' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+                <div className="score-tooltip">
+                  <div style={{fontWeight: '700', marginBottom: '8px', color: '#08F0FF'}}>Hybrid Score</div>
+                  <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                    Final composite score combining all pillars:<br/>
+                    • 40% Strength Score<br/>
+                    • 40% Endurance Score<br/>
+                    • 10% Recovery Score<br/>
+                    • Balance Bonus (up to +10)<br/>
+                    • Data Completeness Penalty
+                  </div>
+                </div>
+              </div>
+              <div style={{ color: '#5CFF5C', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                   onClick={() => handleSort('str')}
+                   className="score-tooltip-container">
+                STR {sortColumn === 'str' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+                <div className="score-tooltip">
+                  <div style={{fontWeight: '700', marginBottom: '8px', color: '#5CFF5C'}}>Strength Score</div>
+                  <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                    Based on 1-RM ratios to bodyweight:<br/>
+                    • Bench: 1.5x (M), 1.0x (F)<br/>
+                    • Squat: 2.0x (M), 1.5x (F)<br/>
+                    • Deadlift: 2.4x (M), 1.8x (F)<br/>
+                    Average of available lifts vs targets
+                  </div>
+                </div>
+              </div>
+              <div style={{ color: '#FFA42D', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                   onClick={() => handleSort('spd')}
+                   className="score-tooltip-container">
+                SPD {sortColumn === 'spd' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+                <div className="score-tooltip">
+                  <div style={{fontWeight: '700', marginBottom: '8px', color: '#FFA42D'}}>Speed Score</div>
+                  <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                    Based on mile time performance:<br/>
+                    • Elite target: 5:30 (M), 6:15 (F)<br/>
+                    • Scoring cap: 330s (M), 375s (F)<br/>
+                    • Faster times = higher scores<br/>
+                    One of four endurance pillars
+                  </div>
+                </div>
+              </div>
+              <div style={{ color: '#B96DFF', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                   onClick={() => handleSort('vo2')}
+                   className="score-tooltip-container">
+                VO₂ {sortColumn === 'vo2' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+                <div className="score-tooltip">
+                  <div style={{fontWeight: '700', marginBottom: '8px', color: '#B96DFF'}}>VO₂ Max Score</div>
+                  <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                    Aerobic fitness capacity:<br/>
+                    • Elite target: 70 (M), 60 (F)<br/>
+                    • Baseline: 30 ml/kg/min<br/>
+                    • Estimated from mile time if not provided<br/>
+                    One of four endurance pillars
+                  </div>
+                </div>
+              </div>
+              <div style={{ color: '#16D7FF', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                   onClick={() => handleSort('dist')}
+                   className="score-tooltip-container">
+                DIST {sortColumn === 'dist' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+                <div className="score-tooltip">
+                  <div style={{fontWeight: '700', marginBottom: '8px', color: '#16D7FF'}}>Distance Score</div>
+                  <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                    Longest single run capacity:<br/>
+                    • Half Marathon: 13.1 mi (60% max)<br/>
+                    • Full Marathon: 26.2 mi (80% max)<br/>
+                    • Ultra Distance: 50+ mi (100%)<br/>
+                    One of four endurance pillars
+                  </div>
+                </div>
+              </div>
+              <div style={{ color: '#F9F871', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                   onClick={() => handleSort('vol')}
+                   className="score-tooltip-container">
+                VOL {sortColumn === 'vol' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+                <div className="score-tooltip">
+                  <div style={{fontWeight: '700', marginBottom: '8px', color: '#F9F871'}}>Volume Score</div>
+                  <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                    Weekly running volume:<br/>
+                    • Moderate: 20 miles (60% max)<br/>
+                    • High: 40 miles (80% max)<br/>
+                    • Elite: 50+ miles (100%)<br/>
+                    One of four endurance pillars
+                  </div>
+                </div>
+              </div>
+              <div style={{ color: '#2EFFC0', cursor: 'pointer', textAlign: 'center', position: 'relative' }} 
+                   onClick={() => handleSort('rec')}
+                   className="score-tooltip-container">
+                REC {sortColumn === 'rec' && (sortDirection === 'asc' ? <ChevronUp size={12} style={{display: 'inline', color: '#08F0FF'}} /> : <ChevronDown size={12} style={{display: 'inline', color: '#08F0FF'}} />)}
+                <div className="score-tooltip">
+                  <div style={{fontWeight: '700', marginBottom: '8px', color: '#2EFFC0'}}>Recovery Score</div>
+                  <div style={{fontSize: '12px', lineHeight: '1.4'}}>
+                    Recovery and readiness metrics:<br/>
+                    • HRV: Higher = better recovery<br/>
+                    • Resting HR: Lower = better fitness<br/>
+                    • Sleep quality and duration<br/>
+                    Critical for hybrid performance
+                  </div>
+                </div>
+              </div>
+              <div style={{ color: '#8D9299', textAlign: 'center' }}>ACTIONS</div>
+            </div>
+
+            {/* Table Rows */}
+            {filteredData.length === 0 ? (
+              <div style={{
+                textAlign: 'center',
+                padding: '40px 20px',
+                color: '#8D9299'
+              }}>
+                <TrendingUp size={48} style={{ margin: '0 auto 16px', color: '#08F0FF' }} />
+                <h3 style={{ color: '#FFFFFF', marginBottom: '8px' }}>No athletes match those filters</h3>
+                <p>Try adjusting your filters to see more results</p>
+              </div>
+            ) : (
+              filteredData.map((athlete, index) => (
+                <div key={athlete.profile_id || index} style={{
+                  display: 'grid',
+                  gridTemplateColumns: '60px 200px 80px 80px 100px 100px repeat(6, 80px) 120px',
+                  padding: '12px 20px',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                  background: index % 2 === 0 ? 'rgba(255, 255, 255, 0.01)' : 'transparent',
+                  alignItems: 'center',
+                  fontSize: '14px',
+                  fontFamily: 'Inter, sans-serif',
+                  transition: 'background-color 0.2s ease'
+                }}>
+                  {/* Rank */}
+                  <div style={{
+                    textAlign: 'center',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    color: '#08F0FF'
+                  }}>
+                    {index + 1}
                   </div>
                   
-                  {/* Age, Sex, Country */}
-                  <div style={{ textAlign: 'center', color: '#8D9299', fontSize: '14px', fontVariantNumeric: 'tabular-nums' }}>
-                    {athlete.age || '--'}
+                  {/* Name */}
+                  <div style={{
+                    color: '#FFFFFF',
+                    fontWeight: '600',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {athlete.display_name}
                   </div>
-                  <div style={{ textAlign: 'center', color: '#8D9299', fontSize: '14px' }}>
-                    {athlete.gender || '--'}
+                  
+                  {/* Age */}
+                  <div style={{
+                    textAlign: 'center',
+                    color: athlete.age ? '#FFFFFF' : '#8D9299'
+                  }}>
+                    {athlete.age || '—'}
                   </div>
-                  <div style={{ textAlign: 'center', color: '#8D9299', fontSize: '14px' }}>
-                    {athlete.country ? getCountryFlag(athlete.country) : '--'}
+                  
+                  {/* Gender */}
+                  <div style={{
+                    textAlign: 'center',
+                    color: athlete.gender ? '#FFFFFF' : '#8D9299',
+                    textTransform: 'capitalize'
+                  }}>
+                    {athlete.gender || '—'}
+                  </div>
+                  
+                  {/* Country */}
+                  <div style={{
+                    textAlign: 'center',
+                    color: athlete.country ? '#FFFFFF' : '#8D9299'
+                  }}>
+                    {athlete.country ? `${getCountryFlag(athlete.country)} ${athlete.country}` : '—'}
                   </div>
                   
                   {/* Hybrid Score */}
                   <div style={{
                     textAlign: 'center',
-                    fontSize: '16px',
+                    fontSize: '18px',
                     fontWeight: '700',
-                    color: athlete.score >= 80 ? '#08F0FF' : '#FFFFFF',
-                    fontVariantNumeric: 'tabular-nums'
+                    color: '#08F0FF'
                   }}>
                     {formatScore(athlete.score)}
                   </div>
                   
-                  {/* Pillar Scores */}
+                  {/* Sub-scores */}
                   {athlete.score_breakdown ? [
-                    { score: athlete.score_breakdown.strengthScore, color: '#5CFF5C' },
-                    { score: athlete.score_breakdown.speedScore, color: '#FFA42D' },
-                    { score: athlete.score_breakdown.vo2Score, color: '#B96DFF' },
-                    { score: athlete.score_breakdown.distanceScore, color: '#16D7FF' },
-                    { score: athlete.score_breakdown.volumeScore, color: '#F9F871' },
-                    { score: athlete.score_breakdown.recoveryScore, color: '#2EFFC0' }
-                  ].map((pillar, idx) => (
-                    <div key={idx} style={{
-                      textAlign: 'center'
-                    }}>
-                      <div style={{
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        color: '#FFFFFF',
-                        fontVariantNumeric: 'tabular-nums'
-                      }}>
-                        {pillar.score ? formatScore(pillar.score) : '--'}
-                      </div>
-                    </div>
-                  )) : Array(6).fill(0).map((_, idx) => (
-                    <div key={idx} style={{
+                    { key: 'strengthScore', color: '#5CFF5C' },
+                    { key: 'speedScore', color: '#FFA42D' },
+                    { key: 'vo2Score', color: '#B96DFF' },
+                    { key: 'distanceScore', color: '#16D7FF' },
+                    { key: 'volumeScore', color: '#F9F871' },
+                    { key: 'recoveryScore', color: '#2EFFC0' }
+                  ].map(({ key, color }) => (
+                    <div key={key} style={{
                       textAlign: 'center',
-                      color: '#8D9299',
-                      fontSize: '14px'
-                    }}>--</div>
-                  ))}
+                      color: athlete.score_breakdown[key] ? color : '#8D9299',
+                      fontWeight: '600'
+                    }}>
+                      {athlete.score_breakdown[key] ? Math.round(athlete.score_breakdown[key]) : '—'}
+                    </div>
+                  )) : (
+                    Array(6).fill(null).map((_, i) => (
+                      <div key={i} style={{ textAlign: 'center', color: '#8D9299' }}>—</div>
+                    ))
+                  )}
                   
-                  {/* Updated */}
-                  <div style={{
-                    textAlign: 'center',
-                    fontSize: '12px',
-                    color: '#8D9299',
-                    fontVariantNumeric: 'tabular-nums'
-                  }}>
-                    {athlete.completed_at ? 
-                      new Date(athlete.completed_at).toLocaleDateString() : 
-                      '--'
-                    }
+                  {/* Actions */}
+                  <div style={{ textAlign: 'center' }}>
+                    <button
+                      onClick={() => window.open(`/hybrid-score/${athlete.profile_id}`, '_blank')}
+                      style={{
+                        background: 'rgba(8, 240, 255, 0.1)',
+                        border: '1px solid rgba(8, 240, 255, 0.3)',
+                        borderRadius: '6px',
+                        padding: '4px 8px',
+                        color: '#08F0FF',
+                        fontSize: '11px',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'rgba(8, 240, 255, 0.2)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'rgba(8, 240, 255, 0.1)';
+                      }}
+                    >
+                      View
+                    </button>
                   </div>
                 </div>
-              );
-            })
-          )}
-        </div>
-
-        {/* Table Caption */}
-        <div style={{
-          textAlign: 'center',
-          marginTop: '16px',
-          fontSize: '12px',
-          color: '#8D9299'
-        }}>
-          Scrolling shows the top {leaderboardData.length} athletes • Use filters to dial in.
+              ))
+            )}
+          </div>
         </div>
       </div>
+      
+      {/* Mobile/Desktop Media Query CSS */}
+      <style>
+        {`
+          @media (max-width: 768px) {
+            .mobile-leaderboard { display: block !important; }
+            .desktop-leaderboard { display: none !important; }
+          }
+          
+          @media (min-width: 769px) {
+            .mobile-leaderboard { display: none !important; }
+            .desktop-leaderboard { display: block !important; }
+          }
+        `}
+      </style>
 
       {/* CTA Ribbon */}
       {showCTA && (
