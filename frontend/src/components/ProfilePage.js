@@ -1835,25 +1835,25 @@ const ProfilePage = () => {
 
       {/* Header */}
       <header className="border-b border-white/10 bg-black/20 backdrop-blur-sm">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 accent-gradient rounded-lg flex items-center justify-center">
-                  <Activity className="w-5 h-5 text-white" />
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 accent-gradient rounded-lg flex items-center justify-center">
+                  <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-primary">Hybrid House</h1>
-                  <p className="text-xs text-muted">Performance Analytics</p>
+                  <h1 className="text-lg sm:text-xl font-bold text-primary">Hybrid House</h1>
+                  <p className="text-xs text-muted hidden sm:block">Performance Analytics</p>
                 </div>
               </div>
-              <div className="h-6 w-px bg-white/20"></div>
-              <h2 className="text-lg font-semibold text-secondary">Profile</h2>
+              <div className="h-4 sm:h-6 w-px bg-white/20"></div>
+              <h2 className="text-base sm:text-lg font-semibold text-secondary">Profile</h2>
             </div>
             
-            <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 accent-gradient rounded-full flex items-center justify-center">
-                <User className="w-5 h-5 text-white" />
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 accent-gradient rounded-full flex items-center justify-center">
+                <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
             </div>
           </div>
