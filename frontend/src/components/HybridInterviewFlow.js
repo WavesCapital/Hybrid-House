@@ -994,29 +994,29 @@ const HybridInterviewFlow = () => {
           </section>
 
           {/* How It Works */}
-          <section className="py-24 bg-black">
-            <div className="container mx-auto px-6">
+          <section className="py-16 sm:py-24 bg-black">
+            <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-6xl mx-auto">
-                <h2 className="text-4xl font-bold text-center mb-16" style={{ color: 'var(--txt)' }}>
+                <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 sm:mb-16" style={{ color: 'var(--txt)' }}>
                   How It Works
                 </h2>
                 
-                <div className="grid md:grid-cols-3 gap-8 mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
                   <div className="step-card">
                     <div className="step-number">1</div>
-                    <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>Answer 11 essentials</h3>
+                    <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" style={{ color: 'var(--txt)' }}>Answer 11 essentials</h3>
                     <p style={{ color: 'var(--muted)' }}>Weight, mile time, lifts, and key metrics</p>
                   </div>
                   
                   <div className="step-card">
                     <div className="step-number">2</div>
-                    <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>AI crunches data</h3>
+                    <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" style={{ color: 'var(--txt)' }}>AI crunches data</h3>
                     <p style={{ color: 'var(--muted)' }}>Our AI normalizes data → algorithm v5.0</p>
                   </div>
                   
                   <div className="step-card">
                     <div className="step-number">3</div>
-                    <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--txt)' }}>Score + plan</h3>
+                    <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" style={{ color: 'var(--txt)' }}>Score + plan</h3>
                     <p style={{ color: 'var(--muted)' }}>Dial, pillar scores, and 5 actionable tips</p>
                   </div>
                 </div>
@@ -1025,7 +1025,7 @@ const HybridInterviewFlow = () => {
                   <button 
                     onClick={startInterview}
                     disabled={isLoading}
-                    className="neon-button text-lg"
+                    className="neon-button text-base sm:text-lg"
                   >
                     {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
                   </button>
