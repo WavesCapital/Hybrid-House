@@ -1282,6 +1282,16 @@ test_plan:
 - **Auth Forms:** Enhanced mobile input styling, touch targets, and responsive layout
 - **General:** Proper touch targets (44px+), responsive typography, mobile-first design approach
 
+### Public Profile Feature Implementation ✅
+**Date:** January 5, 2025  
+**Changes:** Added public profile viewing capability for leaderboard athletes
+- **Backend:** New GET /api/public-profile/{user_id} endpoint to fetch public profile data and public athlete scores
+- **Frontend:** Created PublicProfileView component for viewing other athletes' public profiles
+- **Routing:** Added /athlete/:userId route for public profile access
+- **Leaderboard:** Made athlete names clickable buttons that navigate to their public profiles
+- **Privacy:** Respects user privacy settings, only shows public athlete profiles and scores
+- **Features:** Public profiles display athlete info, assessment history, best scores, and join date
+
 ### Previous Updates and Fixes ✅
 
 agent_communication:
