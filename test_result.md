@@ -1296,6 +1296,7 @@ test_plan:
 - **Leaderboard:** Made athlete names clickable buttons that navigate to their public profiles
 - **Privacy:** Respects user privacy settings, only shows public athlete profiles and scores
 - **Features:** Public profiles display athlete info, assessment history, best scores, and join date
+- **Bug Fix:** Fixed missing /api prefix in API call causing "Profile not found" errors
 
 ### Previous Updates and Fixes ✅
 
