@@ -1128,15 +1128,32 @@ const Leaderboard = () => {
                   </div>
                   
                   {/* Name */}
-                  <div style={{
-                    color: '#FFFFFF',
-                    fontWeight: '600',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}>
+                  <button
+                    onClick={() => navigate(`/athlete/${athlete.user_id}`)}
+                    style={{
+                      color: '#FFFFFF',
+                      fontWeight: '600',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      padding: '0',
+                      textDecoration: 'none',
+                      transition: 'color 0.2s ease',
+                      width: '100%'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.color = '#08F0FF';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.color = '#FFFFFF';
+                    }}
+                  >
                     {athlete.display_name}
-                  </div>
+                  </button>
                   
                   {/* Age */}
                   <div style={{
