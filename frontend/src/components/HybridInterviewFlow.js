@@ -709,9 +709,6 @@ const HybridInterviewFlow = () => {
                 <div className="flex items-center space-x-4">
                   {user ? (
                     <div className="flex items-center space-x-3">
-                      <span className="text-sm" style={{ color: 'var(--muted)' }}>
-                        Welcome, {user.email?.split('@')[0]}
-                      </span>
                       <button
                         onClick={() => navigate('/profile')}
                         className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-[#08F0FF] transition-colors text-sm"
