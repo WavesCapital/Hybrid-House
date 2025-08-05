@@ -943,13 +943,13 @@ const HybridInterviewFlow = () => {
           </section>
 
           {/* Authority Bar */}
-          <section className="py-8 border-t border-b border-gray-800">
-            <div className="container mx-auto px-6">
-              <div className="flex justify-center items-center space-x-12 authority-logos">
-                <div className="text-gray-500 font-semibold">Men's Health</div>
-                <div className="text-gray-500 font-semibold">HYROX</div>
-                <div className="text-gray-500 font-semibold">CrossFit Community</div>
-                <div className="text-gray-500 font-semibold">Bare Performance</div>
+          <section className="py-6 sm:py-8 border-t border-b border-gray-800">
+            <div className="container mx-auto px-4 sm:px-6">
+              <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8 lg:gap-12 authority-logos">
+                <div className="text-gray-500 font-semibold text-sm sm:text-base">Men's Health</div>
+                <div className="text-gray-500 font-semibold text-sm sm:text-base">HYROX</div>
+                <div className="text-gray-500 font-semibold text-sm sm:text-base">CrossFit Community</div>
+                <div className="text-gray-500 font-semibold text-sm sm:text-base">Bare Performance</div>
               </div>
             </div>
           </section>
