@@ -13222,6 +13222,327 @@ if __name__ == "__main__":
             self.log_test("Nick Bare Critical Investigation", False, "Critical investigation failed", str(e))
             return False
 
+    def test_authentication_endpoints(self):
+        """Test authentication endpoints - POST /api/auth (login/signup)"""
+        try:
+            print("\n🔐 AUTHENTICATION ENDPOINTS TEST 🔐")
+            print("=" * 45)
+            
+            # Test signup endpoint
+            signup_data = {
+                "user_id": "test-user-123",
+                "email": "test@example.com"
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/auth/signup", json=signup_data)
+            
+            if response.status_code in [200, 201, 400]:  # 400 might be "user already exists"
+                self.log_test("Authentication Signup Endpoint", True, f"Signup endpoint responding correctly with HTTP {response.status_code}")
+            else:
+                self.log_test("Authentication Signup Endpoint", False, f"Unexpected response: HTTP {response.status_code}", response.text)
+                return False
+            
+            return True
+            
+        except Exception as e:
+            self.log_test("Authentication Endpoints", False, "Authentication endpoints test failed", str(e))
+            return False
+    
+    def test_user_profile_endpoints(self):
+        """Test user profile endpoints - GET /api/user-profile/me, PUT /api/user-profile/me"""
+        try:
+            print("\n👤 USER PROFILE ENDPOINTS TEST 👤")
+            print("=" * 40)
+            
+            # Test GET /api/user-profile/me without auth (should fail)
+            response = self.session.get(f"{API_BASE_URL}/user-profile/me")
+            
+            if response.status_code in [401, 403]:
+                self.log_test("GET User Profile (No Auth)", True, f"Correctly rejected with HTTP {response.status_code}")
+            else:
+                self.log_test("GET User Profile (No Auth)", False, f"Should reject but got HTTP {response.status_code}", response.text)
+                return False
+            
+            # Test PUT /api/user-profile/me without auth (should fail)
+            profile_update = {
+                "name": "Test User",
+                "display_name": "TestUser",
+                "location": "Test City",
+                "country": "US"
+            }
+            
+            response = self.session.put(f"{API_BASE_URL}/user-profile/me", json=profile_update)
+            
+            if response.status_code in [401, 403]:
+                self.log_test("PUT User Profile (No Auth)", True, f"Correctly rejected with HTTP {response.status_code}")
+            else:
+                self.log_test("PUT User Profile (No Auth)", False, f"Should reject but got HTTP {response.status_code}", response.text)
+                return False
+            
+            return True
+            
+        except Exception as e:
+            self.log_test("User Profile Endpoints", False, "User profile endpoints test failed", str(e))
+            return False
+    
+    def test_athlete_profile_endpoints(self):
+        """Test athlete profile endpoints - GET /api/athlete-profiles, POST /api/athlete-profiles, PUT /api/athlete-profiles/{profile_id}"""
+        try:
+            print("\n🏃 ATHLETE PROFILE ENDPOINTS TEST 🏃")
+            print("=" * 45)
+            
+            # Test GET /api/athlete-profiles (should work without auth - public endpoint)
+            response = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'profiles' in data and 'total' in data:
+                    self.log_test("GET Athlete Profiles", True, f"Public endpoint working, returned {data.get('total', 0)} profiles")
+                else:
+                    self.log_test("GET Athlete Profiles", False, "Invalid response structure", data)
+                    return False
+            else:
+                self.log_test("GET Athlete Profiles", False, f"HTTP {response.status_code}", response.text)
+                return False
+            
+            # Test POST /api/athlete-profiles without auth (should fail)
+            profile_data = {
+                "profile_json": {"first_name": "Test", "last_name": "User"},
+                "score_data": {"hybridScore": 75.0}
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=profile_data)
+            
+            if response.status_code in [401, 403]:
+                self.log_test("POST Athlete Profile (No Auth)", True, f"Correctly rejected with HTTP {response.status_code}")
+            else:
+                self.log_test("POST Athlete Profile (No Auth)", False, f"Should reject but got HTTP {response.status_code}", response.text)
+                return False
+            
+            # Test PUT /api/athlete-profiles/{profile_id} without auth (should fail)
+            test_profile_id = "test-profile-123"
+            response = self.session.put(f"{API_BASE_URL}/athlete-profile/{test_profile_id}", json=profile_data)
+            
+            if response.status_code in [401, 403]:
+                self.log_test("PUT Athlete Profile (No Auth)", True, f"Correctly rejected with HTTP {response.status_code}")
+            else:
+                self.log_test("PUT Athlete Profile (No Auth)", False, f"Should reject but got HTTP {response.status_code}", response.text)
+                return False
+            
+            return True
+            
+        except Exception as e:
+            self.log_test("Athlete Profile Endpoints", False, "Athlete profile endpoints test failed", str(e))
+            return False
+    
+    def test_leaderboard_endpoint_comprehensive(self):
+        """Test leaderboard endpoint - GET /api/leaderboard with various query parameters"""
+        try:
+            print("\n🏆 LEADERBOARD ENDPOINT TEST 🏆")
+            print("=" * 35)
+            
+            # Test basic leaderboard
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'leaderboard' in data and 'total' in data:
+                    leaderboard = data.get('leaderboard', [])
+                    total = data.get('total', 0)
+                    
+                    self.log_test("GET Leaderboard Basic", True, f"Leaderboard working, returned {total} athletes")
+                    
+                    # Check if leaderboard has expected structure
+                    if leaderboard and len(leaderboard) > 0:
+                        first_entry = leaderboard[0]
+                        expected_fields = ['display_name', 'score', 'rank']
+                        missing_fields = [field for field in expected_fields if field not in first_entry]
+                        
+                        if not missing_fields:
+                            self.log_test("Leaderboard Structure", True, "Leaderboard entries have required fields")
+                        else:
+                            self.log_test("Leaderboard Structure", False, f"Missing fields: {missing_fields}", first_entry)
+                            return False
+                    
+                    # Test with query parameters (age, gender, country filters)
+                    test_params = [
+                        {"age_min": "18", "age_max": "65"},
+                        {"gender": "male"},
+                        {"country": "US"}
+                    ]
+                    
+                    for params in test_params:
+                        param_str = "&".join([f"{k}={v}" for k, v in params.items()])
+                        filter_response = self.session.get(f"{API_BASE_URL}/leaderboard?{param_str}")
+                        
+                        if filter_response.status_code == 200:
+                            filter_data = filter_response.json()
+                            self.log_test(f"Leaderboard Filter ({param_str})", True, f"Filter working, returned {filter_data.get('total', 0)} athletes")
+                        else:
+                            self.log_test(f"Leaderboard Filter ({param_str})", False, f"HTTP {filter_response.status_code}", filter_response.text)
+                            return False
+                    
+                else:
+                    self.log_test("GET Leaderboard Basic", False, "Invalid response structure", data)
+                    return False
+            else:
+                self.log_test("GET Leaderboard Basic", False, f"HTTP {response.status_code}", response.text)
+                return False
+            
+            return True
+            
+        except Exception as e:
+            self.log_test("Leaderboard Endpoint Comprehensive", False, "Leaderboard endpoint test failed", str(e))
+            return False
+    
+    def test_ranking_endpoint_comprehensive(self):
+        """Test ranking endpoint - GET /api/ranking/{profile_id}"""
+        try:
+            print("\n📊 RANKING ENDPOINT TEST 📊")
+            print("=" * 30)
+            
+            # Test with a test profile ID (should return 404 for non-existent profile)
+            test_profile_id = "non-existent-profile-123"
+            response = self.session.get(f"{API_BASE_URL}/ranking/{test_profile_id}")
+            
+            if response.status_code == 404:
+                self.log_test("GET Ranking (Non-existent)", True, "Correctly returned 404 for non-existent profile")
+            else:
+                self.log_test("GET Ranking (Non-existent)", False, f"Expected 404 but got HTTP {response.status_code}", response.text)
+                return False
+            
+            # Test with invalid UUID format
+            invalid_profile_id = "invalid-uuid"
+            response = self.session.get(f"{API_BASE_URL}/ranking/{invalid_profile_id}")
+            
+            if response.status_code in [400, 404, 500]:  # Various valid error responses for invalid UUID
+                self.log_test("GET Ranking (Invalid UUID)", True, f"Correctly handled invalid UUID with HTTP {response.status_code}")
+            else:
+                self.log_test("GET Ranking (Invalid UUID)", False, f"Unexpected response for invalid UUID: HTTP {response.status_code}", response.text)
+                return False
+            
+            return True
+            
+        except Exception as e:
+            self.log_test("Ranking Endpoint Comprehensive", False, "Ranking endpoint test failed", str(e))
+            return False
+    
+    def test_interview_endpoints_comprehensive(self):
+        """Test interview endpoints - POST /api/hybrid-interview/start, POST /api/hybrid-interview/chat"""
+        try:
+            print("\n💬 INTERVIEW ENDPOINTS TEST 💬")
+            print("=" * 35)
+            
+            # Test POST /api/hybrid-interview/start without auth (should fail)
+            response = self.session.post(f"{API_BASE_URL}/hybrid-interview/start", json={})
+            
+            if response.status_code in [401, 403]:
+                self.log_test("POST Hybrid Interview Start (No Auth)", True, f"Correctly rejected with HTTP {response.status_code}")
+            else:
+                self.log_test("POST Hybrid Interview Start (No Auth)", False, f"Should reject but got HTTP {response.status_code}", response.text)
+                return False
+            
+            # Test POST /api/hybrid-interview/chat without auth (should fail)
+            chat_data = {
+                "messages": [{"role": "user", "content": "Hello"}],
+                "session_id": "test-session-123"
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/hybrid-interview/chat", json=chat_data)
+            
+            if response.status_code in [401, 403]:
+                self.log_test("POST Hybrid Interview Chat (No Auth)", True, f"Correctly rejected with HTTP {response.status_code}")
+            else:
+                self.log_test("POST Hybrid Interview Chat (No Auth)", False, f"Should reject but got HTTP {response.status_code}", response.text)
+                return False
+            
+            return True
+            
+        except Exception as e:
+            self.log_test("Interview Endpoints Comprehensive", False, "Interview endpoints test failed", str(e))
+            return False
+    
+    def test_data_integrity_and_persistence(self):
+        """Test data integrity and persistence across endpoints"""
+        try:
+            print("\n🔒 DATA INTEGRITY TEST 🔒")
+            print("=" * 30)
+            
+            # Test that athlete profiles endpoint returns consistent data
+            response1 = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            response2 = self.session.get(f"{API_BASE_URL}/athlete-profiles")
+            
+            if response1.status_code == 200 and response2.status_code == 200:
+                data1 = response1.json()
+                data2 = response2.json()
+                
+                if data1.get('total') == data2.get('total'):
+                    self.log_test("Data Consistency", True, f"Athlete profiles data is consistent across requests ({data1.get('total')} profiles)")
+                else:
+                    self.log_test("Data Consistency", False, f"Data inconsistency detected: {data1.get('total')} vs {data2.get('total')}")
+                    return False
+            else:
+                self.log_test("Data Consistency", False, "Failed to test data consistency due to API errors")
+                return False
+            
+            # Test leaderboard data consistency
+            leaderboard1 = self.session.get(f"{API_BASE_URL}/leaderboard")
+            leaderboard2 = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if leaderboard1.status_code == 200 and leaderboard2.status_code == 200:
+                lb_data1 = leaderboard1.json()
+                lb_data2 = leaderboard2.json()
+                
+                if lb_data1.get('total') == lb_data2.get('total'):
+                    self.log_test("Leaderboard Consistency", True, f"Leaderboard data is consistent ({lb_data1.get('total')} athletes)")
+                else:
+                    self.log_test("Leaderboard Consistency", False, f"Leaderboard inconsistency: {lb_data1.get('total')} vs {lb_data2.get('total')}")
+                    return False
+            else:
+                self.log_test("Leaderboard Consistency", False, "Failed to test leaderboard consistency")
+                return False
+            
+            return True
+            
+        except Exception as e:
+            self.log_test("Data Integrity", False, "Data integrity test failed", str(e))
+            return False
+    
+    def test_mobile_optimization_compatibility(self):
+        """Test that mobile optimizations didn't break backend functionality"""
+        try:
+            print("\n📱 MOBILE OPTIMIZATION COMPATIBILITY TEST 📱")
+            print("=" * 50)
+            
+            # Test all critical endpoints that should work regardless of frontend changes
+            critical_endpoints = [
+                ("/", "GET", None, "API Root"),
+                ("/status", "GET", None, "Status Check"),
+                ("/athlete-profiles", "GET", None, "Athlete Profiles"),
+                ("/leaderboard", "GET", None, "Leaderboard"),
+                ("/test-score", "GET", None, "Test Score")
+            ]
+            
+            all_working = True
+            
+            for endpoint, method, payload, description in critical_endpoints:
+                if method == "GET":
+                    response = self.session.get(f"{API_BASE_URL}{endpoint}")
+                elif method == "POST":
+                    response = self.session.post(f"{API_BASE_URL}{endpoint}", json=payload)
+                
+                if response.status_code == 200:
+                    self.log_test(f"Mobile Compatibility - {description}", True, f"Endpoint working correctly")
+                else:
+                    self.log_test(f"Mobile Compatibility - {description}", False, f"HTTP {response.status_code}", response.text)
+                    all_working = False
+            
+            return all_working
+            
+        except Exception as e:
+            self.log_test("Mobile Optimization Compatibility", False, "Mobile compatibility test failed", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests focused on authentication flow and user profile management"""
         print("=" * 80)
