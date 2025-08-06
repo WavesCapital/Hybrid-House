@@ -2395,6 +2395,174 @@ async def get_profile_ranking(profile_id: str):
             detail=f"Error getting profile ranking: {str(e)}"
         )
 
+@api_router.post("/webhook/hybrid-score-result")
+async def handle_hybrid_score_webhook(webhook_data: list):
+    """Handle webhook data from new hybrid interview system"""
+    try:
+        print(f"🎯 Received webhook data: {webhook_data}")
+        
+        if not webhook_data or len(webhook_data) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No webhook data provided"
+            )
+        
+        # Extract data from webhook format
+        request_data = webhook_data[0]
+        body = request_data.get('body', {})
+        athlete_profile = body.get('athleteProfile', {})
+        
+        if not athlete_profile:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No athleteProfile data found in webhook"
+            )
+        
+        print(f"📊 Processing athlete profile: {athlete_profile}")
+        
+        # Extract user information for profile updates
+        first_name = athlete_profile.get('first_name', '')
+        last_name = athlete_profile.get('last_name', '')
+        sex = athlete_profile.get('sex', '').lower()  # Convert to lowercase
+        dob = athlete_profile.get('dob', '')
+        wearables = athlete_profile.get('wearables', [])
+        body_metrics = athlete_profile.get('body_metrics', {})
+        
+        # Convert date format from MM/DD/YYYY to ISO format
+        date_of_birth = None
+        if dob:
+            try:
+                from datetime import datetime
+                # Parse MM/DD/YYYY format
+                parsed_date = datetime.strptime(dob, '%m/%d/%Y')
+                date_of_birth = parsed_date.isoformat()
+            except ValueError as e:
+                print(f"⚠️  Could not parse date {dob}: {e}")
+        
+        # Prepare user profile update data
+        user_profile_updates = {
+            'name': f"{first_name} {last_name}".strip(),
+            'display_name': f"{first_name} {last_name[0] if last_name else ''}".strip(),
+            'updated_at': datetime.utcnow().isoformat()
+        }
+        
+        # Add optional fields if present
+        if date_of_birth:
+            user_profile_updates['date_of_birth'] = date_of_birth
+        if sex and sex in ['male', 'female']:
+            user_profile_updates['gender'] = sex
+        if body_metrics.get('weight_lb'):
+            user_profile_updates['weight_lb'] = body_metrics['weight_lb']
+        if body_metrics.get('height_in'):
+            user_profile_updates['height_in'] = body_metrics['height_in']
+        if wearables:
+            user_profile_updates['wearables'] = wearables
+        
+        # Get session_id to find user (assuming it links to a user somehow)
+        session_id = athlete_profile.get('meta_session_id')
+        
+        if not session_id:
+            # If no session_id, create anonymous athlete profile
+            print("⚠️  No session_id found, creating anonymous athlete profile")
+            
+            # Create anonymous athlete profile
+            anonymous_profile = {
+                'profile_json': athlete_profile,
+                'score_data': None,  # Will be updated when scores come back
+                'user_id': str(uuid.uuid4()),  # Generate anonymous user ID
+                'is_public': True,
+                'created_at': datetime.utcnow().isoformat(),
+                'updated_at': datetime.utcnow().isoformat()
+            }
+            
+            # Insert anonymous profile
+            result = supabase.table('athlete_profiles').insert(anonymous_profile).execute()
+            
+            if result.data:
+                profile_id = result.data[0]['id']
+                print(f"✅ Created anonymous athlete profile: {profile_id}")
+                
+                # Return the profile ID for score callback
+                return {
+                    "success": True,
+                    "message": "Anonymous athlete profile created",
+                    "profile_id": profile_id,
+                    "webhook_url": f"{WEBHOOK_URL}?profile_id={profile_id}"
+                }
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Failed to create anonymous athlete profile"
+                )
+        
+        # TODO: Handle authenticated user profile updates when session linking is available
+        # For now, treat all as anonymous profiles
+        
+        print(f"✅ Webhook processing completed")
+        return {
+            "success": True,
+            "message": "Webhook data processed successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error processing webhook: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error processing webhook: {str(e)}"
+        )
+
+@api_router.post("/webhook/hybrid-score-callback")
+async def handle_score_callback(score_data: list):
+    """Handle score calculation callback from webhook system"""
+    try:
+        print(f"🎯 Received score callback: {score_data}")
+        
+        if not score_data or len(score_data) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No score data provided"
+            )
+        
+        # Extract score information
+        score_response = score_data[0]  # Get first (and likely only) response
+        
+        # The score data should contain all the calculated scores
+        score_fields = {
+            'hybridScore': score_response.get('hybridScore'),
+            'strengthScore': score_response.get('strengthScore'),
+            'speedScore': score_response.get('speedScore'),
+            'vo2Score': score_response.get('vo2Score'),
+            'distanceScore': score_response.get('distanceScore'),
+            'volumeScore': score_response.get('volumeScore'),
+            'recoveryScore': score_response.get('recoveryScore'),
+            'enduranceScore': score_response.get('enduranceScore'),
+            'balanceBonus': score_response.get('balanceBonus'),
+            'hybridPenalty': score_response.get('hybridPenalty'),
+            'tips': score_response.get('tips', [])
+        }
+        
+        # TODO: Link this to the correct athlete profile
+        # For now, we'll need a way to identify which profile this belongs to
+        # This could be done via profile_id in the webhook URL or session matching
+        
+        print(f"✅ Score callback processed")
+        return {
+            "success": True,
+            "message": "Score data received",
+            "scores": score_fields
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error processing score callback: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error processing score callback: {str(e)}"
+        )
+
 @api_router.get("/public-profile/{user_id}")
 async def get_public_profile(user_id: str):
     """Get public profile information for a specific user"""
