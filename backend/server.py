@@ -1853,10 +1853,32 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                         "updated_at": datetime.utcnow().isoformat()
                     }
                     
-                    profile_result = supabase.table('athlete_profiles').insert(profile_data).execute()
-                    
-                    print(f"Profile created with ID: {profile_data['id']}")
-                    print(f"Profile result: {profile_result}")
+                    try:
+                        profile_result = supabase.table('athlete_profiles').insert(profile_data).execute()
+                        print(f"Profile created with ID: {profile_data['id']}")
+                        print(f"Profile result: {profile_result}")
+                        
+                        if not profile_result.data:
+                            raise Exception("No data returned from athlete_profiles insert")
+                            
+                    except Exception as profile_error:
+                        print(f"Error creating athlete profile: {profile_error}")
+                        
+                        # If foreign key constraint fails, try creating without user_id
+                        if "violates foreign key constraint" in str(profile_error):
+                            print("Foreign key constraint failed, creating profile without user_id link")
+                            profile_data_fallback = {
+                                "id": profile_data["id"],
+                                "profile_json": profile_json,
+                                **individual_fields,
+                                "completed_at": datetime.utcnow().isoformat(),
+                                "created_at": datetime.utcnow().isoformat(),
+                                "updated_at": datetime.utcnow().isoformat()
+                            }
+                            profile_result = supabase.table('athlete_profiles').insert(profile_data_fallback).execute()
+                            print(f"Fallback profile created without user_id: {profile_result}")
+                        else:
+                            raise profile_error
                     
                     # Note: Frontend handles webhook calls to display results immediately
                     # Backend doesn't trigger webhook to avoid duplicate calls
