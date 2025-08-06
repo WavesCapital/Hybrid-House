@@ -89,7 +89,7 @@ const HybridScoreForm = () => {
     }));
   };
 
-  const triggerWebhookForScore = async (athleteProfileData, profileId) => {
+  const triggerWebhookForScore = async (athleteProfileData, profileId, currentSession = session) => {
     try {
       console.log('Triggering webhook for hybrid score calculation...');
       
