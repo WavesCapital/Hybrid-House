@@ -2613,7 +2613,200 @@ async def handle_hybrid_score_webhook(webhook_data: List[WebhookRequest]):
             detail=f"Error processing webhook: {str(e)}"
         )
 
-@api_router.post("/webhook/hybrid-score-callback")
+@api_router.post("/webhook/hybrid-score-result-with-auth")
+async def handle_hybrid_score_webhook_with_auth(webhook_data: List[WebhookRequest], user_id: str = None):
+    """Handle webhook data with explicit user_id from auth system"""
+    try:
+        print(f"🎯 Received webhook data with auth user_id: {user_id}")
+        
+        if not webhook_data or len(webhook_data) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No webhook data provided"
+            )
+        
+        # Extract data from webhook format
+        request_data = webhook_data[0]
+        athlete_profile = request_data.body.athleteProfile
+        
+        print(f"📊 Processing athlete profile for auth user: {athlete_profile.dict()}")
+        
+        # Extract user information for profile updates
+        first_name = athlete_profile.first_name or ''
+        last_name = athlete_profile.last_name or ''
+        sex = athlete_profile.sex.lower() if athlete_profile.sex else None
+        dob = athlete_profile.dob
+        wearables = athlete_profile.wearables or []
+        body_metrics = athlete_profile.body_metrics
+        email = athlete_profile.email
+        
+        # Get country from request headers if available
+        headers = request_data.headers or {}
+        country = None
+        if 'cf-ipcountry' in headers:
+            country = headers['cf-ipcountry']
+        
+        # Convert date format from MM/DD/YYYY to ISO format
+        date_of_birth = None
+        if dob:
+            try:
+                from datetime import datetime
+                parsed_date = datetime.strptime(dob, '%m/%d/%Y')
+                date_of_birth = parsed_date.isoformat()
+            except ValueError as e:
+                print(f"⚠️  Could not parse date {dob}: {e}")
+        
+        # Prepare user profile update data
+        user_profile_updates = {
+            'name': f"{first_name} {last_name}".strip(),
+            'display_name': f"{first_name} {last_name[0] if last_name else ''}".strip(),
+            'updated_at': datetime.utcnow().isoformat()
+        }
+        
+        # Add optional fields if present
+        if date_of_birth:
+            user_profile_updates['date_of_birth'] = date_of_birth
+        if sex and sex in ['male', 'female']:
+            user_profile_updates['gender'] = sex
+        if country:
+            user_profile_updates['country'] = country
+        if body_metrics:
+            if body_metrics.weight_lb:
+                user_profile_updates['weight_lb'] = body_metrics.weight_lb
+            if body_metrics.height_in:
+                user_profile_updates['height_in'] = body_metrics.height_in
+        if wearables:
+            user_profile_updates['wearables'] = wearables
+        
+        # Handle user profile creation/update with explicit user_id
+        user_profile = None
+        if user_id:
+            try:
+                # First, try to find existing user_profiles record
+                user_result = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
+                
+                if user_result.data and len(user_result.data) > 0:
+                    # User profile exists - update it
+                    user_profile = user_result.data[0]
+                    print(f"✅ Found existing user_profiles record: {user_id}")
+                    
+                    update_result = supabase.table('user_profiles').update(user_profile_updates).eq('user_id', user_id).execute()
+                    
+                    if update_result.data:
+                        user_profile = update_result.data[0]
+                        print(f"✅ Updated user profile: {user_profile}")
+                    
+                else:
+                    # User profile missing - create it
+                    print(f"🔄 Creating missing user_profiles record for auth user: {user_id}")
+                    
+                    new_user_profile = {
+                        'user_id': user_id,
+                        'email': email,
+                        **user_profile_updates,
+                        'created_at': datetime.utcnow().isoformat()
+                    }
+                    
+                    create_result = supabase.table('user_profiles').insert(new_user_profile).execute()
+                    
+                    if create_result.data:
+                        user_profile = create_result.data[0]
+                        print(f"✅ Created new user_profiles record: {user_profile}")
+                    else:
+                        print(f"❌ Failed to create user_profiles record")
+                        
+            except Exception as e:
+                print(f"❌ Error handling user_profiles for user_id {user_id}: {e}")
+        
+        # Create athlete profile
+        athlete_profile_data = {
+            'profile_json': athlete_profile.dict(),
+            'score_data': None,
+            'user_id': user_id or str(uuid.uuid4()),
+            'is_public': True,
+            'created_at': datetime.utcnow().isoformat(),
+            'updated_at': datetime.utcnow().isoformat()
+        }
+        
+        # Insert athlete profile
+        result = supabase.table('athlete_profiles').insert(athlete_profile_data).execute()
+        
+        if result.data:
+            profile_id = result.data[0]['id']
+            print(f"✅ Created athlete profile: {profile_id}")
+            
+            return {
+                "success": True,
+                "message": "Athlete profile created and user profile handled",
+                "profile_id": profile_id,
+                "user_id": user_id,
+                "user_profile_created": user_profile is not None,
+                "updates_applied": user_profile_updates
+            }
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to create athlete profile"
+            )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error processing webhook with auth: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error processing webhook with auth: {str(e)}"
+        )
+
+@api_router.post("/create-missing-user-profile")
+async def create_missing_user_profile(user_id: str, email: str):
+    """Create missing user_profiles record for existing auth user"""
+    try:
+        print(f"🔄 Creating missing user_profiles record for {user_id} ({email})")
+        
+        # Check if user_profiles record already exists
+        existing_result = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
+        
+        if existing_result.data and len(existing_result.data) > 0:
+            return {
+                "success": True,
+                "message": "User profile already exists",
+                "user_profile": existing_result.data[0]
+            }
+        
+        # Create basic user_profiles record
+        user_profile_data = {
+            'user_id': user_id,
+            'email': email,
+            'name': '',  # Will be updated by webhook
+            'display_name': '',  # Will be updated by webhook
+            'created_at': datetime.utcnow().isoformat(),
+            'updated_at': datetime.utcnow().isoformat()
+        }
+        
+        create_result = supabase.table('user_profiles').insert(user_profile_data).execute()
+        
+        if create_result.data:
+            print(f"✅ Created user_profiles record: {create_result.data[0]}")
+            return {
+                "success": True,
+                "message": "User profile created successfully",
+                "user_profile": create_result.data[0]
+            }
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to create user profile"
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error creating user profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error creating user profile: {str(e)}"
+        )
 async def handle_score_callback(score_data: List[ScoreData]):
     """Handle score calculation callback from webhook system"""
     try:
