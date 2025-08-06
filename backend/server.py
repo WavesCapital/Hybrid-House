@@ -912,14 +912,28 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
                     'created_at': datetime.utcnow().isoformat(),
                     **personal_data
                 }
-                # Remove None values and empty strings
+                # Remove None values and empty strings  
                 new_user_profile = {k: v for k, v in new_user_profile.items() if v is not None and v != ''}
+                
+                # Ensure we don't have any fields that could violate constraints
+                # Remove any accidentally long fields and add proper defaults for required fields
+                if 'units_preference' not in new_user_profile:
+                    new_user_profile['units_preference'] = 'imperial'  # Default, fits in VARCHAR(20)
+                if 'privacy_level' not in new_user_profile:
+                    new_user_profile['privacy_level'] = 'public'      # Default, fits in VARCHAR(20)
+                if 'is_active' not in new_user_profile:
+                    new_user_profile['is_active'] = True
+                
                 print(f"Creating new user profile: {new_user_profile}")
                 
                 # Debug: Check each field length in final payload
                 for key, value in new_user_profile.items():
                     if isinstance(value, str):
                         print(f"Final field '{key}': length={len(value)}, value='{value}'")
+                        # Extra safety check for known VARCHAR(20) fields
+                        if key in ['gender', 'phone', 'units_preference', 'privacy_level'] and len(value) > 20:
+                            print(f"⚠️  TRUNCATING {key} from {len(value)} to 20 chars")
+                            new_user_profile[key] = value[:20]
                 
                 insert_result = supabase.table('user_profiles').insert(new_user_profile).execute()
                 print(f"Created user profile for user_id: {user_id} - Result: {insert_result}")
