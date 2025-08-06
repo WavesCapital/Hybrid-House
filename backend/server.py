@@ -2578,7 +2578,7 @@ async def handle_hybrid_score_webhook(webhook_data: List[WebhookRequest]):
         athlete_profile_data = {
             'profile_json': athlete_profile.dict(),
             'score_data': None,  # Will be updated when scores come back
-            'user_id': user_profile['user_id'] if user_profile else str(uuid.uuid4()),
+            'user_id': athlete_user_id,
             'is_public': True,
             'created_at': datetime.utcnow().isoformat(),
             'updated_at': datetime.utcnow().isoformat()
