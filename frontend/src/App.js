@@ -77,6 +77,10 @@ function AppContent() {
             element={<HybridInterviewFlow />}
           />
           <Route 
+            path="/hybrid-score-form" 
+            element={<HybridScoreForm />}
+          />
+          <Route 
             path="/profile" 
             element={<ProfilePage />} 
           />
