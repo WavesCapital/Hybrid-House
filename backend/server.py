@@ -892,6 +892,11 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
         try:
             print(f"Creating/updating user profile with data: {personal_data}")
             
+            # Debug: Check each field length
+            for key, value in personal_data.items():
+                if isinstance(value, str):
+                    print(f"Field '{key}': length={len(value)}, value='{value}'")
+            
             # Check if user profile exists
             user_profile_result = supabase.table('user_profiles').select('id').eq('user_id', user_id).execute()
             
@@ -910,6 +915,11 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
                 # Remove None values and empty strings
                 new_user_profile = {k: v for k, v in new_user_profile.items() if v is not None and v != ''}
                 print(f"Creating new user profile: {new_user_profile}")
+                
+                # Debug: Check each field length in final payload
+                for key, value in new_user_profile.items():
+                    if isinstance(value, str):
+                        print(f"Final field '{key}': length={len(value)}, value='{value}'")
                 
                 insert_result = supabase.table('user_profiles').insert(new_user_profile).execute()
                 print(f"Created user profile for user_id: {user_id} - Result: {insert_result}")
