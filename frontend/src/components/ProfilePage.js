@@ -2127,7 +2127,7 @@ const ProfilePage = () => {
                         <label className="block text-sm font-medium text-secondary mb-2">Wearable Devices</label>
                         <div className="space-y-2">
                           <div className="flex flex-wrap gap-2">
-                            {['Apple Watch', 'Garmin', 'Whoop', 'Oura Ring', 'Fitbit', 'Polar', 'Suunto', 'COROS'].map(device => (
+                            {['Apple Watch', 'Garmin', 'Whoop', 'Oura Ring', 'Ultrahuman Ring', 'Fitbit', 'Polar', 'Suunto', 'COROS'].map(device => (
                               <label key={device} className="flex items-center space-x-2 text-sm">
                                 <input
                                   type="checkbox"
