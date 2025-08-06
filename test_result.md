@@ -443,14 +443,14 @@ metadata:
 
 test_plan:
   current_focus:
-    - "GET /api/public-profile/{user_id} Endpoint Testing"
-    - "Add Missing Country Column to User Profiles Table"
-    - "Privacy Toggle Functionality and User-Specific Profile Endpoints Testing Complete"
-    - "All Backend API Endpoints Working Correctly"
-    - "Privacy System Fully Operational"
-  stuck_tasks: []
+    - "Database Normalization Implementation Testing"
+    - "Critical User ID Linking System Repair"
+    - "User Profiles Table Population and Migration"
+    - "Ranking Service JOIN Logic Verification"
+  stuck_tasks:
+    - "Database Normalization Implementation Testing"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "critical_first"
 
 agent_communication:
   - agent: "testing"
