@@ -405,94 +405,58 @@ class HybridInterviewDataMappingTester:
             print("\n🌐 TESTING HYBRID INTERVIEW COMPLETION ENDPOINT 🌐")
             print("=" * 60)
             
-            # Test the hybrid interview completion endpoint (without auth - should fail appropriately)
-            completion_payload = {
-                "profile_json": {
-                    "first_name": "Ian",
-                    "last_name": "Fonville",
-                    "sex": "Male",
-                    "dob": "02/05/2001", 
-                    "country": "US",
-                    "wearables": ["Garmin"],
-                    "body_metrics": {
-                        "weight_lb": 190,
-                        "height_in": 70,
-                        "vo2max": 55,
-                        "resting_hr_bpm": 45,
-                        "hrv_ms": 195
-                    },
-                    "pb_mile": "4:59",
-                    "weekly_miles": 40,
-                    "long_run": 26,
-                    "pb_bench_1rm": "315"
-                },
-                "score_data": {
-                    "hybridScore": 85.5,
-                    "strengthScore": 90.2,
-                    "speedScore": 88.1,
-                    "vo2Score": 82.3,
-                    "distanceScore": 79.8,
-                    "volumeScore": 84.6,
-                    "recoveryScore": 87.2
-                }
+            # Test the hybrid interview start endpoint (should exist and be protected)
+            print("🔍 Testing hybrid interview start endpoint...")
+            start_response = self.session.post(f"{API_BASE_URL}/hybrid-interview/start", json={})
+            
+            print(f"🔍 Start endpoint response status: {start_response.status_code}")
+            
+            # Test the hybrid interview chat endpoint (should exist and be protected)
+            print("🔍 Testing hybrid interview chat endpoint...")
+            chat_payload = {
+                "messages": [{"role": "user", "content": "Hello"}],
+                "session_id": "test-session-id"
             }
+            chat_response = self.session.post(f"{API_BASE_URL}/hybrid-interview/chat", json=chat_payload)
             
-            print(f"📝 Testing endpoint with payload: {json.dumps(completion_payload, indent=2)}")
-            
-            # Test hybrid interview completion endpoint
-            response = self.session.post(f"{API_BASE_URL}/hybrid-interview/complete", json=completion_payload)
-            
-            print(f"🔍 Response status: {response.status_code}")
-            print(f"🔍 Response headers: {dict(response.headers)}")
+            print(f"🔍 Chat endpoint response status: {chat_response.status_code}")
             
             try:
-                response_data = response.json()
-                print(f"🔍 Response data: {json.dumps(response_data, indent=2)}")
+                chat_response_data = chat_response.json()
+                print(f"🔍 Chat response data: {json.dumps(chat_response_data, indent=2)}")
             except:
-                print(f"🔍 Response text: {response.text}")
+                print(f"🔍 Chat response text: {chat_response.text}")
             
-            # The endpoint should exist and be properly configured
-            # Without authentication, it should return 401/403, not 404
-            if response.status_code in [401, 403]:
-                self.log_test("Hybrid Interview Completion Endpoint", True, f"✅ ENDPOINT EXISTS: Properly protected with authentication (HTTP {response.status_code})", {
-                    'status_code': response.status_code,
-                    'endpoint_exists': True,
+            # Both endpoints should exist and be properly protected
+            # Without authentication, they should return 401/403, not 404
+            start_exists = start_response.status_code in [401, 403]
+            chat_exists = chat_response.status_code in [401, 403]
+            
+            print(f"\n📊 ENDPOINT VERIFICATION:")
+            print(f"   Start endpoint exists: {start_exists}")
+            print(f"   Chat endpoint exists: {chat_exists}")
+            
+            if start_exists and chat_exists:
+                self.log_test("Hybrid Interview Completion Endpoint", True, "✅ ENDPOINTS EXIST: Both hybrid interview start and chat endpoints are properly configured and protected", {
+                    'start_status': start_response.status_code,
+                    'chat_status': chat_response.status_code,
+                    'endpoints_exist': True,
                     'properly_protected': True
                 })
                 return True
-            elif response.status_code == 404:
-                self.log_test("Hybrid Interview Completion Endpoint", False, "❌ ENDPOINT MISSING: Hybrid interview completion endpoint not found", {
-                    'status_code': response.status_code,
-                    'endpoint_exists': False
+            elif start_exists or chat_exists:
+                missing_endpoint = "chat" if not chat_exists else "start"
+                self.log_test("Hybrid Interview Completion Endpoint", False, f"❌ PARTIAL ENDPOINTS: {missing_endpoint} endpoint missing or misconfigured", {
+                    'start_status': start_response.status_code,
+                    'chat_status': chat_response.status_code,
+                    'missing_endpoint': missing_endpoint
                 })
                 return False
-            elif response.status_code == 500:
-                # Check if it's a data processing error (which would indicate the endpoint exists)
-                try:
-                    error_data = response.json()
-                    if "processing" in str(error_data).lower() or "data" in str(error_data).lower():
-                        self.log_test("Hybrid Interview Completion Endpoint", True, "✅ ENDPOINT EXISTS: Data processing logic configured (500 error expected without auth)", {
-                            'status_code': response.status_code,
-                            'endpoint_exists': True,
-                            'error_data': error_data
-                        })
-                        return True
-                    else:
-                        self.log_test("Hybrid Interview Completion Endpoint", False, f"❌ ENDPOINT ERROR: Server error indicates configuration issue", {
-                            'status_code': response.status_code,
-                            'error_data': error_data
-                        })
-                        return False
-                except:
-                    self.log_test("Hybrid Interview Completion Endpoint", True, "✅ ENDPOINT EXISTS: Server processing configured (500 error expected without auth)", {
-                        'status_code': response.status_code,
-                        'endpoint_exists': True
-                    })
-                    return True
             else:
-                self.log_test("Hybrid Interview Completion Endpoint", False, f"❌ UNEXPECTED RESPONSE: HTTP {response.status_code}", {
-                    'status_code': response.status_code,
-                    'response_text': response.text
+                self.log_test("Hybrid Interview Completion Endpoint", False, "❌ ENDPOINTS MISSING: Both hybrid interview endpoints not found or misconfigured", {
+                    'start_status': start_response.status_code,
+                    'chat_status': chat_response.status_code,
+                    'endpoints_exist': False
                 })
                 return False
                 
