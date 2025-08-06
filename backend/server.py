@@ -1809,13 +1809,15 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                     
                     # Create or update user profile with personal data
                     try:
+                        print(f"Creating/updating user profile with data: {personal_data}")
+                        
                         # Check if user profile exists
                         user_profile_result = supabase.table('user_profiles').select('id').eq('user_id', user_id).execute()
                         
                         if user_profile_result.data:
                             # Update existing user profile
-                            supabase.table('user_profiles').update(personal_data).eq('user_id', user_id).execute()
-                            print(f"Updated user profile for user_id: {user_id}")
+                            update_result = supabase.table('user_profiles').update(personal_data).eq('user_id', user_id).execute()
+                            print(f"Updated user profile for user_id: {user_id} - Result: {update_result}")
                         else:
                             # Create new user profile
                             new_user_profile = {
@@ -1823,14 +1825,19 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                                 'created_at': datetime.utcnow().isoformat(),
                                 **personal_data
                             }
-                            # Remove None values
+                            # Remove None values and empty strings
                             new_user_profile = {k: v for k, v in new_user_profile.items() if v is not None and v != ''}
-                            supabase.table('user_profiles').insert(new_user_profile).execute()
-                            print(f"Created user profile for user_id: {user_id}")
+                            print(f"Creating new user profile: {new_user_profile}")
+                            
+                            insert_result = supabase.table('user_profiles').insert(new_user_profile).execute()
+                            print(f"Created user profile for user_id: {user_id} - Result: {insert_result}")
                             
                     except Exception as e:
                         print(f"Error creating/updating user profile: {e}")
-                        # Don't fail the whole process if user profile update fails
+                        print(f"Personal data that caused error: {personal_data}")
+                        print(f"User ID: {user_id}")
+                        # Continue with athlete profile creation even if user profile fails
+                        # This ensures the interview completion doesn't fail entirely
                     
                     # Extract individual fields for optimized storage (performance data only)
                     individual_fields = extract_individual_fields(profile_json)
