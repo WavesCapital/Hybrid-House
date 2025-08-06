@@ -1775,6 +1775,17 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                         'updated_at': datetime.utcnow().isoformat()
                     }
                     
+                    # Extract height and weight from body_metrics for user_profiles
+                    body_metrics = profile_json.get('body_metrics', {})
+                    if isinstance(body_metrics, dict):
+                        # Height in inches
+                        if body_metrics.get('height_in'):
+                            personal_data['height_in'] = body_metrics.get('height_in')
+                        
+                        # Weight in pounds  
+                        if body_metrics.get('weight_lb'):
+                            personal_data['weight_lb'] = body_metrics.get('weight_lb')
+                    
                     # Handle date of birth conversion
                     if profile_json.get('dob'):
                         try:
