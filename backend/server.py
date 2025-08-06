@@ -959,9 +959,8 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
             "updated_at": datetime.utcnow().isoformat()
         }
         
-        # Add user_profile_id if available
-        if user_profile_id:
-            new_profile["user_profile_id"] = user_profile_id
+        # Note: user_profile_id is no longer needed due to database normalization
+        # The user_id foreign key directly links to user_profiles.user_id
 
         # Insert into database with error handling for missing columns and foreign key constraints
         try:
