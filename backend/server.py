@@ -359,21 +359,7 @@ def extract_individual_fields(profile_json: dict, score_data: dict = None) -> di
     
     individual_fields = {}
     
-    # Basic info fields (these should exist in database)
-    basic_fields = {
-        'first_name': profile_json.get('first_name'),
-        'last_name': profile_json.get('last_name'),
-        'email': profile_json.get('email'),
-        'sex': profile_json.get('sex'),
-        'age': safe_int(profile_json.get('age')),
-        'schema_version': profile_json.get('schema_version', 'v1.0'),
-        'meta_session_id': profile_json.get('meta_session_id'),
-        'interview_type': profile_json.get('interview_type', 'hybrid')
-    }
-    
-    individual_fields.update(basic_fields)
-    
-    # Body metrics (if columns exist)
+    # Body metrics (performance data only - personal data removed from athlete_profiles)
     body_metrics = profile_json.get('body_metrics', {})
     if isinstance(body_metrics, dict):
         body_metric_fields = {
@@ -384,7 +370,7 @@ def extract_individual_fields(profile_json: dict, score_data: dict = None) -> di
         }
         individual_fields.update(body_metric_fields)
     
-    # Performance fields (if columns exist)
+    # Performance fields (only fitness/training data - personal data in user_profiles)
     performance_fields = {
         'weekly_miles': safe_decimal(profile_json.get('weekly_miles')),
         'long_run_miles': safe_decimal(profile_json.get('long_run')),
