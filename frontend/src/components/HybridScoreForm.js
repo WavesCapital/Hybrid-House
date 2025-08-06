@@ -168,7 +168,7 @@ const HybridScoreForm = () => {
         }
 
         // Sign in the newly created user
-        const signInResult = await signIn(formData.email, formData.password);
+        const signInResult = await signInWithEmail(formData.email, formData.password);
         
         if (signInResult.error) {
           throw new Error('Failed to sign in after account creation');
