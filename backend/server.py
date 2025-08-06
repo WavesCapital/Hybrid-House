@@ -532,6 +532,67 @@ async def get_my_user_profile(user: dict = Depends(verify_jwt)):
             detail=f"Error fetching user profile: {str(e)}"
         )
 
+@api_router.get("/user-profile/me")
+async def get_user_profile(current_user: dict = Depends(get_current_user)):
+    try:
+        user_id = current_user['sub']
+        
+        # First try to get user_profiles record
+        user_profile_result = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
+        
+        if user_profile_result.data and len(user_profile_result.data) > 0:
+            # Found user_profiles record - return it
+            user_profile = user_profile_result.data[0]
+            return {'user_profile': user_profile}
+        else:
+            # No user_profiles record - try to extract data from athlete_profiles
+            print(f"⚠️  No user_profiles record found for {user_id}, checking athlete_profiles...")
+            
+            athlete_profiles_result = supabase.table('athlete_profiles').select('*').eq('user_id', user_id).order('created_at', desc=True).limit(1).execute()
+            
+            if athlete_profiles_result.data and len(athlete_profiles_result.data) > 0:
+                # Extract profile data from most recent athlete profile
+                athlete_profile = athlete_profiles_result.data[0]
+                profile_json = athlete_profile.get('profile_json', {})
+                
+                # Convert athlete profile data to user profile format
+                extracted_profile = {
+                    'user_id': user_id,
+                    'name': f"{profile_json.get('first_name', '')} {profile_json.get('last_name', '')}".strip(),
+                    'display_name': f"{profile_json.get('first_name', '')} {profile_json.get('last_name', '')[0] if profile_json.get('last_name') else ''}".strip(),
+                    'email': profile_json.get('email', ''),
+                    'gender': profile_json.get('sex', '').lower() if profile_json.get('sex') else None,
+                    'country': profile_json.get('country'),
+                    'date_of_birth': profile_json.get('dob'),  # Would need date conversion in production
+                    'height_in': profile_json.get('body_metrics', {}).get('height_in'),
+                    'weight_lb': profile_json.get('body_metrics', {}).get('weight_lb'),
+                    'wearables': profile_json.get('wearables', []),
+                    'created_at': athlete_profile.get('created_at'),
+                    'updated_at': athlete_profile.get('updated_at')
+                }
+                
+                print(f"✅ Extracted profile data from athlete profile: {extracted_profile}")
+                return {
+                    'user_profile': extracted_profile,
+                    'source': 'athlete_profile',
+                    'message': 'Profile data extracted from athlete profile'
+                }
+            else:
+                # No data found anywhere
+                return {
+                    'user_profile': None,
+                    'message': 'No profile data found'
+                }
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error getting user profile: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error"
+        )
+
 @api_router.put("/user-profile/me")
 async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict = Depends(verify_jwt)):
     """Update current user's profile information (creates if doesn't exist)"""
