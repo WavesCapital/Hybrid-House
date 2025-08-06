@@ -7,7 +7,7 @@ Adds height_in, weight_lb, and wearables columns to user_profiles table
 import os
 import sys
 from dotenv import load_dotenv
-from supabase import create_client, Client
+import requests
 
 # Load environment variables
 load_dotenv()
@@ -24,43 +24,40 @@ def main():
         print("- SUPABASE_SERVICE_KEY")
         return False
     
-    try:
-        # Create Supabase client
-        supabase: Client = create_client(supabase_url, supabase_service_key)
-        
-        print("🔄 Adding physical attributes columns to user_profiles table...")
-        
-        # SQL to add new columns
-        migration_sql = """
-        -- Add physical attributes columns to user_profiles
-        ALTER TABLE user_profiles 
-        ADD COLUMN IF NOT EXISTS height_in DECIMAL(5,2),
-        ADD COLUMN IF NOT EXISTS weight_lb DECIMAL(6,2),  
-        ADD COLUMN IF NOT EXISTS wearables JSONB DEFAULT '[]'::jsonb;
-        
-        -- Create index on wearables for better performance
-        CREATE INDEX IF NOT EXISTS idx_user_profiles_wearables ON user_profiles USING GIN (wearables);
-        
-        -- Add comment to document the changes
-        COMMENT ON COLUMN user_profiles.height_in IS 'User height in inches';
-        COMMENT ON COLUMN user_profiles.weight_lb IS 'User weight in pounds';
-        COMMENT ON COLUMN user_profiles.wearables IS 'Array of wearable devices user owns (JSON)';
-        """
-        
-        # Execute the migration
-        result = supabase.rpc('exec_sql', {'sql': migration_sql}).execute()
-        
-        print("✅ Successfully added physical attributes columns:")
-        print("   - height_in (DECIMAL)")
-        print("   - weight_lb (DECIMAL)")  
-        print("   - wearables (JSONB array)")
-        print("   - Added GIN index on wearables")
-        
-        return True
-        
-    except Exception as e:
-        print(f"❌ Migration failed: {e}")
-        return False
+    print("🔄 Adding physical attributes columns to user_profiles table...")
+    print("⚠️  Since direct SQL execution is not available via Supabase client,")
+    print("    you'll need to run these SQL commands manually in your Supabase dashboard:")
+    print()
+    
+    migration_sql = """-- Add physical attributes columns to user_profiles
+ALTER TABLE user_profiles 
+ADD COLUMN IF NOT EXISTS height_in DECIMAL(5,2),
+ADD COLUMN IF NOT EXISTS weight_lb DECIMAL(6,2),  
+ADD COLUMN IF NOT EXISTS wearables JSONB DEFAULT '[]'::jsonb;
+
+-- Create index on wearables for better performance
+CREATE INDEX IF NOT EXISTS idx_user_profiles_wearables ON user_profiles USING GIN (wearables);
+
+-- Add comments to document the changes
+COMMENT ON COLUMN user_profiles.height_in IS 'User height in inches';
+COMMENT ON COLUMN user_profiles.weight_lb IS 'User weight in pounds';
+COMMENT ON COLUMN user_profiles.wearables IS 'Array of wearable devices user owns (JSON)';"""
+    
+    print("📋 SQL Migration Script:")
+    print("=" * 60)
+    print(migration_sql)
+    print("=" * 60)
+    print()
+    print("🔗 Supabase Dashboard URL:")
+    print(f"   {supabase_url.replace('https://', 'https://supabase.com/dashboard/project/')}/sql")
+    print()
+    print("✅ After running the SQL commands, the following fields will be available:")
+    print("   - height_in (DECIMAL) - User height in inches")
+    print("   - weight_lb (DECIMAL) - User weight in pounds")  
+    print("   - wearables (JSONB) - Array of wearable devices")
+    print("   - GIN index on wearables for performance")
+    
+    return True
 
 if __name__ == "__main__":
     success = main()
