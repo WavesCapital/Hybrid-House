@@ -67,136 +67,104 @@ class RankingService:
             raise Exception("Supabase client not initialized")
         
         try:
-            # Get all public athlete profiles with complete scores
+            # Get all public athlete profiles with their linked user profiles
+            # Updated query to work with normalized structure (no personal data in athlete_profiles)
             profiles_response = self.supabase.table('athlete_profiles')\
                 .select('''
-                    id,
-                    user_id,
-                    profile_json,
-                    score_data,
-                    is_public,
-                    updated_at
+                    *,
+                    user_profiles!inner(
+                        user_id,
+                        name,
+                        display_name,
+                        email,
+                        date_of_birth,
+                        gender,
+                        country,
+                        height_in,
+                        weight_lb,
+                        wearables
+                    )
                 ''')\
                 .eq('is_public', True)\
-                .not_.is_('score_data', 'null')\
+                .not_.is_('hybrid_score', 'null')\
+                .order('hybrid_score', desc=True)\
                 .execute()
             
-            profiles = profiles_response.data
-            
-            if not profiles:
+            if not profiles_response.data:
+                print("⚠️  No public profiles found")
                 return []
-            
-            # Get user profile data for age, gender, country information
-            user_ids = [profile['user_id'] for profile in profiles if profile.get('user_id')]
-            
-            user_profiles_response = self.supabase.table('user_profiles')\
-                .select('user_id, display_name, date_of_birth, gender, country')\
-                .in_('user_id', user_ids)\
-                .execute()
-            
-            user_profiles_map = {profile['user_id']: profile for profile in user_profiles_response.data}
-            
+                
             leaderboard_data = []
+            seen_users = set()  # Track users to prevent duplicates
             
-            for profile in profiles:
-                score_data = profile.get('score_data', {})
-                profile_json = profile.get('profile_json', {})
+            for profile in profiles_response.data:
                 user_id = profile.get('user_id')
-                user_profile_data = user_profiles_map.get(user_id, {})
                 
-                # Ensure all required scores are present
-                required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 
-                                 'distanceScore', 'volumeScore', 'recoveryScore']
+                # Skip if we've already processed this user (prevent duplicates)
+                if user_id in seen_users:
+                    continue
+                    
+                seen_users.add(user_id)
                 
-                if all(score in score_data for score in required_scores):
-                    # Extract display_name with enhanced fallback logic
-                    display_name = user_profile_data.get('display_name', '')
-                    if not display_name:
-                        # First fallback: try profile_json display_name
-                        display_name = profile_json.get('display_name', '')
-                        if not display_name:
-                            # Second fallback: try first_name + last_name combination
-                            first_name = profile_json.get('first_name', '').strip()
-                            last_name = profile_json.get('last_name', '').strip()
-                            if first_name and last_name:
-                                display_name = f"{first_name} {last_name}"
-                            elif first_name:
-                                # Third fallback: just first_name
-                                display_name = first_name
-                            else:
-                                # Final fallback: email prefix
-                                email = profile_json.get('email', '')
-                                display_name = email.split('@')[0] if email else f'User {profile.get("id", "")[:8]}'
-                    
-                    # Handle case where display_name might be incomplete (like "Nick" instead of "Nick Bare")
-                    # If display_name exists but seems incomplete, enhance it with last_name if available
-                    if display_name and len(display_name.split()) == 1:  # Single word display name
-                        last_name = profile_json.get('last_name', '').strip()
-                        if last_name and last_name.lower() not in display_name.lower():
-                            display_name = f"{display_name} {last_name}"
-                    
-                    # Calculate age from date_of_birth
-                    age = None
-                    date_of_birth = user_profile_data.get('date_of_birth')
-                    if date_of_birth:
-                        from datetime import datetime, date
-                        if isinstance(date_of_birth, str):
-                            try:
-                                birth_date = datetime.fromisoformat(date_of_birth.replace('Z', '+00:00')).date()
-                            except:
-                                birth_date = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
+                # Get user profile data from the joined table
+                user_profile = profile.get('user_profiles')
+                if not user_profile:
+                    print(f"⚠️  No user_profiles data for athlete profile {profile.get('id')}")
+                    continue
+                
+                # Calculate age from date_of_birth
+                age = None
+                if user_profile.get('date_of_birth'):
+                    try:
+                        birth_date_str = user_profile['date_of_birth']
+                        # Handle both date and datetime formats
+                        if 'T' in birth_date_str:
+                            birth_date = datetime.fromisoformat(birth_date_str.replace('Z', '+00:00')).date()
                         else:
-                            birth_date = date_of_birth
+                            birth_date = datetime.strptime(birth_date_str, '%Y-%m-%d').date()
                         
                         today = date.today()
                         age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-                    
-                    # Extract gender and country from user_profiles
-                    gender = user_profile_data.get('gender', '').lower() if user_profile_data.get('gender') else None
-                    country = user_profile_data.get('country', '') if user_profile_data.get('country') else None
-                    
-                    # Get country flag if available
-                    country_flag = None
-                    if country:
-                        country_flags = {
-                            'United States': '🇺🇸', 'USA': '🇺🇸', 'US': '🇺🇸',
-                            'Canada': '🇨🇦', 'CA': '🇨🇦',
-                            'United Kingdom': '🇬🇧', 'UK': '🇬🇧', 'GB': '🇬🇧',
-                            'Australia': '🇦🇺', 'AU': '🇦🇺',
-                            'Germany': '🇩🇪', 'DE': '🇩🇪',
-                            'France': '🇫🇷', 'FR': '🇫🇷',
-                            'Spain': '🇪🇸', 'ES': '🇪🇸',
-                            'Italy': '🇮🇹', 'IT': '🇮🇹',
-                            'Netherlands': '🇳🇱', 'NL': '🇳🇱',
-                            'Sweden': '🇸🇪', 'SE': '🇸🇪',
-                            'Norway': '🇳🇴', 'NO': '🇳🇴',
-                            'Denmark': '🇩🇰', 'DK': '🇩🇰',
-                            'Japan': '🇯🇵', 'JP': '🇯🇵',
-                            'South Korea': '🇰🇷', 'KR': '🇰🇷',
-                            'Brazil': '🇧🇷', 'BR': '🇧🇷',
-                            'Mexico': '🇲🇽', 'MX': '🇲🇽'
-                        }
-                        country_flag = country_flags.get(country, country)
-                    
-                    leaderboard_data.append({
-                        'profile_id': profile['id'],
-                        'user_id': profile['user_id'],
-                        'display_name': display_name,
-                        'score': round(score_data['hybridScore'], 1),
-                        'age': age,
-                        'gender': gender,
-                        'country': country,
-                        'country_flag': country_flag,
-                        'score_breakdown': {
-                            'strengthScore': round(score_data['strengthScore'], 1),
-                            'speedScore': round(score_data['speedScore'], 1), 
-                            'vo2Score': round(score_data['vo2Score'], 1),
-                            'distanceScore': round(score_data['distanceScore'], 1),
-                            'volumeScore': round(score_data['volumeScore'], 1),
-                            'recoveryScore': round(score_data['recoveryScore'], 1)
-                        },
-                        'updated_at': profile['updated_at']
-                    })
+                    except (ValueError, TypeError) as e:
+                        print(f"⚠️  Could not parse date_of_birth '{user_profile.get('date_of_birth')}': {e}")
+                
+                # Get country flag
+                country = user_profile.get('country')
+                country_flag = self.get_country_flag(country) if country else None
+                
+                # Extract score data
+                score_data = profile.get('score_data', {}) or {}
+                hybrid_score = profile.get('hybrid_score', 0)
+                
+                # Use display_name, fallback to name, fallback to email prefix
+                display_name = (
+                    user_profile.get('display_name') or 
+                    user_profile.get('name') or 
+                    (user_profile.get('email', '').split('@')[0] if user_profile.get('email') else 'Anonymous')
+                )
+                
+                leaderboard_entry = {
+                    'profile_id': profile.get('id'),
+                    'user_id': user_id,
+                    'display_name': display_name,
+                    'score': hybrid_score,
+                    'age': age,
+                    'gender': user_profile.get('gender'),
+                    'country': country,
+                    'country_flag': country_flag,
+                    'created_at': profile.get('created_at'),
+                    'score_breakdown': {
+                        'strengthScore': score_data.get('strengthScore') or profile.get('strength_score'),
+                        'speedScore': score_data.get('speedScore') or profile.get('speed_score'),
+                        'vo2Score': score_data.get('vo2Score') or profile.get('vo2_score'),
+                        'distanceScore': score_data.get('distanceScore') or profile.get('distance_score'),
+                        'volumeScore': score_data.get('volumeScore') or profile.get('volume_score'),
+                        'recoveryScore': score_data.get('recoveryScore') or profile.get('recovery_score'),
+                        'enduranceScore': score_data.get('enduranceScore') or profile.get('endurance_score')
+                    }
+                }
+                
+                leaderboard_data.append(leaderboard_entry)
             
             # Sort by hybrid score (highest to lowest) and deduplicate users
             leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
