@@ -1765,7 +1765,57 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                     profile_json["schema_version"] = "v1.0"
                     profile_json["interview_type"] = "hybrid"
                     
-                    # Extract individual fields for optimized storage
+                    # Extract personal data for user_profiles table (normalized structure)
+                    personal_data = {
+                        'name': f"{profile_json.get('first_name', '')} {profile_json.get('last_name', '')}".strip(),
+                        'display_name': profile_json.get('first_name', 'Athlete'),
+                        'email': profile_json.get('email', ''),
+                        'gender': profile_json.get('sex', '').lower() if profile_json.get('sex') else None,
+                        'country': profile_json.get('country', ''),
+                        'updated_at': datetime.utcnow().isoformat()
+                    }
+                    
+                    # Handle date of birth conversion
+                    if profile_json.get('dob'):
+                        try:
+                            # Convert MM/DD/YYYY to YYYY-MM-DD
+                            dob_parts = profile_json.get('dob').split('/')
+                            if len(dob_parts) == 3:
+                                month, day, year = dob_parts
+                                personal_data['date_of_birth'] = f"{year}-{month.zfill(2)}-{day.zfill(2)}"
+                        except Exception as e:
+                            print(f"Error converting date of birth: {e}")
+                    
+                    # Handle wearables
+                    if profile_json.get('wearables'):
+                        personal_data['wearables'] = profile_json.get('wearables')
+                    
+                    # Create or update user profile with personal data
+                    try:
+                        # Check if user profile exists
+                        user_profile_result = supabase.table('user_profiles').select('id').eq('user_id', user_id).execute()
+                        
+                        if user_profile_result.data:
+                            # Update existing user profile
+                            supabase.table('user_profiles').update(personal_data).eq('user_id', user_id).execute()
+                            print(f"Updated user profile for user_id: {user_id}")
+                        else:
+                            # Create new user profile
+                            new_user_profile = {
+                                'user_id': user_id,
+                                'created_at': datetime.utcnow().isoformat(),
+                                **personal_data
+                            }
+                            # Remove None values
+                            new_user_profile = {k: v for k, v in new_user_profile.items() if v is not None and v != ''}
+                            supabase.table('user_profiles').insert(new_user_profile).execute()
+                            print(f"Created user profile for user_id: {user_id}")
+                            
+                    except Exception as e:
+                        print(f"Error creating/updating user profile: {e}")
+                        # Don't fail the whole process if user profile update fails
+                    
+                    # Extract individual fields for optimized storage (performance data only)
                     individual_fields = extract_individual_fields(profile_json)
                     
                     # Save athlete profile with both JSON and individual fields
