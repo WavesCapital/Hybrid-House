@@ -123,7 +123,7 @@ const HybridScoreForm = () => {
         scoreData,
         {
           headers: {
-            'Authorization': `Bearer ${session.access_token}`,
+            'Authorization': `Bearer ${currentSession.access_token}`,
             'Content-Type': 'application/json',
           },
         }
