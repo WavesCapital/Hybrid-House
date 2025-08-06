@@ -6,6 +6,7 @@ import LoginPage from './components/LoginPage';
 import AthleteProfile from './components/AthleteProfile';
 import InterviewFlow from './components/InterviewFlow';
 import HybridInterviewFlow from './components/HybridInterviewFlow';
+import HybridScoreForm from './components/HybridScoreForm';
 import HybridScoreResults from './components/HybridScoreResults';
 import ProfilePage from './components/ProfilePage';
 import PublicProfileView from './components/PublicProfileView';
