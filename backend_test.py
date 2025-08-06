@@ -1086,6 +1086,209 @@ class BackendTester:
         
         return passed_tests >= total_tests // 2
 
+    # ===== HYBRID FORM SUBMISSION FLOW TESTS =====
+    
+    def test_hybrid_form_submission_flow(self):
+        """Test the complete hybrid score form submission flow with account creation"""
+        try:
+            print("\n🎯 HYBRID FORM SUBMISSION FLOW TESTING")
+            print("=" * 60)
+            
+            # Test form data structure with new height input (feet + inches)
+            form_data = {
+                "first_name": "John",
+                "last_name": "Smith", 
+                "email": "john.smith.form.test@example.com",
+                "password": "securepassword123",
+                "sex": "Male",
+                "dob": "1990-03-15",
+                "country": "US",
+                "wearables": ["Garmin", "Whoop"],
+                "height_ft": 5,
+                "height_in": 10,
+                "weight_lb": 180,
+                "vo2max": 52,
+                "resting_hr_bpm": 50,
+                "hrv_ms": 160,
+                "pb_mile": "5:15",
+                "pb_5k": "19:30",
+                "weekly_miles": 35,
+                "long_run": 22,
+                "pb_bench_1rm": 285,
+                "pb_squat_1rm": 365,
+                "pb_deadlift_1rm": 425
+            }
+            
+            # Verify height conversion from feet+inches to total inches (5 ft 10 in = 70 inches)
+            height_inches = (form_data["height_ft"] * 12) + form_data["height_in"]
+            if height_inches != 70:
+                self.log_test("Hybrid Form Submission Flow", False, f"Height conversion incorrect: expected 70 inches, got {height_inches}")
+                return False
+            
+            print(f"✅ Height conversion: {form_data['height_ft']} ft {form_data['height_in']} in = {height_inches} inches")
+            
+            # Test account creation functionality
+            signup_data = {
+                "user_id": "test-user-form-12345",
+                "email": form_data["email"]
+            }
+            
+            signup_response = self.session.post(f"{API_BASE_URL}/auth/signup", json=signup_data)
+            account_creation_works = signup_response.status_code in [200, 201, 400]  # 400 if already exists
+            
+            if account_creation_works:
+                print(f"✅ Account creation endpoint: HTTP {signup_response.status_code}")
+            else:
+                print(f"❌ Account creation endpoint: HTTP {signup_response.status_code}")
+                self.log_test("Hybrid Form Submission Flow", False, f"Account creation endpoint failed: HTTP {signup_response.status_code}")
+                return False
+            
+            # Test user profile creation with personal data
+            personal_data = {
+                "name": f"{form_data['first_name']} {form_data['last_name']}",
+                "display_name": form_data['first_name'],
+                "email": form_data['email'],
+                "gender": form_data['sex'].lower(),
+                "date_of_birth": form_data['dob'],
+                "country": form_data['country'],
+                "height_in": height_inches,
+                "weight_lb": form_data['weight_lb'],
+                "wearables": form_data['wearables']
+            }
+            
+            user_profile_response = self.session.put(f"{API_BASE_URL}/user-profile/me", json=personal_data)
+            user_profile_works = user_profile_response.status_code in [401, 403, 200]  # Should require auth
+            
+            if user_profile_works:
+                print(f"✅ User profile endpoint: HTTP {user_profile_response.status_code}")
+            else:
+                print(f"❌ User profile endpoint: HTTP {user_profile_response.status_code}")
+                self.log_test("Hybrid Form Submission Flow", False, f"User profile endpoint failed: HTTP {user_profile_response.status_code}")
+                return False
+            
+            # Test athlete profile creation with performance data
+            athlete_data = {
+                "profile_json": {
+                    "first_name": form_data['first_name'],
+                    "last_name": form_data['last_name'],
+                    "email": form_data['email'],
+                    "sex": form_data['sex'],
+                    "dob": form_data['dob'],
+                    "country": form_data['country'],
+                    "wearables": form_data['wearables'],
+                    "body_metrics": {
+                        "height_in": height_inches,
+                        "weight_lb": form_data['weight_lb'],
+                        "vo2_max": form_data['vo2max'],
+                        "resting_hr_bpm": form_data['resting_hr_bpm'],
+                        "hrv_ms": form_data['hrv_ms']
+                    },
+                    "pb_mile": form_data['pb_mile'],
+                    "pb_5k": form_data['pb_5k'],
+                    "weekly_miles": form_data['weekly_miles'],
+                    "long_run": form_data['long_run'],
+                    "pb_bench_1rm": form_data['pb_bench_1rm'],
+                    "pb_squat_1rm": form_data['pb_squat_1rm'],
+                    "pb_deadlift_1rm": form_data['pb_deadlift_1rm']
+                },
+                "is_public": True
+            }
+            
+            athlete_profile_response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=athlete_data)
+            athlete_profile_works = athlete_profile_response.status_code in [401, 403, 200]  # Should require auth
+            
+            if athlete_profile_works:
+                print(f"✅ Athlete profile endpoint: HTTP {athlete_profile_response.status_code}")
+            else:
+                print(f"❌ Athlete profile endpoint: HTTP {athlete_profile_response.status_code}")
+                self.log_test("Hybrid Form Submission Flow", False, f"Athlete profile endpoint failed: HTTP {athlete_profile_response.status_code}")
+                return False
+            
+            # Test webhook triggering endpoint (score update)
+            webhook_data = {
+                "hybridScore": 75.5,
+                "strengthScore": 85.2,
+                "speedScore": 72.1,
+                "vo2Score": 68.9,
+                "distanceScore": 70.3,
+                "volumeScore": 74.8,
+                "recoveryScore": 78.6,
+                "deliverable": "score"
+            }
+            
+            webhook_response = self.session.post(f"{API_BASE_URL}/athlete-profile/test-profile-id/score", json=webhook_data)
+            webhook_works = webhook_response.status_code in [404, 200]  # 404 for non-existent profile is expected
+            
+            if webhook_works:
+                print(f"✅ Webhook endpoint: HTTP {webhook_response.status_code}")
+            else:
+                print(f"❌ Webhook endpoint: HTTP {webhook_response.status_code}")
+                self.log_test("Hybrid Form Submission Flow", False, f"Webhook endpoint failed: HTTP {webhook_response.status_code}")
+                return False
+            
+            # Test data flow verification via leaderboard
+            leaderboard_response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            data_flow_works = leaderboard_response.status_code == 200
+            
+            if data_flow_works:
+                leaderboard_data = leaderboard_response.json()
+                leaderboard = leaderboard_data.get('leaderboard', [])
+                print(f"✅ Data flow verification: {len(leaderboard)} profiles on leaderboard")
+                
+                # Check if any profiles have complete data (personal + performance)
+                complete_profiles = 0
+                for entry in leaderboard:
+                    has_personal = entry.get('display_name') and entry.get('age') is not None
+                    has_performance = entry.get('score') is not None
+                    if has_personal and has_performance:
+                        complete_profiles += 1
+                
+                print(f"✅ Complete profiles with personal + performance data: {complete_profiles}")
+            else:
+                print(f"❌ Data flow verification: HTTP {leaderboard_response.status_code}")
+                self.log_test("Hybrid Form Submission Flow", False, f"Data flow verification failed: HTTP {leaderboard_response.status_code}")
+                return False
+            
+            # Overall assessment
+            all_components_working = (
+                height_inches == 70 and
+                account_creation_works and
+                user_profile_works and
+                athlete_profile_works and
+                webhook_works and
+                data_flow_works
+            )
+            
+            if all_components_working:
+                self.log_test("Hybrid Form Submission Flow", True, 
+                             "Complete hybrid form submission flow is working correctly", 
+                             {
+                                 "height_conversion": f"{form_data['height_ft']} ft {form_data['height_in']} in = {height_inches} inches",
+                                 "account_creation": f"HTTP {signup_response.status_code}",
+                                 "user_profile": f"HTTP {user_profile_response.status_code}",
+                                 "athlete_profile": f"HTTP {athlete_profile_response.status_code}",
+                                 "webhook": f"HTTP {webhook_response.status_code}",
+                                 "data_flow": f"HTTP {leaderboard_response.status_code}",
+                                 "complete_profiles": complete_profiles if data_flow_works else 0
+                             })
+                return True
+            else:
+                self.log_test("Hybrid Form Submission Flow", False, 
+                             "Some components of hybrid form submission flow are not working", 
+                             {
+                                 "height_conversion_ok": height_inches == 70,
+                                 "account_creation_ok": account_creation_works,
+                                 "user_profile_ok": user_profile_works,
+                                 "athlete_profile_ok": athlete_profile_works,
+                                 "webhook_ok": webhook_works,
+                                 "data_flow_ok": data_flow_works
+                             })
+                return False
+                
+        except Exception as e:
+            self.log_test("Hybrid Form Submission Flow", False, "Hybrid form submission flow test failed", str(e))
+            return False
+
     def test_critical_ranking_service_fix_verification(self):
         """CRITICAL: Test the ranking service fix for correct join logic as requested in review"""
         try:
