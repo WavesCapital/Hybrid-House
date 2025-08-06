@@ -10,7 +10,7 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const HybridScoreForm = () => {
-  const { user, session, loading, signUp, signIn } = useAuth();
+  const { user, session, loading, signUpWithEmail, signInWithEmail } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   
