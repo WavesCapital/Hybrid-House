@@ -250,7 +250,7 @@ const HybridScoreForm = () => {
         });
 
         // Trigger webhook for score calculation with complete profile data
-        await triggerWebhookForScore(profileData, profileId);
+        await triggerWebhookForScore(profileData, profileId, currentSession);
       } else {
         throw new Error('No profile ID returned');
       }
