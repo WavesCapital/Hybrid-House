@@ -329,11 +329,11 @@ backend:
 
   - task: "Database Normalization Implementation - Remove Redundant Columns"
     implemented: true
-    working: true
+    working: false
     file: "/app/complete_database_normalization.py"
     stuck_count: 0
     priority: "critical"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
@@ -341,6 +341,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "🚨 CRITICAL DATABASE NORMALIZATION TESTING COMPLETE: Executed comprehensive testing of the database normalization implementation as requested in the review request. CRITICAL FINDINGS CONFIRMED (3/5 tests passed - 60% success rate): ✅ PUBLIC/PRIVATE FILTERING - Working correctly, no public profiles found (all profiles are private or no profiles exist) ✅ COMPLETE SCORES FILTERING - Ready to work when data is available ✅ ATHLETE PROFILE ENDPOINT - Individual profile endpoint structure is correct ❌ CRITICAL DATABASE SCHEMA ERROR - Supabase PostgREST error PGRST200: 'Could not find a relationship between athlete_profiles and user_profiles in the schema cache' - No foreign key relationship found between tables ❌ USER_ID LINKING COMPLETELY BROKEN - Leaderboard returns 0 entries due to failed JOIN between athlete_profiles and user_profiles tables. ROOT CAUSE IDENTIFIED: The database normalization implementation is missing the critical foreign key constraint between athlete_profiles.user_id and user_profiles.user_id. The ranking service cannot perform JOINs because Supabase PostgREST cannot find the relationship in the schema cache. IMPACT: Complete system failure - leaderboard is empty, no demographic data can be retrieved, user profile management is non-functional. URGENT DATABASE SCHEMA FIX NEEDED: 1) Add foreign key constraint: ALTER TABLE athlete_profiles ADD CONSTRAINT fk_athlete_user FOREIGN KEY (user_id) REFERENCES user_profiles(user_id) 2) Populate missing user_profiles entries for existing athlete profiles 3) Update athlete_profiles.user_id values to link to corresponding user_profiles.user_id 4) Verify ranking service can perform JOINs after schema fix."
+      - working: false
+        agent: "testing"
+        comment: "🚨 DATABASE NORMALIZATION COMPREHENSIVE TESTING COMPLETE: Executed comprehensive testing of the database normalization implementation as requested in the review request. DETAILED FINDINGS (PARTIALLY WORKING - 36.4% success rate): ✅ LEADERBOARD ENDPOINT WORKING - GET /api/leaderboard returns HTTP 200 with 11 entries, normalized structure confirmed ✅ PERSONAL DATA SEPARATION - Personal data (names, age, gender, country) correctly separated from performance data ✅ PERFORMANCE DATA INTACT - All 11 profiles have complete performance data from athlete_profiles table ✅ JOIN QUERIES FUNCTIONAL - Ranking service successfully retrieves data from both tables using manual JOIN logic ❌ INCOMPLETE USER PROFILE LINKING - Only 4/11 profiles (36.4%) have complete personal data from user_profiles table ❌ MISSING FOREIGN KEY CONSTRAINT - Supabase PostgREST error PGRST200 confirms missing foreign key relationship ❌ ORPHANED ATHLETE PROFILES - 7/11 profiles missing corresponding user_profiles entries (Ian Fonville, Test User entries). SPECIFIC RESULTS: Nick Bare (#1, 96.8), Luke Hopkins (#4, 90.6), Kyle U (#6, 76.5), bgrumney2 (#11, 62.1) have complete data. Ian Fonville and Test User entries missing personal data. ROOT CAUSE: Database normalization structure is correct but foreign key constraint missing and some athlete_profiles lack user_profiles entries. IMPACT: System functional but not fully normalized - demographic filtering will fail for 63.6% of profiles. REQUIRED FIXES: 1) Add foreign key constraint 2) Create missing user_profiles entries for orphaned athlete_profiles 3) Ensure all athlete_profiles.user_id link to valid user_profiles.user_id"
 
 frontend:
   - task: "Fix Privacy Toggle UI Functionality"
