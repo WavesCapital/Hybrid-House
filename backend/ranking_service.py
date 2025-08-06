@@ -166,28 +166,12 @@ class RankingService:
                 
                 leaderboard_data.append(leaderboard_entry)
             
-            # Sort by hybrid score (highest to lowest) and deduplicate users
-            leaderboard_data.sort(key=lambda x: x['score'], reverse=True)
-            
-            # Deduplicate users - show only highest score per user_id
-            seen_users = set()
-            deduplicated_data = []
-            
-            for entry in leaderboard_data:
-                user_id = entry.get('user_id')
-                if user_id not in seen_users:
-                    seen_users.add(user_id)
-                    deduplicated_data.append(entry)
-                # Skip entries for users we've already seen (they have lower scores due to sorting)
-            
-            # Add rank to each deduplicated entry
-            for i, entry in enumerate(deduplicated_data):
-                entry['rank'] = i + 1
-            
-            return deduplicated_data
+            print(f"✅ Successfully processed {len(leaderboard_data)} unique leaderboard entries")
+            return leaderboard_data
             
         except Exception as e:
-            raise Exception(f"Error fetching leaderboard data: {str(e)}")
+            print(f"❌ Error fetching leaderboard data: {str(e)}")
+            raise
     
     def calculate_hybrid_ranking(self, user_score: float, user_profile_id: str) -> Tuple[Optional[int], int]:
         """
