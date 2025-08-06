@@ -296,13 +296,13 @@ class WebhookTester:
             print("\n🎯 ERROR HANDLING MALFORMED DATA TESTING")
             print("=" * 45)
             
-            # Test with empty data - send directly as list
-            response1 = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json=[])
+            # Test with empty data
+            response1 = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json={"webhook_data": []})
             
-            # Test with missing athleteProfile - send directly as list
-            response2 = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json=[{"body": {}}])
+            # Test with missing athleteProfile
+            response2 = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json={"webhook_data": [{"body": {}}]})
             
-            # Test with invalid JSON structure - send directly as object (not list)
+            # Test with invalid JSON structure (missing webhook_data field)
             response3 = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json={"invalid": "structure"})
             
             error_handling_working = True
@@ -321,7 +321,7 @@ class WebhookTester:
             else:
                 self.log_test("Error Handling - Missing Profile", True, "✅ Properly handles missing athleteProfile with 400 error")
             
-            # Check invalid structure handling (should get 422 for wrong type)
+            # Check invalid structure handling (should get 422 for missing webhook_data field)
             if response3.status_code not in [400, 422]:
                 error_handling_working = False
                 self.log_test("Error Handling - Invalid Structure", False, f"Expected 400/422, got {response3.status_code}", response3.text)
@@ -340,7 +340,7 @@ class WebhookTester:
             print("\n🎯 ANONYMOUS VS AUTHENTICATED PROFILES TESTING")
             print("=" * 50)
             
-            # Test anonymous profile creation (no meta_session_id) - send directly as list
+            # Test anonymous profile creation (no meta_session_id)
             anonymous_data = [{
                 "body": {
                     "athleteProfile": {
@@ -354,7 +354,7 @@ class WebhookTester:
                 }
             }]
             
-            response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json=anonymous_data)
+            response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json={"webhook_data": anonymous_data})
             
             if response.status_code == 200:
                 data = response.json()
