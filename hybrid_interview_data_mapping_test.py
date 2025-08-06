@@ -11,9 +11,6 @@ import sys
 from dotenv import load_dotenv
 from pathlib import Path
 
-# Add backend directory to path to import server modules
-sys.path.append(str(Path(__file__).parent / 'backend'))
-
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / 'frontend' / '.env')
@@ -23,6 +20,97 @@ BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
 API_BASE_URL = f"{BACKEND_URL}/api"
 
 print(f"Testing hybrid interview data mapping at: {API_BASE_URL}")
+
+# Import the extract_individual_fields function directly from the backend code
+def safe_int(value):
+    """Safely convert to integer"""
+    if not value:
+        return None
+    try:
+        return int(float(str(value)))
+    except (ValueError, TypeError):
+        return None
+
+def safe_decimal(value):
+    """Safely convert to decimal"""
+    if not value:
+        return None
+    try:
+        return float(str(value))
+    except (ValueError, TypeError):
+        return None
+
+def convert_time_to_seconds(time_str):
+    """Convert time string like '7:43' to seconds"""
+    if not time_str:
+        return None
+    try:
+        if ':' in str(time_str):
+            parts = str(time_str).split(':')
+            if len(parts) == 2:
+                minutes = int(parts[0])
+                seconds = int(parts[1])
+                return minutes * 60 + seconds
+        return safe_int(time_str)
+    except (ValueError, TypeError):
+        return None
+
+def extract_weight_from_object(obj):
+    """Extract weight from object format like {weight_lb: 225, reps: 5, sets: 3}"""
+    if not obj:
+        return None
+    if isinstance(obj, dict):
+        return safe_decimal(obj.get('weight_lb') or obj.get('weight'))
+    return safe_decimal(obj)
+
+def extract_individual_fields(profile_json: dict, score_data: dict = None) -> dict:
+    """Extract individual fields from profile JSON for optimized database storage"""
+    
+    individual_fields = {}
+    
+    # Body metrics (performance/fitness data only - personal attributes go to user_profiles)
+    body_metrics = profile_json.get('body_metrics', {})
+    if isinstance(body_metrics, dict):
+        body_metric_fields = {
+            # Performance metrics only (height/weight go to user_profiles)
+            'vo2_max': safe_decimal(body_metrics.get('vo2_max') or body_metrics.get('vo2max')),
+            'hrv_ms': safe_int(body_metrics.get('hrv') or body_metrics.get('hrv_ms')),
+            'resting_hr_bpm': safe_int(body_metrics.get('resting_hr') or body_metrics.get('resting_hr_bpm'))
+        }
+        individual_fields.update(body_metric_fields)
+    
+    # Performance fields (only fitness/training data - personal data in user_profiles)
+    performance_fields = {
+        'weekly_miles': safe_decimal(profile_json.get('weekly_miles')),
+        'long_run_miles': safe_decimal(profile_json.get('long_run')),
+        'pb_mile_seconds': convert_time_to_seconds(profile_json.get('pb_mile')),
+        'pb_5k_seconds': convert_time_to_seconds(profile_json.get('pb_5k')),
+        'pb_10k_seconds': convert_time_to_seconds(profile_json.get('pb_10k')),
+        'pb_half_marathon_seconds': convert_time_to_seconds(profile_json.get('pb_half_marathon')),
+        'pb_bench_1rm_lb': extract_weight_from_object(profile_json.get('pb_bench_1rm')),
+        'pb_squat_1rm_lb': extract_weight_from_object(profile_json.get('pb_squat_1rm')),
+        'pb_deadlift_1rm_lb': extract_weight_from_object(profile_json.get('pb_deadlift_1rm'))
+    }
+    
+    individual_fields.update(performance_fields)
+    
+    # Score data (enabled now that database schema should be updated)
+    if score_data and isinstance(score_data, dict):
+        print(f"✅ Processing score data: {score_data}")
+        score_fields = {
+            'hybrid_score': safe_decimal(score_data.get('hybridScore')),
+            'strength_score': safe_decimal(score_data.get('strengthScore')),
+            'endurance_score': safe_decimal(score_data.get('enduranceScore')),
+            'speed_score': safe_decimal(score_data.get('speedScore')),
+            'vo2_score': safe_decimal(score_data.get('vo2Score')),
+            'distance_score': safe_decimal(score_data.get('distanceScore')),
+            'volume_score': safe_decimal(score_data.get('volumeScore')),
+            'recovery_score': safe_decimal(score_data.get('recoveryScore'))
+        }
+        individual_fields.update(score_fields)
+    
+    # Remove None values
+    return {k: v for k, v in individual_fields.items() if v is not None}
 
 class HybridInterviewDataMappingTester:
     def __init__(self):
