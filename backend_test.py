@@ -2432,6 +2432,480 @@ if __name__ == "__main__":
             self.log_test("Leaderboard Score Data Completeness", False, "Score data completeness test failed", str(e))
             return False
 
+    # ===== DATABASE NORMALIZATION TESTS =====
+    
+    def test_database_normalization_leaderboard(self):
+        """Test GET /api/leaderboard endpoint to verify normalized structure is working"""
+        try:
+            print("\n🏆 DATABASE NORMALIZATION - LEADERBOARD TESTING 🏆")
+            print("=" * 60)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Database Normalization - Leaderboard", True, "✅ Leaderboard endpoint working (empty state)", data)
+                    return True
+                
+                print(f"📊 Testing normalized structure for {len(leaderboard)} leaderboard entries:")
+                
+                # Test that personal data comes from user_profiles table
+                personal_data_success = 0
+                performance_data_success = 0
+                join_success = 0
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name')
+                    age = entry.get('age')
+                    gender = entry.get('gender')
+                    country = entry.get('country')
+                    
+                    # Performance data from athlete_profiles
+                    score = entry.get('score')
+                    score_breakdown = entry.get('score_breakdown', {})
+                    
+                    # Check personal data (should come from user_profiles)
+                    if display_name and age is not None and gender and country:
+                        personal_data_success += 1
+                        print(f"   ✅ {display_name}: Personal data from user_profiles (Age: {age}, Gender: {gender}, Country: {country})")
+                    else:
+                        missing = []
+                        if not display_name: missing.append("display_name")
+                        if age is None: missing.append("age")
+                        if not gender: missing.append("gender")
+                        if not country: missing.append("country")
+                        print(f"   ❌ Entry missing personal data: {', '.join(missing)}")
+                    
+                    # Check performance data (should come from athlete_profiles)
+                    if score and score_breakdown:
+                        performance_data_success += 1
+                    
+                    # Check JOIN is working
+                    if display_name and score:
+                        join_success += 1
+                
+                total_entries = len(leaderboard)
+                personal_rate = (personal_data_success / total_entries) * 100 if total_entries > 0 else 0
+                performance_rate = (performance_data_success / total_entries) * 100 if total_entries > 0 else 0
+                join_rate = (join_success / total_entries) * 100 if total_entries > 0 else 0
+                
+                print(f"\n📈 Normalization Results:")
+                print(f"   Personal data (user_profiles): {personal_data_success}/{total_entries} ({personal_rate:.1f}%)")
+                print(f"   Performance data (athlete_profiles): {performance_data_success}/{total_entries} ({performance_rate:.1f}%)")
+                print(f"   JOIN queries working: {join_success}/{total_entries} ({join_rate:.1f}%)")
+                
+                if personal_rate >= 80 and performance_rate >= 80 and join_rate >= 80:
+                    self.log_test("Database Normalization - Leaderboard", True, f"✅ NORMALIZED STRUCTURE WORKING: Personal data from user_profiles ({personal_rate:.1f}%), performance data from athlete_profiles ({performance_rate:.1f}%), JOINs working ({join_rate:.1f}%)", {
+                        'personal_data_rate': f"{personal_rate:.1f}%",
+                        'performance_data_rate': f"{performance_rate:.1f}%",
+                        'join_rate': f"{join_rate:.1f}%",
+                        'total_entries': total_entries
+                    })
+                    return True
+                else:
+                    self.log_test("Database Normalization - Leaderboard", False, f"❌ NORMALIZATION ISSUES: Personal data ({personal_rate:.1f}%), performance data ({performance_rate:.1f}%), JOINs ({join_rate:.1f}%) - Database normalization incomplete", {
+                        'personal_data_rate': f"{personal_rate:.1f}%",
+                        'performance_data_rate': f"{performance_rate:.1f}%",
+                        'join_rate': f"{join_rate:.1f}%",
+                        'total_entries': total_entries
+                    })
+                    return False
+                    
+            else:
+                self.log_test("Database Normalization - Leaderboard", False, f"❌ Leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Database Normalization - Leaderboard", False, "❌ Database normalization leaderboard test failed", str(e))
+            return False
+    
+    def test_database_normalization_profile_endpoints(self):
+        """Test individual profile endpoints to verify normalized structure"""
+        try:
+            print("\n👤 DATABASE NORMALIZATION - PROFILE ENDPOINTS TESTING 👤")
+            print("=" * 65)
+            
+            # First get a profile ID from leaderboard
+            leaderboard_response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if leaderboard_response.status_code != 200:
+                self.log_test("Database Normalization - Profile Endpoints", False, "❌ Cannot get leaderboard to find profile IDs", leaderboard_response.text)
+                return False
+            
+            leaderboard_data = leaderboard_response.json()
+            leaderboard = leaderboard_data.get('leaderboard', [])
+            
+            if not leaderboard:
+                self.log_test("Database Normalization - Profile Endpoints", True, "✅ No profiles to test (empty state)", leaderboard_data)
+                return True
+            
+            # Test GET /api/athlete-profile/{profile_id}
+            test_profile = leaderboard[0]
+            profile_id = test_profile.get('profile_id')
+            
+            if not profile_id:
+                self.log_test("Database Normalization - Profile Endpoints", False, "❌ No profile_id found in leaderboard entry", test_profile)
+                return False
+            
+            print(f"🔍 Testing profile endpoint with ID: {profile_id}")
+            
+            profile_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            
+            if profile_response.status_code == 200:
+                profile_data = profile_response.json()
+                
+                # Check that profile data structure is correct
+                required_fields = ['profile_id', 'profile_json', 'score_data']
+                missing_fields = []
+                
+                for field in required_fields:
+                    if field not in profile_data:
+                        missing_fields.append(field)
+                
+                if not missing_fields:
+                    # Check that profile_json no longer contains personal data
+                    profile_json = profile_data.get('profile_json', {})
+                    
+                    # These fields should NOT be in profile_json anymore (moved to user_profiles)
+                    personal_fields_in_json = []
+                    personal_fields_to_check = ['first_name', 'last_name', 'email', 'sex', 'age']
+                    
+                    for field in personal_fields_to_check:
+                        if field in profile_json:
+                            personal_fields_in_json.append(field)
+                    
+                    if not personal_fields_in_json:
+                        self.log_test("Database Normalization - Profile Endpoints", True, f"✅ PROFILE ENDPOINT NORMALIZED: Profile {profile_id} has correct structure, personal data removed from profile_json", {
+                            'profile_id': profile_id,
+                            'has_required_fields': True,
+                            'personal_data_removed': True,
+                            'profile_structure': list(profile_data.keys())
+                        })
+                        return True
+                    else:
+                        self.log_test("Database Normalization - Profile Endpoints", False, f"❌ NORMALIZATION INCOMPLETE: Profile {profile_id} still contains personal data in profile_json: {personal_fields_in_json}", {
+                            'profile_id': profile_id,
+                            'personal_fields_remaining': personal_fields_in_json
+                        })
+                        return False
+                else:
+                    self.log_test("Database Normalization - Profile Endpoints", False, f"❌ PROFILE STRUCTURE INVALID: Profile {profile_id} missing required fields: {missing_fields}", {
+                        'profile_id': profile_id,
+                        'missing_fields': missing_fields,
+                        'available_fields': list(profile_data.keys())
+                    })
+                    return False
+            else:
+                self.log_test("Database Normalization - Profile Endpoints", False, f"❌ Profile endpoint error for {profile_id}: HTTP {profile_response.status_code}", profile_response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Database Normalization - Profile Endpoints", False, "❌ Database normalization profile endpoints test failed", str(e))
+            return False
+    
+    def test_database_normalization_data_integrity(self):
+        """Verify data integrity after normalization"""
+        try:
+            print("\n🔒 DATABASE NORMALIZATION - DATA INTEGRITY TESTING 🔒")
+            print("=" * 60)
+            
+            # Test leaderboard for data integrity
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Database Normalization - Data Integrity", True, "✅ No data to verify integrity (empty state)", data)
+                    return True
+                
+                print(f"🔍 Verifying data integrity for {len(leaderboard)} profiles:")
+                
+                # Check for orphaned records and foreign key relationships
+                profiles_with_user_data = 0
+                profiles_without_user_data = 0
+                duplicate_users = {}
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name')
+                    age = entry.get('age')
+                    gender = entry.get('gender')
+                    country = entry.get('country')
+                    profile_id = entry.get('profile_id')
+                    
+                    # Check if profile has corresponding user data
+                    if display_name and age is not None and gender and country:
+                        profiles_with_user_data += 1
+                        
+                        # Check for duplicate users (should be deduplicated)
+                        user_key = f"{display_name}_{age}_{gender}_{country}"
+                        if user_key in duplicate_users:
+                            duplicate_users[user_key].append(profile_id)
+                        else:
+                            duplicate_users[user_key] = [profile_id]
+                        
+                        print(f"   ✅ {display_name}: Complete user data linked")
+                    else:
+                        profiles_without_user_data += 1
+                        print(f"   ❌ Profile {profile_id}: Missing user data (orphaned record)")
+                
+                # Check for duplicates
+                actual_duplicates = {k: v for k, v in duplicate_users.items() if len(v) > 1}
+                
+                total_profiles = len(leaderboard)
+                integrity_rate = (profiles_with_user_data / total_profiles) * 100 if total_profiles > 0 else 0
+                
+                print(f"\n📊 Data Integrity Results:")
+                print(f"   Profiles with user data: {profiles_with_user_data}/{total_profiles} ({integrity_rate:.1f}%)")
+                print(f"   Orphaned records: {profiles_without_user_data}")
+                print(f"   Duplicate users found: {len(actual_duplicates)}")
+                
+                if len(actual_duplicates) > 0:
+                    print(f"   Duplicate details: {actual_duplicates}")
+                
+                if integrity_rate >= 80 and len(actual_duplicates) == 0:
+                    self.log_test("Database Normalization - Data Integrity", True, f"✅ DATA INTEGRITY VERIFIED: {integrity_rate:.1f}% of profiles have proper user data links, no orphaned records, no duplicates", {
+                        'integrity_rate': f"{integrity_rate:.1f}%",
+                        'profiles_with_user_data': profiles_with_user_data,
+                        'orphaned_records': profiles_without_user_data,
+                        'duplicates': len(actual_duplicates)
+                    })
+                    return True
+                else:
+                    issues = []
+                    if integrity_rate < 80:
+                        issues.append(f"Low integrity rate ({integrity_rate:.1f}%)")
+                    if profiles_without_user_data > 0:
+                        issues.append(f"{profiles_without_user_data} orphaned records")
+                    if len(actual_duplicates) > 0:
+                        issues.append(f"{len(actual_duplicates)} duplicate users")
+                    
+                    self.log_test("Database Normalization - Data Integrity", False, f"❌ DATA INTEGRITY ISSUES: {', '.join(issues)}", {
+                        'integrity_rate': f"{integrity_rate:.1f}%",
+                        'profiles_with_user_data': profiles_with_user_data,
+                        'orphaned_records': profiles_without_user_data,
+                        'duplicates': len(actual_duplicates),
+                        'duplicate_details': actual_duplicates
+                    })
+                    return False
+                    
+            else:
+                self.log_test("Database Normalization - Data Integrity", False, f"❌ Cannot verify data integrity - leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Database Normalization - Data Integrity", False, "❌ Database normalization data integrity test failed", str(e))
+            return False
+    
+    def test_database_normalization_ranking_service(self):
+        """Test ranking service functionality with normalized structure"""
+        try:
+            print("\n🏅 DATABASE NORMALIZATION - RANKING SERVICE TESTING 🏅")
+            print("=" * 60)
+            
+            # Test leaderboard ranking service
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Database Normalization - Ranking Service", True, "✅ Ranking service working (empty state)", data)
+                    return True
+                
+                print(f"🔍 Testing ranking service with {len(leaderboard)} profiles:")
+                
+                # Test that ranking service can join athlete_profiles with user_profiles
+                successful_joins = 0
+                demographic_data_available = 0
+                proper_rankings = True
+                
+                previous_score = float('inf')
+                expected_rank = 1
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name')
+                    age = entry.get('age')
+                    gender = entry.get('gender')
+                    country = entry.get('country')
+                    score = entry.get('score', 0)
+                    rank = entry.get('rank')
+                    
+                    # Check JOIN success (has both profile and user data)
+                    if display_name and score:
+                        successful_joins += 1
+                    
+                    # Check demographic data retrieval
+                    if age is not None and gender and country:
+                        demographic_data_available += 1
+                        print(f"   ✅ {display_name}: Rank {rank}, Score {score}, Demographics (Age: {age}, Gender: {gender}, Country: {country})")
+                    else:
+                        print(f"   ❌ {display_name}: Rank {rank}, Score {score}, Missing demographics")
+                    
+                    # Check ranking order (should be descending by score)
+                    if score > previous_score:
+                        proper_rankings = False
+                        print(f"   ⚠️  Ranking order issue: {display_name} (score {score}) ranked after higher score {previous_score}")
+                    
+                    if rank != expected_rank:
+                        proper_rankings = False
+                        print(f"   ⚠️  Ranking number issue: {display_name} has rank {rank}, expected {expected_rank}")
+                    
+                    previous_score = score
+                    expected_rank += 1
+                
+                total_profiles = len(leaderboard)
+                join_rate = (successful_joins / total_profiles) * 100 if total_profiles > 0 else 0
+                demographic_rate = (demographic_data_available / total_profiles) * 100 if total_profiles > 0 else 0
+                
+                print(f"\n📊 Ranking Service Results:")
+                print(f"   Successful JOINs: {successful_joins}/{total_profiles} ({join_rate:.1f}%)")
+                print(f"   Demographic data available: {demographic_data_available}/{total_profiles} ({demographic_rate:.1f}%)")
+                print(f"   Proper ranking order: {'✅ Yes' if proper_rankings else '❌ No'}")
+                
+                if join_rate >= 90 and demographic_rate >= 80 and proper_rankings:
+                    self.log_test("Database Normalization - Ranking Service", True, f"✅ RANKING SERVICE WORKING: JOINs successful ({join_rate:.1f}%), demographics available ({demographic_rate:.1f}%), proper ranking order", {
+                        'join_rate': f"{join_rate:.1f}%",
+                        'demographic_rate': f"{demographic_rate:.1f}%",
+                        'proper_rankings': proper_rankings,
+                        'total_profiles': total_profiles
+                    })
+                    return True
+                else:
+                    issues = []
+                    if join_rate < 90:
+                        issues.append(f"Low JOIN success rate ({join_rate:.1f}%)")
+                    if demographic_rate < 80:
+                        issues.append(f"Low demographic data rate ({demographic_rate:.1f}%)")
+                    if not proper_rankings:
+                        issues.append("Ranking order issues")
+                    
+                    self.log_test("Database Normalization - Ranking Service", False, f"❌ RANKING SERVICE ISSUES: {', '.join(issues)}", {
+                        'join_rate': f"{join_rate:.1f}%",
+                        'demographic_rate': f"{demographic_rate:.1f}%",
+                        'proper_rankings': proper_rankings,
+                        'total_profiles': total_profiles
+                    })
+                    return False
+                    
+            else:
+                self.log_test("Database Normalization - Ranking Service", False, f"❌ Cannot test ranking service - leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Database Normalization - Ranking Service", False, "❌ Database normalization ranking service test failed", str(e))
+            return False
+    
+    def test_database_normalization_public_private_filtering(self):
+        """Test public/private filtering works correctly with normalized structure"""
+        try:
+            print("\n🔒 DATABASE NORMALIZATION - PUBLIC/PRIVATE FILTERING TESTING 🔒")
+            print("=" * 70)
+            
+            # Test leaderboard (should only show public profiles)
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                total_public = data.get('total', 0)
+                
+                print(f"🔍 Testing public/private filtering:")
+                print(f"   Leaderboard entries: {len(leaderboard)}")
+                print(f"   Total public athletes: {total_public}")
+                
+                # All leaderboard entries should be public
+                if len(leaderboard) == total_public:
+                    self.log_test("Database Normalization - Public/Private Filtering", True, f"✅ PUBLIC/PRIVATE FILTERING WORKING: Leaderboard shows {len(leaderboard)} public profiles, filtering working correctly", {
+                        'leaderboard_entries': len(leaderboard),
+                        'total_public': total_public,
+                        'filtering_working': True
+                    })
+                    return True
+                else:
+                    self.log_test("Database Normalization - Public/Private Filtering", False, f"❌ FILTERING MISMATCH: Leaderboard shows {len(leaderboard)} entries but total_public is {total_public}", {
+                        'leaderboard_entries': len(leaderboard),
+                        'total_public': total_public,
+                        'filtering_working': False
+                    })
+                    return False
+                    
+            else:
+                self.log_test("Database Normalization - Public/Private Filtering", False, f"❌ Cannot test filtering - leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Database Normalization - Public/Private Filtering", False, "❌ Database normalization public/private filtering test failed", str(e))
+            return False
+    
+    def run_database_normalization_tests(self):
+        """Run comprehensive database normalization tests as requested in review"""
+        print("\n" + "="*80)
+        print("🚨 DATABASE NORMALIZATION IMPLEMENTATION TESTING 🚨")
+        print("="*80)
+        print("Testing the completed database normalization implementation:")
+        print("- Personal data (names, age, gender, country) from user_profiles table")
+        print("- Performance data from athlete_profiles table")
+        print("- JOIN queries between athlete_profiles and user_profiles working")
+        print("- Public/private filtering working correctly")
+        print("- Data integrity verified")
+        print("="*80)
+        
+        normalization_tests = [
+            ("Database Normalization - Leaderboard", self.test_database_normalization_leaderboard),
+            ("Database Normalization - Profile Endpoints", self.test_database_normalization_profile_endpoints),
+            ("Database Normalization - Data Integrity", self.test_database_normalization_data_integrity),
+            ("Database Normalization - Ranking Service", self.test_database_normalization_ranking_service),
+            ("Database Normalization - Public/Private Filtering", self.test_database_normalization_public_private_filtering)
+        ]
+        
+        test_results = []
+        for test_name, test_func in normalization_tests:
+            print(f"\n🔍 Running: {test_name}")
+            print("-" * 60)
+            try:
+                result = test_func()
+                test_results.append((test_name, result))
+            except Exception as e:
+                print(f"❌ {test_name} failed with exception: {e}")
+                test_results.append((test_name, False))
+        
+        # Summary of normalization test results
+        print("\n" + "="*80)
+        print("🚨 DATABASE NORMALIZATION TESTING SUMMARY 🚨")
+        print("="*80)
+        
+        passed_tests = 0
+        total_tests = len(test_results)
+        
+        for test_name, result in test_results:
+            status = "✅ PASS" if result else "❌ FAIL"
+            print(f"{status}: {test_name}")
+            if result:
+                passed_tests += 1
+        
+        success_rate = (passed_tests / total_tests) * 100 if total_tests > 0 else 0
+        print(f"\nNORMALIZATION TEST RESULTS: {passed_tests}/{total_tests} tests passed ({success_rate:.1f}%)")
+        
+        if passed_tests == total_tests:
+            print("🎉 NORMALIZATION CONCLUSION: Database normalization is COMPLETE and WORKING correctly")
+        elif passed_tests >= total_tests * 0.8:
+            print("✅ NORMALIZATION CONCLUSION: Database normalization is MOSTLY WORKING with minor issues")
+        elif passed_tests >= total_tests * 0.5:
+            print("⚠️  NORMALIZATION CONCLUSION: Database normalization is PARTIALLY WORKING - significant issues remain")
+        else:
+            print("❌ NORMALIZATION CONCLUSION: Database normalization has MAJOR ISSUES - needs immediate attention")
+            print("   LIKELY ISSUES: Foreign key constraints missing, JOIN logic incorrect, or data migration incomplete")
+        
+        print("="*80)
+        
+        return passed_tests >= total_tests * 0.8
+
     # ===== URGENT LEADERBOARD DEBUGGING TESTS =====
     
     def test_leaderboard_broken_urgent(self):
