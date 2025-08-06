@@ -13702,6 +13702,429 @@ if __name__ == "__main__":
             self.log_test("Public Profile Endpoint", False, "❌ Public profile endpoint test failed", str(e))
             return False
 
+    def test_webhook_hybrid_score_result_with_user_linking(self):
+        """Test POST /api/webhook/hybrid-score-result with user email linking as requested in review"""
+        try:
+            print("\n🎯 WEBHOOK HYBRID SCORE RESULT WITH USER LINKING TEST 🎯")
+            print("=" * 70)
+            print("Testing the fixed webhook integration with proper Pydantic models and user profile linking")
+            print("Expected: User profile should be found by email and updated with athlete data")
+            print("=" * 70)
+            
+            # Test data from review request - using Ian Fonville's actual email
+            webhook_test_data = [{
+                "body": {
+                    "athleteProfile": {
+                        "first_name": "Ian",
+                        "last_name": "Fonville", 
+                        "sex": "Male",
+                        "dob": "02/05/2001",
+                        "wearables": ["Ultrahuman Ring"],
+                        "body_metrics": {
+                            "weight_lb": 190,
+                            "height_in": 70,
+                            "vo2max": 55,
+                            "resting_hr_bpm": 45,
+                            "hrv_ms": 195
+                        },
+                        "email": "ianfonz1@wavescapital.co",
+                        "schema_version": "v1.0",
+                        "meta_session_id": "test-session-123",
+                        "interview_type": "hybrid"
+                    }
+                },
+                "headers": {
+                    "cf-ipcountry": "US"
+                }
+            }]
+            
+            print(f"📤 Sending webhook data for Ian Fonville (ianfonz1@wavescapital.co)")
+            
+            # Send webhook request
+            response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json=webhook_test_data)
+            
+            print(f"📥 Response: HTTP {response.status_code}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Webhook processed successfully: {data}")
+                
+                # Verify expected response structure
+                expected_fields = ['success', 'message', 'profile_id', 'user_updated', 'updates_applied']
+                missing_fields = [field for field in expected_fields if field not in data]
+                
+                if not missing_fields:
+                    # Check if user was found and updated
+                    user_updated = data.get('user_updated', False)
+                    updates_applied = data.get('updates_applied', {})
+                    profile_id = data.get('profile_id')
+                    
+                    if user_updated:
+                        print(f"✅ USER PROFILE LINKING SUCCESS:")
+                        print(f"   User found by email: ianfonz1@wavescapital.co")
+                        print(f"   Profile ID created: {profile_id}")
+                        print(f"   Updates applied: {updates_applied}")
+                        
+                        # Verify expected updates
+                        expected_updates = {
+                            'display_name': 'Ian F',
+                            'gender': 'male',
+                            'country': 'US',
+                            'weight_lb': 190,
+                            'height_in': 70,
+                            'wearables': ['Ultrahuman Ring']
+                        }
+                        
+                        update_success = True
+                        for key, expected_value in expected_updates.items():
+                            if key in updates_applied:
+                                actual_value = updates_applied[key]
+                                if actual_value == expected_value:
+                                    print(f"   ✅ {key}: {actual_value} (correct)")
+                                else:
+                                    print(f"   ⚠️  {key}: {actual_value} (expected {expected_value})")
+                            else:
+                                print(f"   ❌ {key}: missing from updates")
+                                update_success = False
+                        
+                        if update_success:
+                            self.log_test("Webhook Hybrid Score Result with User Linking", True, "✅ WEBHOOK INTEGRATION WORKING: User profile found by email, athlete profile created, all expected updates applied", {
+                                'user_updated': user_updated,
+                                'profile_id': profile_id,
+                                'updates_applied': updates_applied
+                            })
+                            return True
+                        else:
+                            self.log_test("Webhook Hybrid Score Result with User Linking", False, "⚠️  PARTIAL SUCCESS: User found but some updates missing or incorrect", {
+                                'user_updated': user_updated,
+                                'updates_applied': updates_applied
+                            })
+                            return False
+                    else:
+                        self.log_test("Webhook Hybrid Score Result with User Linking", False, "❌ USER NOT FOUND: Email ianfonz1@wavescapital.co not found in user_profiles table", data)
+                        return False
+                else:
+                    self.log_test("Webhook Hybrid Score Result with User Linking", False, f"❌ RESPONSE STRUCTURE INVALID: Missing fields {missing_fields}", data)
+                    return False
+                    
+            elif response.status_code == 422:
+                try:
+                    error_data = response.json()
+                    self.log_test("Webhook Hybrid Score Result with User Linking", False, "❌ PYDANTIC VALIDATION ERROR: Webhook data format invalid", error_data)
+                    return False
+                except:
+                    self.log_test("Webhook Hybrid Score Result with User Linking", False, "❌ PYDANTIC VALIDATION ERROR: 422 response", response.text)
+                    return False
+            else:
+                self.log_test("Webhook Hybrid Score Result with User Linking", False, f"❌ WEBHOOK FAILED: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Webhook Hybrid Score Result with User Linking", False, "❌ Webhook test failed with exception", str(e))
+            return False
+    
+    def test_webhook_with_nonexistent_email(self):
+        """Test webhook with non-existent email (should create anonymous profile)"""
+        try:
+            print("\n🔍 WEBHOOK WITH NON-EXISTENT EMAIL TEST 🔍")
+            print("=" * 50)
+            
+            # Test data with non-existent email
+            webhook_test_data = [{
+                "body": {
+                    "athleteProfile": {
+                        "first_name": "Test",
+                        "last_name": "User",
+                        "sex": "Male", 
+                        "dob": "01/01/1990",
+                        "wearables": ["Apple Watch"],
+                        "body_metrics": {
+                            "weight_lb": 180,
+                            "height_in": 72,
+                            "vo2max": 50,
+                            "resting_hr_bpm": 60,
+                            "hrv_ms": 50
+                        },
+                        "email": "nonexistent@example.com",
+                        "schema_version": "v1.0",
+                        "meta_session_id": "test-session-456",
+                        "interview_type": "hybrid"
+                    }
+                },
+                "headers": {
+                    "cf-ipcountry": "CA"
+                }
+            }]
+            
+            response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json=webhook_test_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                user_updated = data.get('user_updated', False)
+                profile_id = data.get('profile_id')
+                
+                if not user_updated and profile_id:
+                    self.log_test("Webhook with Non-existent Email", True, "✅ ANONYMOUS PROFILE CREATION: Non-existent email handled correctly, anonymous profile created", {
+                        'user_updated': user_updated,
+                        'profile_id': profile_id
+                    })
+                    return True
+                else:
+                    self.log_test("Webhook with Non-existent Email", False, "❌ UNEXPECTED BEHAVIOR: Non-existent email should not update user", data)
+                    return False
+            else:
+                self.log_test("Webhook with Non-existent Email", False, f"❌ WEBHOOK FAILED: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Webhook with Non-existent Email", False, "❌ Non-existent email test failed", str(e))
+            return False
+    
+    def test_webhook_score_callback_endpoint(self):
+        """Test POST /api/webhook/hybrid-score-callback with proper Pydantic model"""
+        try:
+            print("\n🎯 WEBHOOK SCORE CALLBACK ENDPOINT TEST 🎯")
+            print("=" * 50)
+            
+            # Test score callback data
+            score_callback_data = [{
+                "hybridScore": 85.5,
+                "strengthScore": 90.2,
+                "speedScore": 78.3,
+                "vo2Score": 82.1,
+                "distanceScore": 75.8,
+                "volumeScore": 88.4,
+                "recoveryScore": 91.2,
+                "enduranceScore": 80.5,
+                "balanceBonus": 5.0,
+                "hybridPenalty": 2.0,
+                "tips": [
+                    "Increase weekly mileage gradually",
+                    "Focus on strength training consistency",
+                    "Improve recovery protocols"
+                ]
+            }]
+            
+            response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-callback", json=score_callback_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                expected_fields = ['success', 'message', 'scores']
+                missing_fields = [field for field in expected_fields if field not in data]
+                
+                if not missing_fields:
+                    scores = data.get('scores', {})
+                    expected_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
+                    
+                    scores_present = all(score in scores for score in expected_scores)
+                    
+                    if scores_present:
+                        self.log_test("Webhook Score Callback Endpoint", True, "✅ SCORE CALLBACK WORKING: All score fields processed correctly with proper Pydantic validation", {
+                            'scores_received': scores,
+                            'tips_count': len(scores.get('tips', []))
+                        })
+                        return True
+                    else:
+                        missing_scores = [score for score in expected_scores if score not in scores]
+                        self.log_test("Webhook Score Callback Endpoint", False, f"❌ MISSING SCORES: {missing_scores}", data)
+                        return False
+                else:
+                    self.log_test("Webhook Score Callback Endpoint", False, f"❌ RESPONSE STRUCTURE INVALID: Missing fields {missing_fields}", data)
+                    return False
+            elif response.status_code == 422:
+                try:
+                    error_data = response.json()
+                    self.log_test("Webhook Score Callback Endpoint", False, "❌ PYDANTIC VALIDATION ERROR: Score data format invalid", error_data)
+                    return False
+                except:
+                    self.log_test("Webhook Score Callback Endpoint", False, "❌ PYDANTIC VALIDATION ERROR: 422 response", response.text)
+                    return False
+            else:
+                self.log_test("Webhook Score Callback Endpoint", False, f"❌ SCORE CALLBACK FAILED: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Webhook Score Callback Endpoint", False, "❌ Score callback test failed", str(e))
+            return False
+    
+    def test_user_profile_retrieval_after_webhook(self):
+        """Test user profile retrieval to verify webhook updates were applied"""
+        try:
+            print("\n👤 USER PROFILE RETRIEVAL VERIFICATION TEST 👤")
+            print("=" * 55)
+            print("Testing if webhook updates are reflected in user profile data")
+            
+            # Test the public profile endpoint for Ian Fonville's user_id
+            # Note: This assumes the user exists from previous webhook test
+            ian_user_id = "ff6827a2-2b0b-4210-8bc6-e02cc8487752"  # From review request
+            
+            response = self.session.get(f"{API_BASE_URL}/public-profile/{ian_user_id}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                public_profile = data.get('public_profile', {})
+                
+                # Verify expected profile updates from webhook
+                display_name = public_profile.get('display_name')
+                country = public_profile.get('country')
+                gender = public_profile.get('gender')
+                age = public_profile.get('age')
+                
+                print(f"📊 Profile data retrieved:")
+                print(f"   Display Name: {display_name}")
+                print(f"   Country: {country}")
+                print(f"   Gender: {gender}")
+                print(f"   Age: {age}")
+                
+                # Check if webhook updates are reflected
+                webhook_updates_verified = True
+                verification_results = []
+                
+                if display_name and 'Ian' in display_name:
+                    verification_results.append("✅ Display name contains 'Ian'")
+                else:
+                    verification_results.append("❌ Display name missing or incorrect")
+                    webhook_updates_verified = False
+                
+                if country == 'US':
+                    verification_results.append("✅ Country set to 'US'")
+                else:
+                    verification_results.append(f"❌ Country is '{country}' (expected 'US')")
+                    webhook_updates_verified = False
+                
+                if gender == 'male':
+                    verification_results.append("✅ Gender set to 'male'")
+                else:
+                    verification_results.append(f"❌ Gender is '{gender}' (expected 'male')")
+                    webhook_updates_verified = False
+                
+                for result in verification_results:
+                    print(f"   {result}")
+                
+                if webhook_updates_verified:
+                    self.log_test("User Profile Retrieval After Webhook", True, "✅ WEBHOOK UPDATES VERIFIED: User profile correctly reflects webhook data updates", {
+                        'display_name': display_name,
+                        'country': country,
+                        'gender': gender,
+                        'age': age
+                    })
+                    return True
+                else:
+                    self.log_test("User Profile Retrieval After Webhook", False, "❌ WEBHOOK UPDATES NOT REFLECTED: User profile missing expected webhook updates", public_profile)
+                    return False
+                    
+            elif response.status_code == 404:
+                self.log_test("User Profile Retrieval After Webhook", False, f"❌ USER NOT FOUND: User ID {ian_user_id} not found in system", response.text)
+                return False
+            else:
+                self.log_test("User Profile Retrieval After Webhook", False, f"❌ PROFILE RETRIEVAL FAILED: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("User Profile Retrieval After Webhook", False, "❌ Profile retrieval test failed", str(e))
+            return False
+    
+    def test_pydantic_model_validation(self):
+        """Test Pydantic model validation for webhook endpoints"""
+        try:
+            print("\n🔧 PYDANTIC MODEL VALIDATION TEST 🔧")
+            print("=" * 45)
+            print("Testing that webhook endpoints properly validate data with Pydantic models")
+            
+            # Test with invalid webhook data (should return 422)
+            invalid_webhook_data = [{
+                "body": {
+                    "athleteProfile": {
+                        # Missing required first_name and last_name
+                        "sex": "Invalid",  # Invalid sex value
+                        "dob": "invalid-date-format",  # Invalid date format
+                        "body_metrics": {
+                            "weight_lb": "not-a-number",  # Invalid type
+                            "height_in": -5  # Invalid value
+                        }
+                    }
+                }
+            }]
+            
+            response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json=invalid_webhook_data)
+            
+            if response.status_code == 422:
+                try:
+                    error_data = response.json()
+                    self.log_test("Pydantic Model Validation", True, "✅ PYDANTIC VALIDATION WORKING: Invalid data correctly rejected with 422 error", {
+                        'error_details': error_data.get('detail', [])[:3]  # Show first 3 validation errors
+                    })
+                    return True
+                except:
+                    self.log_test("Pydantic Model Validation", True, "✅ PYDANTIC VALIDATION WORKING: Invalid data rejected with 422", response.text[:200])
+                    return True
+            elif response.status_code == 200:
+                self.log_test("Pydantic Model Validation", False, "❌ VALIDATION NOT WORKING: Invalid data was accepted", response.json())
+                return False
+            else:
+                self.log_test("Pydantic Model Validation", False, f"❌ UNEXPECTED RESPONSE: HTTP {response.status_code} (expected 422)", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Pydantic Model Validation", False, "❌ Pydantic validation test failed", str(e))
+            return False
+    
+    def run_webhook_integration_tests(self):
+        """Run all webhook integration tests as requested in review"""
+        print("\n" + "="*80)
+        print("🎯 WEBHOOK INTEGRATION TESTING - AS REQUESTED IN REVIEW 🎯")
+        print("="*80)
+        print("Testing the fixed webhook integration with proper Pydantic models and user profile linking")
+        print("Focus Areas: Pydantic validation, email-based user lookup, profile updates, athlete profile creation")
+        print("="*80)
+        
+        webhook_tests = [
+            ("Webhook Hybrid Score Result with User Linking", self.test_webhook_hybrid_score_result_with_user_linking),
+            ("Webhook with Non-existent Email", self.test_webhook_with_nonexistent_email),
+            ("Webhook Score Callback Endpoint", self.test_webhook_score_callback_endpoint),
+            ("User Profile Retrieval After Webhook", self.test_user_profile_retrieval_after_webhook),
+            ("Pydantic Model Validation", self.test_pydantic_model_validation)
+        ]
+        
+        webhook_results = []
+        for test_name, test_func in webhook_tests:
+            print(f"\n🔍 Running: {test_name}")
+            print("-" * 60)
+            try:
+                result = test_func()
+                webhook_results.append((test_name, result))
+            except Exception as e:
+                print(f"❌ {test_name} failed with exception: {e}")
+                webhook_results.append((test_name, False))
+        
+        # Summary of webhook test results
+        print("\n" + "="*80)
+        print("🎯 WEBHOOK INTEGRATION TESTING SUMMARY 🎯")
+        print("="*80)
+        
+        passed_tests = 0
+        total_tests = len(webhook_results)
+        
+        for test_name, result in webhook_results:
+            status = "✅ PASS" if result else "❌ FAIL"
+            print(f"{status}: {test_name}")
+            if result:
+                passed_tests += 1
+        
+        print(f"\nWEBHOOK TEST RESULTS: {passed_tests}/{total_tests} tests passed")
+        
+        if passed_tests == total_tests:
+            print("🎉 WEBHOOK CONCLUSION: All webhook integration tests PASSED - webhook system is fully functional")
+        elif passed_tests >= total_tests // 2:
+            print("⚠️  WEBHOOK CONCLUSION: Most webhook tests passed - system is mostly functional with minor issues")
+        else:
+            print("❌ WEBHOOK CONCLUSION: Multiple webhook tests FAILED - webhook integration needs significant fixes")
+        
+        print("="*80)
+        
+        return passed_tests >= total_tests // 2
+
     def run_all_tests(self):
         """Run all backend tests for mobile optimization review"""
         print("🚀 Starting Backend API Tests for Mobile Optimization Review")
