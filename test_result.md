@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Add delete functionality to athlete profiles in the Hybrid Score History table on the /profile page. Users should be able to delete athlete profiles by clicking a small x button all the way to the right on the table."
+user_problem_statement: "Remove profile_text, first_name, last_name, email, sex, age, user_profile_id columns from the athlete_profiles table. This data should come from the user_profiles table instead. user_id column is the link between athlete_profiles and user_profiles. Do an audit and create a plan to make sure our database structure is optimized factoring in this data."
 
 backend:
   - task: "GET /api/public-profile/{user_id} Endpoint Testing"
