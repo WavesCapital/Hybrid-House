@@ -1767,11 +1767,11 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                     
                     # Extract personal data for user_profiles table (normalized structure)
                     personal_data = {
-                        'name': f"{profile_json.get('first_name', '')} {profile_json.get('last_name', '')}".strip(),
-                        'display_name': profile_json.get('first_name', 'Athlete'),
-                        'email': profile_json.get('email', ''),
-                        'gender': profile_json.get('sex', '').lower() if profile_json.get('sex') else None,
-                        'country': profile_json.get('country', ''),
+                        'name': f"{profile_json.get('first_name', '')} {profile_json.get('last_name', '')}".strip()[:50],  # Limit to 50 chars
+                        'display_name': profile_json.get('first_name', 'Athlete')[:50],  # Limit to 50 chars
+                        'email': profile_json.get('email', '')[:100],  # Limit to 100 chars
+                        'gender': profile_json.get('sex', '').lower()[:10] if profile_json.get('sex') else None,  # Limit to 10 chars
+                        'country': profile_json.get('country', '')[:10],  # Limit to 10 chars
                         'updated_at': datetime.utcnow().isoformat()
                     }
                     
@@ -1797,9 +1797,15 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                         except Exception as e:
                             print(f"Error converting date of birth: {e}")
                     
-                    # Handle wearables
+                    # Handle wearables - truncate if too long
                     if profile_json.get('wearables'):
-                        personal_data['wearables'] = profile_json.get('wearables')
+                        wearables = profile_json.get('wearables')
+                        if isinstance(wearables, list):
+                            # Truncate each wearable name if needed
+                            truncated_wearables = [w[:20] if isinstance(w, str) else w for w in wearables]
+                            personal_data['wearables'] = truncated_wearables
+                        else:
+                            personal_data['wearables'] = wearables
                     
                     # Create or update user profile with personal data
                     try:
