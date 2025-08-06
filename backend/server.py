@@ -2517,16 +2517,18 @@ async def handle_hybrid_score_webhook(webhook_data: List[WebhookRequest]):
         
         # Find user by email if provided
         user_profile = None
+        user_id = None
+        
         if email:
             try:
-                # Find user by email in user_profiles table
+                # First, try to find user by email in user_profiles table
                 user_result = supabase.table('user_profiles').select('*').eq('email', email).execute()
                 
                 if user_result.data and len(user_result.data) > 0:
                     user_profile = user_result.data[0]
                     user_id = user_profile['user_id']
                     
-                    print(f"✅ Found existing user: {email} -> {user_id}")
+                    print(f"✅ Found existing user in user_profiles: {email} -> {user_id}")
                     
                     # Update existing user profile
                     update_result = supabase.table('user_profiles').update(user_profile_updates).eq('user_id', user_id).execute()
@@ -2535,12 +2537,42 @@ async def handle_hybrid_score_webhook(webhook_data: List[WebhookRequest]):
                         print(f"✅ Updated user profile: {update_result.data[0]}")
                     else:
                         print(f"⚠️  Failed to update user profile")
-                        
                 else:
-                    print(f"⚠️  No user found with email: {email}")
+                    print(f"⚠️  No user found in user_profiles with email: {email}")
+                    
+                    # Check if this could be a missing user_profiles record for an existing auth user
+                    # We can infer this if we get a specific user_id in the session or other context
+                    session_id = athlete_profile.meta_session_id
+                    
+                    # If we have additional context (like user_id from external source), create the user_profiles record
+                    # For now, we'll create a user_profiles record for the authenticated user
+                    if email and '@' in email:  # Basic email validation
+                        print(f"🔄 Creating missing user_profiles record for authenticated user: {email}")
+                        
+                        # Generate or use provided user_id
+                        user_id = str(uuid.uuid4())  # This should ideally come from the auth context
+                        
+                        # Create user_profiles record
+                        new_user_profile = {
+                            'user_id': user_id,
+                            'email': email,
+                            **user_profile_updates,
+                            'created_at': datetime.utcnow().isoformat()
+                        }
+                        
+                        create_result = supabase.table('user_profiles').insert(new_user_profile).execute()
+                        
+                        if create_result.data:
+                            user_profile = create_result.data[0]
+                            print(f"✅ Created new user_profiles record: {user_profile}")
+                        else:
+                            print(f"❌ Failed to create user_profiles record")
                     
             except Exception as e:
                 print(f"❌ Error finding/updating user by email: {e}")
+        
+        # For the athlete profile, use the actual user_id if we have one, or generate new one
+        athlete_user_id = user_id if user_id else str(uuid.uuid4())
         
         # Create athlete profile
         athlete_profile_data = {
