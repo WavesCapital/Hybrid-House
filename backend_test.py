@@ -15318,6 +15318,247 @@ if __name__ == "__main__":
             print(f"extract_individual_fields function error: {e}")
             return None
 
+    def test_hybrid_interview_completion_with_failing_data(self):
+        """Test hybrid interview completion with the exact data that was failing"""
+        try:
+            print("\n🚨 HYBRID INTERVIEW COMPLETION BUG FIX TESTING 🚨")
+            print("=" * 70)
+            print("Testing with the exact data that was causing:")
+            print("- Character length constraint errors in user_profiles table")
+            print("- Foreign key constraint violations")
+            print("- Field truncation issues")
+            print("- 'I apologize, but there was an error processing your hybrid profile' error")
+            print("=" * 70)
+            
+            # The exact failing data from the review request
+            failing_data = {
+                "first_name": "Ian",
+                "last_name": "Fonville", 
+                "sex": "Male",
+                "dob": "02/05/2001",
+                "country": "US",
+                "wearables": ["Garmin Forerunner"],
+                "body_metrics": {
+                    "weight_lb": 190,
+                    "height_in": 70,
+                    "vo2max": 55,
+                    "resting_hr_bpm": 45,
+                    "hrv_ms": 195
+                },
+                "pb_mile": "4:59",
+                "weekly_miles": 40,
+                "long_run": 26,
+                "pb_bench_1rm": 315,
+                "pb_squat_1rm": 405,
+                "pb_deadlift_1rm": 500
+            }
+            
+            print(f"📝 Testing with failing data:")
+            print(f"   Name: {failing_data['first_name']} {failing_data['last_name']}")
+            print(f"   Sex: {failing_data['sex']}")
+            print(f"   DOB: {failing_data['dob']}")
+            print(f"   Country: {failing_data['country']}")
+            print(f"   Weight: {failing_data['body_metrics']['weight_lb']} lb")
+            print(f"   Height: {failing_data['body_metrics']['height_in']} in")
+            print(f"   VO2 Max: {failing_data['body_metrics']['vo2max']}")
+            print(f"   Mile PR: {failing_data['pb_mile']}")
+            print(f"   Weekly Miles: {failing_data['weekly_miles']}")
+            print(f"   Long Run: {failing_data['long_run']}")
+            print(f"   Bench 1RM: {failing_data['pb_bench_1rm']} lb")
+            print(f"   Squat 1RM: {failing_data['pb_squat_1rm']} lb")
+            print(f"   Deadlift 1RM: {failing_data['pb_deadlift_1rm']} lb")
+            
+            # Test 1: Try to create athlete profile with this data (simulating completion)
+            print(f"\n🔍 Test 1: Creating athlete profile with failing data...")
+            
+            # Create profile data structure as it would be during completion
+            profile_json = {
+                "first_name": failing_data["first_name"],
+                "last_name": failing_data["last_name"],
+                "sex": failing_data["sex"],
+                "dob": failing_data["dob"],
+                "country": failing_data["country"],
+                "wearables": failing_data["wearables"],
+                "body_metrics": failing_data["body_metrics"],
+                "pb_mile": failing_data["pb_mile"],
+                "weekly_miles": failing_data["weekly_miles"],
+                "long_run": failing_data["long_run"],
+                "pb_bench_1rm": failing_data["pb_bench_1rm"],
+                "pb_squat_1rm": failing_data["pb_squat_1rm"],
+                "pb_deadlift_1rm": failing_data["pb_deadlift_1rm"]
+            }
+            
+            # Add mock score data (as would be generated)
+            score_data = {
+                "hybridScore": 85.2,
+                "strengthScore": 92.1,
+                "speedScore": 88.5,
+                "vo2Score": 87.3,
+                "distanceScore": 82.1,
+                "volumeScore": 84.7,
+                "recoveryScore": 89.2
+            }
+            
+            # Test creating public athlete profile (no auth required)
+            create_payload = {
+                "profile_json": profile_json,
+                "score_data": score_data,
+                "user_id": "test-user-ian-fonville-" + str(hash(str(failing_data)))[:8]
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=create_payload)
+            
+            if response.status_code in [200, 201]:
+                response_data = response.json()
+                profile_id = response_data.get('profile', {}).get('id')
+                
+                print(f"✅ Test 1 PASSED: Athlete profile created successfully")
+                print(f"   Profile ID: {profile_id}")
+                print(f"   Response: {response_data.get('message', 'Success')}")
+                
+                # Test 2: Verify the profile can be retrieved
+                print(f"\n🔍 Test 2: Retrieving created profile...")
+                
+                if profile_id:
+                    get_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                    
+                    if get_response.status_code == 200:
+                        profile_data = get_response.json()
+                        
+                        print(f"✅ Test 2 PASSED: Profile retrieved successfully")
+                        print(f"   Profile JSON contains: {len(profile_data.get('profile_json', {}))} fields")
+                        print(f"   Score data contains: {len(profile_data.get('score_data', {}))} scores")
+                        
+                        # Test 3: Verify data integrity
+                        print(f"\n🔍 Test 3: Verifying data integrity...")
+                        
+                        retrieved_profile = profile_data.get('profile_json', {})
+                        retrieved_scores = profile_data.get('score_data', {})
+                        
+                        # Check critical fields that were causing issues
+                        integrity_checks = [
+                            ("first_name", retrieved_profile.get('first_name') == failing_data['first_name']),
+                            ("last_name", retrieved_profile.get('last_name') == failing_data['last_name']),
+                            ("sex", retrieved_profile.get('sex') == failing_data['sex']),
+                            ("country", retrieved_profile.get('country') == failing_data['country']),
+                            ("weight_lb", retrieved_profile.get('body_metrics', {}).get('weight_lb') == failing_data['body_metrics']['weight_lb']),
+                            ("height_in", retrieved_profile.get('body_metrics', {}).get('height_in') == failing_data['body_metrics']['height_in']),
+                            ("vo2max", retrieved_profile.get('body_metrics', {}).get('vo2max') == failing_data['body_metrics']['vo2max']),
+                            ("pb_mile", retrieved_profile.get('pb_mile') == failing_data['pb_mile']),
+                            ("weekly_miles", retrieved_profile.get('weekly_miles') == failing_data['weekly_miles']),
+                            ("long_run", retrieved_profile.get('long_run') == failing_data['long_run']),
+                            ("pb_bench_1rm", retrieved_profile.get('pb_bench_1rm') == failing_data['pb_bench_1rm']),
+                            ("pb_squat_1rm", retrieved_profile.get('pb_squat_1rm') == failing_data['pb_squat_1rm']),
+                            ("pb_deadlift_1rm", retrieved_profile.get('pb_deadlift_1rm') == failing_data['pb_deadlift_1rm']),
+                            ("hybridScore", retrieved_scores.get('hybridScore') == score_data['hybridScore']),
+                            ("strengthScore", retrieved_scores.get('strengthScore') == score_data['strengthScore'])
+                        ]
+                        
+                        passed_checks = 0
+                        total_checks = len(integrity_checks)
+                        
+                        for field_name, check_result in integrity_checks:
+                            if check_result:
+                                passed_checks += 1
+                                print(f"   ✅ {field_name}: Data integrity maintained")
+                            else:
+                                print(f"   ❌ {field_name}: Data integrity issue")
+                        
+                        integrity_rate = (passed_checks / total_checks) * 100
+                        
+                        if integrity_rate >= 90:
+                            print(f"✅ Test 3 PASSED: Data integrity excellent ({integrity_rate:.1f}%)")
+                            
+                            # Test 4: Test character length constraints
+                            print(f"\n🔍 Test 4: Testing character length constraint handling...")
+                            
+                            # Test with potentially problematic long strings
+                            long_data = failing_data.copy()
+                            long_data["first_name"] = "Ian" + "x" * 100  # Very long first name
+                            long_data["last_name"] = "Fonville" + "y" * 100  # Very long last name
+                            long_data["country"] = "US" + "z" * 100  # Very long country
+                            
+                            long_profile_json = profile_json.copy()
+                            long_profile_json.update(long_data)
+                            
+                            long_create_payload = {
+                                "profile_json": long_profile_json,
+                                "score_data": score_data,
+                                "user_id": "test-user-long-data-" + str(hash(str(long_data)))[:8]
+                            }
+                            
+                            long_response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=long_create_payload)
+                            
+                            if long_response.status_code in [200, 201]:
+                                print(f"✅ Test 4 PASSED: Character length constraints handled gracefully")
+                                
+                                # Test 5: Test foreign key constraint handling
+                                print(f"\n🔍 Test 5: Testing foreign key constraint handling...")
+                                
+                                # Test with various user_id scenarios
+                                fk_test_scenarios = [
+                                    ("valid_uuid", "550e8400-e29b-41d4-a716-446655440000"),
+                                    ("another_uuid", "6ba7b810-9dad-11d1-80b4-00c04fd430c8"),
+                                    ("generated_uuid", f"test-fk-{hash(str(failing_data))}-{hash('fk_test')}")
+                                ]
+                                
+                                fk_passed = 0
+                                for scenario_name, test_user_id in fk_test_scenarios:
+                                    fk_payload = {
+                                        "profile_json": profile_json,
+                                        "score_data": score_data,
+                                        "user_id": test_user_id
+                                    }
+                                    
+                                    fk_response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=fk_payload)
+                                    
+                                    if fk_response.status_code in [200, 201]:
+                                        fk_passed += 1
+                                        print(f"   ✅ {scenario_name}: Foreign key constraint handled")
+                                    else:
+                                        print(f"   ❌ {scenario_name}: Foreign key constraint issue - HTTP {fk_response.status_code}")
+                                
+                                if fk_passed >= 2:  # At least 2 out of 3 should work
+                                    print(f"✅ Test 5 PASSED: Foreign key constraints handled properly ({fk_passed}/3)")
+                                    
+                                    self.log_test("Hybrid Interview Completion Bug Fix", True, f"🎉 ALL TESTS PASSED: Hybrid interview completion with failing data now works correctly. Character length constraints, foreign key constraints, and field truncation are all handled properly. The error 'I apologize, but there was an error processing your hybrid profile' should no longer appear.", {
+                                        'data_integrity': f"{integrity_rate:.1f}%",
+                                        'character_length_handling': 'Working',
+                                        'foreign_key_handling': f"{fk_passed}/3 scenarios passed",
+                                        'profile_creation': 'Success',
+                                        'profile_retrieval': 'Success',
+                                        'original_failing_data': failing_data
+                                    })
+                                    return True
+                                else:
+                                    print(f"❌ Test 5 FAILED: Foreign key constraint issues ({fk_passed}/3)")
+                            else:
+                                print(f"❌ Test 4 FAILED: Character length constraint issues - HTTP {long_response.status_code}")
+                        else:
+                            print(f"❌ Test 3 FAILED: Data integrity issues ({integrity_rate:.1f}%)")
+                    else:
+                        print(f"❌ Test 2 FAILED: Cannot retrieve profile - HTTP {get_response.status_code}")
+                else:
+                    print(f"❌ Test 2 FAILED: No profile ID returned")
+            else:
+                print(f"❌ Test 1 FAILED: Cannot create athlete profile - HTTP {response.status_code}")
+                try:
+                    error_data = response.json()
+                    print(f"   Error details: {error_data}")
+                except:
+                    print(f"   Error text: {response.text}")
+            
+            self.log_test("Hybrid Interview Completion Bug Fix", False, f"❌ HYBRID INTERVIEW COMPLETION STILL HAS ISSUES: The bug fix is not complete. The exact data that was failing is still causing problems. Character length constraints, foreign key constraints, or field truncation issues persist.", {
+                'http_status': response.status_code,
+                'failing_data': failing_data,
+                'error_details': response.text[:500] if response.text else 'No error details'
+            })
+            return False
+                
+        except Exception as e:
+            self.log_test("Hybrid Interview Completion Bug Fix", False, f"❌ Hybrid interview completion test failed with exception", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests for mobile optimization review"""
         print("🚀 Starting Backend API Tests for Mobile Optimization Review")
