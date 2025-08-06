@@ -359,11 +359,11 @@ def extract_individual_fields(profile_json: dict, score_data: dict = None) -> di
     
     individual_fields = {}
     
-    # Body metrics (performance data only - personal data removed from athlete_profiles)
+    # Body metrics (performance/fitness data only - personal attributes go to user_profiles)
     body_metrics = profile_json.get('body_metrics', {})
     if isinstance(body_metrics, dict):
         body_metric_fields = {
-            'weight_lb': safe_decimal(body_metrics.get('weight_lb') or body_metrics.get('weight')),
+            # Performance metrics only (height/weight go to user_profiles)
             'vo2_max': safe_decimal(body_metrics.get('vo2_max') or body_metrics.get('vo2max')),
             'hrv_ms': safe_int(body_metrics.get('hrv') or body_metrics.get('hrv_ms')),
             'resting_hr_bpm': safe_int(body_metrics.get('resting_hr') or body_metrics.get('resting_hr_bpm'))
