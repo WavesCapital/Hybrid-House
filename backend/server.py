@@ -2588,9 +2588,21 @@ async def handle_hybrid_score_webhook(webhook_data: List[WebhookRequest]):
         # For the athlete profile, use the actual user_id if we have one, or generate new one
         athlete_user_id = user_id if user_id else str(uuid.uuid4())
         
-        # Create athlete profile
+        # Create athlete profile with performance data only (no personal data)
         athlete_profile_data = {
-            'profile_json': athlete_profile.dict(),
+            'profile_json': {
+                # Performance metrics only
+                'pb_mile': athlete_profile.pb_mile,
+                'weekly_miles': athlete_profile.weekly_miles,
+                'long_run': athlete_profile.long_run,
+                'pb_bench_1rm': athlete_profile.pb_bench_1rm,
+                'pb_squat_1rm': athlete_profile.pb_squat_1rm,
+                'pb_deadlift_1rm': athlete_profile.pb_deadlift_1rm,
+                'body_metrics': athlete_profile.body_metrics.dict() if athlete_profile.body_metrics else None,
+                'schema_version': athlete_profile.schema_version,
+                'meta_session_id': athlete_profile.meta_session_id,
+                'interview_type': athlete_profile.interview_type
+            },
             'score_data': None,  # Will be updated when scores come back
             'user_id': athlete_user_id,
             'is_public': True,
