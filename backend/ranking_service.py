@@ -36,6 +36,31 @@ class RankingService:
             print(f"❌ RankingService: Missing environment variables - URL: {bool(supabase_url)}, Key: {bool(supabase_key)}")
             self.supabase = None
     
+    def get_country_flag(self, country: str) -> str:
+        """Get country flag emoji for a given country name"""
+        if not country:
+            return None
+            
+        country_flags = {
+            'United States': '🇺🇸', 'USA': '🇺🇸', 'US': '🇺🇸',
+            'Canada': '🇨🇦', 'CA': '🇨🇦',
+            'United Kingdom': '🇬🇧', 'UK': '🇬🇧', 'GB': '🇬🇧',
+            'Australia': '🇦🇺', 'AU': '🇦🇺',
+            'Germany': '🇩🇪', 'DE': '🇩🇪',
+            'France': '🇫🇷', 'FR': '🇫🇷',
+            'Spain': '🇪🇸', 'ES': '🇪🇸',
+            'Italy': '🇮🇹', 'IT': '🇮🇹',
+            'Netherlands': '🇳🇱', 'NL': '🇳🇱',
+            'Sweden': '🇸🇪', 'SE': '🇸🇪',
+            'Norway': '🇳🇴', 'NO': '🇳🇴',
+            'Denmark': '🇩🇰', 'DK': '🇩🇰',
+            'Japan': '🇯🇵', 'JP': '🇯🇵',
+            'South Korea': '🇰🇷', 'KR': '🇰🇷',
+            'Brazil': '🇧🇷', 'BR': '🇧🇷',
+            'Mexico': '🇲🇽', 'MX': '🇲🇽'
+        }
+        return country_flags.get(country, country)
+    
     def get_public_leaderboard_data(self) -> List[Dict]:
         """Get all public profiles with complete scores for leaderboard"""
         if not self.supabase:
