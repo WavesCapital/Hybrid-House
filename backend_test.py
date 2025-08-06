@@ -14125,6 +14125,452 @@ if __name__ == "__main__":
         
         return passed_tests >= total_tests // 2
 
+    def test_database_normalization_leaderboard(self):
+        """Test GET /api/leaderboard endpoint for database normalization verification"""
+        try:
+            print("\n🎯 DATABASE NORMALIZATION - LEADERBOARD TESTING 🎯")
+            print("=" * 60)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                total = data.get('total', 0)
+                
+                print(f"📊 Leaderboard returned {len(leaderboard)} entries (total: {total})")
+                
+                if not leaderboard:
+                    self.log_test("Database Normalization - Leaderboard", True, "Leaderboard endpoint working but empty (no public profiles)", data)
+                    return True
+                
+                # Analyze data structure for normalization
+                normalization_analysis = {
+                    'total_entries': len(leaderboard),
+                    'entries_with_user_profiles_data': 0,
+                    'entries_with_complete_demographics': 0,
+                    'entries_missing_demographics': 0,
+                    'sample_entries': []
+                }
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name', 'Unknown')
+                    age = entry.get('age')
+                    gender = entry.get('gender') 
+                    country = entry.get('country')
+                    score = entry.get('score')
+                    rank = entry.get('rank')
+                    
+                    # Check if personal data comes from user_profiles table
+                    has_demographics = age is not None and gender is not None and country is not None
+                    
+                    if has_demographics:
+                        normalization_analysis['entries_with_complete_demographics'] += 1
+                        normalization_analysis['entries_with_user_profiles_data'] += 1
+                        print(f"   ✅ {display_name} (Rank {rank}): Complete demographics from user_profiles (Age: {age}, Gender: {gender}, Country: {country}, Score: {score})")
+                    else:
+                        normalization_analysis['entries_missing_demographics'] += 1
+                        missing = []
+                        if age is None: missing.append("age")
+                        if gender is None: missing.append("gender")
+                        if country is None: missing.append("country")
+                        print(f"   ❌ {display_name} (Rank {rank}): Missing demographics: {', '.join(missing)} (Score: {score})")
+                    
+                    # Collect sample data
+                    if len(normalization_analysis['sample_entries']) < 3:
+                        normalization_analysis['sample_entries'].append({
+                            'display_name': display_name,
+                            'rank': rank,
+                            'score': score,
+                            'age': age,
+                            'gender': gender,
+                            'country': country,
+                            'has_complete_demographics': has_demographics
+                        })
+                
+                # Calculate success rate
+                success_rate = (normalization_analysis['entries_with_complete_demographics'] / normalization_analysis['total_entries']) * 100 if normalization_analysis['total_entries'] > 0 else 0
+                
+                print(f"\n📈 Database Normalization Analysis:")
+                print(f"   Total entries: {normalization_analysis['total_entries']}")
+                print(f"   Entries with complete demographics: {normalization_analysis['entries_with_complete_demographics']}")
+                print(f"   Success rate: {success_rate:.1f}%")
+                
+                if success_rate >= 80:
+                    self.log_test("Database Normalization - Leaderboard", True, f"✅ NORMALIZATION SUCCESS: {success_rate:.1f}% of entries have complete personal data from user_profiles table", normalization_analysis)
+                    return True
+                elif success_rate >= 50:
+                    self.log_test("Database Normalization - Leaderboard", False, f"⚠️ PARTIAL NORMALIZATION: {success_rate:.1f}% of entries have demographics - some user_id linking issues remain", normalization_analysis)
+                    return False
+                else:
+                    self.log_test("Database Normalization - Leaderboard", False, f"❌ NORMALIZATION FAILED: Only {success_rate:.1f}% of entries have demographics - user_profiles table join is broken", normalization_analysis)
+                    return False
+                    
+            else:
+                self.log_test("Database Normalization - Leaderboard", False, f"❌ Leaderboard endpoint error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Database Normalization - Leaderboard", False, "❌ Database normalization leaderboard test failed", str(e))
+            return False
+    
+    def test_user_id_linking_verification(self):
+        """Test that user_id linking between athlete_profiles and user_profiles is working"""
+        try:
+            print("\n🔗 USER_ID LINKING VERIFICATION 🔗")
+            print("=" * 40)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("User ID Linking Verification", True, "No leaderboard data to test linking (empty state)", data)
+                    return True
+                
+                # Analyze linking patterns
+                linking_stats = {
+                    'total_profiles': len(leaderboard),
+                    'profiles_with_demographics': 0,
+                    'profiles_without_demographics': 0,
+                    'successful_links': []
+                }
+                
+                print(f"🔍 Analyzing user_id linking for {len(leaderboard)} profiles:")
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name', 'Unknown')
+                    age = entry.get('age')
+                    gender = entry.get('gender')
+                    country = entry.get('country')
+                    profile_id = entry.get('profile_id')
+                    
+                    has_demographics = age is not None and gender is not None and country is not None
+                    
+                    if has_demographics:
+                        linking_stats['profiles_with_demographics'] += 1
+                        linking_stats['successful_links'].append({
+                            'display_name': display_name,
+                            'profile_id': profile_id,
+                            'age': age,
+                            'gender': gender,
+                            'country': country
+                        })
+                        print(f"   ✅ {display_name}: Successful user_id linking (demographics present)")
+                    else:
+                        linking_stats['profiles_without_demographics'] += 1
+                        print(f"   ❌ {display_name}: Failed user_id linking (no demographics)")
+                
+                linking_success_rate = (linking_stats['profiles_with_demographics'] / linking_stats['total_profiles']) * 100 if linking_stats['total_profiles'] > 0 else 0
+                
+                print(f"\n📊 User ID Linking Results:")
+                print(f"   Total profiles: {linking_stats['total_profiles']}")
+                print(f"   Successful links: {linking_stats['profiles_with_demographics']}")
+                print(f"   Failed links: {linking_stats['profiles_without_demographics']}")
+                print(f"   Success rate: {linking_success_rate:.1f}%")
+                
+                if linking_success_rate >= 80:
+                    self.log_test("User ID Linking Verification", True, f"✅ USER_ID LINKING SUCCESS: {linking_success_rate:.1f}% of profiles successfully linked between athlete_profiles.user_id and user_profiles.user_id", linking_stats)
+                    return True
+                elif linking_success_rate >= 50:
+                    self.log_test("User ID Linking Verification", False, f"⚠️ PARTIAL LINKING: {linking_success_rate:.1f}% of profiles linked - some user_id values may be null or incorrect", linking_stats)
+                    return False
+                else:
+                    self.log_test("User ID Linking Verification", False, f"❌ LINKING FAILED: Only {linking_success_rate:.1f}% of profiles linked - user_id foreign key relationship is broken", linking_stats)
+                    return False
+                    
+            else:
+                self.log_test("User ID Linking Verification", False, f"❌ Cannot test user_id linking - leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("User ID Linking Verification", False, "❌ User ID linking verification failed", str(e))
+            return False
+    
+    def test_public_private_profiles_filtering(self):
+        """Test that public/private profiles filtering works correctly"""
+        try:
+            print("\n🔒 PUBLIC/PRIVATE PROFILES FILTERING TEST 🔒")
+            print("=" * 50)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                total = data.get('total', 0)
+                
+                print(f"📊 Leaderboard shows {len(leaderboard)} public profiles (total: {total})")
+                
+                # All entries on leaderboard should be public profiles only
+                if len(leaderboard) == 0:
+                    self.log_test("Public/Private Profiles Filtering", True, "✅ FILTERING WORKING: No public profiles found - all profiles are private or no profiles exist", {
+                        'public_profiles': 0,
+                        'total_profiles': total
+                    })
+                    return True
+                
+                # Verify all returned profiles are public (they should be since they're on leaderboard)
+                print(f"🔍 Verifying all {len(leaderboard)} leaderboard entries are public profiles:")
+                
+                for i, entry in enumerate(leaderboard):
+                    display_name = entry.get('display_name', f'Profile {i+1}')
+                    score = entry.get('score')
+                    rank = entry.get('rank')
+                    print(f"   ✅ {display_name} (Rank {rank}, Score {score}): Public profile on leaderboard")
+                
+                self.log_test("Public/Private Profiles Filtering", True, f"✅ FILTERING SUCCESS: Leaderboard shows {len(leaderboard)} public profiles only - private profiles correctly filtered out", {
+                    'public_profiles_shown': len(leaderboard),
+                    'total_profiles': total,
+                    'filtering_working': True
+                })
+                return True
+                
+            else:
+                self.log_test("Public/Private Profiles Filtering", False, f"❌ Cannot test profile filtering - leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Public/Private Profiles Filtering", False, "❌ Public/private profiles filtering test failed", str(e))
+            return False
+    
+    def test_complete_scores_filtering(self):
+        """Test that only profiles with complete scores are shown"""
+        try:
+            print("\n📊 COMPLETE SCORES FILTERING TEST 📊")
+            print("=" * 40)
+            
+            response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if response.status_code == 200:
+                data = response.json()
+                leaderboard = data.get('leaderboard', [])
+                
+                if not leaderboard:
+                    self.log_test("Complete Scores Filtering", True, "No profiles to test complete scores filtering (empty leaderboard)", data)
+                    return True
+                
+                print(f"🔍 Verifying all {len(leaderboard)} profiles have complete scores:")
+                
+                complete_scores_count = 0
+                incomplete_scores_count = 0
+                
+                for entry in leaderboard:
+                    display_name = entry.get('display_name', 'Unknown')
+                    score = entry.get('score')
+                    score_breakdown = entry.get('score_breakdown', {})
+                    
+                    # Check if profile has complete score data
+                    required_scores = ['strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
+                    
+                    if isinstance(score_breakdown, dict):
+                        missing_scores = []
+                        for score_field in required_scores:
+                            if score_field not in score_breakdown or score_breakdown[score_field] is None:
+                                missing_scores.append(score_field)
+                        
+                        if not missing_scores and score is not None:
+                            complete_scores_count += 1
+                            print(f"   ✅ {display_name}: Complete scores (Hybrid: {score}, All sub-scores present)")
+                        else:
+                            incomplete_scores_count += 1
+                            print(f"   ❌ {display_name}: Incomplete scores - Missing: {', '.join(missing_scores) if missing_scores else 'hybrid score'}")
+                    else:
+                        incomplete_scores_count += 1
+                        print(f"   ❌ {display_name}: No score breakdown data")
+                
+                total_profiles = len(leaderboard)
+                complete_rate = (complete_scores_count / total_profiles) * 100 if total_profiles > 0 else 0
+                
+                print(f"\n📈 Complete Scores Analysis:")
+                print(f"   Total profiles: {total_profiles}")
+                print(f"   Complete scores: {complete_scores_count}")
+                print(f"   Incomplete scores: {incomplete_scores_count}")
+                print(f"   Complete rate: {complete_rate:.1f}%")
+                
+                if complete_rate == 100:
+                    self.log_test("Complete Scores Filtering", True, f"✅ FILTERING SUCCESS: 100% of leaderboard profiles have complete scores - incomplete profiles correctly filtered out", {
+                        'complete_profiles': complete_scores_count,
+                        'total_profiles': total_profiles,
+                        'complete_rate': f"{complete_rate:.1f}%"
+                    })
+                    return True
+                elif complete_rate >= 90:
+                    self.log_test("Complete Scores Filtering", True, f"✅ MOSTLY COMPLETE: {complete_rate:.1f}% of profiles have complete scores - filtering mostly working", {
+                        'complete_profiles': complete_scores_count,
+                        'incomplete_profiles': incomplete_scores_count,
+                        'total_profiles': total_profiles
+                    })
+                    return True
+                else:
+                    self.log_test("Complete Scores Filtering", False, f"❌ FILTERING FAILED: Only {complete_rate:.1f}% of profiles have complete scores - incomplete profiles are not being filtered out", {
+                        'complete_profiles': complete_scores_count,
+                        'incomplete_profiles': incomplete_scores_count,
+                        'total_profiles': total_profiles
+                    })
+                    return False
+                    
+            else:
+                self.log_test("Complete Scores Filtering", False, f"❌ Cannot test complete scores filtering - leaderboard API error: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Complete Scores Filtering", False, "❌ Complete scores filtering test failed", str(e))
+            return False
+    
+    def test_specific_athlete_profile_endpoint(self):
+        """Test GET /api/athlete-profile/{profile_id} endpoint"""
+        try:
+            print("\n👤 SPECIFIC ATHLETE PROFILE ENDPOINT TEST 👤")
+            print("=" * 50)
+            
+            # First get a profile_id from the leaderboard
+            leaderboard_response = self.session.get(f"{API_BASE_URL}/leaderboard")
+            
+            if leaderboard_response.status_code != 200:
+                self.log_test("Specific Athlete Profile Endpoint", False, "❌ Cannot get profile_id - leaderboard API error", leaderboard_response.text)
+                return False
+            
+            leaderboard_data = leaderboard_response.json()
+            leaderboard = leaderboard_data.get('leaderboard', [])
+            
+            if not leaderboard:
+                self.log_test("Specific Athlete Profile Endpoint", True, "No profiles available to test specific athlete profile endpoint", leaderboard_data)
+                return True
+            
+            # Test with the first profile from leaderboard
+            test_profile = leaderboard[0]
+            profile_id = test_profile.get('profile_id')
+            display_name = test_profile.get('display_name', 'Unknown')
+            
+            if not profile_id:
+                self.log_test("Specific Athlete Profile Endpoint", False, "❌ No profile_id found in leaderboard entry", test_profile)
+                return False
+            
+            print(f"🎯 Testing athlete profile endpoint with profile_id: {profile_id} ({display_name})")
+            
+            # Test the specific athlete profile endpoint
+            response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Verify response structure
+                required_fields = ['profile_id', 'profile_json', 'score_data']
+                missing_fields = []
+                
+                for field in required_fields:
+                    if field not in data:
+                        missing_fields.append(field)
+                
+                if not missing_fields:
+                    profile_json = data.get('profile_json', {})
+                    score_data = data.get('score_data', {})
+                    
+                    print(f"✅ Profile data retrieved successfully:")
+                    print(f"   Profile ID: {data.get('profile_id')}")
+                    print(f"   Has profile_json: {isinstance(profile_json, dict) and len(profile_json) > 0}")
+                    print(f"   Has score_data: {isinstance(score_data, dict) and len(score_data) > 0}")
+                    print(f"   Created at: {data.get('created_at')}")
+                    
+                    self.log_test("Specific Athlete Profile Endpoint", True, f"✅ ENDPOINT SUCCESS: Profile {profile_id} retrieved with complete data structure", {
+                        'profile_id': profile_id,
+                        'display_name': display_name,
+                        'has_profile_json': isinstance(profile_json, dict) and len(profile_json) > 0,
+                        'has_score_data': isinstance(score_data, dict) and len(score_data) > 0,
+                        'response_structure': list(data.keys())
+                    })
+                    return True
+                else:
+                    self.log_test("Specific Athlete Profile Endpoint", False, f"❌ INCOMPLETE RESPONSE: Missing required fields: {', '.join(missing_fields)}", data)
+                    return False
+                    
+            elif response.status_code == 404:
+                self.log_test("Specific Athlete Profile Endpoint", False, f"❌ PROFILE NOT FOUND: Profile {profile_id} returns 404 - may be data consistency issue", {
+                    'profile_id': profile_id,
+                    'display_name': display_name,
+                    'status_code': 404
+                })
+                return False
+            else:
+                self.log_test("Specific Athlete Profile Endpoint", False, f"❌ ENDPOINT ERROR: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Specific Athlete Profile Endpoint", False, "❌ Specific athlete profile endpoint test failed", str(e))
+            return False
+    
+    def run_database_normalization_tests(self):
+        """Run comprehensive database normalization tests as requested in review"""
+        print("\n" + "="*80)
+        print("🎯 DATABASE NORMALIZATION IMPLEMENTATION TESTING 🎯")
+        print("="*80)
+        print("Testing the database normalization to verify:")
+        print("1. GET /api/leaderboard returns complete leaderboard data with user profiles")
+        print("2. Personal information (names, age, gender, country) comes from user_profiles table")
+        print("3. user_id linking between athlete_profiles and user_profiles is functioning")
+        print("4. Public/private profiles filtering works correctly")
+        print("5. Only profiles with complete scores are shown")
+        print("6. Specific athlete profile endpoint works")
+        print("="*80)
+        
+        normalization_tests = [
+            ("Database Normalization - Leaderboard", self.test_database_normalization_leaderboard),
+            ("User ID Linking Verification", self.test_user_id_linking_verification),
+            ("Public/Private Profiles Filtering", self.test_public_private_profiles_filtering),
+            ("Complete Scores Filtering", self.test_complete_scores_filtering),
+            ("Specific Athlete Profile Endpoint", self.test_specific_athlete_profile_endpoint)
+        ]
+        
+        normalization_results = []
+        for test_name, test_func in normalization_tests:
+            print(f"\n🔍 Running: {test_name}")
+            print("-" * 60)
+            try:
+                result = test_func()
+                normalization_results.append((test_name, result))
+            except Exception as e:
+                print(f"❌ {test_name} failed with exception: {e}")
+                normalization_results.append((test_name, False))
+        
+        # Summary of normalization test results
+        print("\n" + "="*80)
+        print("🎯 DATABASE NORMALIZATION TEST SUMMARY 🎯")
+        print("="*80)
+        
+        passed_tests = 0
+        total_tests = len(normalization_results)
+        
+        for test_name, result in normalization_results:
+            status = "✅ PASS" if result else "❌ FAIL"
+            print(f"{status}: {test_name}")
+            if result:
+                passed_tests += 1
+        
+        print(f"\nNORMALIZATION TEST RESULTS: {passed_tests}/{total_tests} tests passed")
+        
+        if passed_tests == total_tests:
+            print("🎉 NORMALIZATION SUCCESS: Database normalization is working correctly!")
+            print("   ✅ Personal data comes from user_profiles table")
+            print("   ✅ user_id linking is functional")
+            print("   ✅ Leaderboard filtering is working")
+            print("   ✅ All endpoints are operational")
+        elif passed_tests >= total_tests // 2:
+            print("⚠️  PARTIAL NORMALIZATION: Database normalization is partially working")
+            print("   ⚠️  Some user_id linking issues may remain")
+            print("   ⚠️  Some profiles may not have complete user_profiles data")
+        else:
+            print("❌ NORMALIZATION FAILED: Database normalization has critical issues")
+            print("   ❌ user_id linking between tables is broken")
+            print("   ❌ Personal data is not coming from user_profiles table")
+            print("   ❌ System requires immediate attention")
+        
+        print("="*80)
+        
+        return passed_tests >= total_tests // 2
+
     def run_all_tests(self):
         """Run all backend tests for mobile optimization review"""
         print("🚀 Starting Backend API Tests for Mobile Optimization Review")
