@@ -991,7 +991,7 @@ const HybridInterviewFlow = () => {
                         <Activity className="w-8 h-8 text-white" />
                       </div>
                       <h3 className="text-xl font-semibold" style={{ color: 'var(--txt)' }}>Time-crunched schedules</h3>
-                      <p style={{ color: 'var(--muted)' }}>11-question interview &lt; 3 min to complete</p>
+                      <p style={{ color: 'var(--muted)' }}>AI interview (3 min) or quick form - your choice</p>
                     </div>
                   </div>
                 </div>
