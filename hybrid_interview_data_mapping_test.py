@@ -272,115 +272,127 @@ class HybridInterviewDataMappingTester:
             
             print(f"📝 Testing completion flow with data: {json.dumps(completion_data, indent=2)}")
             
-            # Test the hybrid interview completion endpoint
-            # Note: This would normally require authentication, but we're testing the data processing logic
-            
             # Create a mock profile data structure that would be sent to the completion endpoint
-            profile_data = {
-                "profile_json": completion_data,
-                "score_data": {
-                    "hybridScore": 85.5,
-                    "strengthScore": 90.2,
-                    "speedScore": 88.1,
-                    "vo2Score": 82.3,
-                    "distanceScore": 79.8,
-                    "volumeScore": 84.6,
-                    "recoveryScore": 87.2
-                }
+            score_data = {
+                "hybridScore": 85.5,
+                "strengthScore": 90.2,
+                "speedScore": 88.1,
+                "vo2Score": 82.3,
+                "distanceScore": 79.8,
+                "volumeScore": 84.6,
+                "recoveryScore": 87.2
             }
             
             # Test the data separation logic
-            try:
-                from server import extract_individual_fields
+            # Extract fields that should go to athlete_profiles
+            athlete_profile_fields = extract_individual_fields(completion_data, score_data)
+            
+            # Fields that should go to user_profiles (personal data)
+            user_profile_fields = {
+                'name': f"{completion_data.get('first_name', '')} {completion_data.get('last_name', '')}".strip(),
+                'display_name': completion_data.get('first_name', ''),
+                'email': completion_data.get('email', ''),
+                'gender': completion_data.get('sex', '').lower() if completion_data.get('sex') else None,
+                'country': completion_data.get('country'),
+                'height_in': completion_data.get('body_metrics', {}).get('height_in'),
+                'weight_lb': completion_data.get('body_metrics', {}).get('weight_lb'),
+                'wearables': completion_data.get('wearables')
+            }
+            
+            # Handle date of birth conversion (as done in the actual code)
+            if completion_data.get('dob'):
+                try:
+                    # Convert MM/DD/YYYY to YYYY-MM-DD
+                    dob_parts = completion_data.get('dob').split('/')
+                    if len(dob_parts) == 3:
+                        month, day, year = dob_parts
+                        user_profile_fields['date_of_birth'] = f"{year}-{month.zfill(2)}-{day.zfill(2)}"
+                except Exception as e:
+                    print(f"Error converting date of birth: {e}")
+            
+            print(f"\n📊 DATA SEPARATION RESULTS:")
+            print(f"🏃 ATHLETE_PROFILES should get: {json.dumps(athlete_profile_fields, indent=2)}")
+            print(f"👤 USER_PROFILES should get: {json.dumps(user_profile_fields, indent=2)}")
+            
+            # Verify correct separation
+            # user_profiles should get personal data including height/weight
+            user_profile_has_height_weight = (
+                user_profile_fields.get('height_in') == 70 and 
+                user_profile_fields.get('weight_lb') == 190
+            )
+            
+            user_profile_has_personal_data = all([
+                user_profile_fields.get('name') == "Ian Fonville",
+                user_profile_fields.get('display_name') == "Ian",
+                user_profile_fields.get('date_of_birth') == "2001-02-05",
+                user_profile_fields.get('gender') == "male",
+                user_profile_fields.get('country') == "US",
+                user_profile_fields.get('wearables') == ["Garmin"]
+            ])
+            
+            # athlete_profiles should get performance metrics and training data
+            athlete_profile_has_performance_data = all([
+                athlete_profile_fields.get('vo2_max') == 55,
+                athlete_profile_fields.get('hrv_ms') == 195,
+                athlete_profile_fields.get('resting_hr_bpm') == 45,
+                athlete_profile_fields.get('pb_mile_seconds') == 299,  # 4:59
+                athlete_profile_fields.get('weekly_miles') == 40,
+                athlete_profile_fields.get('long_run_miles') == 26,
+                athlete_profile_fields.get('pb_bench_1rm_lb') == 315
+            ])
+            
+            # athlete_profiles should have score data
+            athlete_profile_has_score_data = all([
+                athlete_profile_fields.get('hybrid_score') == 85.5,
+                athlete_profile_fields.get('strength_score') == 90.2,
+                athlete_profile_fields.get('speed_score') == 88.1,
+                athlete_profile_fields.get('vo2_score') == 82.3,
+                athlete_profile_fields.get('distance_score') == 79.8,
+                athlete_profile_fields.get('volume_score') == 84.6,
+                athlete_profile_fields.get('recovery_score') == 87.2
+            ])
+            
+            # athlete_profiles should NOT have height/weight
+            athlete_profile_missing_height_weight = (
+                'height_in' not in athlete_profile_fields and
+                'weight_lb' not in athlete_profile_fields
+            )
+            
+            print(f"\n✅ VERIFICATION CHECKS:")
+            print(f"   User profiles has height/weight: {user_profile_has_height_weight}")
+            print(f"   User profiles has personal data: {user_profile_has_personal_data}")
+            print(f"   Athlete profiles has performance data: {athlete_profile_has_performance_data}")
+            print(f"   Athlete profiles has score data: {athlete_profile_has_score_data}")
+            print(f"   Athlete profiles missing height/weight: {athlete_profile_missing_height_weight}")
+            
+            all_separation_correct = all([
+                user_profile_has_height_weight,
+                user_profile_has_personal_data,
+                athlete_profile_has_performance_data,
+                athlete_profile_has_score_data,
+                athlete_profile_missing_height_weight
+            ])
+            
+            if all_separation_correct:
+                self.log_test("Hybrid Interview Completion Flow", True, "✅ CORRECT DATA SEPARATION: Personal data (including height/weight) → user_profiles, Performance data → athlete_profiles", {
+                    'user_profile_fields': user_profile_fields,
+                    'athlete_profile_fields': athlete_profile_fields,
+                    'separation_correct': True
+                })
+                return True
+            else:
+                failed_separations = []
+                if not user_profile_has_height_weight: failed_separations.append("height/weight not in user_profiles")
+                if not user_profile_has_personal_data: failed_separations.append("personal data not in user_profiles")
+                if not athlete_profile_has_performance_data: failed_separations.append("performance data not in athlete_profiles")
+                if not athlete_profile_has_score_data: failed_separations.append("score data not in athlete_profiles")
+                if not athlete_profile_missing_height_weight: failed_separations.append("height/weight incorrectly in athlete_profiles")
                 
-                # Extract fields that should go to athlete_profiles
-                athlete_profile_fields = extract_individual_fields(completion_data, profile_data["score_data"])
-                
-                # Fields that should go to user_profiles (personal data)
-                user_profile_fields = {
-                    'name': f"{completion_data.get('first_name', '')} {completion_data.get('last_name', '')}".strip(),
-                    'display_name': completion_data.get('first_name', ''),
-                    'date_of_birth': completion_data.get('dob'),
-                    'gender': completion_data.get('sex', '').lower() if completion_data.get('sex') else None,
-                    'country': completion_data.get('country'),
-                    'height_in': completion_data.get('body_metrics', {}).get('height_in'),
-                    'weight_lb': completion_data.get('body_metrics', {}).get('weight_lb'),
-                    'wearables': completion_data.get('wearables')
-                }
-                
-                print(f"\n📊 DATA SEPARATION RESULTS:")
-                print(f"🏃 ATHLETE_PROFILES should get: {json.dumps(athlete_profile_fields, indent=2)}")
-                print(f"👤 USER_PROFILES should get: {json.dumps(user_profile_fields, indent=2)}")
-                
-                # Verify correct separation
-                # user_profiles should get personal data including height/weight
-                user_profile_has_height_weight = (
-                    user_profile_fields.get('height_in') == 70 and 
-                    user_profile_fields.get('weight_lb') == 190
-                )
-                
-                user_profile_has_personal_data = all([
-                    user_profile_fields.get('name') == "Ian Fonville",
-                    user_profile_fields.get('display_name') == "Ian",
-                    user_profile_fields.get('date_of_birth') == "02/05/2001",
-                    user_profile_fields.get('gender') == "male",
-                    user_profile_fields.get('country') == "US",
-                    user_profile_fields.get('wearables') == ["Garmin"]
-                ])
-                
-                # athlete_profiles should get performance metrics and training data
-                athlete_profile_has_performance_data = all([
-                    athlete_profile_fields.get('vo2_max') == 55,
-                    athlete_profile_fields.get('hrv_ms') == 195,
-                    athlete_profile_fields.get('resting_hr_bpm') == 45,
-                    athlete_profile_fields.get('pb_mile_seconds') == 299,  # 4:59
-                    athlete_profile_fields.get('weekly_miles') == 40,
-                    athlete_profile_fields.get('long_run_miles') == 26,
-                    athlete_profile_fields.get('pb_bench_1rm_lb') == 315
-                ])
-                
-                # athlete_profiles should NOT have height/weight
-                athlete_profile_missing_height_weight = (
-                    'height_in' not in athlete_profile_fields and
-                    'weight_lb' not in athlete_profile_fields
-                )
-                
-                print(f"\n✅ VERIFICATION CHECKS:")
-                print(f"   User profiles has height/weight: {user_profile_has_height_weight}")
-                print(f"   User profiles has personal data: {user_profile_has_personal_data}")
-                print(f"   Athlete profiles has performance data: {athlete_profile_has_performance_data}")
-                print(f"   Athlete profiles missing height/weight: {athlete_profile_missing_height_weight}")
-                
-                all_separation_correct = all([
-                    user_profile_has_height_weight,
-                    user_profile_has_personal_data,
-                    athlete_profile_has_performance_data,
-                    athlete_profile_missing_height_weight
-                ])
-                
-                if all_separation_correct:
-                    self.log_test("Hybrid Interview Completion Flow", True, "✅ CORRECT DATA SEPARATION: Personal data (including height/weight) → user_profiles, Performance data → athlete_profiles", {
-                        'user_profile_fields': user_profile_fields,
-                        'athlete_profile_fields': athlete_profile_fields,
-                        'separation_correct': True
-                    })
-                    return True
-                else:
-                    failed_separations = []
-                    if not user_profile_has_height_weight: failed_separations.append("height/weight not in user_profiles")
-                    if not user_profile_has_personal_data: failed_separations.append("personal data not in user_profiles")
-                    if not athlete_profile_has_performance_data: failed_separations.append("performance data not in athlete_profiles")
-                    if not athlete_profile_missing_height_weight: failed_separations.append("height/weight incorrectly in athlete_profiles")
-                    
-                    self.log_test("Hybrid Interview Completion Flow", False, f"❌ INCORRECT DATA SEPARATION: {', '.join(failed_separations)}", {
-                        'user_profile_fields': user_profile_fields,
-                        'athlete_profile_fields': athlete_profile_fields,
-                        'failed_separations': failed_separations
-                    })
-                    return False
-                    
-            except ImportError:
-                self.log_test("Hybrid Interview Completion Flow", False, "❌ Cannot import extract_individual_fields function")
+                self.log_test("Hybrid Interview Completion Flow", False, f"❌ INCORRECT DATA SEPARATION: {', '.join(failed_separations)}", {
+                    'user_profile_fields': user_profile_fields,
+                    'athlete_profile_fields': athlete_profile_fields,
+                    'failed_separations': failed_separations
+                })
                 return False
                 
         except Exception as e:
