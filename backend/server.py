@@ -988,8 +988,7 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
                     "created_at": datetime.utcnow().isoformat(),
                     "updated_at": datetime.utcnow().isoformat()
                 }
-                if user_profile_id:
-                    fallback_profile["user_profile_id"] = user_profile_id
+                # Note: No user_profile_id needed due to database normalization
                 result = supabase.table('athlete_profiles').insert(fallback_profile).execute()
             else:
                 raise db_error
