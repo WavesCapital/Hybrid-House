@@ -218,7 +218,7 @@ class WebhookTester:
             print("\n🎯 DATE FORMAT CONVERSION TESTING")
             print("=" * 40)
             
-            # Test webhook with MM/DD/YYYY date format - send directly as list
+            # Test webhook with MM/DD/YYYY date format
             sample_data = [{
                 "body": {
                     "athleteProfile": {
@@ -233,7 +233,7 @@ class WebhookTester:
                 }
             }]
             
-            response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json=sample_data)
+            response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json={"webhook_data": sample_data})
             
             if response.status_code == 200:
                 data = response.json()
@@ -257,7 +257,7 @@ class WebhookTester:
             print("\n🎯 WEARABLES ARRAY HANDLING TESTING")
             print("=" * 40)
             
-            # Test webhook with wearables array - send directly as list
+            # Test webhook with wearables array
             sample_data = [{
                 "body": {
                     "athleteProfile": {
@@ -272,7 +272,7 @@ class WebhookTester:
                 }
             }]
             
-            response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json=sample_data)
+            response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json={"webhook_data": sample_data})
             
             if response.status_code == 200:
                 data = response.json()
