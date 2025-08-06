@@ -218,7 +218,7 @@ class WebhookTester:
             print("\n🎯 DATE FORMAT CONVERSION TESTING")
             print("=" * 40)
             
-            # Test webhook with MM/DD/YYYY date format
+            # Test webhook with MM/DD/YYYY date format - send directly as list
             sample_data = [{
                 "body": {
                     "athleteProfile": {
@@ -257,7 +257,7 @@ class WebhookTester:
             print("\n🎯 WEARABLES ARRAY HANDLING TESTING")
             print("=" * 40)
             
-            # Test webhook with wearables array
+            # Test webhook with wearables array - send directly as list
             sample_data = [{
                 "body": {
                     "athleteProfile": {
