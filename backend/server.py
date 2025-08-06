@@ -484,53 +484,6 @@ async def handle_signup(signup_data: dict):
             detail=f"Error creating user profile: {str(e)}"
         )
 
-@api_router.get("/user-profile/me")
-async def get_my_user_profile(user: dict = Depends(verify_jwt)):
-    """Get current user's profile information"""
-    try:
-        user_id = user.get('sub')
-        user_email = user.get('email', '')
-        
-        # Get user profile from database
-        result = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
-        
-        if result.data:
-            return {
-                "profile": result.data[0]
-            }
-        else:
-            # Auto-create profile if it doesn't exist
-            print(f"🔄 Auto-creating user profile for {user_email}")
-            
-            default_profile = {
-                "user_id": user_id,
-                "email": user_email,
-                "name": user_email.split('@')[0],  # Use email prefix as default name
-                "display_name": user_email.split('@')[0],  # Use email prefix as default
-                "created_at": datetime.utcnow().isoformat(),
-                "updated_at": datetime.utcnow().isoformat()
-            }
-            
-            create_result = supabase.table('user_profiles').insert(default_profile).execute()
-            
-            if create_result.data:
-                return {
-                    "profile": create_result.data[0]
-                }
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Failed to create user profile"
-                )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        print(f"Error fetching user profile: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error fetching user profile: {str(e)}"
-        )
 
 @api_router.get("/user-profile/me")
 async def get_user_profile(current_user: dict = Depends(verify_jwt)):
