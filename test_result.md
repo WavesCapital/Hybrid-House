@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Remove profile_text, first_name, last_name, email, sex, age, user_profile_id columns from the athlete_profiles table. This data should come from the user_profiles table instead. user_id column is the link between athlete_profiles and user_profiles. Do an audit and create a plan to make sure our database structure is optimized factoring in this data."
+user_problem_statement: "When testing the hybrid interview i got 'I apologize, but there was an error processing your hybrid profile. Please try again.' and it never sent the webhook"
 
 backend:
   - task: "GET /api/public-profile/{user_id} Endpoint Testing"
