@@ -845,10 +845,10 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
         # Extract personal data for user_profiles table (normalized structure)
         personal_data = {
             'name': f"{profile_json.get('first_name', '')} {profile_json.get('last_name', '')}".strip()[:50],  # Limit to 50 chars
-            'display_name': profile_json.get('first_name', 'Athlete')[:50],  # Limit to 50 chars
-            'email': profile_json.get('email', user.get('email', ''))[:100],  # Limit to 100 chars
+            'display_name': profile_json.get('first_name', 'Athlete')[:20],  # Limit to 20 chars (likely the constraint)
+            'email': profile_json.get('email', user.get('email', ''))[:50],  # Increase email limit
             'gender': profile_json.get('sex', '').lower()[:10] if profile_json.get('sex') else None,  # Limit to 10 chars
-            'country': profile_json.get('country', '')[:10],  # Limit to 10 chars
+            'country': profile_json.get('country', '')[:2],  # Limit to 2 chars for country code
             'updated_at': datetime.utcnow().isoformat()
         }
         
