@@ -2556,7 +2556,7 @@ async def handle_hybrid_score_webhook(webhook_data: List[WebhookRequest]):
         result = supabase.table('athlete_profiles').insert(athlete_profile_data).execute()
         
         if result.data:
-            profile_id = result.data[0]['profile_id']
+            profile_id = result.data[0]['id']
             print(f"✅ Created athlete profile: {profile_id}")
             
             return {
