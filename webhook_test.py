@@ -45,7 +45,7 @@ class WebhookTester:
             print("\n🎯 WEBHOOK HYBRID SCORE RESULT TESTING")
             print("=" * 50)
             
-            # Sample data from review request
+            # Sample data from review request - send directly as list
             sample_data = [{
                 "body": {
                     "athleteProfile": {
@@ -74,6 +74,7 @@ class WebhookTester:
                 }
             }]
             
+            # Send data directly as JSON body (not wrapped in webhook_data field)
             response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json=sample_data)
             
             if response.status_code == 200:
@@ -98,7 +99,7 @@ class WebhookTester:
             print("\n🎯 WEBHOOK HYBRID SCORE CALLBACK TESTING")
             print("=" * 50)
             
-            # Sample score data
+            # Sample score data - send directly as list
             sample_score_data = [{
                 "hybridScore": 85.2,
                 "strengthScore": 92.1,
@@ -117,6 +118,7 @@ class WebhookTester:
                 ]
             }]
             
+            # Send data directly as JSON body (not wrapped in score_data field)
             response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-callback", json=sample_score_data)
             
             if response.status_code == 200:
