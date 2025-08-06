@@ -327,6 +327,18 @@ backend:
         agent: "testing"
         comment: "🚨 CRITICAL FRONTEND-BACKEND DISCONNECT INVESTIGATION COMPLETE: Executed comprehensive investigation of the critical disconnect between backend test results and frontend reality as reported by user. USER REPORT: Frontend shows Kyle S as #1 with score 77/76.5. BACKEND REALITY: Nick is #1 with score 96.8, Kyle S is #2 with score 76.5. INVESTIGATION RESULTS: ✅ BACKEND WORKING CORRECTLY - GET /api/leaderboard returns proper data with Nick #1 (96.8) and Kyle S #2 (76.5) ✅ NICK PROFILE VERIFIED - Profile 4a417508-ccc8-482c-b917-8d84f018310e exists, is public, has complete score data ✅ DATABASE ANALYSIS - Found 9 profiles with complete scores, all public ❌ RANKING SERVICE FILTERING ISSUE - Only 2 of 9 eligible profiles appear on leaderboard ❌ DEDUPLICATION LOGIC FLAW - 7 profiles with null user_profile_id are being filtered out despite being eligible ❌ DISPLAY NAME ISSUE - Nick shows as 'Nick' instead of 'Nick Bare' due to missing last_name in profile_json. ROOT CAUSE IDENTIFIED: The disconnect is NOT a backend API issue - the backend is working correctly. The issue is either: (1) Frontend caching old leaderboard data, (2) Frontend calling wrong API endpoint, (3) Browser/CDN caching, or (4) Frontend client-side filtering. RECOMMENDATION: The backend APIs are functioning correctly. The user should check frontend caching, clear browser cache, or verify frontend API endpoint configuration."
 
+  - task: "Database Normalization Implementation Testing"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL DATABASE NORMALIZATION TESTING COMPLETE: Executed comprehensive testing of the database normalization implementation as requested in the review. PARTIAL SUCCESS ACHIEVED (66.7% pass rate): ✅ NORMALIZATION STRUCTURE CORRECT - Personal data successfully removed from athlete_profiles direct columns (first_name, last_name, email, age, sex all null), performance data properly stored ✅ WEBHOOK ENDPOINT FUNCTIONAL - POST /api/webhook/hybrid-score-result exists and accessible ✅ NO DATA DUPLICATION - Athlete profiles clean of redundant personal data in direct columns ❌ CRITICAL USER_ID LINKING FAILURE - ALL 13 athlete_profiles have user_id = null, breaking foreign key relationships ❌ LEADERBOARD NON-FUNCTIONAL - Ranking service INNER JOIN fails due to null user_id values (0 entries displayed) ❌ PERSONAL DATA MIGRATION INCOMPLETE - Names and demographics still in profile_json instead of user_profiles table. ROOT CAUSE: Database normalization removed redundant columns but failed to establish proper user_id foreign key relationships. The ranking service expects athlete_profiles.user_id → user_profiles.user_id links, but all user_id values are null. IMPACT: Complete breakdown of user profile system - leaderboard empty, demographic filtering impossible, user management broken. URGENT FIXES NEEDED: 1) Create user_profiles entries for existing athletes 2) Populate athlete_profiles.user_id with proper foreign keys 3) Migrate remaining personal data from profile_json to user_profiles 4) Test ranking service JOINs after linking is established."
+
 frontend:
   - task: "Fix Privacy Toggle UI Functionality"
     implemented: true
