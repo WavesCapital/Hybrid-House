@@ -2088,6 +2088,72 @@ const ProfilePage = () => {
                         className="neon-input"
                       />
                     </div>
+                    
+                    {/* Physical Attributes */}
+                    <div className="border-t border-white/10 pt-4">
+                      <h5 className="text-sm font-medium text-primary mb-3">Physical Attributes</h5>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-sm font-medium text-secondary mb-2">Height (inches)</label>
+                          <Input
+                            type="number"
+                            step="0.5"
+                            min="48"
+                            max="96"
+                            value={profileForm.height_in || ''}
+                            onChange={(e) => handleProfileFormChange('height_in', e.target.value)}
+                            placeholder="e.g. 70"
+                            className="neon-input"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-secondary mb-2">Weight (lbs)</label>
+                          <Input
+                            type="number"
+                            step="0.5"
+                            min="80"
+                            max="400"
+                            value={profileForm.weight_lb || ''}
+                            onChange={(e) => handleProfileFormChange('weight_lb', e.target.value)}
+                            placeholder="e.g. 180"
+                            className="neon-input"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="mt-3">
+                        <label className="block text-sm font-medium text-secondary mb-2">Wearable Devices</label>
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap gap-2">
+                            {['Apple Watch', 'Garmin', 'Whoop', 'Oura Ring', 'Fitbit', 'Polar', 'Suunto', 'COROS'].map(device => (
+                              <label key={device} className="flex items-center space-x-2 text-sm">
+                                <input
+                                  type="checkbox"
+                                  checked={(profileForm.wearables || []).includes(device)}
+                                  onChange={(e) => {
+                                    const currentWearables = profileForm.wearables || [];
+                                    if (e.target.checked) {
+                                      handleProfileFormChange('wearables', [...currentWearables, device]);
+                                    } else {
+                                      handleProfileFormChange('wearables', currentWearables.filter(w => w !== device));
+                                    }
+                                  }}
+                                  className="rounded border-gray-600 text-[#08F0FF] focus:ring-[#08F0FF] focus:ring-1"
+                                />
+                                <span className="text-secondary">{device}</span>
+                              </label>
+                            ))}
+                          </div>
+                          {profileForm.wearables && profileForm.wearables.length > 0 && (
+                            <div className="text-xs text-muted">
+                              Selected: {profileForm.wearables.join(', ')}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
                   {/* Preferences */}
