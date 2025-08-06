@@ -74,8 +74,12 @@ class WebhookTester:
                 }
             }]
             
-            # Send data with the correct parameter name expected by FastAPI
-            response = self.session.post(f"{API_BASE_URL}/webhook/hybrid-score-result", json={"webhook_data": sample_data})
+            # Send data directly as JSON body (the list itself)
+            response = self.session.post(
+                f"{API_BASE_URL}/webhook/hybrid-score-result", 
+                json=sample_data,
+                headers={'Content-Type': 'application/json'}
+            )
             
             if response.status_code == 200:
                 data = response.json()
