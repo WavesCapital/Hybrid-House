@@ -4,23 +4,25 @@ import { Card } from './ui/card';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { Dumbbell, Activity, User, Heart, Target, Trophy } from 'lucide-react';
+import { Dumbbell, Activity, User, Heart, Target, Trophy, Info, HelpCircle } from 'lucide-react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const HybridScoreForm = () => {
-  const { user, session, loading } = useAuth();
+  const { user, session, loading, signUp, signIn } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [formData, setFormData] = useState({
     // Personal Information
     first_name: '',
     last_name: '',
     email: '',
+    password: '',
     sex: '',
     dob: '',
     country: 'US',
@@ -28,6 +30,7 @@ const HybridScoreForm = () => {
     
     // Body Metrics
     weight_lb: '',
+    height_ft: '',
     height_in: '',
     vo2max: '',
     resting_hr_bpm: '',
@@ -51,12 +54,12 @@ const HybridScoreForm = () => {
     {
       title: 'Personal Info',
       icon: <User className="w-5 h-5" />,
-      fields: ['first_name', 'last_name', 'email', 'sex', 'dob', 'country', 'wearables']
+      fields: ['first_name', 'last_name', 'email', 'password', 'sex', 'dob', 'country', 'wearables']
     },
     {
       title: 'Body Metrics',
       icon: <Activity className="w-5 h-5" />,
-      fields: ['weight_lb', 'height_in', 'vo2max', 'resting_hr_bpm', 'hrv_ms']
+      fields: ['weight_lb', 'height_ft', 'height_in', 'vo2max', 'resting_hr_bpm', 'hrv_ms']
     },
     {
       title: 'Running PRs',
@@ -69,14 +72,6 @@ const HybridScoreForm = () => {
       fields: ['pb_bench_1rm', 'pb_squat_1rm', 'pb_deadlift_1rm']
     }
   ];
-
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!loading && !user) {
-      localStorage.setItem('postAuthRedirect', '/hybrid-score-form');
-      navigate('/auth?mode=signup');
-    }
-  }, [loading, user, navigate]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -152,8 +147,52 @@ const HybridScoreForm = () => {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
+    setIsCreatingAccount(true);
 
     try {
+      let currentUser = user;
+      let currentSession = session;
+
+      // Create account if user is not authenticated
+      if (!currentUser) {
+        console.log('Creating new account...');
+        
+        if (!formData.email || !formData.password) {
+          throw new Error('Email and password are required');
+        }
+
+        const authResult = await signUp(formData.email, formData.password);
+        
+        if (authResult.error) {
+          throw new Error(authResult.error.message);
+        }
+
+        // Sign in the newly created user
+        const signInResult = await signIn(formData.email, formData.password);
+        
+        if (signInResult.error) {
+          throw new Error('Failed to sign in after account creation');
+        }
+
+        currentUser = signInResult.data?.user;
+        currentSession = signInResult.data?.session;
+
+        if (!currentUser || !currentSession) {
+          throw new Error('Failed to authenticate after account creation');
+        }
+
+        toast({
+          title: "Account Created! 🎉",
+          description: "Now calculating your hybrid score...",
+          duration: 3000,
+        });
+      }
+
+      setIsCreatingAccount(false);
+
+      // Calculate height in inches
+      const heightInches = (parseInt(formData.height_ft) || 0) * 12 + (parseInt(formData.height_in) || 0);
+
       // Structure the data for submission
       const profileData = {
         first_name: formData.first_name,
@@ -165,15 +204,15 @@ const HybridScoreForm = () => {
         wearables: formData.wearables,
         body_metrics: {
           weight_lb: parseFloat(formData.weight_lb) || null,
-          height_in: parseFloat(formData.height_in) || null,
+          height_in: heightInches || null,
           vo2max: parseFloat(formData.vo2max) || null,
           resting_hr_bpm: parseInt(formData.resting_hr_bpm) || null,
           hrv_ms: parseInt(formData.hrv_ms) || null
         },
-        pb_mile: formData.pb_mile,
-        pb_5k: formData.pb_5k,
-        pb_10k: formData.pb_10k,
-        pb_half_marathon: formData.pb_half_marathon,
+        pb_mile: formData.pb_mile || null,
+        pb_5k: formData.pb_5k || null,
+        pb_10k: formData.pb_10k || null,
+        pb_half_marathon: formData.pb_half_marathon || null,
         weekly_miles: parseFloat(formData.weekly_miles) || null,
         long_run: parseFloat(formData.long_run) || null,
         pb_bench_1rm: parseFloat(formData.pb_bench_1rm) || null,
@@ -194,7 +233,7 @@ const HybridScoreForm = () => {
         },
         {
           headers: {
-            'Authorization': `Bearer ${session.access_token}`,
+            'Authorization': `Bearer ${currentSession.access_token}`,
             'Content-Type': 'application/json',
           },
         }
@@ -210,7 +249,7 @@ const HybridScoreForm = () => {
           duration: 3000,
         });
 
-        // Trigger webhook for score calculation
+        // Trigger webhook for score calculation with complete profile data
         await triggerWebhookForScore(profileData, profileId);
       } else {
         throw new Error('No profile ID returned');
@@ -220,9 +259,10 @@ const HybridScoreForm = () => {
       console.error('Error submitting form:', error);
       toast({
         title: "Submission Error",
-        description: error.response?.data?.detail || "Please try again.",
+        description: error.message || "Please try again.",
         variant: "destructive",
       });
+      setIsCreatingAccount(false);
     } finally {
       setIsSubmitting(false);
     }
@@ -388,6 +428,32 @@ const HybridScoreForm = () => {
           color: var(--neon-primary);
         }
 
+        .info-box {
+          background: rgba(8, 240, 255, 0.1);
+          border: 1px solid rgba(8, 240, 255, 0.3);
+          border-radius: 8px;
+          padding: 16px;
+          margin-bottom: 24px;
+        }
+
+        .height-input-group {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+        }
+
+        .height-input {
+          flex: 1;
+        }
+
+        .height-label {
+          color: var(--muted);
+          font-size: 14px;
+          font-weight: 500;
+          min-width: 20px;
+          text-align: center;
+        }
+
         @media (max-width: 768px) {
           .section-nav {
             flex-direction: column;
@@ -395,6 +461,16 @@ const HybridScoreForm = () => {
           
           .form-grid {
             grid-template-columns: 1fr;
+          }
+
+          .height-input-group {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .height-label {
+            text-align: left;
+            margin-bottom: 4px;
           }
         }
         `}
@@ -452,6 +528,17 @@ const HybridScoreForm = () => {
                     Personal Information
                   </h2>
                   
+                  <div className="info-box">
+                    <div className="flex items-start gap-3">
+                      <Info className="w-5 h-5 mt-1" style={{ color: 'var(--neon-primary)' }} />
+                      <div>
+                        <p className="text-sm" style={{ color: 'var(--txt)' }}>
+                          <strong>Why we need this:</strong> Age, gender, and physical attributes are crucial for calculating accurate hybrid performance benchmarks. Your wearables data helps us understand your training monitoring capabilities.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
@@ -490,6 +577,24 @@ const HybridScoreForm = () => {
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         required
                       />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
+                        Password *
+                      </label>
+                      <input
+                        type="password"
+                        className="form-input"
+                        value={formData.password}
+                        onChange={(e) => handleInputChange('password', e.target.value)}
+                        placeholder="Create a secure password"
+                        required
+                        minLength={6}
+                      />
+                      <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
+                        Password should be at least 6 characters long
+                      </p>
                     </div>
 
                     <div>
@@ -562,6 +667,17 @@ const HybridScoreForm = () => {
                     Body Metrics
                   </h2>
                   
+                  <div className="info-box">
+                    <div className="flex items-start gap-3">
+                      <Heart className="w-5 h-5 mt-1" style={{ color: 'var(--neon-primary)' }} />
+                      <div>
+                        <p className="text-sm" style={{ color: 'var(--txt)' }}>
+                          <strong>Why we need this:</strong> Height and weight determine power-to-weight ratios. VO₂ max measures aerobic capacity, while resting HR and HRV indicate cardiovascular fitness and recovery capacity - all critical for hybrid performance scoring.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
@@ -579,16 +695,36 @@ const HybridScoreForm = () => {
 
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Height (inches) *
+                        Height *
                       </label>
-                      <input
-                        type="number"
-                        className="form-input"
-                        value={formData.height_in}
-                        onChange={(e) => handleInputChange('height_in', e.target.value)}
-                        placeholder="70"
-                        required
-                      />
+                      <div className="height-input-group">
+                        <div className="height-input">
+                          <input
+                            type="number"
+                            className="form-input"
+                            value={formData.height_ft}
+                            onChange={(e) => handleInputChange('height_ft', e.target.value)}
+                            placeholder="5"
+                            min="3"
+                            max="8"
+                            required
+                          />
+                          <div className="height-label">ft</div>
+                        </div>
+                        <div className="height-input">
+                          <input
+                            type="number"
+                            className="form-input"
+                            value={formData.height_in}
+                            onChange={(e) => handleInputChange('height_in', e.target.value)}
+                            placeholder="10"
+                            min="0"
+                            max="11"
+                            required
+                          />
+                          <div className="height-label">in</div>
+                        </div>
+                      </div>
                     </div>
 
                     <div>
@@ -602,6 +738,9 @@ const HybridScoreForm = () => {
                         onChange={(e) => handleInputChange('vo2max', e.target.value)}
                         placeholder="55"
                       />
+                      <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
+                        If you don't know this, leave blank - we'll estimate it
+                      </p>
                     </div>
 
                     <div>
@@ -628,6 +767,9 @@ const HybridScoreForm = () => {
                         onChange={(e) => handleInputChange('hrv_ms', e.target.value)}
                         placeholder="195"
                       />
+                      <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
+                        Heart Rate Variability - check your fitness tracker
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -640,10 +782,22 @@ const HybridScoreForm = () => {
                     Running Performance
                   </h2>
                   
+                  <div className="info-box">
+                    <div className="flex items-start gap-3">
+                      <Target className="w-5 h-5 mt-1" style={{ color: 'var(--neon-primary)' }} />
+                      <div>
+                        <p className="text-sm" style={{ color: 'var(--txt)' }}>
+                          <strong>Why we need this:</strong> Running PRs measure your aerobic power and endurance capacity across different distances. Weekly mileage and long runs show your aerobic base. <strong>It's okay to leave some fields blank, but more data = better score accuracy!</strong>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         Mile PR (MM:SS)
+                        <span className="text-xs" style={{ color: 'var(--muted)' }}> - Optional</span>
                       </label>
                       <input
                         type="text"
@@ -657,6 +811,7 @@ const HybridScoreForm = () => {
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         5K PR (MM:SS)
+                        <span className="text-xs" style={{ color: 'var(--muted)' }}> - Optional</span>
                       </label>
                       <input
                         type="text"
@@ -670,6 +825,7 @@ const HybridScoreForm = () => {
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         10K PR (MM:SS)
+                        <span className="text-xs" style={{ color: 'var(--muted)' }}> - Optional</span>
                       </label>
                       <input
                         type="text"
@@ -683,6 +839,7 @@ const HybridScoreForm = () => {
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         Half Marathon PR (HH:MM:SS)
+                        <span className="text-xs" style={{ color: 'var(--muted)' }}> - Optional</span>
                       </label>
                       <input
                         type="text"
@@ -696,6 +853,7 @@ const HybridScoreForm = () => {
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         Weekly Miles
+                        <span className="text-xs" style={{ color: 'var(--muted)' }}> - Optional</span>
                       </label>
                       <input
                         type="number"
@@ -709,6 +867,7 @@ const HybridScoreForm = () => {
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         Long Run (miles)
+                        <span className="text-xs" style={{ color: 'var(--muted)' }}> - Optional</span>
                       </label>
                       <input
                         type="number"
@@ -729,10 +888,22 @@ const HybridScoreForm = () => {
                     Strength Performance
                   </h2>
                   
+                  <div className="info-box">
+                    <div className="flex items-start gap-3">
+                      <Dumbbell className="w-5 h-5 mt-1" style={{ color: 'var(--neon-primary)' }} />
+                      <div>
+                        <p className="text-sm" style={{ color: 'var(--txt)' }}>
+                          <strong>Why we need this:</strong> Strength PRs (1-rep max) measure your anaerobic power and muscular strength. These compound movements are the foundation of hybrid training. <strong>Don't have all PRs? No problem! More data = better accuracy, but we can work with what you have.</strong>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         Bench Press 1RM (lbs)
+                        <span className="text-xs" style={{ color: 'var(--muted)' }}> - Optional</span>
                       </label>
                       <input
                         type="number"
@@ -746,6 +917,7 @@ const HybridScoreForm = () => {
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         Squat 1RM (lbs)
+                        <span className="text-xs" style={{ color: 'var(--muted)' }}> - Optional</span>
                       </label>
                       <input
                         type="number"
@@ -759,6 +931,7 @@ const HybridScoreForm = () => {
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         Deadlift 1RM (lbs)
+                        <span className="text-xs" style={{ color: 'var(--muted)' }}> - Optional</span>
                       </label>
                       <input
                         type="number"
@@ -798,7 +971,11 @@ const HybridScoreForm = () => {
                     className="neon-button"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Calculating Score...' : 'Calculate Hybrid Score'}
+                    {isSubmitting ? (
+                      isCreatingAccount ? 'Creating Account...' : 'Calculating Score...'
+                    ) : (
+                      'Calculate Hybrid Score'
+                    )}
                   </button>
                 )}
               </div>
