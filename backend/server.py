@@ -430,6 +430,9 @@ class UserProfileUpdate(BaseModel):
     timezone: Optional[str] = None
     units_preference: Optional[str] = None
     privacy_level: Optional[str] = None
+    weight_lb: Optional[float] = None  # New field
+    height_in: Optional[float] = None  # New field
+    wearables: Optional[list] = None   # New field
 
 @api_router.post("/auth/signup")
 async def handle_signup(signup_data: dict):
