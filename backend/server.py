@@ -840,57 +840,133 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
     """Create a new athlete profile with optimized individual fields and automatic user linking"""
     try:
         user_id = user.get('sub')
+        profile_json = profile_data.get('profile_json', {})
         
-        # Get or create user profile
-        user_profile_result = supabase.table('user_profiles').select('id').eq('user_id', user_id).execute()
+        # Extract personal data for user_profiles table (normalized structure)
+        personal_data = {
+            'name': f"{profile_json.get('first_name', '')} {profile_json.get('last_name', '')}".strip()[:50],  # Limit to 50 chars
+            'display_name': profile_json.get('first_name', 'Athlete')[:50],  # Limit to 50 chars
+            'email': profile_json.get('email', user.get('email', ''))[:100],  # Limit to 100 chars
+            'gender': profile_json.get('sex', '').lower()[:10] if profile_json.get('sex') else None,  # Limit to 10 chars
+            'country': profile_json.get('country', '')[:10],  # Limit to 10 chars
+            'updated_at': datetime.utcnow().isoformat()
+        }
         
-        user_profile_id = None
-        if user_profile_result.data:
-            user_profile_id = user_profile_result.data[0]['id']
-        else:
-            # Create user profile if it doesn't exist
-            default_profile = {
-                "user_id": user_id,
-                "email": user.get('email', ''),
-                "name": user.get('user_metadata', {}).get('name', user.get('email', '').split('@')[0]),
-                "display_name": user.get('user_metadata', {}).get('display_name', user.get('email', '').split('@')[0]),
-                "created_at": datetime.utcnow().isoformat(),
-                "updated_at": datetime.utcnow().isoformat()
-            }
+        # Extract height and weight from body_metrics for user_profiles
+        body_metrics = profile_json.get('body_metrics', {})
+        if isinstance(body_metrics, dict):
+            # Height in inches
+            if body_metrics.get('height_in'):
+                personal_data['height_in'] = body_metrics.get('height_in')
             
-            create_result = supabase.table('user_profiles').insert(default_profile).execute()
-            if create_result.data:
-                user_profile_id = create_result.data[0]['id']
+            # Weight in pounds  
+            if body_metrics.get('weight_lb'):
+                personal_data['weight_lb'] = body_metrics.get('weight_lb')
         
-        # Extract individual fields from profile_json
-        individual_fields = extract_individual_fields(profile_data.get('profile_json', {}))
+        # Handle date of birth conversion
+        if profile_json.get('dob'):
+            try:
+                # Handle YYYY-MM-DD format (from form date input)
+                if len(profile_json.get('dob', '').split('-')) == 3:
+                    personal_data['date_of_birth'] = profile_json.get('dob')
+                # Handle MM/DD/YYYY format (from interview)
+                elif '/' in profile_json.get('dob', ''):
+                    dob_parts = profile_json.get('dob').split('/')
+                    if len(dob_parts) == 3:
+                        month, day, year = dob_parts
+                        personal_data['date_of_birth'] = f"{year}-{month.zfill(2)}-{day.zfill(2)}"
+            except Exception as e:
+                print(f"Error converting date of birth: {e}")
         
-        # Create profile with automatic user linking
+        # Handle wearables - truncate if too long
+        if profile_json.get('wearables'):
+            wearables = profile_json.get('wearables')
+            if isinstance(wearables, list):
+                # Truncate each wearable name if needed
+                truncated_wearables = [w[:20] if isinstance(w, str) else w for w in wearables]
+                personal_data['wearables'] = truncated_wearables
+            else:
+                personal_data['wearables'] = wearables
+
+        # Create or update user profile with personal data
+        try:
+            print(f"Creating/updating user profile with data: {personal_data}")
+            
+            # Check if user profile exists
+            user_profile_result = supabase.table('user_profiles').select('id').eq('user_id', user_id).execute()
+            
+            if user_profile_result.data:
+                # Update existing user profile
+                update_result = supabase.table('user_profiles').update(personal_data).eq('user_id', user_id).execute()
+                print(f"Updated user profile for user_id: {user_id} - Result: {update_result}")
+                user_profile_id = user_profile_result.data[0]['id']
+            else:
+                # Create new user profile
+                new_user_profile = {
+                    'user_id': user_id,
+                    'created_at': datetime.utcnow().isoformat(),
+                    **personal_data
+                }
+                # Remove None values and empty strings
+                new_user_profile = {k: v for k, v in new_user_profile.items() if v is not None and v != ''}
+                print(f"Creating new user profile: {new_user_profile}")
+                
+                insert_result = supabase.table('user_profiles').insert(new_user_profile).execute()
+                print(f"Created user profile for user_id: {user_id} - Result: {insert_result}")
+                user_profile_id = insert_result.data[0]['id'] if insert_result.data else None
+                
+        except Exception as e:
+            print(f"Error creating/updating user profile: {e}")
+            print(f"Personal data that caused error: {personal_data}")
+            print(f"User ID: {user_id}")
+            # Continue with athlete profile creation even if user profile fails
+            user_profile_id = None
+        
+        # Extract individual fields for optimized storage (performance data only)
+        individual_fields = extract_individual_fields(profile_json)
+        
+        # Create athlete profile with both JSON and individual fields
         new_profile = {
             **profile_data,
             **individual_fields,  # Add extracted individual fields
             "user_id": user_id,  # Link to authenticated user
-            "user_profile_id": user_profile_id,  # Link to user profile
             "is_public": profile_data.get('is_public', True),  # Default to public
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat()
         }
         
-        # Insert into database with error handling for missing columns
+        # Add user_profile_id if available
+        if user_profile_id:
+            new_profile["user_profile_id"] = user_profile_id
+
+        # Insert into database with error handling for missing columns and foreign key constraints
         try:
             result = supabase.table('athlete_profiles').insert(new_profile).execute()
+            
+            if not result.data:
+                raise Exception("No data returned from athlete_profiles insert")
+                
         except Exception as db_error:
+            print(f"Error creating athlete profile: {db_error}")
+            
+            # If foreign key constraint fails, try creating without user_id
+            if "violates foreign key constraint" in str(db_error):
+                print("Foreign key constraint failed, creating profile without user_id link")
+                fallback_profile = {k: v for k, v in new_profile.items() if k != 'user_id'}
+                result = supabase.table('athlete_profiles').insert(fallback_profile).execute()
+                print(f"Fallback profile created without user_id: {result}")
             # If individual columns don't exist yet, fall back to just JSON storage
-            if "does not exist" in str(db_error).lower() or "column" in str(db_error).lower():
+            elif "does not exist" in str(db_error).lower() or "column" in str(db_error).lower():
                 print(f"⚠️  Individual columns not yet added to database, using JSON-only storage")
                 fallback_profile = {
                     **profile_data,
                     "user_id": user_id,
-                    "user_profile_id": user_profile_id,
-                    "is_public": profile_data.get('is_public', True),  # Default to public
+                    "is_public": profile_data.get('is_public', True),
                     "created_at": datetime.utcnow().isoformat(),
                     "updated_at": datetime.utcnow().isoformat()
                 }
+                if user_profile_id:
+                    fallback_profile["user_profile_id"] = user_profile_id
                 result = supabase.table('athlete_profiles').insert(fallback_profile).execute()
             else:
                 raise db_error
