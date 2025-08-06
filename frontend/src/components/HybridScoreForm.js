@@ -161,7 +161,7 @@ const HybridScoreForm = () => {
           throw new Error('Email and password are required');
         }
 
-        const authResult = await signUp(formData.email, formData.password);
+        const authResult = await signUpWithEmail(formData.email, formData.password);
         
         if (authResult.error) {
           throw new Error(authResult.error.message);
