@@ -137,13 +137,6 @@ class HybridInterviewDataMappingTester:
             print("\n🧪 TESTING EXTRACT_INDIVIDUAL_FIELDS FUNCTION 🧪")
             print("=" * 60)
             
-            # Import the function from server.py
-            try:
-                from server import extract_individual_fields
-            except ImportError:
-                self.log_test("Extract Individual Fields Function Import", False, "Cannot import extract_individual_fields function from server.py")
-                return False
-            
             # Sample completion data from review request
             sample_completion_data = {
                 "first_name": "Ian",
