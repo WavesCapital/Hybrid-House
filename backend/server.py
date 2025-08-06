@@ -533,7 +533,7 @@ async def get_my_user_profile(user: dict = Depends(verify_jwt)):
         )
 
 @api_router.get("/user-profile/me")
-async def get_user_profile(current_user: dict = Depends(get_current_user)):
+async def get_user_profile(current_user: dict = Depends(verify_jwt)):
     try:
         user_id = current_user['sub']
         
