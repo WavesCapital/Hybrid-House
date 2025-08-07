@@ -78,8 +78,16 @@ function AppContent() {
             element={<HybridInterviewFlow />}
           />
           <Route 
+            path="/create-account" 
+            element={user ? <Navigate to="/hybrid-score-form" replace /> : <AccountCreation />}
+          />
+          <Route 
             path="/hybrid-score-form" 
-            element={<HybridScoreForm />}
+            element={
+              <ProtectedRoute>
+                <HybridScoreForm />
+              </ProtectedRoute>
+            }
           />
           <Route 
             path="/profile" 
