@@ -106,7 +106,9 @@ const HybridScoreForm = () => {
     {
       title: 'Personal Info',
       icon: <User className="w-5 h-5" />,
-      fields: ['first_name', 'last_name', 'email', 'password', 'sex', 'dob', 'country', 'wearables']
+      fields: user 
+        ? ['first_name', 'last_name', 'email', 'sex', 'dob', 'country', 'wearables'] // No password for authenticated users
+        : ['first_name', 'last_name', 'email', 'password', 'sex', 'dob', 'country', 'wearables'] // Include password for new users
     },
     {
       title: 'Body Metrics',
