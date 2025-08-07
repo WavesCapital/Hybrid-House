@@ -1055,7 +1055,7 @@ async def create_public_athlete_profile(profile_data: dict):
         
         return {
             "message": "Profile created successfully",
-            "profile": result.data[0]
+            "user_profile": result.data[0]
         }
         
     except HTTPException:
