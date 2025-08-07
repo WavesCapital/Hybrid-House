@@ -205,57 +205,27 @@ const HybridScoreForm = () => {
       return;
     }
 
+    // Users should always be authenticated when reaching this page
+    if (!user || !session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please create an account first.",
+        variant: "destructive",
+      });
+      navigate('/create-account');
+      return;
+    }
+
     console.log('✅ Form submission proceeding - user clicked Calculate Hybrid Score');
     setIsSubmitting(true);
 
     try {
-      let currentUser = user;
-      let currentSession = session;
-
-      // Create account if user is not authenticated
-      if (!currentUser) {
-        console.log('Creating new account...');
-        setIsCreatingAccount(true);
-        
-        if (!formData.email || !formData.password) {
-          throw new Error('Email and password are required');
-        }
-
-        const authResult = await signUpWithEmail(formData.email, formData.password);
-        
-        if (authResult.error) {
-          throw new Error(authResult.error.message);
-        }
-
-        // Sign in the newly created user
-        const signInResult = await signInWithEmail(formData.email, formData.password);
-        
-        if (signInResult.error) {
-          throw new Error('Failed to sign in after account creation');
-        }
-
-        currentUser = signInResult.data?.user;
-        currentSession = signInResult.data?.session;
-
-        if (!currentUser || !currentSession) {
-          throw new Error('Failed to authenticate after account creation');
-        }
-
-        toast({
-          title: "Account Created! 🎉",
-          description: "Now calculating your hybrid score...",
-          duration: 3000,
-        });
-      } else {
-        console.log('User already authenticated, proceeding with score calculation...');
-        toast({
-          title: "Processing your data! 🚀",
-          description: "Calculating your hybrid score...",
-          duration: 3000,
-        });
-      }
-
-      setIsCreatingAccount(false);
+      console.log('User already authenticated, proceeding with score calculation...');
+      toast({
+        title: "Processing your data! 🚀",
+        description: "Calculating your hybrid score...",
+        duration: 3000,
+      });
 
       // Calculate height in inches
       const heightInches = (parseInt(formData.height_ft) || 0) * 12 + (parseInt(formData.height_in) || 0);
