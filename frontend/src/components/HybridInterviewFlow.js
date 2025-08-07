@@ -894,7 +894,7 @@ const HybridInterviewFlow = () => {
                     </button>
                     <button 
                       className="px-6 sm:px-8 py-3 sm:py-4 border-2 border-[#FF2DDE] rounded-lg text-[#FF2DDE] hover:bg-[#FF2DDE] hover:text-black transition-all w-full sm:w-auto font-semibold"
-                      onClick={() => navigate('/hybrid-score-form')}
+                      onClick={() => navigate('/create-account')}
                     >
                       📋 Quick Form
                     </button>
