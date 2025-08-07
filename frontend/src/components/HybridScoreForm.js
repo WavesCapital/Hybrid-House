@@ -536,7 +536,12 @@ const HybridScoreForm = () => {
             </div>
 
             {/* Form Content */}
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()} onKeyDown={(e) => {
+              if (e.key === 'Enter' && currentSection !== sections.length - 1) {
+                e.preventDefault(); // Prevent accidental submission when not on final section
+                console.log('⚠️ Enter key blocked - not on final section');
+              }
+            }}>
               
               {/* Personal Info Section */}
               {currentSection === 0 && (
