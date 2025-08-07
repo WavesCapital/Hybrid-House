@@ -923,7 +923,7 @@ const HybridScoreForm = () => {
                   <div className="section-explainer">
                     <h3>Measuring Your Aerobic Engine</h3>
                     <p>
-                      Running PRs reveal your aerobic power across different time domains - from explosive mile speed to endurance half-marathon pace. Weekly mileage shows your aerobic base development, while long runs demonstrate your aerobic capacity. <strong>These fields are optional, but more complete data leads to more accurate scoring.</strong>
+                      Your <strong>mile time</strong> determines your speed score (25% of endurance) - males target sub-5:30, females target sub-6:15. <strong>Weekly miles</strong> create your volume score with thresholds at 20/40/50+ miles. <strong>Long runs</strong> build your distance score with benchmarks at half-marathon (13.1mi), marathon (26.2mi), and ultra (50mi+) distances. Together, these form your endurance score - 40% of your total hybrid score.
                     </p>
                   </div>
                   
