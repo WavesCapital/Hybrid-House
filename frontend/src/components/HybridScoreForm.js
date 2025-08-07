@@ -1022,15 +1022,11 @@ const HybridScoreForm = () => {
                     Strength Performance
                   </h2>
                   
-                  <div className="info-box">
-                    <div className="flex items-start gap-3">
-                      <Dumbbell className="w-5 h-5 mt-1" style={{ color: 'var(--neon-primary)' }} />
-                      <div>
-                        <p className="text-sm" style={{ color: 'var(--txt)' }}>
-                          <strong>Why we need this:</strong> Strength PRs (1-rep max) measure your anaerobic power and muscular strength. These compound movements are the foundation of hybrid training. <strong>Don't have all PRs? No problem! More data = better accuracy, but we can work with what you have.</strong>
-                        </p>
-                      </div>
-                    </div>
+                  <div className="section-explainer">
+                    <h3>Assessing Your Anaerobic Power</h3>
+                    <p>
+                      Strength PRs measure your maximum force production through fundamental movement patterns. These compound lifts - bench press, squat, and deadlift - form the foundation of hybrid training by developing raw power and muscular strength. <strong>Don't have all your 1RMs? No problem! Even partial data helps create a more accurate hybrid profile.</strong>
+                    </p>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
