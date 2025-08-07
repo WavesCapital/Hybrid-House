@@ -663,7 +663,7 @@ const HybridScoreForm = () => {
                   <div className="section-explainer">
                     <h3>Why We Need Your Personal Details</h3>
                     <p>
-                      Age and gender are crucial for calculating accurate performance benchmarks, as fitness standards vary significantly across demographics. Your physical attributes help determine power-to-weight ratios and set appropriate comparison groups. Wearable selection enables us to provide device-specific guidance for tracking your metrics.
+                      Your <strong>body weight</strong> is fundamental to hybrid scoring - all strength calculations compare your lifts to bodyweight ratios (e.g., 1.5x bodyweight bench press for males). <strong>Gender</strong> determines your performance targets: males target 1.5x/2.0x/2.4x bodyweight for bench/squat/deadlift, while females target 1.0x/1.5x/1.8x. Your demographic profile ensures accurate peer comparison in the global leaderboard rankings.
                     </p>
                   </div>
                   
