@@ -17,6 +17,7 @@ const HybridScoreForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [formData, setFormData] = useState({
     // Personal Information
     first_name: '',
@@ -49,6 +50,57 @@ const HybridScoreForm = () => {
     pb_squat_1rm: '',
     pb_deadlift_1rm: ''
   });
+
+  // Pre-fill form data for authenticated users
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (user && session && !isLoadingProfile) {
+        setIsLoadingProfile(true);
+        try {
+          const response = await axios.get(
+            `${BACKEND_URL}/api/user-profile/me`,
+            {
+              headers: {
+                'Authorization': `Bearer ${session.access_token}`,
+              },
+            }
+          );
+
+          const userProfile = response.data.user_profile;
+          if (userProfile) {
+            // Parse the name if it exists
+            const [firstName = '', lastName = ''] = (userProfile.name || '').split(' ', 2);
+            
+            // Convert height back to feet and inches if available
+            const totalHeightInches = userProfile.height_in || 0;
+            const feet = Math.floor(totalHeightInches / 12);
+            const inches = totalHeightInches % 12;
+
+            setFormData(prev => ({
+              ...prev,
+              first_name: firstName,
+              last_name: lastName,
+              email: userProfile.email || '',
+              sex: userProfile.gender || '',
+              dob: userProfile.dob || '',
+              country: userProfile.country || 'US',
+              wearables: Array.isArray(userProfile.wearables) ? userProfile.wearables : [],
+              weight_lb: userProfile.weight_lb || '',
+              height_ft: feet > 0 ? feet.toString() : '',
+              height_in: inches > 0 ? inches.toString() : '',
+            }));
+          }
+        } catch (error) {
+          console.error('Error loading user profile:', error);
+          // Don't show error toast for profile loading as it's not critical
+        } finally {
+          setIsLoadingProfile(false);
+        }
+      }
+    };
+
+    loadUserProfile();
+  }, [user, session]); // Re-run when user or session changes
 
   const sections = [
     {
