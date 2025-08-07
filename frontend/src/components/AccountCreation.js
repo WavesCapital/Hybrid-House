@@ -88,7 +88,7 @@ const AccountCreation = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ background: '#0A0B0C' }}>
+    <div className="min-h-screen flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8" style={{ background: '#0A0B0C' }}>
       <style jsx>{`
         .neo-text-primary {
           color: #D9D9D9;
