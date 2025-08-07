@@ -549,7 +549,7 @@ async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict =
                 print(f"✅ Profile updated successfully: {result.data[0]['id']}")
                 return {
                     "message": "Profile updated successfully",
-                    "profile": result.data[0]
+                    "user_profile": result.data[0]
                 }
         except Exception as update_error:
             # Check if it's a missing column error
