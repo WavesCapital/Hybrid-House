@@ -765,26 +765,36 @@ const HybridScoreForm = () => {
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         required
+                        readOnly={!!user}
+                        style={user ? { backgroundColor: 'var(--muted)', opacity: 0.7 } : {}}
                       />
+                      {user && (
+                        <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
+                          Email cannot be changed for existing accounts
+                        </p>
+                      )}
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Password *
-                      </label>
-                      <input
-                        type="password"
-                        className="form-input"
-                        value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
-                        placeholder="Create a secure password"
-                        required
-                        minLength={6}
-                      />
-                      <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
-                        Password should be at least 6 characters long
-                      </p>
-                    </div>
+                    {/* Only show password field for new users */}
+                    {!user && (
+                      <div>
+                        <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
+                          Password *
+                        </label>
+                        <input
+                          type="password"
+                          className="form-input"
+                          value={formData.password}
+                          onChange={(e) => handleInputChange('password', e.target.value)}
+                          placeholder="Create a secure password"
+                          required
+                          minLength={6}
+                        />
+                        <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
+                          Password should be at least 6 characters long
+                        </p>
+                      </div>
+                    )}
 
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
