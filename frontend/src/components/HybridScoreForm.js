@@ -1234,10 +1234,10 @@ const HybridScoreForm = () => {
               )}
 
               {/* Navigation Buttons */}
-              <div className="flex justify-between mt-8 pt-6 border-t" style={{ borderColor: 'var(--border)' }}>
+              <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t" style={{ borderColor: 'var(--border)' }}>
                 <button
                   type="button"
-                  className="px-6 py-3 border border-gray-600 rounded-lg text-gray-300 hover:border-[#08F0FF] transition-colors"
+                  className="px-4 sm:px-6 py-3 text-sm sm:text-base border border-gray-600 rounded-lg text-gray-300 hover:border-[#08F0FF] transition-colors min-h-[44px] order-2 sm:order-1"
                   onClick={prevSection}
                   disabled={currentSection === 0}
                   style={{ opacity: currentSection === 0 ? 0.5 : 1 }}
@@ -1248,7 +1248,7 @@ const HybridScoreForm = () => {
                 {currentSection < sections.length - 1 ? (
                   <button
                     type="button"
-                    className="neon-button"
+                    className="neon-button text-sm sm:text-base px-4 sm:px-6 py-3 min-h-[44px] order-1 sm:order-2"
                     onClick={nextSection}
                   >
                     Next
@@ -1256,7 +1256,7 @@ const HybridScoreForm = () => {
                 ) : (
                   <button
                     type="button"
-                    className="neon-button"
+                    className="neon-button text-sm sm:text-base px-4 sm:px-6 py-3 min-h-[44px] order-1 sm:order-2"
                     disabled={isSubmitting}
                     onClick={handleSubmit}
                   >
