@@ -209,7 +209,6 @@ const HybridScoreForm = () => {
 
     console.log('✅ Form submission proceeding - user clicked Calculate Hybrid Score');
     setIsSubmitting(true);
-    setIsCreatingAccount(true);
 
     try {
       let currentUser = user;
@@ -218,6 +217,7 @@ const HybridScoreForm = () => {
       // Create account if user is not authenticated
       if (!currentUser) {
         console.log('Creating new account...');
+        setIsCreatingAccount(true);
         
         if (!formData.email || !formData.password) {
           throw new Error('Email and password are required');
@@ -246,6 +246,13 @@ const HybridScoreForm = () => {
         toast({
           title: "Account Created! 🎉",
           description: "Now calculating your hybrid score...",
+          duration: 3000,
+        });
+      } else {
+        console.log('User already authenticated, proceeding with score calculation...');
+        toast({
+          title: "Processing your data! 🚀",
+          description: "Calculating your hybrid score...",
           duration: 3000,
         });
       }
