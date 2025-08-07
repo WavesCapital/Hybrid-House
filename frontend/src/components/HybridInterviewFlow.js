@@ -886,17 +886,10 @@ const HybridInterviewFlow = () => {
 
                   <div className="flex flex-col sm:flex-row gap-4 px-4 sm:px-0" style={{ position: 'relative', zIndex: 10 }}>
                     <button 
-                      onClick={startInterview}
-                      disabled={isLoading}
                       className="neon-button text-base sm:text-lg w-full sm:w-auto"
-                    >
-                      {isLoading ? 'Starting...' : 'AI Interview (3 min)'}
-                    </button>
-                    <button 
-                      className="px-6 sm:px-8 py-3 sm:py-4 border-2 border-[#FF2DDE] rounded-lg text-[#FF2DDE] hover:bg-[#FF2DDE] hover:text-black transition-all w-full sm:w-auto font-semibold"
                       onClick={() => navigate('/create-account')}
                     >
-                      📋 Quick Form
+                      Get Hybrid Score
                     </button>
                     <button 
                       className="px-6 sm:px-8 py-3 sm:py-4 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors w-full sm:w-auto"
