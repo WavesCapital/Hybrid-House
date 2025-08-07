@@ -1911,8 +1911,45 @@ const ProfilePage = () => {
             </div>
             
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 accent-gradient rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              {/* Leaderboard Button */}
+              <button 
+                onClick={() => navigate('/leaderboard')}
+                className="px-3 py-2 text-sm border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors hidden sm:flex items-center gap-2"
+              >
+                <Trophy className="w-4 h-4" />
+                Leaderboard
+              </button>
+              
+              {/* Profile Dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="w-6 h-6 sm:w-8 sm:h-8 accent-gradient rounded-full flex items-center justify-center hover:opacity-80 transition-opacity"
+                >
+                  <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                </button>
+                
+                {/* Dropdown Menu */}
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-[#181B1D] border border-white/10 rounded-lg shadow-lg z-50">
+                    <div className="py-2">
+                      <button
+                        onClick={handleViewPublicProfile}
+                        className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 transition-colors flex items-center gap-2"
+                      >
+                        <Eye className="w-4 h-4" />
+                        View Public Profile
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-white/10 transition-colors flex items-center gap-2"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Log Out
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
