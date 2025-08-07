@@ -78,7 +78,6 @@ const HybridScoreForm = () => {
               ...prev,
               first_name: firstName,
               last_name: lastName,
-              email: userProfile.email || '',
               sex: userProfile.gender || '',
               dob: userProfile.dob || '',
               country: userProfile.country || 'US',
