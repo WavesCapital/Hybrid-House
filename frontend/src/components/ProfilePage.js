@@ -487,7 +487,7 @@ const ProfilePage = () => {
       });
 
       // Update user profile with new data
-      setUserProfile(response.data.profile);
+      setUserProfile(response.data.user_profile);
       setEditingFields(prev => ({...prev, [fieldName]: false}));
       
       // Show success feedback
