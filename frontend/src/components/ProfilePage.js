@@ -709,7 +709,7 @@ const ProfilePage = () => {
         }
       });
 
-      setUserProfile(response.data.profile);
+      setUserProfile(response.data.user_profile);
       setIsEditingProfile(false);
       toast({
         title: "Success",
