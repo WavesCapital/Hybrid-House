@@ -144,8 +144,25 @@ const HybridScoreForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isSubmitting) return;
+    
+    console.log('🔍 Form submission triggered');
+    console.log('🔍 Current section:', currentSection);
+    console.log('🔍 Sections length:', sections.length);
+    console.log('🔍 Is on final section?', currentSection === sections.length - 1);
+    console.log('🔍 Form data at submission:', formData);
+    
+    if (isSubmitting) {
+      console.log('🔍 Already submitting, returning early');
+      return;
+    }
 
+    // Only allow submission if we're on the final section
+    if (currentSection !== sections.length - 1) {
+      console.log('⚠️ Form submission attempted but not on final section, blocking submission');
+      return;
+    }
+
+    console.log('✅ Form submission proceeding on final section');
     setIsSubmitting(true);
     setIsCreatingAccount(true);
 
