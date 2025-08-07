@@ -22,8 +22,6 @@ const HybridScoreForm = () => {
     // Personal Information
     first_name: '',
     last_name: '',
-    email: '',
-    password: '',
     sex: '',
     dob: '',
     country: 'US',
