@@ -289,8 +289,71 @@ const HybridScoreForm = () => {
   };
 
   const wearableOptions = [
-    'Apple Watch', 'Garmin', 'Whoop', 'Ultrahuman Ring', 'Fitbit', 'Oura', 'None'
+    'Apple Watch', 'Garmin', 'Whoop', 'Ultrahuman Ring', 'Fitbit', 'Oura', 'None', 'Other'
   ];
+
+  const getWearableTips = () => {
+    const selectedWearables = formData.wearables;
+    if (selectedWearables.length === 0) return null;
+
+    const tips = [];
+    
+    if (selectedWearables.includes('Apple Watch')) {
+      tips.push({
+        device: 'Apple Watch',
+        vo2: 'Health app → Browse → Heart → Cardio Fitness',
+        rhr: 'Health app → Browse → Heart → Resting Heart Rate',
+        hrv: 'Health app → Browse → Heart → Heart Rate Variability'
+      });
+    }
+    
+    if (selectedWearables.includes('Garmin')) {
+      tips.push({
+        device: 'Garmin',
+        vo2: 'Garmin Connect app → Health Stats → VO2 Max',
+        rhr: 'Garmin Connect app → Health Stats → Resting Heart Rate', 
+        hrv: 'Garmin Connect app → Health Stats → HRV Status'
+      });
+    }
+    
+    if (selectedWearables.includes('Whoop')) {
+      tips.push({
+        device: 'Whoop',
+        vo2: 'Not available on Whoop - use estimated values',
+        rhr: 'Whoop app → Overview → Resting Heart Rate',
+        hrv: 'Whoop app → Overview → HRV (RMSSD value)'
+      });
+    }
+    
+    if (selectedWearables.includes('Ultrahuman Ring')) {
+      tips.push({
+        device: 'Ultrahuman Ring',
+        vo2: 'Not typically measured - use estimated values',
+        rhr: 'Ultrahuman app → Vitals → Resting Heart Rate',
+        hrv: 'Ultrahuman app → Vitals → HRV'
+      });
+    }
+    
+    if (selectedWearables.includes('Fitbit')) {
+      tips.push({
+        device: 'Fitbit',
+        vo2: 'Fitbit app → Today tab → Cardio Fitness Score',
+        rhr: 'Fitbit app → Today tab → Heart Rate tile → Resting HR',
+        hrv: 'Fitbit app → Premium features → HRV'
+      });
+    }
+    
+    if (selectedWearables.includes('Oura')) {
+      tips.push({
+        device: 'Oura',
+        vo2: 'Not available - use estimated values',
+        rhr: 'Oura app → Today → Resting Heart Rate',
+        hrv: 'Oura app → Today → HRV'
+      });
+    }
+
+    return tips;
+  };
 
   if (loading) {
     return (
