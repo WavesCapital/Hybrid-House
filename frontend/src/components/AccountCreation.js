@@ -272,7 +272,7 @@ const AccountCreation = () => {
                   <span>Creating Account...</span>
                 </div>
               ) : (
-                'Create Account & Continue'
+                'Create Account'
               )}
             </button>
           </form>
