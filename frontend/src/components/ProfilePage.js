@@ -249,7 +249,7 @@ const ProfilePage = () => {
         });
 
         console.log('User profile fetched:', response.data);
-        const profile = response.data.profile;
+        const profile = response.data.user_profile; // Fixed: was response.data.profile
         setUserProfile(profile);
         // Initialize temp field values for inline editing
         setTempFieldValues({
