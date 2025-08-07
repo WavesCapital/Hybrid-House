@@ -454,7 +454,7 @@ async def handle_signup(signup_data: dict):
         result = supabase.table('user_profiles').insert(user_profile).execute()
         
         if result.data:
-            return {"message": "User profile created successfully", "profile": result.data[0]}
+            return {"message": "User profile created successfully", "user_profile": result.data[0]}
         else:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
