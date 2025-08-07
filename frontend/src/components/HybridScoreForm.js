@@ -507,22 +507,78 @@ const HybridScoreForm = () => {
           margin-bottom: 24px;
         }
 
+        .section-explainer {
+          background: rgba(8, 240, 255, 0.05);
+          border-left: 3px solid var(--neon-primary);
+          padding: 16px 20px;
+          margin-bottom: 32px;
+          border-radius: 0 8px 8px 0;
+        }
+
+        .section-explainer h3 {
+          margin: 0 0 8px 0;
+          color: var(--neon-primary);
+          font-size: 16px;
+          font-weight: 600;
+        }
+
+        .section-explainer p {
+          margin: 0;
+          color: var(--txt);
+          font-size: 14px;
+          line-height: 1.5;
+        }
+
         .height-input-group {
           display: flex;
-          gap: 8px;
+          gap: 12px;
           align-items: center;
         }
 
+        .height-input-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
         .height-input {
-          flex: 1;
+          width: 80px;
         }
 
         .height-label {
-          color: var(--muted);
+          color: var(--txt);
           font-size: 14px;
           font-weight: 500;
           min-width: 20px;
-          text-align: center;
+        }
+
+        .wearable-tips {
+          background: rgba(255, 45, 222, 0.05);
+          border-left: 3px solid var(--neon-secondary);
+          padding: 12px 16px;
+          margin-top: 16px;
+          border-radius: 0 8px 8px 0;
+        }
+
+        .wearable-tip {
+          margin-bottom: 8px;
+        }
+
+        .wearable-tip:last-child {
+          margin-bottom: 0;
+        }
+
+        .wearable-tip-device {
+          color: var(--neon-secondary);
+          font-weight: 600;
+          font-size: 14px;
+        }
+
+        .wearable-tip-instruction {
+          color: var(--txt);
+          font-size: 13px;
+          margin-left: 16px;
+          line-height: 1.4;
         }
 
         @media (max-width: 768px) {
