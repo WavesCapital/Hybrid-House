@@ -591,13 +591,13 @@ const HybridScoreForm = () => {
           }
 
           .height-input-group {
-            flex-direction: column;
-            align-items: stretch;
+            flex-direction: row;
+            justify-content: flex-start;
           }
 
-          .height-label {
-            text-align: left;
-            margin-bottom: 4px;
+          .height-input-wrapper {
+            flex-direction: row;
+            align-items: center;
           }
         }
         `}
