@@ -551,7 +551,10 @@ const ProfilePage = () => {
     try {
       setIsAutoSaving(true);
       
-      // Include all fields including country (now that database column exists)
+      // Convert height to inches
+      const heightInches = (parseInt(formData.height_ft) || 0) * 12 + (parseInt(formData.height_in) || 0);
+      
+      // Include all fields including country and height
       const safeFormData = {
         name: formData.name || null,
         display_name: formData.display_name || null,
@@ -559,7 +562,8 @@ const ProfilePage = () => {
         website: formData.website || null,
         gender: formData.gender || null,
         date_of_birth: formData.date_of_birth || null,
-        country: formData.country || null, // Now including country!
+        country: formData.country || null,
+        height_in: heightInches || null,
         units_preference: formData.units_preference || 'imperial',
         privacy_level: formData.privacy_level || 'private'
       };
