@@ -491,13 +491,13 @@ const HybridScoreForm = () => {
         }
 
         .section-nav {
-          display: flex;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
           gap: 8px;
           margin-bottom: 32px;
         }
 
         .section-tab {
-          flex: 1;
           background: var(--card);
           border: 1px solid var(--border);
           border-radius: 8px;
@@ -508,8 +508,10 @@ const HybridScoreForm = () => {
           display: flex;
           align-items: center;
           justify-content: center;
+          flex-direction: column;
           gap: 8px;
           font-size: 14px;
+          min-height: 70px;
         }
 
         .section-tab.active {
