@@ -1123,11 +1123,7 @@ const HybridScoreForm = () => {
                     disabled={isSubmitting}
                     onClick={handleSubmit}
                   >
-                    {isSubmitting ? (
-                      isCreatingAccount ? 'Creating Account...' : 'Calculating Score...'
-                    ) : (
-                      'Calculate Hybrid Score'
-                    )}
+                    {isSubmitting ? 'Calculating Score...' : 'Calculate Hybrid Score'}
                   </button>
                 )}
               </div>
