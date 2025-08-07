@@ -234,7 +234,7 @@ const HybridScoreForm = () => {
       const profileData = {
         first_name: formData.first_name.substring(0, 20), // Limit first name
         last_name: formData.last_name.substring(0, 20),   // Limit last name
-        email: formData.email.substring(0, 50),           // Limit email to 50 chars
+        email: user.email.substring(0, 50),               // Get email from authenticated user
         sex: formData.sex,
         dob: formData.dob,
         country: formData.country.substring(0, 2),        // Limit country to 2 chars
@@ -270,7 +270,7 @@ const HybridScoreForm = () => {
         },
         {
           headers: {
-            'Authorization': `Bearer ${currentSession.access_token}`,
+            'Authorization': `Bearer ${session.access_token}`,
             'Content-Type': 'application/json',
           },
         }
@@ -287,7 +287,7 @@ const HybridScoreForm = () => {
         });
 
         // Trigger webhook for score calculation with complete profile data
-        await triggerWebhookForScore(profileData, profileId, currentSession);
+        await triggerWebhookForScore(profileData, profileId, session);
       } else {
         throw new Error('No profile ID returned');
       }
