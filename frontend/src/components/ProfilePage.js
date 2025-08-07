@@ -2302,21 +2302,6 @@ const ProfilePage = () => {
                     <h4 className="text-lg font-semibold text-primary">Preferences</h4>
                     
                     <div>
-                      <label className="block text-sm font-medium text-secondary mb-2">Gender</label>
-                      <select
-                        value={profileForm.gender || ''}
-                        onChange={(e) => handleProfileFormChange('gender', e.target.value)}
-                        className="neon-input w-full"
-                      >
-                        <option value="">Select gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                        <option value="prefer_not_to_say">Prefer not to say</option>
-                      </select>
-                    </div>
-                    
-                    <div>
                       <label className="block text-sm font-medium text-secondary mb-2">Units</label>
                       <select
                         value={profileForm.units_preference || 'imperial'}
