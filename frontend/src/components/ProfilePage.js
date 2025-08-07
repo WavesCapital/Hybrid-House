@@ -260,6 +260,8 @@ const ProfilePage = () => {
           gender: profile.gender || '',
           date_of_birth: profile.date_of_birth || '',
           country: profile.country || '',
+          height_ft: Math.floor((profile.height_in || 0) / 12).toString() || '',
+          height_in: ((profile.height_in || 0) % 12).toString() || '',
           units_preference: profile.units_preference || 'imperial',
           privacy_level: profile.privacy_level || 'private'
         });
@@ -272,6 +274,8 @@ const ProfilePage = () => {
           gender: profile.gender || '',
           date_of_birth: profile.date_of_birth || '',
           country: profile.country || '',
+          height_ft: Math.floor((profile.height_in || 0) / 12).toString() || '',
+          height_in: ((profile.height_in || 0) % 12).toString() || '',
           units_preference: profile.units_preference || 'imperial',
           privacy_level: profile.privacy_level || 'private'
         });
