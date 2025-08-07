@@ -705,11 +705,11 @@ const HybridScoreForm = () => {
                       <div className="flex items-center space-x-2 mb-2">
                         <User className="w-4 h-4" style={{ color: 'var(--neon-primary)' }} />
                         <span style={{ color: 'var(--neon-primary)', fontWeight: '600' }}>
-                          Welcome back! 👋
+                          Account Created Successfully! 🎉
                         </span>
                       </div>
                       <p className="text-sm" style={{ color: 'var(--txt)' }}>
-                        We've pre-filled your personal information from your profile. You can update any details and add your performance metrics below.
+                        Now let's collect your performance data to calculate your hybrid score. Any pre-filled information can be updated below.
                       </p>
                     </div>
                   )}
