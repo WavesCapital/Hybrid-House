@@ -795,16 +795,29 @@ const HybridScoreForm = () => {
                     Body Metrics
                   </h2>
                   
-                  <div className="info-box">
-                    <div className="flex items-start gap-3">
-                      <Heart className="w-5 h-5 mt-1" style={{ color: 'var(--neon-primary)' }} />
-                      <div>
-                        <p className="text-sm" style={{ color: 'var(--txt)' }}>
-                          <strong>Why we need this:</strong> Height and weight determine power-to-weight ratios. VO₂ max measures aerobic capacity, while resting HR and HRV indicate cardiovascular fitness and recovery capacity - all critical for hybrid performance scoring.
-                        </p>
-                      </div>
-                    </div>
+                  <div className="section-explainer">
+                    <h3>Understanding Your Physiological Foundation</h3>
+                    <p>
+                      Height and weight establish your power-to-weight ratios, fundamental to hybrid performance. VO₂ max measures your aerobic capacity - your body's ability to use oxygen during exercise. Resting heart rate indicates cardiovascular fitness, while HRV reflects your recovery capacity and nervous system balance.
+                    </p>
                   </div>
+
+                  {/* Dynamic Wearable Tips */}
+                  {getWearableTips() && (
+                    <div className="wearable-tips">
+                      <h4 style={{ color: 'var(--neon-secondary)', fontSize: '14px', fontWeight: '600', marginBottom: '12px' }}>
+                        📱 How to Find These Metrics on Your Devices:
+                      </h4>
+                      {getWearableTips().map((tip, index) => (
+                        <div key={index} className="wearable-tip">
+                          <div className="wearable-tip-device">{tip.device}:</div>
+                          <div className="wearable-tip-instruction">• VO₂ Max: {tip.vo2}</div>
+                          <div className="wearable-tip-instruction">• Resting HR: {tip.rhr}</div>
+                          <div className="wearable-tip-instruction">• HRV: {tip.hrv}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
@@ -826,10 +839,10 @@ const HybridScoreForm = () => {
                         Height *
                       </label>
                       <div className="height-input-group">
-                        <div className="height-input">
+                        <div className="height-input-wrapper">
                           <input
                             type="number"
-                            className="form-input"
+                            className="form-input height-input"
                             value={formData.height_ft}
                             onChange={(e) => handleInputChange('height_ft', e.target.value)}
                             placeholder="5"
@@ -837,12 +850,12 @@ const HybridScoreForm = () => {
                             max="8"
                             required
                           />
-                          <div className="height-label">ft</div>
+                          <span className="height-label">ft</span>
                         </div>
-                        <div className="height-input">
+                        <div className="height-input-wrapper">
                           <input
                             type="number"
-                            className="form-input"
+                            className="form-input height-input"
                             value={formData.height_in}
                             onChange={(e) => handleInputChange('height_in', e.target.value)}
                             placeholder="10"
@@ -850,7 +863,7 @@ const HybridScoreForm = () => {
                             max="11"
                             required
                           />
-                          <div className="height-label">in</div>
+                          <span className="height-label">in</span>
                         </div>
                       </div>
                     </div>
@@ -866,9 +879,6 @@ const HybridScoreForm = () => {
                         onChange={(e) => handleInputChange('vo2max', e.target.value)}
                         placeholder="55"
                       />
-                      <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
-                        If you don't know this, leave blank - we'll estimate it
-                      </p>
                     </div>
 
                     <div>
