@@ -143,26 +143,17 @@ const HybridScoreForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     
-    console.log('🔍 Form submission triggered');
-    console.log('🔍 Current section:', currentSection);
-    console.log('🔍 Sections length:', sections.length);
-    console.log('🔍 Is on final section?', currentSection === sections.length - 1);
-    console.log('🔍 Form data at submission:', formData);
-    
-    if (isSubmitting) {
-      console.log('🔍 Already submitting, returning early');
-      return;
-    }
+    if (isSubmitting) return;
 
-    // Only allow submission if we're on the final section
+    // Double-check we're on the final section before proceeding
     if (currentSection !== sections.length - 1) {
-      console.log('⚠️ Form submission attempted but not on final section, blocking submission');
+      console.log('⚠️ Form submission blocked - not on final section');
       return;
     }
 
-    console.log('✅ Form submission proceeding on final section');
+    console.log('✅ Form submission proceeding - user clicked Calculate Hybrid Score');
     setIsSubmitting(true);
     setIsCreatingAccount(true);
 
