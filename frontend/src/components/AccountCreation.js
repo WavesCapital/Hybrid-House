@@ -163,9 +163,44 @@ const AccountCreation = () => {
           border-radius: 8px;
           transition: all 200ms cubic-bezier(0.4,0,0.2,1);
         }
-        .back-link:hover {
-          background: rgba(121, 207, 247, 0.1);
-          transform: translateY(-1px);
+        @media (max-width: 768px) {
+          .neo-card {
+            margin: 0 16px;
+            padding: 24px 20px;
+          }
+          
+          .neo-input {
+            font-size: 16px; /* Prevent zoom on iOS */
+            padding: 14px 16px;
+            min-height: 48px;
+          }
+          
+          .neo-btn-primary {
+            font-size: 16px;
+            padding: 14px 20px;
+            min-height: 48px;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          h1 {
+            font-size: 2.5rem !important;
+            line-height: 1.1 !important;
+          }
+          
+          h2 {
+            font-size: 1.5rem !important;
+          }
+          
+          .neo-card {
+            margin: 0 12px;
+            padding: 20px 16px;
+          }
+          
+          .back-link {
+            font-size: 14px;
+            padding: 6px 12px;
+          }
         }
       `}</style>
       
