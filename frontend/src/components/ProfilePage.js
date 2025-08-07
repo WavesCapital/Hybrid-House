@@ -294,6 +294,8 @@ const ProfilePage = () => {
           gender: '',
           date_of_birth: '',
           country: '',
+          height_ft: '',
+          height_in: '',
           units_preference: 'imperial',
           privacy_level: 'private'
         };
