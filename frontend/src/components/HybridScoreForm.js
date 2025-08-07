@@ -660,15 +660,11 @@ const HybridScoreForm = () => {
                     Personal Information
                   </h2>
                   
-                  <div className="info-box">
-                    <div className="flex items-start gap-3">
-                      <Info className="w-5 h-5 mt-1" style={{ color: 'var(--neon-primary)' }} />
-                      <div>
-                        <p className="text-sm" style={{ color: 'var(--txt)' }}>
-                          <strong>Why we need this:</strong> Age, gender, and physical attributes are crucial for calculating accurate hybrid performance benchmarks. Your wearables data helps us understand your training monitoring capabilities.
-                        </p>
-                      </div>
-                    </div>
+                  <div className="section-explainer">
+                    <h3>Why We Need Your Personal Details</h3>
+                    <p>
+                      Age and gender are crucial for calculating accurate performance benchmarks, as fitness standards vary significantly across demographics. Your physical attributes help determine power-to-weight ratios and set appropriate comparison groups. Wearable selection enables us to provide device-specific guidance for tracking your metrics.
+                    </p>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
