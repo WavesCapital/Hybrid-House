@@ -31,7 +31,7 @@ function ProtectedRoute({ children }) {
   }
   
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/create-account" replace />;
   }
   
   return children;
