@@ -1862,6 +1862,41 @@ const ProfilePage = () => {
             padding-left: 0.75rem;
             padding-right: 0.75rem;
           }
+          
+          /* Mobile Leaderboard Button */
+          @media (max-width: 640px) {
+            .mobile-leaderboard-btn {
+              display: flex !important;
+              padding: 0.5rem;
+              border-radius: 50%;
+              width: 2rem;
+              height: 2rem;
+              align-items: center;
+              justify-content: center;
+            }
+            
+            .desktop-leaderboard-btn {
+              display: none !important;
+            }
+          }
+        }
+        
+        /* Dropdown Menu Styles */
+        .dropdown-menu {
+          animation: slideDown 0.2s ease-out;
+          transform-origin: top;
+        }
+        
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px) scaleY(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scaleY(1);
+          }
+        }
         }
         `}
       </style>
