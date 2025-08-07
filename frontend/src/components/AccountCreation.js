@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
-import { Trophy, User, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 const AccountCreation = () => {
   const { signUpWithEmail, signInWithEmail } = useAuth();
@@ -12,6 +10,7 @@ const AccountCreation = () => {
   const navigate = useNavigate();
   
   const [isCreating, setIsCreating] = useState(false);
+  const [message, setMessage] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -30,31 +29,22 @@ const AccountCreation = () => {
     
     if (isCreating) return;
 
+    // Clear any previous messages
+    setMessage('');
+
     // Validation
     if (!formData.email || !formData.password) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
-      });
+      setMessage('Please fill in all required fields.');
       return;
     }
 
     if (formData.password.length < 6) {
-      toast({
-        title: "Password Too Short",
-        description: "Password must be at least 6 characters long.",
-        variant: "destructive",
-      });
+      setMessage('Password must be at least 6 characters long.');
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: "Password Mismatch",
-        description: "Passwords do not match.",
-        variant: "destructive",
-      });
+      setMessage('Passwords do not match.');
       return;
     }
 
@@ -76,207 +66,236 @@ const AccountCreation = () => {
         throw new Error('Failed to sign in after account creation');
       }
 
+      setMessage('Account created successfully! Redirecting...');
+
       toast({
         title: "Account Created Successfully! 🎉",
         description: "Welcome to Hybrid House! Now let's collect your data.",
         duration: 3000,
       });
 
-      // Navigate to hybrid score form
-      navigate('/hybrid-score-form');
+      // Navigate to hybrid score form after a short delay
+      setTimeout(() => {
+        navigate('/hybrid-score-form');
+      }, 1000);
 
     } catch (error) {
       console.error('Error creating account:', error);
-      toast({
-        title: "Account Creation Failed",
-        description: error.message || "Please try again.",
-        variant: "destructive",
-      });
+      setMessage(error.message || 'Failed to create account. Please try again.');
     } finally {
       setIsCreating(false);
     }
   };
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ background: '#0A0B0C' }}>
       <style jsx>{`
-        .neon-button {
-          background: linear-gradient(135deg, var(--neon-primary), var(--neon-secondary));
-          color: #000000;
-          border: none;
-          font-weight: 600;
-          transition: all 0.3s ease;
-          text-shadow: none;
+        .neo-text-primary {
+          color: #D9D9D9;
         }
-
-        .neon-button:hover {
-          transform: translateY(-2px);
-          box-shadow: 
-            0 8px 32px rgba(8, 240, 255, 0.4),
-            0 4px 16px rgba(255, 45, 222, 0.3);
+        .neo-text-secondary {
+          color: #9FA1A3;
         }
-
-        .neon-button:disabled {
-          opacity: 0.6;
-          transform: none;
-          cursor: not-allowed;
+        .neo-text-muted {
+          color: #6B6E71;
         }
-
-        .form-input {
-          background: var(--card);
-          border: 1px solid var(--border);
+        .neo-primary {
+          color: #79CFF7;
+        }
+        .neo-card {
+          background: #181B1D;
+          border: 1px solid #1A1C1D;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .neo-input {
+          background: #0F1112;
+          border: 1px solid #1A1C1D;
+          color: #D9D9D9;
           border-radius: 8px;
-          color: var(--txt);
           padding: 12px 16px;
-          font-size: 14px;
-          transition: all 0.3s ease;
-          width: 100%;
+          font-size: 16px;
+          transition: all 200ms cubic-bezier(0.4,0,0.2,1);
         }
-
-        .form-input:focus {
+        .neo-input:focus {
           outline: none;
-          border-color: var(--neon-primary);
-          box-shadow: 0 0 0 2px rgba(8, 240, 255, 0.2);
+          border-color: #79CFF7;
+          box-shadow: 0 0 0 3px rgba(121, 207, 247, 0.15);
         }
-
-        .back-button {
-          background: transparent;
-          border: 1px solid var(--border);
+        .neo-btn-primary {
+          background: rgba(121, 207, 247, 0.2);
+          color: #79CFF7;
+          border: 2px solid #79CFF7;
           border-radius: 8px;
-          color: var(--txt);
-          padding: 8px 16px;
-          font-size: 14px;
-          transition: all 0.3s ease;
-          cursor: pointer;
+          padding: 12px 20px;
+          font-weight: 600;
+          transition: all 200ms cubic-bezier(0.4,0,0.2,1);
+          box-shadow: 0 0 12px rgba(121, 207, 247, 0.25);
+          backdrop-filter: blur(8px);
+        }
+        .neo-btn-primary:hover {
+          background: rgba(121, 207, 247, 0.3);
+          box-shadow: 0 0 20px rgba(121, 207, 247, 0.4);
+          transform: translateY(-1px);
+        }
+        .neo-btn-primary:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          transform: none;
+        }
+        .error-message {
+          color: #FF4B4B;
+          background: rgba(255, 75, 75, 0.1);
+          border: 1px solid rgba(255, 75, 75, 0.2);
+        }
+        .success-message {
+          color: #85E26E;
+          background: rgba(133, 226, 110, 0.1);
+          border: 1px solid rgba(133, 226, 110, 0.2);
+        }
+        .back-link {
+          color: #79CFF7;
+          text-decoration: none;
           display: inline-flex;
           align-items: center;
           gap: 8px;
+          padding: 8px 16px;
+          border: 1px solid #79CFF7;
+          border-radius: 8px;
+          transition: all 200ms cubic-bezier(0.4,0,0.2,1);
         }
-
-        .back-button:hover {
-          border-color: var(--neon-primary);
-          color: var(--neon-primary);
+        .back-link:hover {
+          background: rgba(121, 207, 247, 0.1);
+          transform: translateY(-1px);
         }
       `}</style>
+      
+      <div className="max-w-md w-full space-y-8">
+        {/* Back to Home Link */}
+        <div className="flex justify-center">
+          <Link to="/" className="back-link">
+            <ArrowLeft size={16} />
+            Back to Home
+          </Link>
+        </div>
 
-      {/* Header */}
-      <header className="border-b border-gray-800" style={{ background: 'var(--bg)' }}>
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Trophy className="w-6 h-6" style={{ color: 'var(--neon-primary)' }} />
-              <h1 className="text-xl font-bold" style={{ color: 'var(--neon-primary)' }}>
-                Create Your Account
-              </h1>
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-5xl font-bold mb-4 neo-primary" style={{ lineHeight: '1.1' }}>
+            Hybrid House
+          </h1>
+          <h2 className="text-2xl font-semibold neo-text-primary mb-2">
+            Create Your Account
+          </h2>
+          <p className="neo-text-secondary">
+            Join thousands of hybrid athletes tracking their performance
+          </p>
+        </div>
+        
+        {/* Account Creation Card */}
+        <div className="neo-card rounded-xl p-8 space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-semibold neo-text-primary mb-2">
+                Email address
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="neo-input w-full"
+                placeholder="your.email@example.com"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                disabled={isCreating}
+              />
             </div>
+            
+            <div>
+              <label htmlFor="password" className="block text-sm font-semibold neo-text-primary mb-2">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                className="neo-input w-full"
+                placeholder="Create a secure password"
+                value={formData.password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
+                disabled={isCreating}
+                minLength={6}
+              />
+              <p className="text-xs neo-text-muted mt-1">Minimum 6 characters</p>
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-semibold neo-text-primary mb-2">
+                Confirm Password
+              </label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                required
+                className="neo-input w-full"
+                placeholder="Confirm your password"
+                value={formData.confirmPassword}
+                onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                disabled={isCreating}
+                minLength={6}
+              />
+            </div>
+
+            {message && (
+              <div className={`text-sm text-center p-3 rounded-lg ${
+                message.includes('error') || message.includes('Failed') || message.includes('must') || message.includes('not match')
+                  ? 'error-message' 
+                  : 'success-message'
+              }`}>
+                {message}
+              </div>
+            )}
+
             <button
-              onClick={() => navigate('/')}
-              className="back-button"
+              type="submit"
+              disabled={isCreating}
+              className="neo-btn-primary w-full py-3 text-lg font-semibold"
             >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
+              {isCreating ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                  <span>Creating Account...</span>
+                </div>
+              ) : (
+                'Create Account & Continue'
+              )}
             </button>
+          </form>
+
+          {/* Sign In Link */}
+          <div className="text-center pt-4 border-t border-gray-700">
+            <p className="neo-text-secondary text-sm">
+              Already have an account?{' '}
+              <Link 
+                to="/login" 
+                className="neo-primary font-semibold hover:underline"
+              >
+                Sign in here
+              </Link>
+            </p>
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-6 py-12">
-        <div className="max-w-md mx-auto">
-          <Card className="p-8" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-            
-            {/* Welcome Section */}
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" 
-                   style={{ background: 'rgba(8, 240, 255, 0.1)', border: '2px solid var(--neon-primary)' }}>
-                <User className="w-8 h-8" style={{ color: 'var(--neon-primary)' }} />
-              </div>
-              <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--txt)' }}>
-                Join Hybrid House
-              </h2>
-              <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                Create your account to start tracking your hybrid fitness score
-              </p>
-            </div>
-
-            {/* Account Creation Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                  <Mail className="w-4 h-4 inline mr-2" />
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  className="form-input"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  placeholder="your.email@example.com"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                  <Lock className="w-4 h-4 inline mr-2" />
-                  Password *
-                </label>
-                <input
-                  type="password"
-                  className="form-input"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  placeholder="Create a secure password"
-                  required
-                  minLength={6}
-                />
-                <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
-                  Minimum 6 characters
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                  <Lock className="w-4 h-4 inline mr-2" />
-                  Confirm Password *
-                </label>
-                <input
-                  type="password"
-                  className="form-input"
-                  value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                  placeholder="Confirm your password"
-                  required
-                  minLength={6}
-                />
-              </div>
-
-              <Button
-                type="submit"
-                disabled={isCreating}
-                className="neon-button w-full py-3 text-base font-semibold"
-              >
-                {isCreating ? (
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                    <span>Creating Account...</span>
-                  </div>
-                ) : (
-                  'Create Account & Continue'
-                )}
-              </Button>
-
-            </form>
-
-            {/* Additional Info */}
-            <div className="mt-6 text-center">
-              <p className="text-xs" style={{ color: 'var(--muted)' }}>
-                After creating your account, you'll be able to complete the hybrid score form and see your results on the leaderboard.
-              </p>
-            </div>
-
-          </Card>
+        {/* Footer */}
+        <div className="text-center">
+          <p className="text-xs neo-text-muted">
+            After creating your account, you'll complete the hybrid score form and see your results on the leaderboard
+          </p>
         </div>
       </div>
     </div>
