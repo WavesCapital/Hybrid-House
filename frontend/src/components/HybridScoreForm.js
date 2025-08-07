@@ -295,7 +295,6 @@ const HybridScoreForm = () => {
         description: error.message || "Please try again.",
         variant: "destructive",
       });
-      setIsCreatingAccount(false);
     } finally {
       setIsSubmitting(false);
     }
