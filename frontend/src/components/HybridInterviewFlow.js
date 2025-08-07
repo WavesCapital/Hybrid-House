@@ -1179,11 +1179,10 @@ const HybridInterviewFlow = () => {
                   </div>
                 </div>
                 <button 
-                  onClick={startInterview}
-                  disabled={isLoading}
+                  onClick={() => navigate('/create-account')}
                   className="neon-button"
                 >
-                  {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
+                  Get Hybrid Score
                 </button>
               </div>
             </div>
