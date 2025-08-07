@@ -783,9 +783,9 @@ const HybridScoreForm = () => {
       </header>
 
       {/* Main Form */}
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-12">
         <div className="max-w-4xl mx-auto">
-          <Card className="p-8" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
+          <Card className="p-4 sm:p-8" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
             
             {/* Section Navigation */}
             <div className="section-nav">
@@ -799,7 +799,7 @@ const HybridScoreForm = () => {
                   onClick={() => setCurrentSection(index)}
                 >
                   {section.icon}
-                  <span className="hidden sm:inline">{section.title}</span>
+                  <span className="text-xs sm:text-sm">{section.title}</span>
                 </div>
               ))}
             </div>
