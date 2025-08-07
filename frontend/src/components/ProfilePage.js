@@ -1946,13 +1946,21 @@ const ProfilePage = () => {
             </div>
             
             <div className="flex items-center space-x-2 sm:space-x-4">
-              {/* Leaderboard Button */}
+              {/* Desktop Leaderboard Button */}
               <button 
                 onClick={() => navigate('/leaderboard')}
-                className="px-3 py-2 text-sm border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors hidden sm:flex items-center gap-2"
+                className="desktop-leaderboard-btn px-3 py-2 text-sm border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors flex items-center gap-2"
               >
                 <Trophy className="w-4 h-4" />
                 Leaderboard
+              </button>
+              
+              {/* Mobile Leaderboard Button */}
+              <button 
+                onClick={() => navigate('/leaderboard')}
+                className="mobile-leaderboard-btn hidden border border-[#08F0FF] text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors"
+              >
+                <Trophy className="w-4 h-4" />
               </button>
               
               {/* Profile Dropdown */}
@@ -1966,7 +1974,7 @@ const ProfilePage = () => {
                 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-[#181B1D] border border-white/10 rounded-lg shadow-lg z-50">
+                  <div className="dropdown-menu absolute right-0 mt-2 w-48 bg-[#181B1D] border border-white/10 rounded-lg shadow-lg z-50">
                     <div className="py-2">
                       <button
                         onClick={handleViewPublicProfile}
