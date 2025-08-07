@@ -2152,7 +2152,7 @@ class BackendTester:
         # Key findings
         print(f"\n🎯 KEY FINDINGS:")
         print(f"   1. Backend endpoint: /api/user-profile/me")
-        print(f"   2. Response structure: {'user_profile': {...}}")
+        print(f"   2. Response structure: {{'user_profile': {{...}}}}")
         print(f"   3. Authentication: Required (JWT token)")
         print(f"   4. Auto-creation: Yes (creates profile if missing)")
         print(f"   5. Most likely issue: Frontend expects 'profile' key, backend returns 'user_profile'")
