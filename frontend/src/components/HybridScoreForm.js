@@ -714,6 +714,16 @@ const HybridScoreForm = () => {
               }
             }}>
               
+              {/* Loading state for profile data */}
+              {isLoadingProfile && user && (
+                <div className="text-center py-8">
+                  <div className="inline-flex items-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-[#08F0FF] border-t-transparent rounded-full animate-spin"></div>
+                    <span style={{ color: 'var(--txt)' }}>Loading your profile data...</span>
+                  </div>
+                </div>
+              )}
+              
               {/* Personal Info Section */}
               {currentSection === 0 && (
                 <div className="space-y-6">
