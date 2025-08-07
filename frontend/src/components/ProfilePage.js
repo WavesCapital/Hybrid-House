@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
@@ -8,7 +8,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { 
   User, Calendar, Trophy, BarChart3, Plus, Target, Activity,
   Zap, RefreshCw, ArrowRight, Award, TrendingUp, Camera, 
-  Save, Edit, MapPin, Globe, Mail, Settings, Upload, X, Eye, CheckCircle
+  Save, Edit, MapPin, Globe, Mail, Settings, Upload, X, Eye, CheckCircle,
+  ChevronDown, LogOut
 } from 'lucide-react';
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
