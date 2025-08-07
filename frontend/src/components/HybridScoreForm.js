@@ -762,19 +762,21 @@ const HybridScoreForm = () => {
 
       {/* Header */}
       <header className="border-b border-gray-800" style={{ background: 'var(--bg)' }}>
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Trophy className="w-6 h-6" style={{ color: 'var(--neon-primary)' }} />
-              <h1 className="text-xl font-bold" style={{ color: 'var(--neon-primary)' }}>
-                Hybrid Score Form
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <Trophy className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: 'var(--neon-primary)' }} />
+              <h1 className="text-lg sm:text-xl font-bold" style={{ color: 'var(--neon-primary)' }}>
+                <span className="hidden sm:inline">Hybrid Score Form</span>
+                <span className="sm:hidden">Score Form</span>
               </h1>
             </div>
             <button
               onClick={() => navigate('/')}
-              className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:border-[#08F0FF] transition-colors"
+              className="px-3 py-2 sm:px-4 text-sm sm:text-base border border-gray-600 rounded-lg text-gray-300 hover:border-[#08F0FF] transition-colors"
             >
-              Back to Home
+              <span className="hidden sm:inline">Back to Home</span>
+              <span className="sm:hidden">Home</span>
             </button>
           </div>
         </div>
