@@ -1025,7 +1025,7 @@ const HybridScoreForm = () => {
                   <div className="section-explainer">
                     <h3>Assessing Your Anaerobic Power</h3>
                     <p>
-                      Strength PRs measure your maximum force production through fundamental movement patterns. These compound lifts - bench press, squat, and deadlift - form the foundation of hybrid training by developing raw power and muscular strength. <strong>Don't have all your 1RMs? No problem! Even partial data helps create a more accurate hybrid profile.</strong>
+                      Your <strong>1-rep maxes directly determine 40% of your hybrid score</strong> through bodyweight ratio calculations. <strong>Males target:</strong> 1.5x bench, 2.0x squat, 2.4x deadlift. <strong>Females target:</strong> 1.0x bench, 1.5x squat, 1.8x deadlift. <strong>Missing lifts carry penalties:</strong> 8-point penalty for no lifts, 4-point penalty for only one lift. Even partial data significantly improves your score accuracy.
                     </p>
                   </div>
                   
