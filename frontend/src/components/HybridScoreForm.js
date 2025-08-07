@@ -920,15 +920,11 @@ const HybridScoreForm = () => {
                     Running Performance
                   </h2>
                   
-                  <div className="info-box">
-                    <div className="flex items-start gap-3">
-                      <Target className="w-5 h-5 mt-1" style={{ color: 'var(--neon-primary)' }} />
-                      <div>
-                        <p className="text-sm" style={{ color: 'var(--txt)' }}>
-                          <strong>Why we need this:</strong> Running PRs measure your aerobic power and endurance capacity across different distances. Weekly mileage and long runs show your aerobic base. <strong>It's okay to leave some fields blank, but more data = better score accuracy!</strong>
-                        </p>
-                      </div>
-                    </div>
+                  <div className="section-explainer">
+                    <h3>Measuring Your Aerobic Engine</h3>
+                    <p>
+                      Running PRs reveal your aerobic power across different time domains - from explosive mile speed to endurance half-marathon pace. Weekly mileage shows your aerobic base development, while long runs demonstrate your aerobic capacity. <strong>These fields are optional, but more complete data leads to more accurate scoring.</strong>
+                    </p>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
