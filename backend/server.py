@@ -574,7 +574,7 @@ async def update_my_user_profile(profile_update: UserProfileUpdate, user: dict =
                         print(f"✅ Profile updated successfully (without {problematic_column}): {result.data[0]['id']}")
                         return {
                             "message": f"Profile updated successfully (field '{problematic_column}' skipped - column not available)",
-                            "profile": result.data[0],
+                            "user_profile": result.data[0],
                             "warning": f"Field '{problematic_column}' was not saved due to missing database column"
                         }
                 except Exception as retry_error:
