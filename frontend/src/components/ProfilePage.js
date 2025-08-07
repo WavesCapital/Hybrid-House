@@ -19,7 +19,11 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001'
 const ProfilePage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, session, loading } = useAuth();
+  const { user, session, loading, signOut } = useAuth();
+  
+  // Dropdown menu state
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   
   // User Profile Management States (optional - only for authenticated users)
   const [userProfile, setUserProfile] = useState(null);
@@ -32,6 +36,8 @@ const ProfilePage = () => {
     gender: '',
     date_of_birth: '',
     country: '',
+    height_ft: '',
+    height_in: '',
     units_preference: 'imperial',
     privacy_level: 'private'
   });
