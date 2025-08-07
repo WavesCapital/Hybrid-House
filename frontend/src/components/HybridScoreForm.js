@@ -730,6 +730,24 @@ const HybridScoreForm = () => {
                   <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--txt)' }}>
                     Personal Information
                   </h2>
+
+                  {/* Welcome message for authenticated users */}
+                  {user && !isLoadingProfile && (
+                    <div className="mb-6 p-4 rounded-lg" style={{ 
+                      background: 'rgba(8, 240, 255, 0.1)', 
+                      border: '1px solid rgba(8, 240, 255, 0.3)' 
+                    }}>
+                      <div className="flex items-center space-x-2 mb-2">
+                        <User className="w-4 h-4" style={{ color: 'var(--neon-primary)' }} />
+                        <span style={{ color: 'var(--neon-primary)', fontWeight: '600' }}>
+                          Welcome back! 👋
+                        </span>
+                      </div>
+                      <p className="text-sm" style={{ color: 'var(--txt)' }}>
+                        We've pre-filled your personal information from your profile. You can update any details and add your performance metrics below.
+                      </p>
+                    </div>
+                  )}
                   
                   <div className="section-explainer">
                     <h3>Why We Need Your Personal Details</h3>
