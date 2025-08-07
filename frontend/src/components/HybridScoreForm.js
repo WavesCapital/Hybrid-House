@@ -826,24 +826,24 @@ const HybridScoreForm = () => {
               
               {/* Personal Info Section */}
               {currentSection === 0 && (
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--txt)' }}>
+                <div className="space-y-4 sm:space-y-6">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6" style={{ color: 'var(--txt)' }}>
                     Personal Information
                   </h2>
 
                   {/* Welcome message for authenticated users */}
                   {user && !isLoadingProfile && (
-                    <div className="mb-6 p-4 rounded-lg" style={{ 
+                    <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg" style={{ 
                       background: 'rgba(8, 240, 255, 0.1)', 
                       border: '1px solid rgba(8, 240, 255, 0.3)' 
                     }}>
                       <div className="flex items-center space-x-2 mb-2">
                         <User className="w-4 h-4" style={{ color: 'var(--neon-primary)' }} />
-                        <span style={{ color: 'var(--neon-primary)', fontWeight: '600' }}>
+                        <span className="text-sm sm:text-base" style={{ color: 'var(--neon-primary)', fontWeight: '600' }}>
                           Account Created Successfully! 🎉
                         </span>
                       </div>
-                      <p className="text-sm" style={{ color: 'var(--txt)' }}>
+                      <p className="text-xs sm:text-sm" style={{ color: 'var(--txt)' }}>
                         Now let's collect your performance data to calculate your hybrid score. Any pre-filled information can be updated below.
                       </p>
                     </div>
