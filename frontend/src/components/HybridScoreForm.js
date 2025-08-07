@@ -984,9 +984,10 @@ const HybridScoreForm = () => {
                   </button>
                 ) : (
                   <button
-                    type="submit"
+                    type="button"
                     className="neon-button"
                     disabled={isSubmitting}
+                    onClick={handleSubmit}
                   >
                     {isSubmitting ? (
                       isCreatingAccount ? 'Creating Account...' : 'Calculating Score...'
