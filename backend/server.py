@@ -1001,7 +1001,7 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
         
         return {
             "message": "Profile created successfully and linked to user",
-            "profile": result.data[0]
+            "user_profile": result.data[0]
         }
         
     except HTTPException:
