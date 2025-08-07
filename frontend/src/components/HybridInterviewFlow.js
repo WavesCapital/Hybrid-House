@@ -1022,11 +1022,10 @@ const HybridInterviewFlow = () => {
                 
                 <div className="text-center">
                   <button 
-                    onClick={startInterview}
-                    disabled={isLoading}
+                    onClick={() => navigate('/create-account')}
                     className="neon-button text-base sm:text-lg"
                   >
-                    {isLoading ? 'Starting...' : 'Start Hybrid Interview'}
+                    Get Hybrid Score
                   </button>
                 </div>
               </div>
