@@ -1003,14 +1003,14 @@ const HybridInterviewFlow = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
                   <div className="step-card">
                     <div className="step-number">1</div>
-                    <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" style={{ color: 'var(--txt)' }}>Answer 11 essentials</h3>
-                    <p style={{ color: 'var(--muted)' }}>Weight, mile time, lifts, and key metrics</p>
+                    <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" style={{ color: 'var(--txt)' }}>Complete the form</h3>
+                    <p style={{ color: 'var(--muted)' }}>Enter your metrics: weight, PRs, body composition, wearables</p>
                   </div>
                   
                   <div className="step-card">
                     <div className="step-number">2</div>
-                    <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" style={{ color: 'var(--txt)' }}>AI crunches data</h3>
-                    <p style={{ color: 'var(--muted)' }}>Our AI normalizes data → algorithm v5.0</p>
+                    <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4" style={{ color: 'var(--txt)' }}>Algorithm calculates</h3>
+                    <p style={{ color: 'var(--muted)' }}>Our system processes your data → algorithm v5.0</p>
                   </div>
                   
                   <div className="step-card">
