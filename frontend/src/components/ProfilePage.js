@@ -2142,6 +2142,51 @@ const ProfilePage = () => {
                     </div>
                     
                     <div>
+                      <label className="block text-sm font-medium text-secondary mb-2">Gender</label>
+                      <select
+                        value={profileForm.gender || ''}
+                        onChange={(e) => handleProfileFormChange('gender', e.target.value)}
+                        className="neon-input w-full"
+                      >
+                        <option value="">Select gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                        <option value="prefer_not_to_say">Prefer not to say</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-secondary mb-2">Height</label>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                          <Input
+                            type="number"
+                            value={profileForm.height_ft || ''}
+                            onChange={(e) => handleProfileFormChange('height_ft', e.target.value)}
+                            className="neon-input w-20"
+                            placeholder="5"
+                            min="0"
+                            max="8"
+                          />
+                          <span className="text-secondary text-sm font-medium">ft</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            type="number"
+                            value={profileForm.height_in || ''}
+                            onChange={(e) => handleProfileFormChange('height_in', e.target.value)}
+                            className="neon-input w-20"
+                            placeholder="10"
+                            min="0"
+                            max="11"
+                          />
+                          <span className="text-secondary text-sm font-medium">in</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
                       <label className="block text-sm font-medium text-secondary mb-2">Country</label>
                       <select
                         value={profileForm.country || ''}
