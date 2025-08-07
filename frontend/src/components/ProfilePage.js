@@ -627,6 +627,48 @@ const ProfilePage = () => {
     };
   }, [autoSaveTimeout]);
 
+  // Handle dropdown click outside to close
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Logged out successfully",
+        description: "See you next time!",
+      });
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast({
+        title: "Logout failed",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    }
+    setIsDropdownOpen(false);
+  };
+
+  // Handle view public profile
+  const handleViewPublicProfile = () => {
+    if (user?.id) {
+      navigate(`/athlete/${user.id}`);
+    }
+    setIsDropdownOpen(false);
+  };
+
   // Handle profile form field changes with auto-save
   const handleProfileFormChange = useCallback((fieldName, value) => {
     const updatedForm = { ...profileForm, [fieldName]: value };
