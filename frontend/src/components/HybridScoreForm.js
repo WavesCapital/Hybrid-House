@@ -607,21 +607,154 @@ const HybridScoreForm = () => {
 
         @media (max-width: 768px) {
           .section-nav {
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+            margin-bottom: 24px;
+          }
+          
+          .section-tab {
+            padding: 8px 4px;
+            font-size: 12px;
             flex-direction: column;
+            gap: 4px;
+            min-height: 60px;
+          }
+
+          .section-tab .hidden {
+            display: block !important;
           }
           
           .form-grid {
             grid-template-columns: 1fr;
+            gap: 16px;
           }
 
           .height-input-group {
             flex-direction: row;
             justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 8px;
           }
 
           .height-input-wrapper {
             flex-direction: row;
             align-items: center;
+            flex: none;
+          }
+
+          .height-input {
+            width: 70px;
+          }
+
+          .wearable-chip {
+            font-size: 13px;
+            padding: 10px 14px;
+            margin: 3px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+          }
+
+          .wearable-tips {
+            padding: 12px;
+            margin-top: 12px;
+          }
+
+          .wearable-tip-instruction {
+            margin-left: 8px;
+            font-size: 12px;
+          }
+
+          .section-explainer {
+            padding: 12px;
+            margin-bottom: 16px;
+          }
+
+          .section-explainer h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+          }
+
+          .section-explainer p {
+            font-size: 13px;
+            line-height: 1.4;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .container {
+            padding-left: 16px;
+            padding-right: 16px;
+          }
+
+          .section-nav {
+            grid-template-columns: 1fr 1fr;
+            gap: 3px;
+          }
+
+          .section-tab {
+            padding: 6px 2px;
+            font-size: 11px;
+            min-height: 55px;
+          }
+
+          .form-grid {
+            gap: 12px;
+          }
+
+          .form-input, .form-select {
+            font-size: 16px; /* Prevent zoom on iOS */
+            padding: 12px 14px;
+            min-height: 44px;
+          }
+
+          .neon-button {
+            font-size: 16px;
+            padding: 14px 20px;
+            min-height: 48px;
+          }
+
+          .wearable-chip {
+            font-size: 12px;
+            padding: 8px 12px;
+            margin: 2px;
+            min-height: 44px;
+          }
+
+          .height-input {
+            width: 60px;
+            font-size: 16px;
+          }
+
+          .height-label {
+            font-size: 12px;
+          }
+
+          .section-explainer {
+            padding: 10px;
+          }
+
+          .section-explainer h3 {
+            font-size: 15px;
+          }
+
+          .section-explainer p {
+            font-size: 12px;
+          }
+
+          .wearable-tips {
+            padding: 10px;
+          }
+
+          .wearable-tip-device {
+            font-size: 13px;
+          }
+
+          .wearable-tip-instruction {
+            font-size: 11px;
+            margin-left: 6px;
           }
         }
         `}
