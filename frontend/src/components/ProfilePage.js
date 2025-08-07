@@ -582,7 +582,7 @@ const ProfilePage = () => {
         }
       });
 
-      setUserProfile(response.data.profile);
+      setUserProfile(response.data.user_profile);
       
       // Show success indication
       toast({
