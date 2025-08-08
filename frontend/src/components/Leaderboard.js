@@ -566,23 +566,57 @@ const Leaderboard = () => {
           </div>
 
           {/* Score Range Slider */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '120px' }}>
-            <label style={{ color: '#8D9299', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', minWidth: '50px' }}>
-              Score: {scoreRange[1]}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '140px' }}>
+            <label style={{ 
+              color: (scoreRange[0] > 0 || scoreRange[1] < 100) ? '#08F0FF' : '#8D9299', 
+              fontSize: '11px', 
+              fontWeight: '600', 
+              textTransform: 'uppercase', 
+              minWidth: '70px' 
+            }}>
+              Score: {scoreRange[0]}-{scoreRange[1]}
             </label>
-            <div style={{ position: 'relative' }}>
+            <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={scoreRange[0]}
+                onMouseDown={() => setIsDragging('min')}
+                onMouseUp={() => setIsDragging('')}
+                onChange={(e) => {
+                  const newMin = parseInt(e.target.value);
+                  if (newMin <= scoreRange[1]) {
+                    setScoreRange([newMin, scoreRange[1]]);
+                  }
+                }}
+                style={{
+                  width: '50px',
+                  height: '4px',
+                  background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${scoreRange[0]}%, ${(scoreRange[0] > 0 || scoreRange[1] < 100) ? '#08F0FF' : '#6B7280'} ${scoreRange[0]}%, ${(scoreRange[0] > 0 || scoreRange[1] < 100) ? '#08F0FF' : '#6B7280'} ${scoreRange[1]}%, rgba(255,255,255,0.1) ${scoreRange[1]}%, rgba(255,255,255,0.1) 100%)`,
+                  outline: 'none',
+                  borderRadius: '2px',
+                  cursor: 'pointer',
+                  appearance: 'none'
+                }}
+              />
               <input
                 type="range"
                 min="0"
                 max="100"
                 value={scoreRange[1]}
-                onMouseDown={() => setIsDragging(true)}
-                onMouseUp={() => setIsDragging(false)}
-                onChange={(e) => setScoreRange([0, parseInt(e.target.value)])}
+                onMouseDown={() => setIsDragging('max')}
+                onMouseUp={() => setIsDragging('')}
+                onChange={(e) => {
+                  const newMax = parseInt(e.target.value);
+                  if (newMax >= scoreRange[0]) {
+                    setScoreRange([scoreRange[0], newMax]);
+                  }
+                }}
                 style={{
-                  width: '80px',
+                  width: '50px',
                   height: '4px',
-                  background: `linear-gradient(to right, #6B7280 0%, #6B7280 ${scoreRange[1]}%, rgba(255,255,255,0.1) ${scoreRange[1]}%, rgba(255,255,255,0.1) 100%)`,
+                  background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${scoreRange[0]}%, ${(scoreRange[0] > 0 || scoreRange[1] < 100) ? '#08F0FF' : '#6B7280'} ${scoreRange[0]}%, ${(scoreRange[0] > 0 || scoreRange[1] < 100) ? '#08F0FF' : '#6B7280'} ${scoreRange[1]}%, rgba(255,255,255,0.1) ${scoreRange[1]}%, rgba(255,255,255,0.1) 100%)`,
                   outline: 'none',
                   borderRadius: '2px',
                   cursor: 'pointer',
@@ -593,17 +627,18 @@ const Leaderboard = () => {
                 <div style={{
                   position: 'absolute',
                   top: '-30px',
-                  left: `${scoreRange[1]}%`,
+                  left: isDragging === 'min' ? `${scoreRange[0]}%` : `${scoreRange[1]}%`,
                   transform: 'translateX(-50%)',
-                  background: '#6B7280',
-                  color: '#FFFFFF',
+                  background: '#08F0FF',
+                  color: '#000',
                   padding: '4px 8px',
                   borderRadius: '4px',
                   fontSize: '10px',
                   fontWeight: '600',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  zIndex: 10
                 }}>
-                  {scoreRange[1]}
+                  {isDragging === 'min' ? scoreRange[0] : scoreRange[1]}
                 </div>
               )}
             </div>
