@@ -312,7 +312,7 @@ const SharedHeader = ({
                   {/* Sign Up Button */}
                   <button
                     onClick={() => navigate('/create-account')}
-                    className="nav-button px-3 py-2 text-sm bg-[#08F0FF] rounded-lg text-black hover:bg-[#FF2DDE] transition-colors"
+                    className="nav-button px-3 py-2 text-sm bg-[#08F0FF] rounded-lg text-black hover:bg-[#08F0FF]/90 transition-colors"
                   >
                     Sign Up
                   </button>
