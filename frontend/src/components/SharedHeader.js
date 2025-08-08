@@ -173,15 +173,14 @@ const SharedHeader = ({
               {/* Brand/Logo */}
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <div 
-                  className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center cursor-pointer nav-button"
-                  style={{ background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)' }}
+                  className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center cursor-pointer nav-button bg-gray-800 hover:bg-gray-700"
                   onClick={() => navigate('/')}
                 >
-                  <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                  <HomeIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#08F0FF]" />
                 </div>
                 <div>
                   <h1 
-                    className="text-lg sm:text-xl font-bold brand-gradient cursor-pointer"
+                    className="text-lg sm:text-xl font-bold brand-text cursor-pointer"
                     onClick={() => navigate('/')}
                   >
                     Hybrid House
@@ -193,7 +192,7 @@ const SharedHeader = ({
               </div>
               
               {/* Divider */}
-              {title && <div className="h-4 sm:h-6 w-px bg-white/20 hidden sm:block"></div>}
+              {title && <div className="h-4 sm:h-6 w-px bg-gray-600 hidden sm:block"></div>}
               
               {/* Page Title */}
               {title && (
