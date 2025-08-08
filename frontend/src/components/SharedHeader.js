@@ -410,7 +410,7 @@ const SharedHeader = ({
                         setIsMobileMenuOpen(false);
                       }}
                       className={`w-full text-left px-4 py-3 rounded-lg transition-colors flex items-center gap-3 ${
-                        isCurrentPage('/profile') ? 'bg-[#08F0FF]/10 text-[#08F0FF]' : 'text-gray-300 hover:bg-white/10 hover:text-[#08F0FF]'
+                        isCurrentPage('/profile') ? 'bg-[#08F0FF]/10 text-[#08F0FF]' : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                       }`}
                     >
                       <Settings className="w-5 h-5" />
