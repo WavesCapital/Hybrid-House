@@ -207,12 +207,15 @@ const HybridScoreForm = () => {
       return;
     }
 
-    // Double-check we're on the final section before proceeding
-    if (currentSection !== sections.length - 1) {
-      console.log('⚠️ Form submission blocked - not on final section');
-      console.log('⚠️ Current section:', currentSection, 'Final section should be:', sections.length - 1);
-      return;
-    }
+    // TEMPORARILY REMOVE SECTION CHECK TO TEST WEBHOOK
+    // TODO: Fix section navigation logic
+    console.log('⚠️ TEMPORARILY BYPASSING SECTION CHECK FOR DEBUGGING');
+    
+    // if (currentSection !== sections.length - 1) {
+    //   console.log('⚠️ Form submission blocked - not on final section');
+    //   console.log('⚠️ Current section:', currentSection, 'Final section should be:', sections.length - 1);
+    //   return;
+    // }
 
     // Users should always be authenticated when reaching this page
     if (!user || !session) {
