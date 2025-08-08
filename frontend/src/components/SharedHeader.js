@@ -432,7 +432,7 @@ const SharedHeader = ({
                         handleLogout();
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg text-red-400 hover:bg-red-400/10 transition-colors flex items-center gap-3"
+                      className="w-full text-left px-4 py-3 rounded-lg text-red-400 hover:bg-red-900/30 transition-colors flex items-center gap-3"
                     >
                       <LogOut className="w-5 h-5" />
                       Log Out
