@@ -57,15 +57,12 @@ const SharedHeader = ({
     <>
       <style jsx>{`
         .header-gradient {
-          background: linear-gradient(135deg, rgba(8, 240, 255, 0.05) 0%, rgba(255, 45, 222, 0.05) 100%);
+          background: rgba(0, 0, 0, 0.95);
           backdrop-filter: blur(20px);
         }
         
-        .brand-gradient {
-          background: linear-gradient(135deg, #08F0FF 0%, #FF2DDE 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+        .brand-text {
+          color: #08F0FF;
         }
         
         .nav-button {
@@ -91,7 +88,7 @@ const SharedHeader = ({
           left: 0;
           right: 0;
           height: 2px;
-          background: linear-gradient(90deg, #08F0FF, #FF2DDE);
+          background: #08F0FF;
         }
         
         .dropdown-menu {
