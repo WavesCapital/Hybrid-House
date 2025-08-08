@@ -1047,7 +1047,20 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen neon-noir-canvas">
+    <>
+      <SharedHeader 
+        title="Profile"
+        contextualActions={[
+          {
+            label: 'New Score',
+            icon: <Plus className="w-4 h-4" />,
+            onClick: () => navigate('/hybrid-score-form'),
+            variant: 'primary'
+          }
+        ]}
+      />
+      
+      <div className="min-h-screen neon-noir-canvas">
       <style>
         {`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
