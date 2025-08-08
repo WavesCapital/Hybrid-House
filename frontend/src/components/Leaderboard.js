@@ -761,7 +761,7 @@ const Leaderboard = () => {
               <button
                 onClick={() => {
                   setScoreRange([0, 100]);
-                  setAgeRange([18, 65]);
+                  setAgeRange([18, 100]);
                   setGenderFilter('All');
                   setCountryFilter('All');
                   setSearchQuery('');
