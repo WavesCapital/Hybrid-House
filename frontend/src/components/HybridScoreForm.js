@@ -392,7 +392,15 @@ const HybridScoreForm = () => {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#0E0E11' }}>
+    <>
+      <SharedHeader 
+        title="Hybrid Score Form"
+        showBackButton={true}
+        backTo="/"
+        backLabel="Back to Home"
+      />
+      
+      <div className="min-h-screen" style={{ background: '#0E0E11' }}>
       <style>
         {`
         /* Flat-Neon "Laser Pop" Color System */
