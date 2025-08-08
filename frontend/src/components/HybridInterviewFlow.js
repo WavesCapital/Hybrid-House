@@ -1150,9 +1150,6 @@ const HybridInterviewFlow = () => {
         <>
           <SharedHeader 
             title="AI Interview"
-            showBackButton={true}
-            backTo="/"
-            backLabel="Back to Home"
           />
           <div className="min-h-screen flex items-center justify-center" style={{ background: '#0E0E11' }}>
           <div className="glass-card max-w-md w-full mx-6 p-12 text-center">
