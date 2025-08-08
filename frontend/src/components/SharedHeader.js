@@ -337,10 +337,10 @@ const SharedHeader = ({
       {isMobileMenuOpen && (
         <>
           <div 
-            className="mobile-overlay fixed inset-0 bg-black/50 z-50 md:hidden"
+            className="mobile-overlay fixed inset-0 bg-black/80 z-50 md:hidden"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="mobile-menu fixed top-0 right-0 h-full w-80 bg-[#0E0E11] border-l border-white/10 z-50 md:hidden">
+          <div className="mobile-menu fixed top-0 right-0 h-full w-80 bg-black border-l border-gray-700 z-50 md:hidden">
             <div className="p-4">
               {/* Mobile Menu Header */}
               <div className="flex items-center justify-between mb-6">
