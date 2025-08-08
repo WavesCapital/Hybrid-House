@@ -534,41 +534,6 @@ const Leaderboard = () => {
             {podiumData[2] && renderMinimalPodiumCard(podiumData[2], 3)}
           </div>
         </div>
-
-        {/* Total Athletes Badge */}
-        <div style={{
-          position: 'absolute',
-          bottom: '32px',
-          right: '40px',
-          width: '120px',
-          height: '120px',
-          borderRadius: '50%',
-          background: 'rgba(8, 240, 255, 0.85)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          zIndex: 2
-        }}>
-          <div style={{
-            fontSize: '28px',
-            fontWeight: '700',
-            color: '#FFFFFF',
-            fontFamily: 'Inter, sans-serif'
-          }}>
-            {leaderboardData.length}
-          </div>
-          <div style={{
-            fontSize: '11px',
-            fontWeight: '400',
-            color: '#FFFFFF',
-            textAlign: 'center',
-            textTransform: 'uppercase',
-            opacity: 0.9
-          }}>
-            ATHLETES
-          </div>
-        </div>
       </div>
 
       {/* Filters Bar - Sticky */}
