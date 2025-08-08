@@ -354,6 +354,18 @@ backend:
         agent: "testing"
         comment: "🎉 HYBRID INTERVIEW DATA MAPPING COMPREHENSIVE TESTING COMPLETE: Executed comprehensive testing of the updated data mapping for hybrid interview completion as requested in the review request. ALL 4/4 CORE REQUIREMENTS VERIFIED (100% SUCCESS RATE): ✅ Extract Individual Fields Function - Height/weight NOT extracted for athlete_profiles, only performance metrics (vo2_max, hrv_ms, resting_hr_bpm) and training data (pb_mile_seconds, weekly_miles, pb_bench_1rm_lb, etc.) extracted correctly ✅ Hybrid Interview Completion Flow - Personal data (including height/weight) correctly separated to user_profiles, performance data and scores correctly separated to athlete_profiles ✅ Hybrid Interview Endpoints - Both /api/hybrid-interview/start and /api/hybrid-interview/chat endpoints exist and are properly protected with authentication ✅ Data Mapping Requirements Compliance - All 5 requirements from review met: (1) Height/weight NOT in athlete_profiles ✓ (2) Performance metrics in athlete_profiles ✓ (3) Training data in athlete_profiles ✓ (4) Personal data for user_profiles ✓ (5) Score data for athlete_profiles ✓. CRITICAL VERIFICATION: The data mapping correctly follows user requirements with height and weight going to user_profiles instead of athlete_profiles. The extract_individual_fields function properly excludes personal data and only extracts performance metrics and training data for athlete_profiles. The hybrid interview completion flow correctly separates data between user_profiles (personal data) and athlete_profiles (performance data) as intended."
 
+  - task: "Hybrid Score Form Submission Bug Fix"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/components/HybridScoreForm.js"
+    stuck_count: 1
+    priority: "critical"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "CRITICAL ISSUE IDENTIFIED: The Calculate Hybrid Score button on /hybrid-score-form is not sending the webhook. Root cause: Form allows unauthenticated access but handleSubmit requires authentication. When users click the button, the authentication check fails (lines 250-259 in HybridScoreForm.js) and redirects to /create-account instead of submitting the form. The ProtectedRoute was temporarily removed from App.js line 86 during debugging, creating this disconnect between form access and submission requirements."
+
   - task: "Hybrid Score Form Functionality and Data Mapping Testing"
     implemented: true
     working: true
