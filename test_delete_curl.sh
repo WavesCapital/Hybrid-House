@@ -3,7 +3,7 @@
 # Test Delete Athlete Profile Functionality using curl
 # Focus on testing the DELETE /api/athlete-profile/{profile_id} endpoint
 
-API_BASE_URL="https://d7a0ec68-cae7-46c5-b947-cca86a88eee6.preview.emergentagent.com/api"
+API_BASE_URL="https://097b597a-db92-4486-8f08-16b750111751.preview.emergentagent.com/api"
 TEST_UUID="550e8400-e29b-41d4-a716-446655440000"
 NONEXISTENT_UUID="550e8400-e29b-41d4-a716-446655440001"
 
