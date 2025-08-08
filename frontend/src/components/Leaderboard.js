@@ -741,7 +741,12 @@ const Leaderboard = () => {
 
           {/* Country Dropdown - Simplified */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label style={{ color: '#8D9299', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase' }}>
+            <label style={{ 
+              color: countryFilter !== 'All' ? '#08F0FF' : '#8D9299', 
+              fontSize: '11px', 
+              fontWeight: '600', 
+              textTransform: 'uppercase' 
+            }}>
               Country:
             </label>
             <select
@@ -750,9 +755,9 @@ const Leaderboard = () => {
               style={{
                 padding: '4px 8px',
                 borderRadius: '6px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                background: 'rgba(255, 255, 255, 0.05)',
-                color: '#FFFFFF',
+                border: countryFilter !== 'All' ? '1px solid #08F0FF' : '1px solid rgba(255, 255, 255, 0.1)',
+                background: countryFilter !== 'All' ? 'rgba(8, 240, 255, 0.1)' : 'rgba(255, 255, 255, 0.05)',
+                color: countryFilter !== 'All' ? '#08F0FF' : '#FFFFFF',
                 fontSize: '11px',
                 fontWeight: '600',
                 outline: 'none',
