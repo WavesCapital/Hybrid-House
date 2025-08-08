@@ -197,17 +197,6 @@ const SharedHeader = ({
 
               {user ? (
                 <>
-                  {/* Leaderboard Button */}
-                  <button
-                    onClick={() => navigate('/leaderboard')}
-                    className={`nav-button px-3 py-2 text-sm border rounded-lg transition-colors flex items-center gap-2 ${
-                      isCurrentPage('/leaderboard') ? 'active' : 'border-gray-600 text-gray-300 hover:border-gray-500 hover:text-white'
-                    }`}
-                  >
-                    <Trophy className="w-4 h-4" />
-                    <span className="hidden lg:inline">Leaderboard</span>
-                  </button>
-
                   {/* Profile Dropdown */}
                   <div className="relative" ref={dropdownRef}>
                     <button
