@@ -782,7 +782,7 @@ const Leaderboard = () => {
               left: '8px',
               top: '50%',
               transform: 'translateY(-50%)',
-              color: '#8D9299'
+              color: searchQuery ? '#08F0FF' : '#8D9299'
             }} />
             <input
               type="text"
@@ -793,8 +793,8 @@ const Leaderboard = () => {
                 width: '120px',
                 padding: '6px 8px 6px 28px',
                 borderRadius: '6px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                background: 'rgba(255, 255, 255, 0.05)',
+                border: searchQuery ? '1px solid #08F0FF' : '1px solid rgba(255, 255, 255, 0.1)',
+                background: searchQuery ? 'rgba(8, 240, 255, 0.1)' : 'rgba(255, 255, 255, 0.05)',
                 color: '#FFFFFF',
                 fontSize: '12px',
                 outline: 'none',
