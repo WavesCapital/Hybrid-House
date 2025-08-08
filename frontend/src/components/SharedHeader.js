@@ -421,7 +421,7 @@ const SharedHeader = ({
                         handleViewPublicProfile();
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:bg-white/10 hover:text-[#08F0FF] transition-colors flex items-center gap-3"
+                      className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors flex items-center gap-3"
                     >
                       <Eye className="w-5 h-5" />
                       View Public Profile
