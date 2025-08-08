@@ -413,7 +413,20 @@ const HybridScoreResults = () => {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#0A0B0C' }}>
+    <>
+      <SharedHeader 
+        title="Hybrid Score Results"
+        contextualActions={[
+          {
+            label: 'Get New Score',
+            icon: <Activity className="w-4 h-4" />,
+            onClick: () => navigate('/hybrid-score-form'),
+            variant: 'primary'
+          }
+        ]}
+      />
+      
+      <div className="min-h-screen" style={{ background: '#0A0B0C' }}>
       <style>
         {`
         :root {
