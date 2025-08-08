@@ -83,7 +83,11 @@ function AppContent() {
           />
           <Route 
             path="/hybrid-score-form" 
-            element={<HybridScoreForm />}
+            element={
+              <ProtectedRoute>
+                <HybridScoreForm />
+              </ProtectedRoute>
+            }
           />
           <Route 
             path="/profile" 
