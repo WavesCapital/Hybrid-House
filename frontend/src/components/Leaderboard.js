@@ -630,7 +630,7 @@ const Leaderboard = () => {
               <input
                 type="range"
                 min="18"
-                max="65"
+                max="100"
                 value={ageRange[1]}
                 onMouseDown={() => setIsAgeRangeDragging('max')}
                 onMouseUp={() => setIsAgeRangeDragging('')}
