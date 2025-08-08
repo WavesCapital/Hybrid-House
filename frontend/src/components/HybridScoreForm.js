@@ -1255,7 +1255,8 @@ const HybridScoreForm = () => {
           </Card>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 
