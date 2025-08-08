@@ -730,7 +730,7 @@ const HybridScoreResults = () => {
                       stroke="var(--neon-primary)"
                       strokeWidth="12"
                       strokeLinecap="round"
-                      strokeDasharray={`${(hybridScoreValue / 100) * 754} 754`}
+                      strokeDasharray={`${((animatedScores.hybrid || hybridScoreValue) / 100) * 754} 754`}
                       style={{
                         transition: 'stroke-dasharray 1000ms cubic-bezier(.2,1.4,.3,1)',
                         filter: 'drop-shadow(0 0 10px #08F0FFAA)'
