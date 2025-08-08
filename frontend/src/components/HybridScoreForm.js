@@ -55,6 +55,22 @@ const HybridScoreForm = () => {
       if (user && session && !isLoadingProfile) {
         setIsLoadingProfile(true);
         try {
+          // First, check if there's preserved form data from before authentication
+          const preservedData = localStorage.getItem('hybrid-score-form-data');
+          if (preservedData) {
+            console.log('🔍 Found preserved form data, restoring...');
+            const parsedData = JSON.parse(preservedData);
+            setFormData(prev => ({ ...prev, ...parsedData }));
+            localStorage.removeItem('hybrid-score-form-data'); // Clean up
+            
+            toast({
+              title: "Form Data Restored! 🎉",
+              description: "Your previously entered data has been restored.",
+              duration: 3000,
+            });
+            return; // Skip loading profile if we have preserved data
+          }
+
           const response = await axios.get(
             `${BACKEND_URL}/api/user-profile/me`,
             {
