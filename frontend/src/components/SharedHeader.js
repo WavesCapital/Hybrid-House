@@ -8,9 +8,6 @@ import {
 
 const SharedHeader = ({ 
   title = null,
-  showBackButton = false,
-  backTo = '/',
-  backLabel = 'Back',
   contextualActions = []
 }) => {
   const navigate = useNavigate();
