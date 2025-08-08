@@ -755,7 +755,6 @@ const HybridScoreResults = () => {
                       strokeLinecap="round"
                       strokeDasharray={`${(circleProgress / 100) * 754} 754`}
                       style={{
-                        transition: 'stroke-dasharray 50ms linear',
                         filter: 'drop-shadow(0 0 10px #08F0FFAA)'
                       }}
                     />
