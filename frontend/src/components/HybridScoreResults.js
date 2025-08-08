@@ -644,16 +644,45 @@ const HybridScoreResults = () => {
           {/* Hybrid Score Section */}
           <section className="space-y-8">
             <div className="text-center">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold neo-text-primary mb-4">Your Hybrid Score</h2>
-              <div className="text-6xl sm:text-7xl lg:text-8xl font-bold neo-primary mb-4 sm:mb-6" style={{ 
-                lineHeight: '1',
-                textShadow: '0 0 20px rgba(8, 240, 255, 0.8), 0 0 40px rgba(8, 240, 255, 0.4), 0 0 60px rgba(8, 240, 255, 0.2)'
-              }}>
-                {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : hybridScoreValue}
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold neo-text-primary mb-8">Your Results</h2>
+              
+              {/* Circular Score Display */}
+              <div className="flex justify-center mb-8">
+                <div className="hero-dial relative">
+                  <svg viewBox="0 0 280 280">
+                    <circle
+                      cx="140"
+                      cy="140"
+                      r="120"
+                      fill="none"
+                      stroke="var(--border)"
+                      strokeWidth="12"
+                    />
+                    <circle
+                      cx="140"
+                      cy="140"
+                      r="120"
+                      fill="none"
+                      stroke="var(--neon-primary)"
+                      strokeWidth="12"
+                      strokeLinecap="round"
+                      strokeDasharray={`${(hybridScoreValue / 100) * 754} 754`}
+                      style={{
+                        transition: 'stroke-dasharray 1000ms cubic-bezier(.2,1.4,.3,1)',
+                        filter: 'drop-shadow(0 0 10px #08F0FFAA)'
+                      }}
+                    />
+                  </svg>
+                  <div className="dial-value">
+                    <div className="score-number" style={{
+                      textShadow: '0 0 20px rgba(8, 240, 255, 0.8), 0 0 40px rgba(8, 240, 255, 0.4), 0 0 60px rgba(8, 240, 255, 0.2)'
+                    }}>
+                      {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : hybridScoreValue}
+                    </div>
+                    <div className="score-label">Hybrid Score</div>
+                  </div>
+                </div>
               </div>
-              <p className="text-lg sm:text-xl neo-text-secondary max-w-2xl mx-auto mb-4 sm:mb-6 px-2">
-                Your overall hybrid-fitness score on a 0-100 scale
-              </p>
               
               {/* Leaderboard Position and Buttons */}
               <div className="mb-4 sm:mb-6">
