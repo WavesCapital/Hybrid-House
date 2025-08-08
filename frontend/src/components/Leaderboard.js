@@ -457,11 +457,24 @@ const Leaderboard = () => {
   const tableData = getTableData();
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: '#0E0E11',
-      fontFamily: 'Inter, sans-serif'
-    }}>
+    <>
+      <SharedHeader 
+        title="Global Leaderboard"
+        contextualActions={[
+          {
+            label: 'Get Hybrid Score',
+            icon: <Activity className="w-4 h-4" />,
+            onClick: () => navigate('/create-account'),
+            variant: 'primary'
+          }
+        ]}
+      />
+      
+      <div style={{ 
+        minHeight: 'calc(100vh - 80px)', 
+        background: '#0E0E11',
+        fontFamily: 'Inter, sans-serif'
+      }}>
       {/* Hero Section with Podium */}
       <div style={{ 
         minHeight: '45vh',
