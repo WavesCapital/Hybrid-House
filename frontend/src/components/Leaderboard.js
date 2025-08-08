@@ -742,7 +742,7 @@ const Leaderboard = () => {
           </div>
 
           {/* Active Filters Count */}
-          {(genderFilter !== 'All' || countryFilter !== 'All' || searchQuery || scoreRange[1] < 100 || ageRange[0] > 18 || ageRange[1] < 65) && (
+          {(genderFilter !== 'All' || countryFilter !== 'All' || searchQuery || scoreRange[1] < 100 || ageRange[0] > 18 || ageRange[1] < 100) && (
             <div style={{
               display: 'flex',
               alignItems: 'center',
