@@ -874,14 +874,26 @@ const Leaderboard = () => {
               </div>
             ) : (
               filteredData.map((athlete, index) => (
-                <div key={athlete.profile_id || index} style={{
-                  background: 'rgba(255, 255, 255, 0.02)',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                  padding: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px'
-                }}>
+                <div 
+                  key={athlete.profile_id || index} 
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                    padding: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onClick={() => navigate(`/hybrid-score/${athlete.user_profile_id || athlete.profile_id || athlete.id}`)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(8, 240, 255, 0.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
+                  }}
+                >
                   {/* Rank */}
                   <div style={{
                     minWidth: '40px',
