@@ -797,18 +797,6 @@ const HybridScoreResults = () => {
               >
                 View All Scores
               </Button>
-              <Button
-                onClick={() => navigate('/')}
-                className="neo-btn-secondary px-6 sm:px-8 py-3"
-              >
-                Take Another Assessment
-              </Button>
-              <Button
-                onClick={() => navigate('/full-interview')}
-                className="neo-btn-secondary px-6 sm:px-8 py-3"
-              >
-                Try Full Interview (55 Questions)
-              </Button>
             </div>
           </section>
         </div>
