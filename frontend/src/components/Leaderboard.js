@@ -205,19 +205,19 @@ const Leaderboard = () => {
       1: { 
         width: '260px', 
         height: '280px', 
-        trophyIcon: '🏆',
+        trophyIcon: <Trophy size={40} color="#FFD700" />,
         trophyColor: '#FFD700'
       },
       2: { 
         width: '220px', 
         height: '260px', 
-        trophyIcon: '🥈',
+        trophyIcon: <Trophy size={32} color="#C0C0C0" />,
         trophyColor: '#C0C0C0'
       },
       3: { 
         width: '220px', 
         height: '260px', 
-        trophyIcon: '🥉',
+        trophyIcon: <Trophy size={32} color="#CD7F32" />,
         trophyColor: '#CD7F32'
       }
     };
