@@ -129,9 +129,6 @@ const PublicProfileView = () => {
     <>
       <SharedHeader 
         title="Public Profile"
-        showBackButton={true}
-        backTo="/leaderboard"
-        backLabel="Back to Leaderboard"
       />
       
       <div className="min-h-screen bg-black text-white">
