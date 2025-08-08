@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "When testing the hybrid interview i got 'I apologize, but there was an error processing your hybrid profile. Please try again.' and it never sent the webhook"
+user_problem_statement: "After the form is filled and I click the calculate hybrid score button, it's not calculating (sending the webhook to get the score). The button appears to work momentarily but no webhook is sent."
 
 backend:
   - task: "GET /api/public-profile/{user_id} Endpoint Testing"
