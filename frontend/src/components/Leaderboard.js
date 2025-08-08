@@ -135,7 +135,8 @@ const Leaderboard = () => {
       const data = response.data.leaderboard || [];
       console.log('🏆 LEADERBOARD DATA DEBUG:', data); // Add debugging
       setLeaderboardData(data);
-      console.log('🏆 PROCESSED DATA DEBUG:', data.slice(0, 3)); // Show first 3 athletes
+      console.log('🏆 PROCESSED DATA DEBUG - First athlete:', data[0]); // Show first athlete structure
+      console.log('🏆 AVAILABLE FIELDS:', Object.keys(data[0] || {})); // Show all fields
       setError(null);
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
