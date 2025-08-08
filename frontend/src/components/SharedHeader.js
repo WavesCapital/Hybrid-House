@@ -210,8 +210,8 @@ const SharedHeader = ({
                   key={index}
                   onClick={action.onClick}
                   className={`nav-button px-3 py-2 text-sm border rounded-lg transition-colors flex items-center gap-2 ${action.variant === 'primary' 
-                    ? 'bg-[#08F0FF] text-black hover:bg-[#FF2DDE] border-[#08F0FF]' 
-                    : 'border-gray-600 text-gray-300 hover:border-[#08F0FF] hover:text-[#08F0FF]'
+                    ? 'bg-[#08F0FF] text-black hover:bg-[#08F0FF]/90 border-[#08F0FF]' 
+                    : 'border-gray-600 text-gray-300 hover:border-gray-500 hover:text-white'
                   }`}
                 >
                   {action.icon}
