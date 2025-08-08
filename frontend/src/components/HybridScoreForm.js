@@ -249,10 +249,15 @@ const HybridScoreForm = () => {
     // Users should be authenticated when reaching this page
     if (!user || !session) {
       console.log('⚠️ Form submission blocked - no user or session');
+      console.log('⚠️ Preserving form data and redirecting to account creation...');
+      
+      // Preserve form data in localStorage before redirecting
+      localStorage.setItem('hybrid-score-form-data', JSON.stringify(formData));
+      
       toast({
-        title: "Authentication Required",
-        description: "Please create an account first.",
-        variant: "destructive",
+        title: "Account Required",
+        description: "Please create an account to calculate your hybrid score. Your form data will be preserved.",
+        variant: "default",
       });
       navigate('/create-account');
       return;
