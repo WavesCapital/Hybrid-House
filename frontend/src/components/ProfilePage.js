@@ -38,6 +38,7 @@ const ProfilePage = () => {
     country: '',
     height_ft: '',
     height_in: '',
+    weight_lb: '',
     units_preference: 'imperial',
     privacy_level: 'private'
   });
