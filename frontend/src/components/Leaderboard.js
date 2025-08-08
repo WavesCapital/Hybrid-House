@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trophy, Medal, Award, User, TrendingUp, Activity, Search, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import axios from 'axios';
+import SharedHeader from './SharedHeader';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
