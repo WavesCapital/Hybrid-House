@@ -1915,7 +1915,6 @@ const ProfilePage = () => {
             transform: translateY(0) scaleY(1);
           }
         }
-        }
         `}
       </style>
 
