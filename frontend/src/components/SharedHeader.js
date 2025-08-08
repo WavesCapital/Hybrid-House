@@ -57,7 +57,7 @@ const SharedHeader = ({
     <>
       <style jsx>{`
         .header-gradient {
-          background: rgba(0, 0, 0, 0.95);
+          background: #0E0E11;
           backdrop-filter: blur(20px);
         }
         
