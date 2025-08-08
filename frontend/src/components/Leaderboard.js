@@ -646,7 +646,13 @@ const Leaderboard = () => {
 
           {/* Age Range Filter - Simplified for mobile */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '100px' }}>
-            <label style={{ color: '#8D9299', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', minWidth: '40px' }}>
+            <label style={{ 
+              color: (ageRange[0] > 18 || ageRange[1] < 100) ? '#08F0FF' : '#8D9299', 
+              fontSize: '11px', 
+              fontWeight: '600', 
+              textTransform: 'uppercase', 
+              minWidth: '40px' 
+            }}>
               Age: {ageRange[0]}-{ageRange[1]}
             </label>
             <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
@@ -666,7 +672,7 @@ const Leaderboard = () => {
                 style={{
                   width: '50px',
                   height: '4px',
-                  background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${((ageRange[0]-18)/(100-18))*100}%, #6B7280 ${((ageRange[0]-18)/(100-18))*100}%, #6B7280 ${((ageRange[1]-18)/(100-18))*100}%, rgba(255,255,255,0.1) ${((ageRange[1]-18)/(100-18))*100}%, rgba(255,255,255,0.1) 100%)`,
+                  background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${((ageRange[0]-18)/(100-18))*100}%, ${(ageRange[0] > 18 || ageRange[1] < 100) ? '#08F0FF' : '#6B7280'} ${((ageRange[0]-18)/(100-18))*100}%, ${(ageRange[0] > 18 || ageRange[1] < 100) ? '#08F0FF' : '#6B7280'} ${((ageRange[1]-18)/(100-18))*100}%, rgba(255,255,255,0.1) ${((ageRange[1]-18)/(100-18))*100}%, rgba(255,255,255,0.1) 100%)`,
                   outline: 'none',
                   borderRadius: '2px',
                   cursor: 'pointer',
@@ -689,7 +695,7 @@ const Leaderboard = () => {
                 style={{
                   width: '50px',
                   height: '4px',
-                  background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${((ageRange[0]-18)/(100-18))*100}%, #6B7280 ${((ageRange[0]-18)/(100-18))*100}%, #6B7280 ${((ageRange[1]-18)/(100-18))*100}%, rgba(255,255,255,0.1) ${((ageRange[1]-18)/(100-18))*100}%, rgba(255,255,255,0.1) 100%)`,
+                  background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${((ageRange[0]-18)/(100-18))*100}%, ${(ageRange[0] > 18 || ageRange[1] < 100) ? '#08F0FF' : '#6B7280'} ${((ageRange[0]-18)/(100-18))*100}%, ${(ageRange[0] > 18 || ageRange[1] < 100) ? '#08F0FF' : '#6B7280'} ${((ageRange[1]-18)/(100-18))*100}%, rgba(255,255,255,0.1) ${((ageRange[1]-18)/(100-18))*100}%, rgba(255,255,255,0.1) 100%)`,
                   outline: 'none',
                   borderRadius: '2px',
                   cursor: 'pointer',
