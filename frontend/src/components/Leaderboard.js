@@ -582,7 +582,7 @@ const Leaderboard = () => {
                 style={{
                   width: '80px',
                   height: '4px',
-                  background: `linear-gradient(to right, #08F0FF 0%, #08F0FF ${scoreRange[1]}%, rgba(255,255,255,0.1) ${scoreRange[1]}%, rgba(255,255,255,0.1) 100%)`,
+                  background: `linear-gradient(to right, #6B7280 0%, #6B7280 ${scoreRange[1]}%, rgba(255,255,255,0.1) ${scoreRange[1]}%, rgba(255,255,255,0.1) 100%)`,
                   outline: 'none',
                   borderRadius: '2px',
                   cursor: 'pointer',
