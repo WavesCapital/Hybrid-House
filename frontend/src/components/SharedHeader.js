@@ -468,7 +468,7 @@ const SharedHeader = ({
                         navigate('/create-account');
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full text-left px-4 py-3 rounded-lg bg-[#08F0FF] text-black hover:bg-[#FF2DDE] transition-colors flex items-center gap-3"
+                      className="w-full text-left px-4 py-3 rounded-lg bg-[#08F0FF] text-black hover:bg-[#08F0FF]/90 transition-colors flex items-center gap-3"
                     >
                       <User className="w-5 h-5" />
                       Sign Up
