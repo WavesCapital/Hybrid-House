@@ -277,7 +277,10 @@ const HybridScoreForm = () => {
         interview_type: "form"
       };
 
-      console.log('Creating athlete profile with form data:', profileData);
+      console.log('🔍 DEBUGGING - Creating athlete profile...');
+      console.log('🔍 DEBUGGING - Backend URL:', BACKEND_URL);
+      console.log('🔍 DEBUGGING - Session access token:', session?.access_token ? 'Present' : 'Missing');
+      console.log('🔍 DEBUGGING - Profile data:', profileData);
 
       // Create athlete profile
       const response = await axios.post(
@@ -293,6 +296,9 @@ const HybridScoreForm = () => {
           },
         }
       );
+
+      console.log('🔍 DEBUGGING - Athlete profile response:', response);
+      console.log('🔍 DEBUGGING - Response data:', response.data);
 
       const profileResult = response.data;
       const profileId = profileResult.profile?.id;
