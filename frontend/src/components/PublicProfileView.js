@@ -361,7 +361,8 @@ const PublicProfileView = () => {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 
