@@ -369,8 +369,8 @@ const SharedHeader = ({
                       setIsMobileMenuOpen(false);
                     }}
                     className={`w-full text-left px-4 py-3 rounded-lg transition-colors flex items-center gap-3 ${action.variant === 'primary' 
-                      ? 'bg-[#08F0FF] text-black hover:bg-[#FF2DDE]' 
-                      : 'text-gray-300 hover:bg-white/10 hover:text-[#08F0FF]'
+                      ? 'bg-[#08F0FF] text-black hover:bg-[#08F0FF]/90' 
+                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                     }`}
                   >
                     {action.icon}
