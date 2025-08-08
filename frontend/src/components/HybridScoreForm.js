@@ -194,16 +194,29 @@ const HybridScoreForm = () => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     
-    if (isSubmitting) return;
+    console.log('🔍 DEBUG - handleSubmit called!');
+    console.log('🔍 DEBUG - currentSection:', currentSection);
+    console.log('🔍 DEBUG - sections.length:', sections.length);
+    console.log('🔍 DEBUG - sections.length - 1:', sections.length - 1);
+    console.log('🔍 DEBUG - isSubmitting:', isSubmitting);
+    console.log('🔍 DEBUG - user:', user);
+    console.log('🔍 DEBUG - session:', session);
+    
+    if (isSubmitting) {
+      console.log('⚠️ Form submission blocked - already submitting');
+      return;
+    }
 
     // Double-check we're on the final section before proceeding
     if (currentSection !== sections.length - 1) {
       console.log('⚠️ Form submission blocked - not on final section');
+      console.log('⚠️ Current section:', currentSection, 'Final section should be:', sections.length - 1);
       return;
     }
 
     // Users should always be authenticated when reaching this page
     if (!user || !session) {
+      console.log('⚠️ Form submission blocked - no user or session');
       toast({
         title: "Authentication Required",
         description: "Please create an account first.",
