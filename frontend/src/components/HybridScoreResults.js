@@ -739,11 +739,11 @@ const HybridScoreResults = () => {
                   </svg>
                   <div className="dial-value">
                     <div className="score-number" style={{
-                      textShadow: '0 0 20px rgba(8, 240, 255, 0.8), 0 0 40px rgba(8, 240, 255, 0.4), 0 0 60px rgba(8, 240, 255, 0.2)'
+                      textShadow: '0 0 10px rgba(8, 240, 255, 0.4), 0 0 20px rgba(8, 240, 255, 0.2)'
                     }}>
                       {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : hybridScoreValue}
                     </div>
-                    <div className="score-label">Hybrid Score</div>
+                    <div className="score-label" style={{ color: '#FFFFFF' }}>Hybrid Score</div>
                   </div>
                 </div>
               </div>
