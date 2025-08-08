@@ -140,11 +140,15 @@ const HybridScoreForm = () => {
 
   const triggerWebhookForScore = async (athleteProfileData, profileId, currentSession = session) => {
     try {
-      console.log('Triggering webhook for hybrid score calculation...');
+      console.log('🔍 WEBHOOK - Starting webhook for hybrid score calculation...');
+      console.log('🔍 WEBHOOK - Profile ID:', profileId);
+      console.log('🔍 WEBHOOK - Athlete profile data:', athleteProfileData);
+      console.log('🔍 WEBHOOK - Session:', currentSession?.access_token ? 'Present' : 'Missing');
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 240000); // 4 minutes
 
+      console.log('🔍 WEBHOOK - Sending POST request to webhook URL...');
       const response = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
         method: 'POST',
         headers: {
@@ -158,14 +162,21 @@ const HybridScoreForm = () => {
       });
 
       clearTimeout(timeoutId);
+      console.log('🔍 WEBHOOK - Response received, status:', response.status);
 
       if (!response.ok) {
+        console.error('❌ WEBHOOK - Response not OK:', response.status, response.statusText);
         throw new Error(`Webhook request failed with status: ${response.status}`);
       }
 
+      console.log('🔍 WEBHOOK - Parsing response JSON...');
       const data = await response.json();
-      const scoreData = Array.isArray(data) ? data[0] : data;
+      console.log('🔍 WEBHOOK - Response data:', data);
       
+      const scoreData = Array.isArray(data) ? data[0] : data;
+      console.log('🔍 WEBHOOK - Score data extracted:', scoreData);
+      
+      console.log('🔍 WEBHOOK - Storing score data in backend...');
       // Store score data in Supabase
       await axios.post(
         `${BACKEND_URL}/api/athlete-profile/${profileId}/score`,
@@ -178,16 +189,29 @@ const HybridScoreForm = () => {
         }
       );
 
+      console.log('✅ WEBHOOK - Score stored successfully, navigating to results...');
       // Navigate to score results
       navigate(`/hybrid-score/${profileId}`);
       
     } catch (error) {
-      console.error('Error calling webhook:', error);
-      toast({
-        title: "Error calculating score",
-        description: "Please try again later.",
-        variant: "destructive",
-      });
+      console.error('❌ WEBHOOK - Error calling webhook:', error);
+      console.error('❌ WEBHOOK - Error message:', error.message);
+      console.error('❌ WEBHOOK - Error name:', error.name);
+      
+      if (error.name === 'AbortError') {
+        console.error('❌ WEBHOOK - Request timed out after 4 minutes');
+        toast({
+          title: "Request timed out",
+          description: "Score calculation is taking longer than expected. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error calculating score",
+          description: error.message || "Please try again later.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
