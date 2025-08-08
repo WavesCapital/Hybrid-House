@@ -635,6 +635,70 @@ const HybridScoreResults = () => {
             font-size: 1rem;
           }
         }
+        
+        /* Hero Dial Styles */
+        .hero-dial {
+          width: 280px;
+          height: 280px;
+          filter: drop-shadow(0 0 10px #08F0FFAA);
+        }
+
+        .hero-dial svg {
+          width: 100%;
+          height: 100%;
+          transform: rotate(-90deg);
+        }
+
+        .hero-dial .dial-value {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+        }
+
+        .hero-dial .score-number {
+          font-size: 4rem;
+          font-weight: 800;
+          color: var(--neon-primary);
+          line-height: 1;
+          margin-bottom: 8px;
+        }
+
+        .hero-dial .score-label {
+          font-size: 1.2rem;
+          color: var(--txt);
+          font-weight: 600;
+        }
+
+        /* Mobile Hero Dial */
+        @media (max-width: 768px) {
+          .hero-dial {
+            width: 200px;
+            height: 200px;
+          }
+          
+          .hero-dial .score-number {
+            font-size: 3rem;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .hero-dial {
+            width: 160px;
+            height: 160px;
+          }
+          
+          .hero-dial .score-number {
+            font-size: 2.5rem;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .hero-dial svg circle {
+            animation: none !important;
+          }
+        }
         `}
       </style>
 
