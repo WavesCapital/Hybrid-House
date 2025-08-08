@@ -503,10 +503,10 @@ const HybridInterviewFlow = () => {
 
         .neon-button:hover {
           transform: translateY(-2px);
-          background: var(--neon-secondary);
           box-shadow: 
-            0 8px 32px rgba(8, 240, 255, 0.4),
-            0 4px 16px rgba(255, 45, 222, 0.3);
+            0 8px 32px rgba(8, 240, 255, 0.6),
+            0 4px 16px rgba(8, 240, 255, 0.4),
+            0 0 20px rgba(8, 240, 255, 0.3);
         }
 
         .neon-button:disabled {
