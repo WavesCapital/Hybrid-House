@@ -11,7 +11,7 @@ import json
 def test_auto_save_endpoint():
     """Test the auto-save endpoint directly"""
     
-    backend_url = "https://097b597a-db92-4486-8f08-16b750111751.preview.emergentagent.com/api"
+    backend_url = "https://cb5889f7-0baa-4f21-b0c5-d9b5a5d1e3eb.preview.emergentagent.com/api"
     
     print("🔍 TESTING AUTO-SAVE PROFILE FUNCTIONALITY")
     print("=" * 60)

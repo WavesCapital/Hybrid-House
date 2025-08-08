@@ -8,7 +8,7 @@ import requests
 import json
 
 # Use external URL for testing
-API_BASE_URL = "https://097b597a-db92-4486-8f08-16b750111751.preview.emergentagent.com/api"
+API_BASE_URL = "https://cb5889f7-0baa-4f21-b0c5-d9b5a5d1e3eb.preview.emergentagent.com/api"
 
 def test_nick_bare_critical_investigation():
     """CRITICAL: Investigate Nick Bare's profile linking and demographic data as per user clarification"""
