@@ -496,11 +496,8 @@ const Leaderboard = () => {
             lineHeight: '1.1'
           }}>
             <span style={{
-              background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              filter: 'drop-shadow(0 0 6px rgba(8, 240, 255, 0.15))'
+              color: '#08F0FF',
+              textShadow: '0 0 20px rgba(8, 240, 255, 0.8), 0 0 40px rgba(8, 240, 255, 0.4), 0 0 60px rgba(8, 240, 255, 0.2)'
             }}>Hybrid</span>
             <span style={{ color: '#FFFFFF' }}> Athletes Global Leaderboard</span>
           </h1>
