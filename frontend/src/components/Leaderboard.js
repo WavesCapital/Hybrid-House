@@ -249,6 +249,7 @@ const Leaderboard = () => {
       <div 
         className="minimal-podium-card"
         style={cardStyle}
+        onClick={() => navigate(`/hybrid-score/${athlete.user_profile_id || athlete.id}`)}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = 'translateY(-12px) scale(1.03)';
           e.currentTarget.style.boxShadow = `
