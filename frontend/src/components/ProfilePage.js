@@ -2230,6 +2230,21 @@ const ProfilePage = () => {
                     </div>
                     
                     <div>
+                      <label className="block text-sm font-medium text-secondary mb-2">Weight</label>
+                      <Input
+                        type="number"
+                        step="0.5"
+                        min="80"
+                        max="400"
+                        value={profileForm.weight_lb || ''}
+                        onChange={(e) => handleProfileFormChange('weight_lb', e.target.value)}
+                        placeholder="e.g. 180"
+                        className="neon-input"
+                      />
+                      <p className="text-xs text-muted mt-1">Weight in pounds</p>
+                    </div>
+                    
+                    <div>
                       <label className="block text-sm font-medium text-secondary mb-2">Country</label>
                       <select
                         value={profileForm.country || ''}
