@@ -891,8 +891,8 @@ const Leaderboard = () => {
                     transition: 'background-color 0.2s ease'
                   }}
                   onClick={() => {
-                    const id = athlete.user_profile_id || athlete.profile_id || athlete.id;
-                    console.log('Clicking mobile athlete:', athlete.first_name, athlete.last_name, 'with ID:', id);
+                    const id = athlete.profile_id;
+                    console.log('Clicking mobile athlete:', athlete.first_name, athlete.last_name, 'with profile_id:', id);
                     navigate(`/hybrid-score/${id}`);
                   }}
                   onMouseEnter={(e) => {
