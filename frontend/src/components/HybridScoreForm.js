@@ -6,6 +6,7 @@ import { useToast } from '../hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Dumbbell, Activity, User, Heart, Target, Trophy, Info, HelpCircle } from 'lucide-react';
 import axios from 'axios';
+import SharedHeader from './SharedHeader';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
