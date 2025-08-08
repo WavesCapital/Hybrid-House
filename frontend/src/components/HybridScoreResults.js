@@ -638,53 +638,7 @@ const HybridScoreResults = () => {
         `}
       </style>
 
-      {/* Header - Same as Home Page */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gray-800">
-        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <h3 className="text-lg sm:text-xl font-bold" style={{ color: 'var(--neon-primary)' }}>
-                Hybrid House
-              </h3>
-            </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              {user ? (
-                <div className="flex items-center space-x-2 sm:space-x-3">
-                  <button
-                    onClick={() => navigate('/profile')}
-                    className="px-3 sm:px-4 py-2 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors text-sm font-medium min-h-[40px] min-w-[60px]"
-                  >
-                    Profile
-                  </button>
-                  <button
-                    onClick={() => navigate('/logout')}
-                    className="px-3 sm:px-4 py-2 bg-[#08F0FF] rounded-lg text-black hover:shadow-lg transition-all text-sm font-medium min-h-[40px] min-w-[60px]"
-                  >
-                    Log Out
-                  </button>
-                </div>
-              ) : (
-                <div className="flex space-x-2 sm:space-x-3">
-                  <button
-                    onClick={() => navigate('/login')}
-                    className="px-3 sm:px-4 py-2 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors text-sm font-medium min-h-[40px] min-w-[60px]"
-                  >
-                    Log In
-                  </button>
-                  <button
-                    onClick={() => navigate('/auth?mode=signup')}
-                    className="px-3 sm:px-4 py-2 bg-[#08F0FF] rounded-lg text-black hover:shadow-lg transition-all text-sm font-medium min-h-[40px] min-w-[60px]"
-                  >
-                    Sign Up
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl" style={{ paddingTop: '80px' }}>
+      <div className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
         {/* Score Display */}
         <div className="space-y-8">
           {/* Hybrid Score Section */}
