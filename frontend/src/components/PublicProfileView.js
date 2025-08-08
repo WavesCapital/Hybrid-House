@@ -205,39 +205,6 @@ const PublicProfileView = () => {
         }
       `}</style>
 
-      {/* Header */}
-      <header className="border-b border-white/10 bg-black/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <button
-                onClick={() => navigate('/leaderboard')}
-                className="flex items-center space-x-2 text-[#08F0FF] hover:text-[#08F0FF]/80 transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:block">Back to Leaderboard</span>
-              </button>
-              <div className="h-4 sm:h-6 w-px bg-white/20"></div>
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 accent-gradient rounded-lg flex items-center justify-center">
-                  <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-lg sm:text-xl font-bold text-primary">Hybrid House</h1>
-                  <p className="text-xs text-muted hidden sm:block">Public Profile</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 accent-gradient rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8 max-w-6xl">
         {/* Profile Header */}
         <div className="glass-card p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
