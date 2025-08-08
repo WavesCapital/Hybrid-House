@@ -153,7 +153,7 @@ const SharedHeader = ({
       `}</style>
 
       {/* Header */}
-      <header className="header-gradient border-b border-white/10 sticky top-0 z-40">
+      <header className="header-gradient border-b border-gray-800 sticky top-0 z-40">
         <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             
