@@ -1169,7 +1169,11 @@ const Leaderboard = () => {
                     transition: 'background-color 0.2s ease',
                     cursor: 'pointer'
                   }}
-                  onClick={() => navigate(`/hybrid-score/${athlete.user_profile_id || athlete.profile_id || athlete.id}`)}
+                  onClick={() => {
+                    const id = athlete.user_profile_id || athlete.profile_id || athlete.id;
+                    console.log('Clicking desktop athlete:', athlete.first_name, athlete.last_name, 'with ID:', id);
+                    navigate(`/hybrid-score/${id}`);
+                  }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = 'rgba(8, 240, 255, 0.05)';
                   }}
