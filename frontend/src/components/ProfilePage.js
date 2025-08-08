@@ -2847,6 +2847,7 @@ const ProfilePage = () => {
 
       </div>
     </div>
+    </>
   );
 };
 
