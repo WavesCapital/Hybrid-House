@@ -1408,6 +1408,7 @@ const HybridInterviewFlow = () => {
             )}
           </div>
         </div>
+        </>
       )}
     </div>
   );
