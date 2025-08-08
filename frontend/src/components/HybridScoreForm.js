@@ -1255,7 +1255,10 @@ const HybridScoreForm = () => {
                     type="button"
                     className="neon-button text-sm sm:text-base px-4 sm:px-6 py-3 min-h-[44px] order-1 sm:order-2"
                     disabled={isSubmitting}
-                    onClick={handleSubmit}
+                    onClick={(e) => {
+                      console.log('🔍 DEBUG - Calculate Hybrid Score button clicked!');
+                      handleSubmit(e);
+                    }}
                   >
                     {isSubmitting ? 'Calculating Score...' : 'Calculate Hybrid Score'}
                   </button>
