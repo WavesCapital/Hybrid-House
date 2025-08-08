@@ -345,13 +345,10 @@ const SharedHeader = ({
               {/* Mobile Menu Header */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-3">
-                  <div 
-                    className="w-8 h-8 rounded-lg flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)' }}
-                  >
-                    <Activity className="w-5 h-5 text-white" />
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gray-800">
+                    <HomeIcon className="w-5 h-5 text-[#08F0FF]" />
                   </div>
-                  <h2 className="text-lg font-bold brand-gradient">Hybrid House</h2>
+                  <h2 className="text-lg font-bold brand-text">Hybrid House</h2>
                 </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
