@@ -263,6 +263,7 @@ const ProfilePage = () => {
           country: profile.country || '',
           height_ft: Math.floor((profile.height_in || 0) / 12).toString() || '',
           height_in: ((profile.height_in || 0) % 12).toString() || '',
+          weight_lb: profile.weight_lb || '',
           units_preference: profile.units_preference || 'imperial',
           privacy_level: profile.privacy_level || 'private'
         });
