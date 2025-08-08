@@ -643,7 +643,7 @@ const Leaderboard = () => {
                 style={{
                   width: '50px',
                   height: '4px',
-                  background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[0]-18)/(65-18))*100}%, #B96DFF ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) ${((ageRange[1]-18)/(65-18))*100}%, rgba(255,255,255,0.1) 100%)`,
+                  background: `linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) ${((ageRange[0]-18)/(100-18))*100}%, #B96DFF ${((ageRange[0]-18)/(100-18))*100}%, #B96DFF ${((ageRange[1]-18)/(100-18))*100}%, rgba(255,255,255,0.1) ${((ageRange[1]-18)/(100-18))*100}%, rgba(255,255,255,0.1) 100%)`,
                   outline: 'none',
                   borderRadius: '2px',
                   cursor: 'pointer',
