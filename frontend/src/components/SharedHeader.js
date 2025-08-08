@@ -247,12 +247,11 @@ const SharedHeader = ({
                   <div className="relative" ref={dropdownRef}>
                     <button
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className={`nav-button w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all ${
-                        isCurrentPage('/profile') ? 'active' : 'hover:bg-white/10'
+                      className={`nav-button w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all bg-gray-800 hover:bg-gray-700 ${
+                        isCurrentPage('/profile') ? 'active' : ''
                       }`}
-                      style={{ background: 'linear-gradient(135deg, #08F0FF, #FF2DDE)' }}
                     >
-                      <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                      <User className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300" />
                     </button>
 
                     {/* Dropdown Menu */}
