@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Activity, User, Calendar, MapPin, Trophy, TrendingUp, ArrowLeft } from 'lucide-react';
 import axios from 'axios';
+import SharedHeader from './SharedHeader';
 
 const PublicProfileView = () => {
   const { userId } = useParams();
