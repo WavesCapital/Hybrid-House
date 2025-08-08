@@ -303,7 +303,10 @@ const HybridScoreForm = () => {
       const profileResult = response.data;
       const profileId = profileResult.profile?.id;
 
+      console.log('🔍 DEBUGGING - Profile ID extracted:', profileId);
+
       if (profileId) {
+        console.log('✅ DEBUGGING - Profile created successfully, triggering webhook...');
         toast({
           title: "Profile Created! 🚀",
           description: "Calculating your hybrid score...",
@@ -311,8 +314,12 @@ const HybridScoreForm = () => {
         });
 
         // Trigger webhook for score calculation with complete profile data
+        console.log('🔍 DEBUGGING - About to call triggerWebhookForScore...');
         await triggerWebhookForScore(profileData, profileId, session);
+        console.log('✅ DEBUGGING - triggerWebhookForScore completed');
       } else {
+        console.error('❌ DEBUGGING - No profile ID returned from API');
+        console.error('❌ DEBUGGING - Full response data:', profileResult);
         throw new Error('No profile ID returned');
       }
 
