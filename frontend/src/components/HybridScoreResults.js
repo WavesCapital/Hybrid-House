@@ -256,13 +256,17 @@ const HybridScoreResults = () => {
     // Animate the circle progress separately
     const hybridScore = parseFloat(data.hybridScore);
     if (hybridScore) {
-      const duration = 2000; // 2 seconds
+      const duration = 2500; // 2.5 seconds for smoother animation
       const startTime = Date.now();
+      
+      // Smooth easing function (ease-out)
+      const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
       
       const animateCircle = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        const currentProgress = hybridScore * progress;
+        const easedProgress = easeOutQuart(progress);
+        const currentProgress = hybridScore * easedProgress;
         
         setCircleProgress(currentProgress);
         
@@ -272,7 +276,7 @@ const HybridScoreResults = () => {
       };
       
       // Start circle animation with a slight delay for smoother effect
-      setTimeout(() => animateCircle(), 100);
+      setTimeout(() => animateCircle(), 200);
     }
 
     scoresToAnimate.forEach(({ key, value }) => {
