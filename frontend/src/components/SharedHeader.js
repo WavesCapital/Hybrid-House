@@ -256,29 +256,29 @@ const SharedHeader = ({
 
                     {/* Dropdown Menu */}
                     {isDropdownOpen && (
-                      <div className="dropdown-menu absolute right-0 mt-2 w-48 bg-[#181B1D] border border-white/10 rounded-lg shadow-lg z-50">
+                      <div className="dropdown-menu absolute right-0 mt-2 w-48 bg-black border border-gray-700 rounded-lg shadow-lg z-50">
                         <div className="py-2">
                           <button
                             onClick={() => {
                               navigate('/profile');
                               setIsDropdownOpen(false);
                             }}
-                            className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 transition-colors flex items-center gap-2"
+                            className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors flex items-center gap-2"
                           >
                             <Settings className="w-4 h-4" />
                             Profile Settings
                           </button>
                           <button
                             onClick={handleViewPublicProfile}
-                            className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 transition-colors flex items-center gap-2"
+                            className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors flex items-center gap-2"
                           >
                             <Eye className="w-4 h-4" />
                             View Public Profile
                           </button>
-                          <div className="border-t border-white/10 my-1"></div>
+                          <div className="border-t border-gray-700 my-1"></div>
                           <button
                             onClick={handleLogout}
-                            className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-400/10 transition-colors flex items-center gap-2"
+                            className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-900/20 transition-colors flex items-center gap-2"
                           >
                             <LogOut className="w-4 h-4" />
                             Log Out
