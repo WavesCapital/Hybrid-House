@@ -778,11 +778,11 @@ const Leaderboard = () => {
                   setSearchQuery('');
                 }}
                 style={{
-                  background: 'rgba(8, 240, 255, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.1)',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '1px 4px',
-                  color: '#08F0FF',
+                  color: '#FFFFFF',
                   fontSize: '9px',
                   cursor: 'pointer',
                   fontWeight: '600'
