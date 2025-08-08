@@ -159,17 +159,6 @@ const SharedHeader = ({
             
             {/* Left Side - Brand/Title */}
             <div className="flex items-center space-x-3 sm:space-x-4">
-              {/* Back Button */}
-              {showBackButton && (
-                <button
-                  onClick={() => navigate(backTo)}
-                  className="flex items-center space-x-2 text-[#08F0FF] hover:text-[#08F0FF]/80 transition-colors nav-button p-2 rounded-lg border border-transparent hover:border-[#08F0FF]/30"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span className="hidden sm:inline text-sm">{backLabel}</span>
-                </button>
-              )}
-              
               {/* Brand/Logo */}
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <div 
@@ -186,20 +175,10 @@ const SharedHeader = ({
                     Hybrid House
                   </h1>
                   {title && (
-                    <p className="text-xs text-gray-400 hidden sm:block">{title}</p>
+                    <p className="text-xs sm:text-sm text-gray-400">{title}</p>
                   )}
                 </div>
               </div>
-              
-              {/* Divider */}
-              {title && <div className="h-4 sm:h-6 w-px bg-gray-600 hidden sm:block"></div>}
-              
-              {/* Page Title */}
-              {title && (
-                <h2 className="text-base sm:text-lg font-semibold text-white hidden sm:block">
-                  {title}
-                </h2>
-              )}
             </div>
 
             {/* Right Side - Desktop Navigation */}
