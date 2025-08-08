@@ -1439,7 +1439,7 @@ const Leaderboard = () => {
           width: 16px;
           height: 16px;
           border-radius: 50%;
-          background: #6B7280;
+          background: #08F0FF;
           cursor: pointer;
           transform: scale(1);
           transition: transform 0.2s;
@@ -1453,7 +1453,7 @@ const Leaderboard = () => {
           width: 16px;
           height: 16px;
           border-radius: 50%;
-          background: #6B7280;
+          background: #08F0FF;
           cursor: pointer;
           border: none;
           transform: scale(1);
