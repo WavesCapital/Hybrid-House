@@ -9,6 +9,7 @@ import {
   BarChart3, Activity, Moon, Share2
 } from 'lucide-react';
 import axios from 'axios';
+import SharedHeader from './SharedHeader';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
