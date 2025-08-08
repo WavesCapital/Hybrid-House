@@ -212,9 +212,14 @@ const HybridScoreForm = () => {
       console.log('⚠️ Form submission blocked - not on final section');
       console.log('⚠️ Current section:', currentSection, 'Final section should be:', sections.length - 1);
       
-      // For debugging, let's allow submission from any section temporarily
-      console.log('⚠️ TEMPORARILY ALLOWING SUBMISSION FROM ANY SECTION FOR TESTING');
-      // return;
+      // Navigate to final section automatically
+      setCurrentSection(sections.length - 1);
+      toast({
+        title: "Please complete the form",
+        description: "Navigating to the final section to submit your assessment.",
+        variant: "default",
+      });
+      return;
     }
 
     // TEMPORARILY BYPASS AUTH CHECK FOR WEBHOOK TESTING
