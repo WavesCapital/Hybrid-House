@@ -682,8 +682,8 @@ const Leaderboard = () => {
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   textTransform: 'uppercase',
-                  background: genderFilter === gender ? 'rgba(255, 45, 222, 0.85)' : 'rgba(255, 255, 255, 0.1)',
-                  color: genderFilter === gender ? '#000' : '#8D9299',
+                  background: genderFilter === gender ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                  color: genderFilter === gender ? '#FFFFFF' : '#8D9299',
                   minHeight: '32px'
                 }}
               >
