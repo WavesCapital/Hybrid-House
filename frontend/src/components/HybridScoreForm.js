@@ -324,13 +324,18 @@ const HybridScoreForm = () => {
       }
 
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('❌ DEBUGGING - Error in handleSubmit:', error);
+      console.error('❌ DEBUGGING - Error message:', error.message);
+      console.error('❌ DEBUGGING - Error response:', error.response?.data);
+      console.error('❌ DEBUGGING - Error status:', error.response?.status);
+      
       toast({
         title: "Submission Error",
-        description: error.message || "Please try again.",
+        description: error.response?.data?.message || error.message || "Please try again.",
         variant: "destructive",
       });
     } finally {
+      console.log('🔍 DEBUGGING - Setting isSubmitting to false');
       setIsSubmitting(false);
     }
   };
