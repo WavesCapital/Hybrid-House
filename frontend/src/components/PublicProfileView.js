@@ -126,7 +126,15 @@ const PublicProfileView = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <>
+      <SharedHeader 
+        title="Public Profile"
+        showBackButton={true}
+        backTo="/leaderboard"
+        backLabel="Back to Leaderboard"
+      />
+      
+      <div className="min-h-screen bg-black text-white">
       <style jsx>{`
         .glass-card {
           background: rgba(24, 27, 29, 0.8);
