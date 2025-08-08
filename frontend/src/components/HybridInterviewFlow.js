@@ -849,10 +849,11 @@ const HybridInterviewFlow = () => {
                       Get Hybrid Score
                     </button>
                     <button 
-                      className="px-6 sm:px-8 py-3 sm:py-4 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors w-full sm:w-auto"
+                      className="px-6 sm:px-8 py-3 sm:py-4 border border-[#08F0FF] rounded-lg text-[#08F0FF] hover:bg-[#08F0FF]/10 transition-colors w-full sm:w-auto flex items-center justify-center gap-2"
                       onClick={() => navigate('/leaderboard')}
                     >
-                      🏆 Leaderboard
+                      <Trophy className="w-4 h-4" />
+                      Leaderboard
                     </button>
                   </div>
 
