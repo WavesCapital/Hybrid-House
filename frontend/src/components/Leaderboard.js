@@ -250,8 +250,8 @@ const Leaderboard = () => {
         className="minimal-podium-card"
         style={cardStyle}
         onClick={() => {
-          const id = athlete.user_profile_id || athlete.profile_id || athlete.id;
-          console.log('Clicking athlete:', athlete.first_name, athlete.last_name, 'with ID:', id, 'full athlete object:', athlete);
+          const id = athlete.profile_id;
+          console.log('Clicking athlete:', athlete.first_name, athlete.last_name, 'with profile_id:', id, 'full athlete object:', athlete);
           navigate(`/hybrid-score/${id}`);
         }}
         onMouseEnter={(e) => {
