@@ -1147,17 +1147,28 @@ const Leaderboard = () => {
               </div>
             ) : (
               filteredData.map((athlete, index) => (
-                <div key={athlete.profile_id || index} style={{
-                  display: 'grid',
-                  gridTemplateColumns: '60px 200px 80px 80px 100px 100px repeat(6, 80px) 120px',
-                  padding: '12px 20px',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                  background: index % 2 === 0 ? 'rgba(255, 255, 255, 0.01)' : 'transparent',
-                  alignItems: 'center',
-                  fontSize: '14px',
-                  fontFamily: 'Inter, sans-serif',
-                  transition: 'background-color 0.2s ease'
-                }}>
+                <div 
+                  key={athlete.profile_id || index} 
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '60px 200px 80px 80px 100px 100px repeat(6, 80px) 120px',
+                    padding: '12px 20px',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                    background: index % 2 === 0 ? 'rgba(255, 255, 255, 0.01)' : 'transparent',
+                    alignItems: 'center',
+                    fontSize: '14px',
+                    fontFamily: 'Inter, sans-serif',
+                    transition: 'background-color 0.2s ease',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => navigate(`/hybrid-score/${athlete.user_profile_id || athlete.profile_id || athlete.id}`)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(8, 240, 255, 0.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = index % 2 === 0 ? 'rgba(255, 255, 255, 0.01)' : 'transparent';
+                  }}
+                >
                   {/* Rank */}
                   <div style={{
                     textAlign: 'center',
