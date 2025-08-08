@@ -240,7 +240,7 @@ const HybridScoreResults = () => {
     });
   };
 
-  // Animate score numbers
+  // Animate score numbers and circle
   const animateScores = useCallback((data) => {
     const scoresToAnimate = [
       { key: 'hybrid', value: data.hybridScore },
@@ -252,6 +252,28 @@ const HybridScoreResults = () => {
       { key: 'endurance', value: data.enduranceScore },
       { key: 'recovery', value: data.recoveryScore }
     ];
+
+    // Animate the circle progress separately
+    const hybridScore = parseFloat(data.hybridScore);
+    if (hybridScore) {
+      const duration = 2000; // 2 seconds
+      const startTime = Date.now();
+      
+      const animateCircle = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const currentProgress = hybridScore * progress;
+        
+        setCircleProgress(currentProgress);
+        
+        if (progress < 1) {
+          requestAnimationFrame(animateCircle);
+        }
+      };
+      
+      // Start circle animation with a slight delay for smoother effect
+      setTimeout(() => animateCircle(), 100);
+    }
 
     scoresToAnimate.forEach(({ key, value }) => {
       if (value) {
