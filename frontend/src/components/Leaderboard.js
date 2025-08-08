@@ -554,6 +554,20 @@ const Leaderboard = () => {
           gap: '16px',
           flexWrap: 'wrap'
         }}>
+          {/* Total Athletes Count */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            color: '#8D9299',
+            fontSize: '11px',
+            fontWeight: '600',
+            textTransform: 'uppercase'
+          }}>
+            <User size={12} />
+            {leaderboardData.length} Athletes
+          </div>
+
           {/* Score Range Slider */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '120px' }}>
             <label style={{ color: '#8D9299', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', minWidth: '50px' }}>
