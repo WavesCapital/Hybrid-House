@@ -56,9 +56,16 @@
 ##   test_all: false
 ##   test_priority: "high_first"  # or "sequential" or "stuck_first"
 ##
-## agent_communication:
-##     -agent: "main"  # or "testing" or "user"
-##     -message: "Communication message between agents"
+agent_communication:
+  - agent: "main"
+    message: "Fixed Hybrid Score Form submission bug. The issue was that the form allows unauthenticated access but handleSubmit() requires authentication. Implemented solution: 1) Modified authentication check to preserve form data in localStorage before redirecting to account creation, 2) Enhanced form data loading to restore preserved data after authentication, 3) Added user-friendly messaging about data preservation. The form now properly saves user input when they click Calculate without authentication, redirects to account creation, and restores their data after login. Need to test the complete flow."
+
+test_plan:
+  current_focus:
+    - "Hybrid Score Form Submission Bug Fix"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
 
 # Protocol Guidelines for Main agent
 #
