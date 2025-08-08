@@ -133,7 +133,9 @@ const Leaderboard = () => {
       setLoading(true);
       const response = await axios.get(`${BACKEND_URL}/api/leaderboard`);
       const data = response.data.leaderboard || [];
+      console.log('🏆 LEADERBOARD DATA DEBUG:', data); // Add debugging
       setLeaderboardData(data);
+      console.log('🏆 PROCESSED DATA DEBUG:', data.slice(0, 3)); // Show first 3 athletes
       setError(null);
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
