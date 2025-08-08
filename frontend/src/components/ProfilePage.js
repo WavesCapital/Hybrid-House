@@ -2292,36 +2292,6 @@ const ProfilePage = () => {
                     <div className="border-t border-white/10 pt-4">
                       <h5 className="text-sm font-medium text-primary mb-3">Physical Attributes</h5>
                       
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-sm font-medium text-secondary mb-2">Height (inches)</label>
-                          <Input
-                            type="number"
-                            step="0.5"
-                            min="48"
-                            max="96"
-                            value={profileForm.height_in || ''}
-                            onChange={(e) => handleProfileFormChange('height_in', e.target.value)}
-                            placeholder="e.g. 70"
-                            className="neon-input"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-secondary mb-2">Weight (lbs)</label>
-                          <Input
-                            type="number"
-                            step="0.5"
-                            min="80"
-                            max="400"
-                            value={profileForm.weight_lb || ''}
-                            onChange={(e) => handleProfileFormChange('weight_lb', e.target.value)}
-                            placeholder="e.g. 180"
-                            className="neon-input"
-                          />
-                        </div>
-                      </div>
-                      
                       <div className="mt-3">
                         <label className="block text-sm font-medium text-secondary mb-2">Wearable Devices</label>
                         <div className="space-y-2">
