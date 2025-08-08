@@ -805,18 +805,18 @@ const Leaderboard = () => {
           </div>
 
           {/* Active Filters Count */}
-          {(genderFilter !== 'All' || countryFilter !== 'All' || searchQuery || scoreRange[1] < 100 || ageRange[0] > 18 || ageRange[1] < 100) && (
+          {(genderFilter !== 'All' || countryFilter !== 'All' || searchQuery || scoreRange[0] > 0 || scoreRange[1] < 100 || ageRange[0] > 18 || ageRange[1] < 100) && (
             <div style={{
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
               padding: '2px 8px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
+              background: 'rgba(8, 240, 255, 0.1)',
+              border: '1px solid rgba(8, 240, 255, 0.3)',
               borderRadius: '12px',
               fontSize: '10px',
               fontWeight: '600',
-              color: '#FFFFFF',
+              color: '#08F0FF',
               textTransform: 'uppercase'
             }}>
               <Filter size={10} />
@@ -830,11 +830,11 @@ const Leaderboard = () => {
                   setSearchQuery('');
                 }}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
+                  background: 'rgba(8, 240, 255, 0.2)',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '1px 4px',
-                  color: '#FFFFFF',
+                  color: '#08F0FF',
                   fontSize: '9px',
                   cursor: 'pointer',
                   fontWeight: '600'
