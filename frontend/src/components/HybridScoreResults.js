@@ -270,9 +270,10 @@ Think you can beat this? Get scored at HybridHouse.ai 🚀`;
       
       // Check if native sharing is available
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'hybrid-score.png', { type: 'image/png' })] })) {
+        // Share only the image first to ensure it appears first
+        // The image itself contains all the text information
         await navigator.share({
           title: '🏆 My Hybrid Athlete Score',
-          text: punchyShareText,
           files: [new File([blob], 'hybrid-score.png', { type: 'image/png' })]
         });
       } else {
