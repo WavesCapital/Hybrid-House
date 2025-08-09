@@ -204,33 +204,8 @@ const HybridScoreResults = () => {
       ctx.fillText(item.label, x, y - 55);
     });
     
-    // Ranking badge (if available) - positioned cleanly
-    if (leaderboardPosition && totalAthletes) {
-      const badgeX = centerX + 220;
-      const badgeY = titleY;
-      
-      // Badge circle
-      ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
-      ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';
-      ctx.shadowBlur = 15;
-      ctx.beginPath();
-      ctx.arc(badgeX, badgeY, 35, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-      
-      // Badge border
-      ctx.strokeStyle = '#FFD700';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(badgeX, badgeY, 35, 0, 2 * Math.PI);
-      ctx.stroke();
-      
-      // Ranking text
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 16px Inter, Arial, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(`#${leaderboardPosition}`, badgeX, badgeY + 5);
-    }
+    // Ranking badge removed as requested
+    // (No ranking badge will be displayed)
     
     // Call to action - perfectly spaced
     ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
