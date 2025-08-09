@@ -668,7 +668,7 @@ const HybridScoreForm = () => {
           --txt: #F5FAFF;
           --muted: #8D9299;
           --neon-primary: #08F0FF;
-          --neon-secondary: #FF2DDE;
+          --neon-secondary: #00FF88;
         }
 
         .neon-button {
