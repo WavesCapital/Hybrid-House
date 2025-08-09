@@ -329,7 +329,7 @@ const AthleteProfile = () => {
     `;
     
     const encodedText = encodeURIComponent(shareText);
-    const encodedUrl = encodeURIComponent('https://HybridLab.ai');
+    const encodedUrl = encodeURIComponent('https://HybridLab.io');
     
     // Function to copy image to clipboard
     const copyImageToClipboard = async () => {
