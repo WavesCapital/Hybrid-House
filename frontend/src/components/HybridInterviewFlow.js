@@ -462,7 +462,7 @@ const HybridInterviewFlow = () => {
           --txt: #F5FAFF;
           --muted: #8D9299;
           --neon-primary: #08F0FF;
-          --neon-secondary: #FF2DDE;
+          --neon-secondary: #00FF88;
           --strength: #5CFF5C;
           --speed: #FFA42D;
           --vo2: #B96DFF;
