@@ -1327,7 +1327,7 @@ async def get_athlete_profile(profile_id: str):
         # If there's a user_id, fetch the user profile data
         if user_id:
             try:
-                user_result = supabase.table('user_profiles').select('*').eq('id', user_id).execute()
+                user_result = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
                 if user_result.data:
                     user_profile = user_result.data[0]
             except Exception as user_error:
