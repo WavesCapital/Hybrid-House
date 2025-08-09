@@ -43,87 +43,205 @@ const HybridScoreResults = () => {
     return scoreData ? Math.round(parseFloat(scoreData.hybridScore)) : 0;
   }, [scoreData]);
 
-  // Generate share image (memoized)
+  // Generate beautiful share image with neon theme
   const generateShareImage = useCallback(async () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     
-    // Set canvas size
-    canvas.width = 1200;
-    canvas.height = 600;
+    // Set canvas size for social media (Instagram/Twitter optimal)
+    canvas.width = 1080;
+    canvas.height = 1080;
     
-    // Create gradient background matching Neo design
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradient.addColorStop(0, '#0A0B0C');
-    gradient.addColorStop(0.5, '#111314');
-    gradient.addColorStop(1, '#0A0B0C');
+    // Create dark gradient background
+    const gradient = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width/2);
+    gradient.addColorStop(0, '#111314');
+    gradient.addColorStop(0.7, '#0A0B0C');
+    gradient.addColorStop(1, '#000000');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Add subtle texture
-    for (let i = 0; i < 800; i++) {
-      ctx.fillStyle = `rgba(121, 207, 247, ${Math.random() * 0.02})`;
-      ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 1, 1);
+    // Add neon grid pattern
+    ctx.strokeStyle = 'rgba(0, 255, 136, 0.08)';
+    ctx.lineWidth = 1;
+    const gridSize = 60;
+    for (let i = 0; i < canvas.width; i += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, canvas.height);
+      ctx.stroke();
+    }
+    for (let i = 0; i < canvas.height; i += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(0, i);
+      ctx.lineTo(canvas.width, i);
+      ctx.stroke();
     }
     
-    // Title
-    ctx.fillStyle = '#D9D9D9';
-    ctx.font = 'bold 48px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('My Hybrid Athlete Score', canvas.width / 2, 80);
-    
-    // Main score with Neo blue
-    const hybridScore = hybridScoreValue;
-    ctx.fillStyle = '#79CFF7';
-    ctx.font = 'bold 120px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-    ctx.fillText(hybridScore.toString(), canvas.width / 2, 220);
-    
-    // Subtitle
-    ctx.fillStyle = '#9FA1A3';
-    ctx.font = '24px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-    ctx.fillText('Overall hybrid-fitness score', canvas.width / 2, 260);
-    
-    // Component scores
-    const scores = [
-      { label: 'Strength', value: Math.round(parseFloat(scoreData.strengthScore)), color: '#79CFF7' },
-      { label: 'Speed', value: Math.round(parseFloat(scoreData.speedScore)), color: '#85E26E' },
-      { label: 'VO₂', value: Math.round(parseFloat(scoreData.vo2Score)), color: '#8D5CFF' },
-      { label: 'Endurance', value: Math.round(parseFloat(scoreData.enduranceScore)), color: '#79CFF7' }
+    // Add floating circles with neon glow
+    const circles = [
+      { x: 150, y: 200, r: 80, alpha: 0.15 },
+      { x: 950, y: 150, r: 60, alpha: 0.1 },
+      { x: 200, y: 800, r: 100, alpha: 0.12 },
+      { x: 900, y: 900, r: 70, alpha: 0.08 },
+      { x: 750, y: 400, r: 40, alpha: 0.2 }
     ];
     
-    const startX = 150;
-    const scoreWidth = (canvas.width - 300) / 4;
-    
-    scores.forEach((score, index) => {
-      const x = startX + (index * scoreWidth) + (scoreWidth / 2);
-      const y = 380;
-      
-      // Score circle background
+    circles.forEach(circle => {
+      // Outer glow
+      const glowGradient = ctx.createRadialGradient(circle.x, circle.y, 0, circle.x, circle.y, circle.r * 1.5);
+      glowGradient.addColorStop(0, `rgba(0, 255, 136, ${circle.alpha})`);
+      glowGradient.addColorStop(1, 'rgba(0, 255, 136, 0)');
+      ctx.fillStyle = glowGradient;
       ctx.beginPath();
-      ctx.arc(x, y, 60, 0, 2 * Math.PI);
-      ctx.fillStyle = '#111314';
+      ctx.arc(circle.x, circle.y, circle.r * 1.5, 0, 2 * Math.PI);
       ctx.fill();
       
-      // Score value
-      ctx.fillStyle = score.color;
-      ctx.font = 'bold 36px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(score.value.toString(), x, y + 12);
-      
-      // Score label
-      ctx.fillStyle = '#9FA1A3';
-      ctx.font = '18px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-      ctx.fillText(score.label, x, y + 90);
+      // Inner circle
+      ctx.strokeStyle = `rgba(0, 255, 136, ${circle.alpha * 2})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
+      ctx.stroke();
     });
     
-    // Branding
-    ctx.fillStyle = '#6B6E71';
-    ctx.font = '20px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Get your score at HybridHouse.ai', canvas.width / 2, canvas.height - 30);
+    // Main content area with subtle border
+    const contentY = 250;
+    const contentHeight = 580;
+    ctx.strokeStyle = 'rgba(0, 255, 136, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(80, contentY, canvas.width - 160, contentHeight);
     
-    return canvas.toDataURL('image/png', 0.9);
-  }, [scoreData]);
+    // Title with neon glow effect
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 52px Inter, sans-serif';
+    ctx.shadowColor = 'rgba(0, 255, 136, 0.8)';
+    ctx.shadowBlur = 20;
+    ctx.fillText('HYBRID ATHLETE', canvas.width / 2, contentY + 80);
+    ctx.shadowBlur = 0;
+    
+    // Main score circle with animated rings
+    const centerX = canvas.width / 2;
+    const centerY = contentY + 250;
+    const mainRadius = 140;
+    
+    // Outer ring with glow
+    ctx.strokeStyle = 'rgba(0, 255, 136, 0.6)';
+    ctx.lineWidth = 8;
+    ctx.shadowColor = 'rgba(0, 255, 136, 0.8)';
+    ctx.shadowBlur = 15;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, mainRadius, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    
+    // Progress ring
+    const progress = (hybridScoreValue / 100) * 2 * Math.PI;
+    ctx.strokeStyle = '#00FF88';
+    ctx.lineWidth = 12;
+    ctx.lineCap = 'round';
+    ctx.shadowColor = 'rgba(0, 255, 136, 1)';
+    ctx.shadowBlur = 25;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, mainRadius - 20, -Math.PI/2, -Math.PI/2 + progress);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    
+    // Score number with massive glow
+    ctx.fillStyle = '#00FF88';
+    ctx.font = 'bold 120px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.shadowColor = 'rgba(0, 255, 136, 1)';
+    ctx.shadowBlur = 30;
+    ctx.fillText(hybridScoreValue.toString(), centerX, centerY + 20);
+    ctx.shadowBlur = 0;
+    
+    // Score label
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.font = '28px Inter, sans-serif';
+    ctx.fillText('SCORE', centerX, centerY + 65);
+    
+    // Breakdown scores in corners with neon accents
+    const breakdownScores = [
+      { label: 'STR', value: Math.round(parseFloat(scoreData.strengthScore)), x: centerX - 120, y: centerY + 150 },
+      { label: 'SPD', value: Math.round(parseFloat(scoreData.speedScore)), x: centerX + 120, y: centerY + 150 },
+      { label: 'VO₂', value: Math.round(parseFloat(scoreData.vo2Score)), x: centerX - 120, y: centerY - 150 },
+      { label: 'END', value: Math.round(parseFloat(scoreData.enduranceScore)), x: centerX + 120, y: centerY - 150 }
+    ];
+    
+    breakdownScores.forEach(score => {
+      // Mini circle background
+      ctx.fillStyle = 'rgba(0, 255, 136, 0.15)';
+      ctx.beginPath();
+      ctx.arc(score.x, score.y, 45, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Circle border with glow
+      ctx.strokeStyle = '#00FF88';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = 'rgba(0, 255, 136, 0.6)';
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(score.x, score.y, 45, 0, 2 * Math.PI);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      
+      // Score value
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 28px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(score.value.toString(), score.x, score.y + 10);
+      
+      // Label
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.font = '14px Inter, sans-serif';
+      ctx.fillText(score.label, score.x, score.y - 60);
+    });
+    
+    // Ranking badge (if available)
+    if (leaderboardPosition && totalAthletes) {
+      const badgeX = canvas.width - 150;
+      const badgeY = contentY + 50;
+      
+      // Badge background with glow
+      ctx.fillStyle = 'rgba(0, 255, 136, 0.2)';
+      ctx.shadowColor = 'rgba(0, 255, 136, 0.6)';
+      ctx.shadowBlur = 15;
+      ctx.beginPath();
+      ctx.roundRect(badgeX - 70, badgeY - 25, 140, 50, 25);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      
+      // Badge border
+      ctx.strokeStyle = '#00FF88';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(badgeX - 70, badgeY - 25, 140, 50, 25);
+      ctx.stroke();
+      
+      // Ranking text
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 18px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`#${leaderboardPosition}`, badgeX, badgeY + 6);
+    }
+    
+    // Call to action with neon accent
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.font = 'bold 32px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('What\'s Your Score?', canvas.width / 2, contentY + 480);
+    
+    // Website with glow
+    ctx.fillStyle = '#00FF88';
+    ctx.font = 'bold 28px Inter, sans-serif';
+    ctx.shadowColor = 'rgba(0, 255, 136, 0.8)';
+    ctx.shadowBlur = 10;
+    ctx.fillText('HybridHouse.ai', canvas.width / 2, contentY + 520);
+    ctx.shadowBlur = 0;
+    
+    return canvas.toDataURL('image/png', 0.95);
+  }, [scoreData, hybridScoreValue, leaderboardPosition, totalAthletes]);
 
   // Handle share functionality (same as AthleteProfile)
   const handleShare = async () => {
