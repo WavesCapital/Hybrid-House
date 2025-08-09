@@ -251,7 +251,7 @@ const HybridScoreResults = () => {
     ctx.shadowBlur = 0;
     
     return canvas.toDataURL('image/png', 0.95);
-  }, [scoreData, hybridScoreValue, leaderboardPosition, totalAthletes, profileData]);
+  }, [scoreData, hybridScoreValue, leaderboardPosition, totalAthletes, profileData, userProfileData]);
 
   // Handle share functionality with punchy copy
   const handleShare = async () => {
