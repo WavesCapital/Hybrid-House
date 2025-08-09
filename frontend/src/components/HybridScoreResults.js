@@ -116,8 +116,20 @@ const HybridScoreResults = () => {
     const ctaY = 800;
     const websiteY = 860;
     
-    // Get display name from profile data
+    // Get display name from user_profiles table (userProfileData) linked by user_id
     const getDisplayName = () => {
+      // First try to get display_name from user_profiles table
+      if (userProfileData?.display_name && userProfileData.display_name !== 'N/A') {
+        return userProfileData.display_name;
+      }
+      // Fallback to constructing name from user_profiles table
+      if (userProfileData?.first_name && userProfileData?.last_name) {
+        return `${userProfileData.first_name} ${userProfileData.last_name}`;
+      }
+      if (userProfileData?.first_name) {
+        return userProfileData.first_name;
+      }
+      // Final fallback to profile_json if no user_profiles data available
       if (profileData?.display_name && profileData.display_name !== 'N/A') {
         return profileData.display_name;
       }
@@ -127,7 +139,7 @@ const HybridScoreResults = () => {
       if (profileData?.first_name) {
         return profileData.first_name;
       }
-      return 'HYBRID ATHLETE'; // Fallback
+      return 'HYBRID ATHLETE'; // Final fallback
     };
     
     const displayName = getDisplayName();
