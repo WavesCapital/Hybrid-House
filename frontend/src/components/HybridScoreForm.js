@@ -1452,12 +1452,51 @@ const HybridScoreForm = () => {
                     disabled={isSubmitting}
                     onClick={(e) => {
                       console.log('🔍 DEBUG - Calculate Hybrid Score button clicked!');
+                      console.log('🔍 DEBUG - Event target:', e.target);
+                      console.log('🔍 DEBUG - Event type:', e.type);
                       handleSubmit(e);
                     }}
                   >
                     {isSubmitting ? 'Calculating Score...' : 'Calculate Hybrid Score'}
                   </button>
                 )}
+                
+                {/* Debugging button - remove after fixing */}
+                <button
+                  type="button"
+                  className="border border-red-500 text-red-500 px-4 py-2 rounded ml-4"
+                  onClick={() => {
+                    console.log('🚨 EMERGENCY DEBUG BUTTON CLICKED');
+                    console.log('Current section:', currentSection);
+                    console.log('Sections length:', sections.length);
+                    console.log('User:', user);
+                    console.log('Session:', session);
+                    console.log('Form data:', formData);
+                    
+                    // Try to call webhook directly
+                    const testWebhook = async () => {
+                      try {
+                        console.log('🚨 DIRECT WEBHOOK TEST');
+                        const response = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            athleteProfile: { first_name: 'Test', last_name: 'User', schema_version: 'v1.0' },
+                            deliverable: 'score'
+                          })
+                        });
+                        console.log('🚨 Direct webhook response:', response.status);
+                        const data = await response.json();
+                        console.log('🚨 Direct webhook data:', data);
+                      } catch (error) {
+                        console.log('🚨 Direct webhook error:', error);
+                      }
+                    };
+                    testWebhook();
+                  }}
+                >
+                  DEBUG TEST
+                </button>
               </div>
             </form>
           </Card>
