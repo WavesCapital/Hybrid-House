@@ -188,10 +188,10 @@ const HybridScoreResults = () => {
     // Spectacular breakdown scores with neon accents
     const breakdownColors = ['#00FF88', '#00E0FF', '#FF88E0', '#FFE000'];
     const breakdownScores = [
-      { label: 'STR', value: Math.round(parseFloat(scoreData.strengthScore)), x: centerX - 160, y: centerY + 180 },
-      { label: 'SPD', value: Math.round(parseFloat(scoreData.speedScore)), x: centerX + 160, y: centerY + 180 },
-      { label: 'VO₂', value: Math.round(parseFloat(scoreData.vo2Score)), x: centerX - 160, y: centerY - 180 },
-      { label: 'END', value: Math.round(parseFloat(scoreData.enduranceScore)), x: centerX + 160, y: centerY - 180 }
+      { label: 'STR', value: Math.round(parseFloat(scoreData.strengthScore || 0)), x: centerX - 160, y: centerY + 180 },
+      { label: 'SPD', value: Math.round(parseFloat(scoreData.speedScore || 0)), x: centerX + 160, y: centerY + 180 },
+      { label: 'VO₂', value: Math.round(parseFloat(scoreData.vo2Score || 0)), x: centerX - 160, y: centerY - 180 },
+      { label: 'END', value: Math.round(parseFloat(scoreData.enduranceScore || scoreData.recoveryScore || 0)), x: centerX + 160, y: centerY - 180 }
     ];
     
     breakdownScores.forEach((score, index) => {
