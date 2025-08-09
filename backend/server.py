@@ -3253,7 +3253,7 @@ app.include_router(api_router)
 
 @app.on_event("startup")
 async def startup_event():
-    print("Starting up Hybrid House API with Supabase...")
+    print("Starting up Hybrid Lab API with Supabase...")
     
     # Test Supabase connection
     try:
