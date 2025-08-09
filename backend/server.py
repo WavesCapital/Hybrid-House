@@ -1307,9 +1307,9 @@ async def delete_athlete_profile(profile_id: str, user: dict = Depends(verify_jw
 
 @api_router.get("/athlete-profile/{profile_id}")
 async def get_athlete_profile(profile_id: str):
-    """Get athlete profile and score data by profile ID"""
+    """Get athlete profile and score data by profile ID, including user display name"""
     try:
-        # Get athlete profile (no user filtering)
+        # Get athlete profile with user_id
         profile_result = supabase.table('athlete_profiles').select('*').eq('id', profile_id).execute()
         
         if not profile_result.data:
@@ -1319,6 +1319,20 @@ async def get_athlete_profile(profile_id: str):
             )
         
         profile = profile_result.data[0]
+        user_id = profile.get('user_id')
+        
+        # Initialize user_profile as None
+        user_profile = None
+        
+        # If there's a user_id, fetch the user profile data
+        if user_id:
+            try:
+                user_result = supabase.table('user_profiles').select('*').eq('id', user_id).execute()
+                if user_result.data:
+                    user_profile = user_result.data[0]
+            except Exception as user_error:
+                print(f"Warning: Could not fetch user profile for user_id {user_id}: {user_error}")
+                # Continue without user profile data
         
         return {
             "profile_id": profile['id'],
@@ -1326,7 +1340,9 @@ async def get_athlete_profile(profile_id: str):
             "score_data": profile.get('score_data', None),
             "completed_at": profile.get('completed_at'),
             "created_at": profile.get('created_at'),
-            "updated_at": profile.get('updated_at')
+            "updated_at": profile.get('updated_at'),
+            "user_id": user_id,
+            "user_profile": user_profile  # This will include display_name from user_profiles table
         }
         
     except HTTPException:
