@@ -1021,17 +1021,36 @@ async def create_public_athlete_profile(profile_data: dict):
         
         # For public submissions, create a minimal user profile first
         user_id = str(uuid.uuid4())
+        
+        # Handle date of birth - only include if valid
+        dob = profile_json.get('dob')
+        dob_field = {}
+        if dob and dob.strip() and dob != '':
+            try:
+                # Try to parse the date to make sure it's valid
+                from datetime import datetime as dt
+                # Handle both MM/DD/YYYY and YYYY-MM-DD formats
+                if '/' in dob:
+                    parsed_date = dt.strptime(dob, '%m/%d/%Y')
+                    dob_field['date_of_birth'] = parsed_date.strftime('%Y-%m-%d')
+                else:
+                    parsed_date = dt.strptime(dob, '%Y-%m-%d')
+                    dob_field['date_of_birth'] = dob
+            except:
+                # Skip invalid dates
+                print(f"⚠️ Invalid date format for dob: {dob}, skipping")
+        
         minimal_user_profile = {
             "user_id": user_id,
             "name": f"{profile_json.get('first_name', '')} {profile_json.get('last_name', '')}".strip() or "Anonymous User",
             "display_name": f"{profile_json.get('first_name', '')} {profile_json.get('last_name', '')}".strip() or "Anonymous User",
             "email": profile_json.get('email', f"temp.user.{user_id[:8]}@hybrid-score.com"),
             "gender": profile_json.get('sex'),
-            "date_of_birth": profile_json.get('dob'),
             "country": profile_json.get('country'),
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat(),
-            "privacy_level": "public"
+            "privacy_level": "public",
+            **dob_field  # Only include date_of_birth if it's valid
         }
         
         # Create user profile first
