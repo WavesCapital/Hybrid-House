@@ -1498,31 +1498,77 @@ const HybridScoreForm = () => {
                   <button
                     type="button"
                     className="neon-button text-sm sm:text-base px-4 sm:px-6 py-3 min-h-[44px] order-1 sm:order-2"
-                    onClick={() => {
-                      console.log('🔥 SIMPLE BUTTON TEST - CLICKED!');
-                      alert('Button clicked! Check console for webhook test.');
+                    disabled={isSubmitting}
+                    onClick={async () => {
+                      console.log('🔥 CALCULATE BUTTON CLICKED');
+                      setIsSubmitting(true);
                       
-                      // Test webhook call
-                      fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          athleteProfile: { first_name: 'Test', schema_version: 'v1.0' },
-                          deliverable: 'score'
-                        })
-                      }).then(response => {
-                        console.log('🔥 WEBHOOK TEST RESULT:', response.status);
-                        return response.json();
-                      }).then(data => {
-                        console.log('🔥 WEBHOOK DATA:', data);
-                        alert(`Webhook success! Hybrid Score: ${data[0]?.hybridScore || 'N/A'}`);
-                      }).catch(error => {
-                        console.error('🔥 WEBHOOK ERROR:', error);
-                        alert('Webhook failed: ' + error.message);
-                      });
+                      try {
+                        // Create profile data from form
+                        const profileData = {
+                          first_name: formData.first_name || 'Test',
+                          last_name: formData.last_name || 'User',
+                          email: `${formData.first_name || 'test'}.${formData.last_name || 'user'}@temp.com`,
+                          sex: formData.sex || 'male',
+                          pb_bench_1rm: parseFloat(formData.pb_bench_1rm) || null,
+                          pb_squat_1rm: parseFloat(formData.pb_squat_1rm) || null,
+                          pb_deadlift_1rm: parseFloat(formData.pb_deadlift_1rm) || null,
+                          schema_version: 'v1.0',
+                          interview_type: 'form'
+                        };
+                        
+                        console.log('🔥 CALLING WEBHOOK...');
+                        
+                        // Call webhook directly (proven to work)
+                        const response = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            athleteProfile: profileData,
+                            deliverable: 'score'
+                          })
+                        });
+                        
+                        console.log('🔥 WEBHOOK STATUS:', response.status);
+                        
+                        if (response.ok) {
+                          const data = await response.json();
+                          const scoreData = Array.isArray(data) ? data[0] : data;
+                          console.log('🔥 SCORE DATA:', scoreData);
+                          
+                          // Show success message
+                          toast({
+                            title: "Success! 🎉",
+                            description: `Hybrid Score calculated: ${scoreData.hybridScore || 'N/A'}`,
+                            duration: 5000,
+                          });
+                          
+                          // Create simple profile for results page
+                          const profileId = uuid();
+                          console.log('🔥 NAVIGATING TO:', `/hybrid-score/${profileId}`);
+                          
+                          // Store score data in session storage for results page
+                          sessionStorage.setItem('hybridScoreData', JSON.stringify(scoreData));
+                          
+                          // Navigate to results
+                          navigate(`/hybrid-score/${profileId}`);
+                        } else {
+                          throw new Error(`Webhook returned ${response.status}`);
+                        }
+                        
+                      } catch (error) {
+                        console.error('🔥 ERROR:', error);
+                        toast({
+                          title: "Error",
+                          description: "Failed to calculate score. Please try again.",
+                          variant: "destructive",
+                        });
+                      } finally {
+                        setIsSubmitting(false);
+                      }
                     }}
                   >
-                    Calculate Hybrid Score (TEST)
+                    {isSubmitting ? 'Calculating Score...' : 'Calculate Hybrid Score'}
                   </button>
                 )}
               </div>
