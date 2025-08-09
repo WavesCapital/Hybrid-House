@@ -2190,7 +2190,7 @@ async def start_interview(user: dict = Depends(verify_jwt)):
             # Fall back to a simple message if OpenAI fails
             fallback_message = {
                 "role": "assistant", 
-                "content": "Hi! I'm your Hybrid House Coach. I'll ask you a few quick questions to build your athlete profile. Let's start with the basics - what's your first name?",
+                "content": "Hi! I'm your Hybrid Lab Coach. I'll ask you a few quick questions to build your athlete profile. Let's start with the basics - what's your first name?",
                 "timestamp": datetime.utcnow().isoformat()
             }
             
