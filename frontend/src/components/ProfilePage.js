@@ -2534,7 +2534,7 @@ const ProfilePage = () => {
                           className={`
                             relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#08F0FF] focus:ring-offset-2
                             ${profiles[0].is_public 
-                              ? 'bg-gradient-to-r from-[#08F0FF] to-[#FF2DDE] shadow-[0_0_15px_#08F0FFAA]' 
+                              ? 'bg-gradient-to-r from-[#08F0FF] to-[#00FF88] shadow-[0_0_15px_#08F0FFAA]' 
                               : 'bg-gray-600 hover:bg-gray-500'
                             }
                             ${updatingPrivacy[profiles[0].id] ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
