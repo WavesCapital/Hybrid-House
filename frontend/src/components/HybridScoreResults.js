@@ -127,8 +127,8 @@ const HybridScoreResults = () => {
     // Main score circle - perfectly centered
     const mainRadius = 140;
     
-    // Clean outer ring
-    ctx.strokeStyle = 'rgba(0, 255, 136, 0.3)';
+    // Clean outer ring - also blue tint
+    ctx.strokeStyle = 'rgba(0, 224, 255, 0.3)'; // Changed to blue tint
     ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.arc(centerX, mainScoreY, mainRadius + 15, 0, 2 * Math.PI);
