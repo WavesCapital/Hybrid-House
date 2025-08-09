@@ -63,8 +63,8 @@ const HybridScoreResults = () => {
     ctx.fillStyle = bgGradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Add subtle grid pattern (much cleaner)
-    ctx.strokeStyle = 'rgba(0, 255, 136, 0.08)';
+    // Add subtle grid pattern
+    ctx.strokeStyle = 'rgba(0, 255, 136, 0.06)';
     ctx.lineWidth = 1;
     const gridSize = 60;
     for (let i = 0; i < canvas.width; i += gridSize) {
@@ -80,86 +80,89 @@ const HybridScoreResults = () => {
       ctx.stroke();
     }
     
-    // Add decorative corner circles (positioned properly)
+    // Add subtle decorative corner circles (minimal and out of the way)
     const decorCircles = [
-      { x: 150, y: 150, r: 80, alpha: 0.1, color: [0, 255, 136] },
-      { x: canvas.width - 150, y: 150, r: 60, alpha: 0.08, color: [0, 240, 255] },
-      { x: 150, y: canvas.height - 150, r: 100, alpha: 0.1, color: [136, 255, 0] },
-      { x: canvas.width - 150, y: canvas.height - 150, r: 70, alpha: 0.08, color: [255, 136, 0] }
+      { x: 100, y: 100, r: 50, alpha: 0.06, color: [0, 255, 136] },
+      { x: canvas.width - 100, y: 100, r: 40, alpha: 0.05, color: [0, 240, 255] },
+      { x: 100, y: canvas.height - 100, r: 60, alpha: 0.06, color: [136, 255, 0] },
+      { x: canvas.width - 100, y: canvas.height - 100, r: 45, alpha: 0.05, color: [255, 136, 0] }
     ];
     
     decorCircles.forEach(circle => {
-      // Single clean glow layer
-      const glowGradient = ctx.createRadialGradient(circle.x, circle.y, 0, circle.x, circle.y, circle.r * 1.5);
+      // Very subtle glow
+      const glowGradient = ctx.createRadialGradient(circle.x, circle.y, 0, circle.x, circle.y, circle.r * 1.2);
       const [r, g, b] = circle.color;
       glowGradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${circle.alpha})`);
       glowGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = glowGradient;
       ctx.beginPath();
-      ctx.arc(circle.x, circle.y, circle.r * 1.5, 0, 2 * Math.PI);
+      ctx.arc(circle.x, circle.y, circle.r * 1.2, 0, 2 * Math.PI);
       ctx.fill();
       
-      // Clean circle border
-      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${circle.alpha * 2})`;
-      ctx.lineWidth = 2;
+      // Very subtle circle border
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${circle.alpha * 1.5})`;
+      ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
       ctx.stroke();
     });
     
-    // Main content area - well positioned
+    // Perfect spacing and positioning
     const centerX = canvas.width / 2;
-    const topSection = 200;
+    const titleY = 160;
+    const mainScoreY = 400;
+    const breakdownY = 650;
+    const ctaY = 800;
+    const websiteY = 860;
     
-    // Title with clean glow
+    // Title with perfect positioning
     ctx.textAlign = 'center';
-    ctx.font = 'bold 56px Inter, Arial, sans-serif';
+    ctx.font = 'bold 52px Inter, Arial, sans-serif';
     ctx.fillStyle = '#FFFFFF';
     ctx.shadowColor = 'rgba(0, 255, 136, 0.6)';
     ctx.shadowBlur = 20;
-    ctx.fillText('HYBRID ATHLETE', centerX, topSection);
+    ctx.fillText('HYBRID ATHLETE', centerX, titleY);
     ctx.shadowBlur = 0;
     
-    // Main score circle - centered and clean
-    const mainCenterY = 500;
-    const mainRadius = 150;
+    // Main score circle - perfectly centered
+    const mainRadius = 140;
     
     // Clean outer ring
-    ctx.strokeStyle = 'rgba(0, 255, 136, 0.4)';
-    ctx.lineWidth = 6;
+    ctx.strokeStyle = 'rgba(0, 255, 136, 0.3)';
+    ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(centerX, mainCenterY, mainRadius + 20, 0, 2 * Math.PI);
+    ctx.arc(centerX, mainScoreY, mainRadius + 15, 0, 2 * Math.PI);
     ctx.stroke();
     
     // Progress ring
     const progress = (hybridScoreValue / 100) * 2 * Math.PI;
     ctx.strokeStyle = '#00FF88';
-    ctx.lineWidth = 12;
+    ctx.lineWidth = 10;
     ctx.lineCap = 'round';
     ctx.shadowColor = 'rgba(0, 255, 136, 0.8)';
-    ctx.shadowBlur = 25;
+    ctx.shadowBlur = 20;
     ctx.beginPath();
-    ctx.arc(centerX, mainCenterY, mainRadius, -Math.PI/2, -Math.PI/2 + progress);
+    ctx.arc(centerX, mainScoreY, mainRadius, -Math.PI/2, -Math.PI/2 + progress);
     ctx.stroke();
     ctx.shadowBlur = 0;
     
     // Main score number
     ctx.fillStyle = '#00FF88';
-    ctx.font = 'bold 120px Inter, Arial, sans-serif';
+    ctx.font = 'bold 110px Inter, Arial, sans-serif';
     ctx.shadowColor = 'rgba(0, 255, 136, 0.8)';
-    ctx.shadowBlur = 30;
-    ctx.fillText(hybridScoreValue.toString(), centerX, mainCenterY + 20);
+    ctx.shadowBlur = 25;
+    ctx.fillText(hybridScoreValue.toString(), centerX, mainScoreY + 15);
     ctx.shadowBlur = 0;
     
     // Score label
     ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.font = 'bold 28px Inter, Arial, sans-serif';
-    ctx.fillText('HYBRID SCORE', centerX, mainCenterY + 70);
+    ctx.font = 'bold 24px Inter, Arial, sans-serif';
+    ctx.fillText('HYBRID SCORE', centerX, mainScoreY + 55);
     
-    // Breakdown scores - organized in a clean grid
-    const breakdownY = 720;
-    const spacing = 200;
-    const startX = centerX - (1.5 * spacing);
+    // Breakdown scores - perfectly spaced in a clean row
+    const breakdownSpacing = 180; // Increased spacing for better layout
+    const totalWidth = 3 * breakdownSpacing; // Width for 4 items with 3 gaps
+    const startX = centerX - (totalWidth / 2);
     
     const breakdownData = [
       { label: 'STR', value: Math.round(parseFloat(scoreData.strengthScore || 0)), color: '#00FF88' },
@@ -169,21 +172,21 @@ const HybridScoreResults = () => {
     ];
     
     breakdownData.forEach((item, index) => {
-      const x = startX + (index * spacing);
+      const x = startX + (index * breakdownSpacing);
       const y = breakdownY;
-      const radius = 45;
+      const radius = 40;
       
       // Clean circle background
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
       ctx.beginPath();
       ctx.arc(x, y, radius, 0, 2 * Math.PI);
       ctx.fill();
       
       // Circle border
       ctx.strokeStyle = item.color;
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 3;
       ctx.shadowColor = item.color;
-      ctx.shadowBlur = 15;
+      ctx.shadowBlur = 12;
       ctx.beginPath();
       ctx.arc(x, y, radius, 0, 2 * Math.PI);
       ctx.stroke();
@@ -191,27 +194,27 @@ const HybridScoreResults = () => {
       
       // Value
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 28px Inter, Arial, sans-serif';
+      ctx.font = 'bold 24px Inter, Arial, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(item.value.toString(), x, y + 10);
+      ctx.fillText(item.value.toString(), x, y + 8);
       
       // Label
       ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-      ctx.font = 'bold 16px Inter, Arial, sans-serif';
-      ctx.fillText(item.label, x, y - 65);
+      ctx.font = 'bold 14px Inter, Arial, sans-serif';
+      ctx.fillText(item.label, x, y - 55);
     });
     
     // Ranking badge (if available) - positioned cleanly
     if (leaderboardPosition && totalAthletes) {
-      const badgeX = centerX + 200;
-      const badgeY = topSection + 50;
+      const badgeX = centerX + 220;
+      const badgeY = titleY;
       
       // Badge circle
       ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
       ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';
-      ctx.shadowBlur = 20;
+      ctx.shadowBlur = 15;
       ctx.beginPath();
-      ctx.arc(badgeX, badgeY, 40, 0, 2 * Math.PI);
+      ctx.arc(badgeX, badgeY, 35, 0, 2 * Math.PI);
       ctx.fill();
       ctx.shadowBlur = 0;
       
@@ -219,28 +222,28 @@ const HybridScoreResults = () => {
       ctx.strokeStyle = '#FFD700';
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.arc(badgeX, badgeY, 40, 0, 2 * Math.PI);
+      ctx.arc(badgeX, badgeY, 35, 0, 2 * Math.PI);
       ctx.stroke();
       
       // Ranking text
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 18px Inter, Arial, sans-serif';
+      ctx.font = 'bold 16px Inter, Arial, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(`#${leaderboardPosition}`, badgeX, badgeY + 6);
+      ctx.fillText(`#${leaderboardPosition}`, badgeX, badgeY + 5);
     }
     
-    // Call to action - clean and centered
+    // Call to action - perfectly spaced
     ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-    ctx.font = 'bold 36px Inter, Arial, sans-serif';
+    ctx.font = 'bold 32px Inter, Arial, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('What\'s Your Score?', centerX, 880);
+    ctx.fillText('What\'s Your Score?', centerX, ctaY);
     
     // Website - clean with subtle glow
     ctx.fillStyle = '#00FF88';
-    ctx.font = 'bold 32px Inter, Arial, sans-serif';
+    ctx.font = 'bold 28px Inter, Arial, sans-serif';
     ctx.shadowColor = 'rgba(0, 255, 136, 0.6)';
-    ctx.shadowBlur = 15;
-    ctx.fillText('HybridHouse.ai', centerX, 930);
+    ctx.shadowBlur = 12;
+    ctx.fillText('HybridHouse.ai', centerX, websiteY);
     ctx.shadowBlur = 0;
     
     return canvas.toDataURL('image/png', 0.95);
