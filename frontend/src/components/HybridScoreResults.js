@@ -17,6 +17,7 @@ const HybridScoreResults = () => {
   const { profileId } = useParams();
   const [scoreData, setScoreData] = useState(null);
   const [profileData, setProfileData] = useState(null);
+  const [userProfileData, setUserProfileData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [animatedScores, setAnimatedScores] = useState({});
   const [circleProgress, setCircleProgress] = useState(0);
