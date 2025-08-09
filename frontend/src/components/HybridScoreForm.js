@@ -1581,9 +1581,20 @@ const HybridScoreForm = () => {
                         console.log('🔥 STEP 3: Storing score data in database...');
                         
                         try {
-                          await axios.post(`${BACKEND_URL}/api/athlete-profile/${profileId}/score`, scoreData, {
-                            headers: { 'Content-Type': 'application/json' }
-                          });
+                          if (user && session) {
+                            // User authenticated - include auth header
+                            await axios.post(`${BACKEND_URL}/api/athlete-profile/${profileId}/score`, scoreData, {
+                              headers: {
+                                'Authorization': `Bearer ${session.access_token}`,
+                                'Content-Type': 'application/json'
+                              }
+                            });
+                          } else {
+                            // User not authenticated - public submission
+                            await axios.post(`${BACKEND_URL}/api/athlete-profile/${profileId}/score`, scoreData, {
+                              headers: { 'Content-Type': 'application/json' }
+                            });
+                          }
                           console.log('🔥 STEP 3 SUCCESS: Score data stored in database');
                         } catch (scoreError) {
                           console.warn('🔥 STEP 3 WARNING: Could not store score in database:', scoreError.message);
