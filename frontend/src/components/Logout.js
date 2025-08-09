@@ -45,7 +45,7 @@ const Logout = () => {
           Signing You Out...
         </h2>
         <p className="mb-8 leading-relaxed" style={{ color: 'var(--muted)' }}>
-          Thanks for using Hybrid House! You're being signed out safely.
+          Thanks for using Hybrid Lab! You're being signed out safely.
         </p>
       </div>
     </div>
