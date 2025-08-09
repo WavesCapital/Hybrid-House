@@ -232,7 +232,7 @@ class PublicProfileTester:
         
         print("Testing the specific issue reported:")
         print(f"- User ID: {target_user_id}")
-        print("- URL: https://cb5889f7-0baa-4f21-b0c5-d9b5a5d1e3eb.preview.emergentagent.com/athlete/ff6827a2-2b0b-4210-8bc6-e02cc8487752")
+        print("- URL: https://43351878-ed47-48d5-864d-e4e710c99b70.preview.emergentagent.com/athlete/ff6827a2-2b0b-4210-8bc6-e02cc8487752")
         print("- Issue: Returns 'Profile not found'")
         print("=" * 70)
         
