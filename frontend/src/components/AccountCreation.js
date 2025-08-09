@@ -70,7 +70,7 @@ const AccountCreation = () => {
 
       toast({
         title: "Account Created Successfully! 🎉",
-        description: "Welcome to Hybrid House! Now let's collect your data.",
+        description: "Welcome to Hybrid Lab! Now let's collect your data.",
         duration: 3000,
       });
 
