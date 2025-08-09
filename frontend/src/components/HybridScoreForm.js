@@ -1646,17 +1646,17 @@ const HybridScoreForm = () => {
   );
 };
 
-// Beautiful Calculation Modal Component
+// Badass Neon Calculation Modal Component
 const CalculationModal = ({ isVisible }) => {
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   
   const steps = [
-    { text: "Analyzing your performance data...", duration: 2000 },
-    { text: "Calculating strength metrics...", duration: 2000 },
-    { text: "Evaluating endurance capabilities...", duration: 2000 },
-    { text: "Processing speed and power scores...", duration: 2000 },
-    { text: "Generating your personalized hybrid score...", duration: 2000 }
+    { text: "ANALYZING PERFORMANCE DATA", duration: 2000 },
+    { text: "CALCULATING STRENGTH MATRIX", duration: 2000 },
+    { text: "EVALUATING ENDURANCE METRICS", duration: 2000 },
+    { text: "PROCESSING POWER ALGORITHMS", duration: 2000 },
+    { text: "FINALIZING HYBRID SCORE", duration: 2000 }
   ];
 
   useEffect(() => {
@@ -1675,7 +1675,7 @@ const CalculationModal = ({ isVisible }) => {
         }
         return prev + 1;
       });
-    }, 100); // 10 seconds total (100 steps * 100ms)
+    }, 100); // 10 seconds total
 
     // Step text animation
     const stepInterval = setInterval(() => {
@@ -1686,7 +1686,7 @@ const CalculationModal = ({ isVisible }) => {
         }
         return prev + 1;
       });
-    }, 2000); // Change every 2 seconds
+    }, 2000);
 
     return () => {
       clearInterval(progressInterval);
@@ -1697,67 +1697,120 @@ const CalculationModal = ({ isVisible }) => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 backdrop-blur-sm">
-      <div className="relative max-w-md w-full mx-4 p-8 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl shadow-2xl border border-slate-700">
-        {/* Glowing border effect */}
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20 blur-xl animate-pulse"></div>
-        
-        <div className="relative z-10">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
-              <div className="text-2xl font-bold text-white">🏆</div>
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-2">
-              Calculating Your Hybrid Score
-            </h2>
-            <p className="text-slate-300 text-sm">
-              Our advanced algorithm is analyzing your athletic profile
-            </p>
-          </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 backdrop-blur-md">
+      {/* Animated background grid */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="w-full h-full" style={{
+          backgroundImage: `
+            linear-gradient(rgba(8, 240, 255, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(8, 240, 255, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px',
+          animation: 'grid-move 20s linear infinite'
+        }}></div>
+      </div>
 
-          {/* Progress Bar Container */}
-          <div className="mb-6">
-            <div className="relative w-full h-3 bg-slate-700 rounded-full overflow-hidden">
-              {/* Background glow */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-full blur-sm"></div>
+      <div className="relative max-w-lg w-full mx-4">
+        {/* Main container with neon border */}
+        <div className="relative bg-black border-2 border-cyan-400 rounded-lg p-8 shadow-2xl">
+          {/* Glowing neon border effect */}
+          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-cyan-400/20 to-blue-500/20 blur-xl animate-pulse"></div>
+          <div className="absolute inset-0 rounded-lg border-2 border-cyan-400/50 animate-pulse"></div>
+          
+          <div className="relative z-10">
+            {/* Header with neon styling */}
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-white mb-2 tracking-wider" style={{
+                textShadow: '0 0 10px rgba(8, 240, 255, 0.5), 0 0 20px rgba(8, 240, 255, 0.3)',
+                fontFamily: 'monospace'
+              }}>
+                CALCULATING
+              </h1>
+              <h2 className="text-2xl font-bold text-cyan-400 tracking-widest" style={{
+                textShadow: '0 0 10px rgba(8, 240, 255, 0.8)',
+                fontFamily: 'monospace'
+              }}>
+                HYBRID SCORE
+              </h2>
+            </div>
+
+            {/* Neon progress bar */}
+            <div className="mb-8">
+              <div className="relative w-full h-4 bg-gray-900 border border-cyan-400/30 rounded-sm overflow-hidden">
+                {/* Progress fill with neon effect */}
+                <div 
+                  className="h-full bg-gradient-to-r from-cyan-400 to-blue-400 relative transition-all duration-100 ease-out"
+                  style={{ 
+                    width: `${progress}%`,
+                    boxShadow: '0 0 20px rgba(8, 240, 255, 0.8), inset 0 0 20px rgba(8, 240, 255, 0.2)'
+                  }}
+                >
+                  {/* Animated scanner line */}
+                  <div className="absolute right-0 top-0 w-1 h-full bg-white shadow-lg animate-pulse"></div>
+                  {/* Moving neon effect */}
+                  <div 
+                    className="absolute inset-0 opacity-50"
+                    style={{
+                      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+                      animation: 'scan 2s linear infinite'
+                    }}
+                  ></div>
+                </div>
+              </div>
               
-              {/* Progress fill */}
-              <div 
-                className="relative h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-100 ease-out shadow-lg"
-                style={{ 
-                  width: `${progress}%`,
-                  boxShadow: '0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(34, 211, 238, 0.3)'
-                }}
-              >
-                {/* Moving shimmer effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse rounded-full"></div>
+              {/* Progress percentage with neon text */}
+              <div className="flex justify-between items-center mt-3">
+                <span className="text-cyan-400 font-mono text-sm tracking-widest">PROGRESS</span>
+                <span className="text-white font-mono text-lg font-bold" style={{
+                  textShadow: '0 0 10px rgba(8, 240, 255, 0.5)'
+                }}>
+                  {progress}%
+                </span>
               </div>
             </div>
-            
-            {/* Progress percentage */}
-            <div className="text-center mt-3">
-              <span className="text-white font-semibold text-lg">{progress}%</span>
-            </div>
-          </div>
 
-          {/* Current Step */}
-          <div className="text-center">
-            <div className="h-12 flex items-center justify-center">
-              <p className="text-slate-300 text-sm animate-pulse">
+            {/* Current step with terminal styling */}
+            <div className="bg-gray-900 border border-cyan-400/30 rounded p-4 mb-6">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-ping"></div>
+                <span className="text-cyan-400 font-mono text-xs tracking-widest">STATUS</span>
+              </div>
+              <p className="text-white font-mono text-sm mt-2 tracking-wide" style={{
+                textShadow: '0 0 5px rgba(255, 255, 255, 0.3)'
+              }}>
                 {steps[currentStep]?.text}
               </p>
             </div>
-          </div>
 
-          {/* Loading dots */}
-          <div className="flex justify-center space-x-2 mt-4">
-            <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-            <div className="w-2 h-2 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-            <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            {/* Terminal-style loading indicators */}
+            <div className="flex justify-center space-x-1">
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-1 bg-cyan-400 rounded-full animate-pulse"
+                  style={{ 
+                    height: `${Math.random() * 20 + 10}px`,
+                    animationDelay: `${i * 0.1}s`,
+                    boxShadow: '0 0 5px rgba(8, 240, 255, 0.8)'
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Add custom animations */}
+      <style jsx>{`
+        @keyframes grid-move {
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(50px, 50px); }
+        }
+        @keyframes scan {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+      `}</style>
     </div>
   );
 };
