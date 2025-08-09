@@ -202,13 +202,25 @@ const HybridScoreResults = () => {
     if (leaderboardPosition && totalAthletes) {
       const badgeX = canvas.width - 150;
       const badgeY = contentY + 50;
+      const badgeWidth = 140;
+      const badgeHeight = 50;
+      const radius = 25;
       
       // Badge background with glow
       ctx.fillStyle = 'rgba(0, 255, 136, 0.2)';
       ctx.shadowColor = 'rgba(0, 255, 136, 0.6)';
       ctx.shadowBlur = 15;
       ctx.beginPath();
-      ctx.roundRect(badgeX - 70, badgeY - 25, 140, 50, 25);
+      ctx.moveTo(badgeX - badgeWidth/2 + radius, badgeY - badgeHeight/2);
+      ctx.lineTo(badgeX + badgeWidth/2 - radius, badgeY - badgeHeight/2);
+      ctx.quadraticCurveTo(badgeX + badgeWidth/2, badgeY - badgeHeight/2, badgeX + badgeWidth/2, badgeY - badgeHeight/2 + radius);
+      ctx.lineTo(badgeX + badgeWidth/2, badgeY + badgeHeight/2 - radius);
+      ctx.quadraticCurveTo(badgeX + badgeWidth/2, badgeY + badgeHeight/2, badgeX + badgeWidth/2 - radius, badgeY + badgeHeight/2);
+      ctx.lineTo(badgeX - badgeWidth/2 + radius, badgeY + badgeHeight/2);
+      ctx.quadraticCurveTo(badgeX - badgeWidth/2, badgeY + badgeHeight/2, badgeX - badgeWidth/2, badgeY + badgeHeight/2 - radius);
+      ctx.lineTo(badgeX - badgeWidth/2, badgeY - badgeHeight/2 + radius);
+      ctx.quadraticCurveTo(badgeX - badgeWidth/2, badgeY - badgeHeight/2, badgeX - badgeWidth/2 + radius, badgeY - badgeHeight/2);
+      ctx.closePath();
       ctx.fill();
       ctx.shadowBlur = 0;
       
@@ -216,7 +228,16 @@ const HybridScoreResults = () => {
       ctx.strokeStyle = '#00FF88';
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.roundRect(badgeX - 70, badgeY - 25, 140, 50, 25);
+      ctx.moveTo(badgeX - badgeWidth/2 + radius, badgeY - badgeHeight/2);
+      ctx.lineTo(badgeX + badgeWidth/2 - radius, badgeY - badgeHeight/2);
+      ctx.quadraticCurveTo(badgeX + badgeWidth/2, badgeY - badgeHeight/2, badgeX + badgeWidth/2, badgeY - badgeHeight/2 + radius);
+      ctx.lineTo(badgeX + badgeWidth/2, badgeY + badgeHeight/2 - radius);
+      ctx.quadraticCurveTo(badgeX + badgeWidth/2, badgeY + badgeHeight/2, badgeX + badgeWidth/2 - radius, badgeY + badgeHeight/2);
+      ctx.lineTo(badgeX - badgeWidth/2 + radius, badgeY + badgeHeight/2);
+      ctx.quadraticCurveTo(badgeX - badgeWidth/2, badgeY + badgeHeight/2, badgeX - badgeWidth/2, badgeY + badgeHeight/2 - radius);
+      ctx.lineTo(badgeX - badgeWidth/2, badgeY - badgeHeight/2 + radius);
+      ctx.quadraticCurveTo(badgeX - badgeWidth/2, badgeY - badgeHeight/2, badgeX - badgeWidth/2 + radius, badgeY - badgeHeight/2);
+      ctx.closePath();
       ctx.stroke();
       
       // Ranking text
