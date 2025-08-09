@@ -553,7 +553,7 @@ const AthleteProfile = () => {
           {!data && !loading && (
             <div className="text-center mb-12 px-4">
               <h1 className="text-6xl font-bold mb-6 neo-primary" style={{ lineHeight: '1.1' }}>
-                Hybrid House
+                Hybrid Lab
               </h1>
               <p className="text-xl neo-text-secondary mb-8 max-w-2xl mx-auto">
                 Get your hybrid athlete score and unlock your athletic potential
