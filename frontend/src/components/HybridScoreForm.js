@@ -1697,7 +1697,7 @@ const CalculationModal = ({ isVisible }) => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-95 backdrop-blur-md">
       {/* Animated background grid */}
       <div className="absolute inset-0 opacity-10">
         <div className="w-full h-full" style={{
@@ -1711,78 +1711,142 @@ const CalculationModal = ({ isVisible }) => {
       </div>
 
       <div className="relative max-w-lg w-full mx-4">
-        {/* Main container with neon border */}
-        <div className="relative bg-black border-2 border-cyan-400 rounded-lg p-8 shadow-2xl">
-          {/* Glowing neon border effect */}
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-cyan-400/20 to-blue-500/20 blur-xl animate-pulse"></div>
-          <div className="absolute inset-0 rounded-lg border-2 border-cyan-400/50 animate-pulse"></div>
+        {/* Main container with STABLE neon border */}
+        <div 
+          className="relative bg-black rounded-lg p-8 shadow-2xl"
+          style={{
+            border: '2px solid rgb(8, 240, 255)',
+            boxShadow: `
+              0 0 20px rgba(8, 240, 255, 0.5),
+              0 0 40px rgba(8, 240, 255, 0.3),
+              inset 0 0 20px rgba(8, 240, 255, 0.1)
+            `
+          }}
+        >
+          {/* STABLE background glow - no jumping */}
+          <div 
+            className="absolute inset-0 rounded-lg opacity-20"
+            style={{
+              background: 'linear-gradient(45deg, rgba(8, 240, 255, 0.1), rgba(59, 130, 246, 0.1))',
+              filter: 'blur(20px)'
+            }}
+          ></div>
           
           <div className="relative z-10">
-            {/* Header with neon styling */}
+            {/* Header with home page typography */}
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2 tracking-wider" style={{
-                textShadow: '0 0 10px rgba(8, 240, 255, 0.5), 0 0 20px rgba(8, 240, 255, 0.3)',
-                fontFamily: 'monospace'
-              }}>
+              <h1 
+                className="text-3xl lg:text-4xl font-extrabold text-white mb-2" 
+                style={{
+                  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                  textShadow: '0 0 20px rgba(8, 240, 255, 0.6)',
+                  letterSpacing: '0.05em'
+                }}
+              >
                 CALCULATING
               </h1>
-              <h2 className="text-2xl font-bold text-cyan-400 tracking-widest" style={{
-                textShadow: '0 0 10px rgba(8, 240, 255, 0.8)',
-                fontFamily: 'monospace'
-              }}>
+              <h2 
+                className="text-2xl lg:text-3xl font-bold mb-4"
+                style={{
+                  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                  background: 'linear-gradient(135deg, rgb(8, 240, 255) 0%, rgb(59, 130, 246) 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  textShadow: '0 0 30px rgba(8, 240, 255, 0.8)',
+                  letterSpacing: '0.1em'
+                }}
+              >
                 HYBRID SCORE
               </h2>
             </div>
 
             {/* Neon progress bar */}
             <div className="mb-8">
-              <div className="relative w-full h-4 bg-gray-900 border border-cyan-400/30 rounded-sm overflow-hidden">
+              <div 
+                className="relative w-full h-4 bg-gray-900 rounded-sm overflow-hidden"
+                style={{
+                  border: '1px solid rgba(8, 240, 255, 0.3)',
+                  boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.5)'
+                }}
+              >
                 {/* Progress fill with neon effect */}
                 <div 
-                  className="h-full bg-gradient-to-r from-cyan-400 to-blue-400 relative transition-all duration-100 ease-out"
+                  className="h-full relative transition-all duration-100 ease-out"
                   style={{ 
                     width: `${progress}%`,
-                    boxShadow: '0 0 20px rgba(8, 240, 255, 0.8), inset 0 0 20px rgba(8, 240, 255, 0.2)'
+                    background: 'linear-gradient(90deg, rgb(8, 240, 255), rgb(59, 130, 246))',
+                    boxShadow: '0 0 20px rgba(8, 240, 255, 0.8)'
                   }}
                 >
                   {/* Animated scanner line */}
-                  <div className="absolute right-0 top-0 w-1 h-full bg-white shadow-lg animate-pulse"></div>
+                  <div className="absolute right-0 top-0 w-1 h-full bg-white opacity-80"></div>
                   {/* Moving neon effect */}
                   <div 
-                    className="absolute inset-0 opacity-50"
+                    className="absolute inset-0 opacity-30"
                     style={{
-                      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+                      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)',
                       animation: 'scan 2s linear infinite'
                     }}
                   ></div>
                 </div>
               </div>
               
-              {/* Progress percentage with neon text */}
+              {/* Progress percentage with home page typography */}
               <div className="flex justify-between items-center mt-3">
-                <span className="text-cyan-400 font-mono text-sm tracking-widest">PROGRESS</span>
-                <span className="text-white font-mono text-lg font-bold" style={{
-                  textShadow: '0 0 10px rgba(8, 240, 255, 0.5)'
-                }}>
+                <span 
+                  className="text-cyan-400 text-sm font-semibold"
+                  style={{
+                    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                    letterSpacing: '0.1em'
+                  }}
+                >
+                  PROGRESS
+                </span>
+                <span 
+                  className="text-white text-lg font-bold"
+                  style={{
+                    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                    textShadow: '0 0 10px rgba(8, 240, 255, 0.5)'
+                  }}
+                >
                   {progress}%
                 </span>
               </div>
             </div>
 
-            {/* Current step with terminal styling */}
-            <div className="bg-gray-900 border border-cyan-400/30 rounded p-4 mb-6">
-              <div className="flex items-center space-x-2">
+            {/* Current step with stable styling */}
+            <div 
+              className="rounded p-4 mb-6"
+              style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                border: '1px solid rgba(8, 240, 255, 0.3)',
+                boxShadow: '0 0 15px rgba(8, 240, 255, 0.2)'
+              }}
+            >
+              <div className="flex items-center space-x-2 mb-2">
                 <div className="w-2 h-2 bg-cyan-400 rounded-full animate-ping"></div>
-                <span className="text-cyan-400 font-mono text-xs tracking-widest">STATUS</span>
+                <span 
+                  className="text-cyan-400 text-xs font-semibold"
+                  style={{
+                    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                    letterSpacing: '0.1em'
+                  }}
+                >
+                  STATUS
+                </span>
               </div>
-              <p className="text-white font-mono text-sm mt-2 tracking-wide" style={{
-                textShadow: '0 0 5px rgba(255, 255, 255, 0.3)'
-              }}>
+              <p 
+                className="text-white text-sm font-medium"
+                style={{
+                  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                  textShadow: '0 0 5px rgba(255, 255, 255, 0.3)'
+                }}
+              >
                 {steps[currentStep]?.text}
               </p>
             </div>
 
-            {/* Terminal-style loading indicators */}
+            {/* Audio visualizer bars */}
             <div className="flex justify-center space-x-1">
               {[...Array(8)].map((_, i) => (
                 <div
@@ -1790,7 +1854,7 @@ const CalculationModal = ({ isVisible }) => {
                   className="w-1 bg-cyan-400 rounded-full animate-pulse"
                   style={{ 
                     height: `${Math.random() * 20 + 10}px`,
-                    animationDelay: `${i * 0.1}s`,
+                    animationDelay: `${i * 0.15}s`,
                     boxShadow: '0 0 5px rgba(8, 240, 255, 0.8)'
                   }}
                 />
