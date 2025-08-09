@@ -253,7 +253,7 @@ const HybridScoreResults = () => {
     return canvas.toDataURL('image/png', 0.95);
   }, [scoreData, hybridScoreValue, leaderboardPosition, totalAthletes, profileData, userProfileData]);
 
-  // Handle share functionality with punchy copy
+  // Handle share functionality with proper image-first ordering
   const handleShare = async () => {
     try {
       const imageDataUrl = await generateShareImage();
@@ -270,11 +270,17 @@ Think you can beat this? Get scored at HybridHouse.ai 🚀`;
       
       // Check if native sharing is available
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'hybrid-score.png', { type: 'image/png' })] })) {
-        // Share only the image first to ensure it appears first
-        // The image itself contains all the text information
+        // Try sharing with a specific filename that includes metadata to encourage image-first ordering
+        const shareFile = new File([blob], 'hybrid-athlete-score.png', { 
+          type: 'image/png',
+          lastModified: Date.now()
+        });
+        
+        // Share with minimal text to ensure image precedence
         await navigator.share({
-          title: '🏆 My Hybrid Athlete Score',
-          files: [new File([blob], 'hybrid-score.png', { type: 'image/png' })]
+          files: [shareFile],
+          text: punchyShareText,
+          title: '🏆 My Hybrid Athlete Score'
         });
       } else {
         // Fallback: Show enhanced share options with image ABOVE text (proper order)
