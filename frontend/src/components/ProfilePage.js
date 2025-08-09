@@ -2820,7 +2820,7 @@ const ProfilePage = () => {
             
             {/* Privacy Explanation */}
             {profiles.length > 0 && (
-              <div className="mb-6 p-4 rounded-lg border border-[#08F0FF]/20 bg-gradient-to-r from-[#08F0FF]/5 to-[#FF2DDE]/5">
+              <div className="mb-6 p-4 rounded-lg border border-[#08F0FF]/20 bg-gradient-to-r from-[#08F0FF]/5 to-[#00FF88]/5">
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0 mt-1">
                     <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#08F0FF] to-[#FF2DDE] flex items-center justify-center">
