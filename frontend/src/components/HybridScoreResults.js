@@ -243,7 +243,7 @@ const HybridScoreResults = () => {
     return canvas.toDataURL('image/png', 0.95);
   }, [scoreData, hybridScoreValue, leaderboardPosition, totalAthletes]);
 
-  // Handle share functionality (same as AthleteProfile)
+  // Handle share functionality with punchy copy
   const handleShare = async () => {
     try {
       const imageDataUrl = await generateShareImage();
@@ -252,27 +252,31 @@ const HybridScoreResults = () => {
       const response = await fetch(imageDataUrl);
       const blob = await response.blob();
       
-      const shareText = `🏆 My Hybrid Athlete Score: ${hybridScoreValue}/100\n\nStrength: ${Math.round(parseFloat(scoreData.strengthScore))} | Speed: ${Math.round(parseFloat(scoreData.speedScore))} | VO₂: ${Math.round(parseFloat(scoreData.vo2Score))} | Endurance: ${Math.round(parseFloat(scoreData.enduranceScore))}\n\nGet your score at HybridHouse.ai`;
+      const punchyShareText = `💥 Hybrid Athlete Score: ${hybridScoreValue}/100
+
+🔥 STR ${Math.round(parseFloat(scoreData.strengthScore))} | SPD ${Math.round(parseFloat(scoreData.speedScore))} | VO₂ ${Math.round(parseFloat(scoreData.vo2Score))} | END ${Math.round(parseFloat(scoreData.enduranceScore))}
+
+Think you can beat this? Get scored at HybridHouse.ai 🚀`;
       
       // Check if native sharing is available
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'hybrid-score.png', { type: 'image/png' })] })) {
         await navigator.share({
-          title: 'My Hybrid Athlete Score',
-          text: shareText,
+          title: '🏆 My Hybrid Athlete Score',
+          text: punchyShareText,
           files: [new File([blob], 'hybrid-score.png', { type: 'image/png' })]
         });
       } else {
-        // Fallback: Show share options
-        showShareOptions(imageDataUrl, shareText);
+        // Fallback: Show enhanced share options
+        showShareOptions(imageDataUrl, punchyShareText);
       }
     } catch (error) {
       console.error('Error sharing:', error);
       // Fallback to simple text share
-      const shareText = `🏆 My Hybrid Athlete Score: ${hybridScoreValue}/100 - Get yours at HybridHouse.ai`;
+      const fallbackText = `💥 Just scored ${hybridScoreValue}/100 on the Hybrid Athlete test! Think you can beat it? HybridHouse.ai 🚀`;
       if (navigator.share) {
         navigator.share({
-          title: 'My Hybrid Athlete Score',
-          text: shareText
+          title: '🏆 My Hybrid Athlete Score',
+          text: fallbackText
         });
       }
     }
