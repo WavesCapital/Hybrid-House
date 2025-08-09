@@ -440,7 +440,7 @@ const Leaderboard = () => {
             textAlign: 'center'
           }}>
             <TrendingUp size={48} color="#00FF88" style={{ marginBottom: '16px' }} />
-            <p style={{ color: '#FF2DDE', marginBottom: '16px' }}>{error}</p>
+            <p style={{ color: '#00FF88', marginBottom: '16px' }}>{error}</p>
             <button
               onClick={fetchLeaderboard}
               style={{
