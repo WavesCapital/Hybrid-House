@@ -289,7 +289,7 @@ Think you can beat this? Get scored at HybridLab.ai 🚀`;
     } catch (error) {
       console.error('Error sharing:', error);
       // Fallback to simple text share
-      const fallbackText = `💥 Just scored ${hybridScoreValue}/100 on the Hybrid Athlete test! Think you can beat it? HybridHouse.ai 🚀`;
+      const fallbackText = `💥 Just scored ${hybridScoreValue}/100 on the Hybrid Athlete test! Think you can beat it? HybridLab.ai 🚀`;
       if (navigator.share) {
         navigator.share({
           title: '🏆 My Hybrid Athlete Score',
