@@ -134,22 +134,22 @@ const HybridScoreResults = () => {
     ctx.arc(centerX, mainScoreY, mainRadius + 15, 0, 2 * Math.PI);
     ctx.stroke();
     
-    // Progress ring
+    // Progress ring - now glowing blue
     const progress = (hybridScoreValue / 100) * 2 * Math.PI;
-    ctx.strokeStyle = '#00FF88';
+    ctx.strokeStyle = '#00E0FF'; // Changed from green to blue
     ctx.lineWidth = 10;
     ctx.lineCap = 'round';
-    ctx.shadowColor = 'rgba(0, 255, 136, 0.8)';
+    ctx.shadowColor = 'rgba(0, 224, 255, 0.8)'; // Blue glow
     ctx.shadowBlur = 20;
     ctx.beginPath();
     ctx.arc(centerX, mainScoreY, mainRadius, -Math.PI/2, -Math.PI/2 + progress);
     ctx.stroke();
     ctx.shadowBlur = 0;
     
-    // Main score number
-    ctx.fillStyle = '#00FF88';
+    // Main score number - now glowing blue
+    ctx.fillStyle = '#00E0FF'; // Changed from green to blue
     ctx.font = 'bold 110px Inter, Arial, sans-serif';
-    ctx.shadowColor = 'rgba(0, 255, 136, 0.8)';
+    ctx.shadowColor = 'rgba(0, 224, 255, 0.8)'; // Blue glow
     ctx.shadowBlur = 25;
     ctx.fillText(hybridScoreValue.toString(), centerX, mainScoreY + 15);
     ctx.shadowBlur = 0;
