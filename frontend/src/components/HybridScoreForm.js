@@ -650,6 +650,9 @@ const HybridScoreForm = () => {
 
   return (
     <>
+      {/* Beautiful Calculation Modal */}
+      <CalculationModal isVisible={isSubmitting} />
+      
       <SharedHeader 
         title="Hybrid Score Form"
       />
