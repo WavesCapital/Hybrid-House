@@ -283,15 +283,14 @@ const HybridScoreForm = () => {
       console.log('⚠️ Form submission blocked - not on final section');
       console.log('⚠️ Current section:', currentSection, 'Final section should be:', sections.length - 1);
       
-      // FOR DEBUG: Allow submission from any section temporarily
-      console.log('🚨 DEBUG MODE: Allowing submission from any section');
-      
+      // Navigate to final section automatically
+      setCurrentSection(sections.length - 1);
       toast({
-        title: "Debug Mode Active",
-        description: "Proceeding with submission from current section for debugging.",
+        title: "Please complete the form",
+        description: "Navigating to the final section to submit your assessment.",
         variant: "default",
       });
-      // Continue with submission instead of returning
+      return;
     }
 
     // Handle both authenticated and unauthenticated users
