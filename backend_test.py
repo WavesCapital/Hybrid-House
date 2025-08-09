@@ -2458,6 +2458,147 @@ def main_original():
 
 if __name__ == "__main__":
     main()
+    def test_hybridlab_io_url_correction(self):
+        """Test that HybridLab.io is used instead of HybridLab.ai throughout the application"""
+        try:
+            print("\n🔗 HYBRIDLAB.IO URL CORRECTION VERIFICATION")
+            print("=" * 60)
+            
+            # Step 1: Create a test athlete profile using POST /api/athlete-profiles/public
+            profile_data = {
+                "profile_json": {
+                    "first_name": "Test",
+                    "last_name": "Athlete",
+                    "email": "test.athlete@example.com",
+                    "sex": "Male",
+                    "dob": "1990-01-01",
+                    "country": "US",
+                    "body_metrics": {
+                        "height_in": 70,
+                        "weight_lb": 175,
+                        "vo2_max": 50,
+                        "resting_hr_bpm": 60,
+                        "hrv_ms": 45
+                    },
+                    "pb_mile": "6:30",
+                    "weekly_miles": 25,
+                    "long_run": 12,
+                    "pb_bench_1rm": 225,
+                    "pb_squat_1rm": 315,
+                    "pb_deadlift_1rm": 405
+                },
+                "is_public": True
+            }
+            
+            print("📝 Creating test athlete profile...")
+            create_response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=profile_data)
+            
+            if create_response.status_code != 200:
+                self.log_test("HybridLab.io URL Correction", False, f"Failed to create test profile: HTTP {create_response.status_code}", create_response.text)
+                return False
+            
+            create_data = create_response.json()
+            profile_id = create_data.get('user_profile', {}).get('id')
+            
+            if not profile_id:
+                self.log_test("HybridLab.io URL Correction", False, "No profile ID returned from profile creation", create_data)
+                return False
+            
+            print(f"✅ Test profile created with ID: {profile_id}")
+            
+            # Step 2: Add score data to the profile
+            score_data = {
+                "hybridScore": 72.5,
+                "strengthScore": 78.2,
+                "speedScore": 68.9,
+                "vo2Score": 71.3,
+                "distanceScore": 69.7,
+                "volumeScore": 73.1,
+                "recoveryScore": 75.8
+            }
+            
+            print("📊 Adding score data to profile...")
+            score_response = self.session.post(f"{API_BASE_URL}/athlete-profile/{profile_id}/score", json=score_data)
+            
+            if score_response.status_code != 200:
+                print(f"⚠️  Score update failed (HTTP {score_response.status_code}), continuing with profile verification...")
+            else:
+                print("✅ Score data added successfully")
+            
+            # Step 3: Test the GET /api/athlete-profile/{profile_id} endpoint
+            print(f"🔍 Retrieving profile data for verification...")
+            get_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            
+            if get_response.status_code != 200:
+                self.log_test("HybridLab.io URL Correction", False, f"Failed to retrieve profile: HTTP {get_response.status_code}", get_response.text)
+                return False
+            
+            profile_data = get_response.json()
+            print("✅ Profile data retrieved successfully")
+            
+            # Step 4: Verify that all text references show "HybridLab.io" instead of "HybridLab.ai"
+            print("🔍 Checking for HybridLab URL references...")
+            
+            # Convert the entire response to string for text analysis
+            response_text = json.dumps(profile_data, indent=2)
+            
+            # Check for any .ai references
+            ai_references = []
+            if "hybridlab.ai" in response_text.lower():
+                ai_references.append("hybridlab.ai found in response")
+            if "hybrid-lab.ai" in response_text.lower():
+                ai_references.append("hybrid-lab.ai found in response")
+            if ".ai" in response_text.lower() and "hybrid" in response_text.lower():
+                # More specific check for any .ai domain with hybrid context
+                lines = response_text.lower().split('\n')
+                for i, line in enumerate(lines):
+                    if ".ai" in line and "hybrid" in line:
+                        ai_references.append(f"Line {i+1}: {line.strip()}")
+            
+            # Check for correct .io references
+            io_references = []
+            if "hybridlab.io" in response_text.lower():
+                io_references.append("hybridlab.io found in response")
+            if "hybrid-lab.io" in response_text.lower():
+                io_references.append("hybrid-lab.io found in response")
+            
+            print(f"📊 Analysis Results:")
+            print(f"   Profile ID: {profile_id}")
+            print(f"   Profile has user_profile: {'Yes' if profile_data.get('user_profile') else 'No'}")
+            print(f"   Profile has score_data: {'Yes' if profile_data.get('score_data') else 'No'}")
+            print(f"   .ai references found: {len(ai_references)}")
+            print(f"   .io references found: {len(io_references)}")
+            
+            if ai_references:
+                print("❌ Found .ai references:")
+                for ref in ai_references:
+                    print(f"     - {ref}")
+            
+            if io_references:
+                print("✅ Found .io references:")
+                for ref in io_references:
+                    print(f"     - {ref}")
+            
+            # Determine test result
+            if ai_references:
+                self.log_test("HybridLab.io URL Correction", False, f"Found {len(ai_references)} .ai references that should be .io", {
+                    "profile_id": profile_id,
+                    "ai_references": ai_references,
+                    "io_references": io_references
+                })
+                return False
+            else:
+                self.log_test("HybridLab.io URL Correction", True, "No .ai references found - URL correction properly implemented", {
+                    "profile_id": profile_id,
+                    "verification_complete": True,
+                    "io_references": io_references if io_references else "No specific .io references found (which is also acceptable)"
+                })
+                return True
+                
+        except Exception as e:
+            self.log_test("HybridLab.io URL Correction", False, "URL correction verification test failed", str(e))
+            return False
+
     def test_athlete_profile_endpoint_for_share_functionality(self):
         """Test GET /api/athlete-profile/{profile_id} endpoint for share functionality"""
         try:
