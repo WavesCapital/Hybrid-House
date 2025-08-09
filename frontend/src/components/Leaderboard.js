@@ -435,7 +435,7 @@ const Leaderboard = () => {
             background: 'rgba(21, 22, 26, 0.9)',
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
-            border: '1px solid rgba(255, 45, 222, 0.2)',
+            border: '1px solid rgba(0, 255, 136, 0.2)',
             padding: '32px',
             textAlign: 'center'
           }}>
