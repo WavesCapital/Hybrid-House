@@ -728,11 +728,28 @@ Think you can beat this? Get scored at HybridHouse.ai 🚀`;
           config
         );
 
-        const { profile_json, score_data } = response.data;
+        const { profile_json, score_data, user_id } = response.data;
         
         if (score_data) {
           setScoreData(score_data);
           setProfileData(profile_json);
+          
+          // Fetch user profile data from user_profiles table if user_id exists
+          if (user_id) {
+            try {
+              const userProfileResponse = await axios.get(
+                `${BACKEND_URL}/api/public-profile/${user_id}`,
+                config
+              );
+              if (userProfileResponse.data && userProfileResponse.data.public_profile) {
+                setUserProfileData(userProfileResponse.data.public_profile);
+              }
+            } catch (userError) {
+              console.warn('Could not fetch user profile data:', userError);
+              // Continue without user profile data
+            }
+          }
+          
           // Animate scores
           setTimeout(() => animateScores(score_data), 500);
           // Fetch leaderboard position
@@ -760,7 +777,7 @@ Think you can beat this? Get scored at HybridHouse.ai 🚀`;
     };
 
     fetchScoreData();
-  }, [profileId, navigate, toast, fetchLeaderboardPosition]);
+  }, [profileId, navigate, toast, fetchLeaderboardPosition, session]);
 
   if (isLoading) {
     return (
