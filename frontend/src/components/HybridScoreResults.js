@@ -115,13 +115,29 @@ const HybridScoreResults = () => {
     const ctaY = 800;
     const websiteY = 860;
     
-    // Title with perfect positioning
+    // Get display name from profile data
+    const getDisplayName = () => {
+      if (profileData?.display_name && profileData.display_name !== 'N/A') {
+        return profileData.display_name;
+      }
+      if (profileData?.first_name && profileData?.last_name) {
+        return `${profileData.first_name} ${profileData.last_name}`;
+      }
+      if (profileData?.first_name) {
+        return profileData.first_name;
+      }
+      return 'HYBRID ATHLETE'; // Fallback
+    };
+    
+    const displayName = getDisplayName();
+    
+    // Title with display name
     ctx.textAlign = 'center';
     ctx.font = 'bold 52px Inter, Arial, sans-serif';
     ctx.fillStyle = '#FFFFFF';
     ctx.shadowColor = 'rgba(0, 255, 136, 0.6)';
     ctx.shadowBlur = 20;
-    ctx.fillText('HYBRID ATHLETE', centerX, titleY);
+    ctx.fillText(displayName.toUpperCase(), centerX, titleY);
     ctx.shadowBlur = 0;
     
     // Main score circle - perfectly centered
