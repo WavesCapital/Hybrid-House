@@ -499,14 +499,20 @@ const HybridInterviewFlow = () => {
           position: relative;
           z-index: 10;
           pointer-events: auto;
+          box-shadow: 
+            0 0 20px rgba(8, 240, 255, 0.4),
+            0 0 40px rgba(8, 240, 255, 0.2),
+            0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
         .neon-button:hover {
           transform: translateY(-2px);
           box-shadow: 
+            0 0 30px rgba(8, 240, 255, 0.8),
+            0 0 60px rgba(8, 240, 255, 0.4),
             0 8px 32px rgba(8, 240, 255, 0.6),
             0 4px 16px rgba(8, 240, 255, 0.4),
-            0 0 20px rgba(8, 240, 255, 0.3);
+            0 0 80px rgba(8, 240, 255, 0.2);
         }
 
         .neon-button:disabled {
