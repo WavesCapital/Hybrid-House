@@ -462,8 +462,14 @@ Think you can beat this? Get scored at HybridHouse.ai 🚀`;
           </h3>
         </div>
         
-        <div style="margin-bottom: 32px;">
-          <img src="${imageDataUrl}" style="max-width: 100%; height: auto; border-radius: 16px; border: 2px solid rgba(0, 255, 136, 0.3); box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);" alt="Hybrid Score Card" />
+        <!-- IMAGE APPEARS FIRST -->
+        <div style="margin-bottom: 32px; border-radius: 16px; overflow: hidden; border: 2px solid rgba(0, 255, 136, 0.3); box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);">
+          <img src="${imageDataUrl}" style="width: 100%; height: auto; display: block;" alt="Hybrid Score Card" />
+        </div>
+        
+        <!-- TEXT APPEARS BELOW IMAGE -->
+        <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+          <p style="color: #FFFFFF; font-family: Inter, sans-serif; font-size: 14px; line-height: 1.6; margin: 0; white-space: pre-line;">${shareText}</p>
         </div>
         
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px;">
