@@ -286,89 +286,109 @@ const HybridScoreForm = () => {
     // Handle both authenticated and unauthenticated users
     if (!user || !session) {
       console.log('⚠️ No authentication - proceeding with public submission');
-      // For unauthenticated users, we'll use the public endpoint
-      // Generate a temporary user email from form data for webhook submission
-      const tempEmail = `${formData.first_name?.toLowerCase() || 'user'}.${formData.last_name?.toLowerCase() || 'temp'}@temp-hybrid-score.com`;
+      setIsSubmitting(true);
       
-      toast({
-        title: "Processing your data! 🚀",
-        description: "Calculating your hybrid score...",
-        duration: 3000,
-      });
-
-      // Calculate height in inches
-      const heightInches = (parseInt(formData.height_ft) || 0) * 12 + (parseInt(formData.height_in) || 0);
-
-      // Structure the data for public submission
-      const profileData = {
-        first_name: (formData.first_name || '').substring(0, 20),
-        last_name: (formData.last_name || '').substring(0, 20),
-        email: tempEmail,
-        sex: formData.sex,
-        dob: formData.dob,
-        country: (formData.country || 'US').substring(0, 2),
-        wearables: formData.wearables,
-        body_metrics: {
-          weight_lb: parseFloat(formData.weight_lb) || null,
-          height_in: heightInches || null,
-          vo2max: parseFloat(formData.vo2max) || null,
-          resting_hr_bpm: parseInt(formData.resting_hr_bpm) || null,
-          hrv_ms: parseInt(formData.hrv_ms) || null
-        },
-        pb_mile: formData.pb_mile || null,
-        pb_5k: formData.pb_5k || null,
-        pb_10k: formData.pb_10k || null,
-        pb_half_marathon: formData.pb_half_marathon || null,
-        weekly_miles: parseFloat(formData.weekly_miles) || null,
-        long_run: parseFloat(formData.long_run) || null,
-        pb_bench_1rm: parseFloat(formData.pb_bench_1rm) || null,
-        pb_squat_1rm: parseFloat(formData.pb_squat_1rm) || null,
-        pb_deadlift_1rm: parseFloat(formData.pb_deadlift_1rm) || null,
-        schema_version: "v1.0",
-        interview_type: "form"
-      };
-
-      console.log('🔍 DEBUGGING - Creating public athlete profile...');
-      console.log('🔍 DEBUGGING - Profile data:', profileData);
-
-      // Create athlete profile using public endpoint
-      const response = await axios.post(
-        `${BACKEND_URL}/api/athlete-profiles/public`,
-        {
-          profile_json: profileData,
-          is_public: true
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      console.log('🔍 DEBUGGING - Public profile response:', response);
-      console.log('🔍 DEBUGGING - Response data:', response.data);
-
-      const profileResult = response.data;
-      const profileId = profileResult.user_profile?.id;
-
-      console.log('🔍 DEBUGGING - Profile ID extracted:', profileId);
-
-      if (profileId) {
-        console.log('✅ DEBUGGING - Public profile created successfully, triggering webhook...');
+      try {
+        // For unauthenticated users, we'll use the public endpoint
+        // Generate a temporary user email from form data for webhook submission
+        const tempEmail = `${formData.first_name?.toLowerCase() || 'user'}.${formData.last_name?.toLowerCase() || 'temp'}@temp-hybrid-score.com`;
+        
         toast({
-          title: "Profile Created! 🚀",
+          title: "Processing your data! 🚀",
           description: "Calculating your hybrid score...",
           duration: 3000,
         });
 
-        // Trigger webhook for score calculation
-        console.log('🔍 DEBUGGING - About to call triggerWebhookForScore...');
-        await triggerWebhookForScore(profileData, profileId, null); // No session for public submission
-        console.log('✅ DEBUGGING - triggerWebhookForScore completed');
-      } else {
-        console.error('❌ DEBUGGING - No profile ID returned from public API');
-        console.error('❌ DEBUGGING - Full response data:', profileResult);
-        throw new Error('No profile ID returned from public submission');
+        // Calculate height in inches
+        const heightInches = (parseInt(formData.height_ft) || 0) * 12 + (parseInt(formData.height_in) || 0);
+
+        // Structure the data for public submission
+        const profileData = {
+          first_name: (formData.first_name || '').substring(0, 20),
+          last_name: (formData.last_name || '').substring(0, 20),
+          email: tempEmail,
+          sex: formData.sex,
+          dob: formData.dob,
+          country: (formData.country || 'US').substring(0, 2),
+          wearables: formData.wearables,
+          body_metrics: {
+            weight_lb: parseFloat(formData.weight_lb) || null,
+            height_in: heightInches || null,
+            vo2max: parseFloat(formData.vo2max) || null,
+            resting_hr_bpm: parseInt(formData.resting_hr_bpm) || null,
+            hrv_ms: parseInt(formData.hrv_ms) || null
+          },
+          pb_mile: formData.pb_mile || null,
+          pb_5k: formData.pb_5k || null,
+          pb_10k: formData.pb_10k || null,
+          pb_half_marathon: formData.pb_half_marathon || null,
+          weekly_miles: parseFloat(formData.weekly_miles) || null,
+          long_run: parseFloat(formData.long_run) || null,
+          pb_bench_1rm: parseFloat(formData.pb_bench_1rm) || null,
+          pb_squat_1rm: parseFloat(formData.pb_squat_1rm) || null,
+          pb_deadlift_1rm: parseFloat(formData.pb_deadlift_1rm) || null,
+          schema_version: "v1.0",
+          interview_type: "form"
+        };
+
+        console.log('🔍 DEBUGGING - Creating public athlete profile...');
+        console.log('🔍 DEBUGGING - Profile data:', profileData);
+
+        // Create athlete profile using public endpoint
+        const response = await axios.post(
+          `${BACKEND_URL}/api/athlete-profiles/public`,
+          {
+            profile_json: profileData,
+            is_public: true
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        console.log('🔍 DEBUGGING - Public profile response:', response);
+        console.log('🔍 DEBUGGING - Response data:', response.data);
+
+        const profileResult = response.data;
+        const profileId = profileResult.user_profile?.id;
+
+        console.log('🔍 DEBUGGING - Profile ID extracted:', profileId);
+
+        if (profileId) {
+          console.log('✅ DEBUGGING - Public profile created successfully, triggering webhook...');
+          toast({
+            title: "Profile Created! 🚀",
+            description: "Calculating your hybrid score...",
+            duration: 3000,
+          });
+
+          // Trigger webhook for score calculation
+          console.log('🔍 DEBUGGING - About to call triggerWebhookForScore...');
+          await triggerWebhookForScore(profileData, profileId, null); // No session for public submission
+          console.log('✅ DEBUGGING - triggerWebhookForScore completed');
+        } else {
+          console.error('❌ DEBUGGING - No profile ID returned from public API');
+          console.error('❌ DEBUGGING - Full response data:', profileResult);
+          throw new Error('No profile ID returned from public submission');
+        }
+        
+      } catch (error) {
+        console.error('❌ DEBUGGING - Error in public submission:', error);
+        console.error('❌ DEBUGGING - Error message:', error.message);
+        console.error('❌ DEBUGGING - Error stack:', error.stack);
+        console.error('❌ DEBUGGING - Error response:', error.response?.data);
+        console.error('❌ DEBUGGING - Error status:', error.response?.status);
+        
+        toast({
+          title: "Submission Error",
+          description: error.response?.data?.detail || error.message || "Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        console.log('🔍 DEBUGGING - Setting isSubmitting to false (public)');
+        setIsSubmitting(false);
       }
       
       return; // Exit early for public submission
