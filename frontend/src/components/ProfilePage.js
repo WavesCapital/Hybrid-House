@@ -1208,11 +1208,12 @@ const ProfilePage = () => {
         
         .neon-button:hover {
           transform: translateY(-2px);
-          background: #FF2DDE;
+          background: var(--neon-primary);
           color: #0E0E11;
           box-shadow: 
-            0 8px 32px rgba(8, 240, 255, 0.4),
-            0 4px 16px rgba(255, 45, 222, 0.3);
+            0 8px 32px rgba(8, 240, 255, 0.6),
+            0 4px 16px rgba(8, 240, 255, 0.4),
+            0 0 20px rgba(8, 240, 255, 0.8);
         }
         
         .neon-button:active {
