@@ -350,7 +350,7 @@ Think you can beat this? Get scored at HybridLab.ai 🚀`;
     content.appendChild(bgPattern);
     
     const encodedText = encodeURIComponent(shareText);
-    const encodedUrl = encodeURIComponent('https://HybridHouse.ai');
+    const encodedUrl = encodeURIComponent('https://HybridLab.ai');
     
     // Function to copy image to clipboard
     const copyImageToClipboard = async () => {
