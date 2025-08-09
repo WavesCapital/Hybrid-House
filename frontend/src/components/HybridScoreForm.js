@@ -1845,21 +1845,6 @@ const CalculationModal = ({ isVisible }) => {
                 {steps[currentStep]?.text}
               </p>
             </div>
-
-            {/* Audio visualizer bars */}
-            <div className="flex justify-center space-x-1">
-              {[...Array(8)].map((_, i) => (
-                <div
-                  key={i}
-                  className="w-1 bg-cyan-400 rounded-full animate-pulse"
-                  style={{ 
-                    height: `${Math.random() * 20 + 10}px`,
-                    animationDelay: `${i * 0.15}s`,
-                    boxShadow: '0 0 5px rgba(8, 240, 255, 0.8)'
-                  }}
-                />
-              ))}
-            </div>
           </div>
         </div>
       </div>
