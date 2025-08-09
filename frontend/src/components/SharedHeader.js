@@ -169,7 +169,7 @@ const SharedHeader = ({
                     className="text-lg sm:text-xl font-bold brand-text cursor-pointer"
                     onClick={() => navigate('/')}
                   >
-                    Hybrid House
+                    Hybrid Lab
                   </h1>
                   {title && (
                     <p className="text-xs sm:text-sm text-gray-400">{title}</p>
