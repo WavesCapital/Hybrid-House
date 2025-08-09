@@ -203,7 +203,7 @@ backend:
   - task: "Hybrid Score Form Submission Bug Fix"
     implemented: true
     working: true
-    file: "/app/backend/server.py"
+    file: "/app/frontend/src/components/HybridScoreForm.js"
     stuck_count: 1
     priority: "critical"
     needs_retesting: false
