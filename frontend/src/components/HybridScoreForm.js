@@ -301,12 +301,12 @@ const HybridScoreForm = () => {
 
       // Structure the data for public submission
       const profileData = {
-        first_name: formData.first_name.substring(0, 20),
-        last_name: formData.last_name.substring(0, 20),
+        first_name: (formData.first_name || '').substring(0, 20),
+        last_name: (formData.last_name || '').substring(0, 20),
         email: tempEmail,
         sex: formData.sex,
         dob: formData.dob,
-        country: formData.country.substring(0, 2),
+        country: (formData.country || 'US').substring(0, 2),
         wearables: formData.wearables,
         body_metrics: {
           weight_lb: parseFloat(formData.weight_lb) || null,
