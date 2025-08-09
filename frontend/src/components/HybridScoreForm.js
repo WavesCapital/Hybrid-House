@@ -312,7 +312,7 @@ const HybridScoreForm = () => {
         // Calculate height in inches
         const heightInches = (parseInt(formData.height_ft) || 0) * 12 + (parseInt(formData.height_in) || 0);
 
-        // Structure the data for public submission
+        // Structure the data for public submission (same format as ProfilePage)
         const profileData = {
           first_name: (formData.first_name || '').substring(0, 20),
           last_name: (formData.last_name || '').substring(0, 20),
@@ -344,13 +344,22 @@ const HybridScoreForm = () => {
         console.log('🔍 DEBUGGING - Creating public athlete profile...');
         console.log('🔍 DEBUGGING - Profile data:', profileData);
 
-        // Create athlete profile using public endpoint
+        // Generate unique profile ID like ProfilePage does
+        const profileId = require('uuid').v4();
+        
+        // Create athlete profile using public endpoint (same structure as ProfilePage)
+        const newProfile = {
+          id: profileId,
+          profile_json: profileData,
+          is_public: true,
+          completed_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+
         const response = await axios.post(
           `${BACKEND_URL}/api/athlete-profiles/public`,
-          {
-            profile_json: profileData,
-            is_public: true
-          },
+          newProfile,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -359,30 +368,58 @@ const HybridScoreForm = () => {
         );
 
         console.log('🔍 DEBUGGING - Public profile response:', response);
-        console.log('🔍 DEBUGGING - Response data:', response.data);
+        console.log('🔍 DEBUGGING - Using profile ID:', profileId);
 
-        const profileResult = response.data;
-        const profileId = profileResult.user_profile?.id;
+        toast({
+          title: "Profile Created! 🚀",
+          description: "Calculating your hybrid score...",
+          duration: 3000,
+        });
 
-        console.log('🔍 DEBUGGING - Profile ID extracted:', profileId);
+        // Call webhook directly like ProfilePage (WORKING METHOD)
+        console.log('🔍 DEBUGGING - Calling webhook directly with fetch...');
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 240000); // 4 minutes
 
-        if (profileId) {
-          console.log('✅ DEBUGGING - Public profile created successfully, triggering webhook...');
-          toast({
-            title: "Profile Created! 🚀",
-            description: "Calculating your hybrid score...",
-            duration: 3000,
-          });
+        const webhookResponse = await fetch(
+          'https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              athleteProfile: profileData,
+              deliverable: 'score'
+            }),
+            signal: controller.signal
+          }
+        );
 
-          // Trigger webhook for score calculation
-          console.log('🔍 DEBUGGING - About to call triggerWebhookForScore...');
-          await triggerWebhookForScore(profileData, profileId, null); // No session for public submission
-          console.log('✅ DEBUGGING - triggerWebhookForScore completed');
-        } else {
-          console.error('❌ DEBUGGING - No profile ID returned from public API');
-          console.error('❌ DEBUGGING - Full response data:', profileResult);
-          throw new Error('No profile ID returned from public submission');
+        clearTimeout(timeoutId);
+
+        if (!webhookResponse.ok) {
+          throw new Error(`Webhook request failed with status: ${webhookResponse.status}`);
         }
+
+        const webhookData = await webhookResponse.json();
+        console.log('✅ DEBUGGING - Webhook response:', webhookData);
+
+        // Handle the response - it's an array with the score data
+        const scoreData = Array.isArray(webhookData) ? webhookData[0] : webhookData;
+
+        // Store score data (optional for public submissions)
+        try {
+          await axios.post(`${BACKEND_URL}/api/athlete-profile/${profileId}/score`, scoreData);
+          console.log('✅ DEBUGGING - Score stored successfully');
+        } catch (scoreError) {
+          console.warn('⚠️ DEBUGGING - Could not store score for public submission:', scoreError.message);
+        }
+
+        // Navigate to results
+        console.log('✅ DEBUGGING - Navigating to results page...');
+        navigate(`/hybrid-score/${profileId}`);
         
       } catch (error) {
         console.error('❌ DEBUGGING - Error in public submission:', error);
@@ -391,14 +428,24 @@ const HybridScoreForm = () => {
         console.error('❌ DEBUGGING - Error response:', error.response?.data);
         console.error('❌ DEBUGGING - Error status:', error.response?.status);
         
+        let errorMessage = "Failed to calculate your hybrid score. Please try again.";
+        if (error.name === 'AbortError') {
+          errorMessage = "Score calculation timed out. Please try again.";
+        } else if (error.message.includes('Webhook')) {
+          errorMessage = "Score calculation failed. Please try again.";
+        }
+        
         toast({
           title: "Submission Error",
-          description: error.response?.data?.detail || error.message || "Please try again.",
+          description: errorMessage,
           variant: "destructive",
         });
       } finally {
-        console.log('🔍 DEBUGGING - Setting isSubmitting to false (public)');
-        setIsSubmitting(false);
+        // Don't immediately set to false - let redirect happen first
+        setTimeout(() => {
+          console.log('🔍 DEBUGGING - Setting isSubmitting to false (public)');
+          setIsSubmitting(false);
+        }, 1000);
       }
       
       return; // Exit early for public submission
