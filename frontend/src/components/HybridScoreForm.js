@@ -253,6 +253,10 @@ const HybridScoreForm = () => {
   };
 
   const handleSubmit = async (e) => {
+    console.log('🚀 CRITICAL DEBUG - handleSubmit ENTRY POINT');
+    console.log('🚀 Event object:', e);
+    console.log('🚀 Button clicked at:', new Date().toISOString());
+    
     if (e) e.preventDefault();
     
     console.log('🔍 DEBUG - handleSubmit called!');
@@ -262,6 +266,11 @@ const HybridScoreForm = () => {
     console.log('🔍 DEBUG - isSubmitting:', isSubmitting);
     console.log('🔍 DEBUG - user:', user);
     console.log('🔍 DEBUG - session:', session);
+    
+    // Add more debugging for form data
+    console.log('🔍 DEBUG - formData keys:', Object.keys(formData));
+    console.log('🔍 DEBUG - first_name:', formData.first_name);
+    console.log('🔍 DEBUG - last_name:', formData.last_name);
     
     if (isSubmitting) {
       console.log('⚠️ Form submission blocked - already submitting');
