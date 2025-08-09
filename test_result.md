@@ -161,6 +161,21 @@ frontend:
         comment: "🎯 CRITICAL FIXES TEST COMPLETE - USER PROFILE DATA STORAGE & HYBRID SCORE HISTORY: Executed comprehensive testing of the two critical fixes as requested in the review. MAJOR SUCCESS ACHIEVED (75% SUCCESS RATE): ✅ Fix 1 - User Profile Data Storage: Height/weight data (height_in, weight_lb) successfully stored and displayed in profile. Console logs show '📊 Extracted body metrics: {height_in: 70, weight_lb: 180}' confirming backend storage is working. ✅ Fix 2 - Hybrid Score History Display: 'Hybrid Score History' section found on profile page with score data table displaying properly. Profile shows 13 athlete profiles with complete score breakdown. ❌ Authentication Issue: Login failed with 400 error from Supabase, so form submission used public endpoint instead of authenticated endpoint. Console shows '🔥 STEP 1: User not authenticated - using public endpoint' instead of expected authenticated flow. ✅ Form Functionality: Form loads correctly, accepts data input, and processes submissions successfully. CRITICAL VERIFICATION: Both primary fixes are working correctly - user profile data is being stored with height_in and weight_lb fields, and hybrid score history is displaying properly on the profile page. The authentication issue is a separate login problem, not related to the core fixes being tested. The main functionality requested in the review is operational."
 
 backend:
+  - task: "GET /api/athlete-profile/{profile_id} with User Profile Data Integration"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ INITIAL TEST FAILED: GET /api/athlete-profile/901227ec-0b52-496f-babe-ace27cdd1a8d endpoint returned user_profile: null. Investigation revealed the backend was using incorrect join logic: athlete_profiles.user_id -> user_profiles.id instead of athlete_profiles.user_id -> user_profiles.user_id. This caused the user profile data to not be found even though the user_id existed."
+      - working: true
+        agent: "testing"
+        comment: "🎉 ENDPOINT FIX VERIFIED: Fixed the join logic in GET /api/athlete-profile/{profile_id} endpoint (line 1330) from .eq('id', user_id) to .eq('user_id', user_id). ALL 4/4 REQUIREMENTS NOW MET (100% SUCCESS RATE): ✅ user_id field present: e857488b-6f97-459d-b30b-d4ea1b36e0b0 ✅ user_profile field populated with complete user data (21 fields) ✅ user_profile.display_name present: 'Test User' ✅ Additional user profile fields: name, email, gender, country, date_of_birth, height_in, weight_lb, etc. ✅ Score data present with hybridScore: 51 and complete breakdown. CRITICAL SUCCESS: The endpoint now correctly includes user profile data from user_profiles table for share card functionality. The fix ensures proper linking between athlete_profiles.user_id and user_profiles.user_id, resolving the display_name issue for share cards."
+
   - task: "GET /api/public-profile/{user_id} Endpoint Testing"
     implemented: true
     working: true
