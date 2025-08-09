@@ -390,12 +390,12 @@ const HybridScoreForm = () => {
 
       // Structure the data for submission
       const profileData = {
-        first_name: formData.first_name.substring(0, 20), // Limit first name
-        last_name: formData.last_name.substring(0, 20),   // Limit last name
-        email: user.email.substring(0, 50),               // Get email from authenticated user
+        first_name: (formData.first_name || '').substring(0, 20), // Limit first name
+        last_name: (formData.last_name || '').substring(0, 20),   // Limit last name
+        email: (user.email || '').substring(0, 50),               // Get email from authenticated user
         sex: formData.sex,
         dob: formData.dob,
-        country: formData.country.substring(0, 2),        // Limit country to 2 chars
+        country: (formData.country || 'US').substring(0, 2),        // Limit country to 2 chars
         wearables: formData.wearables,
         body_metrics: {
           weight_lb: parseFloat(formData.weight_lb) || null,
