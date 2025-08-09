@@ -266,7 +266,7 @@ const HybridScoreResults = () => {
 
 🔥 STR ${Math.round(parseFloat(scoreData.strengthScore || 0))} | SPD ${Math.round(parseFloat(scoreData.speedScore || 0))} | VO₂ ${Math.round(parseFloat(scoreData.vo2Score || 0))} | END ${Math.round(parseFloat(scoreData.enduranceScore || scoreData.recoveryScore || 0))}
 
-Think you can beat this? Get scored at HybridLab.ai 🚀`;
+Think you can beat this? Get scored at HybridLab.io 🚀`;
       
       // Check if native sharing is available
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'hybrid-score.png', { type: 'image/png' })] })) {
