@@ -1169,19 +1169,19 @@ Think you can beat this? Get scored at HybridHouse.ai 🚀`;
                     View Leaderboard
                   </Button>
                   <Button onClick={handleShare} className="w-full sm:w-auto" size="sm" style={{
-                    background: 'linear-gradient(135deg, #00FF88, #00E0FF)',
+                    background: '#00E0FF',  // Solid blue instead of gradient
                     color: '#000000',
                     border: 'none',
                     fontWeight: '700',
-                    boxShadow: '0 0 20px rgba(0, 255, 136, 0.3)',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',  // Subtle shadow
                     transition: 'all 0.3s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.boxShadow = '0 0 30px rgba(0, 255, 136, 0.5)';
+                    e.target.style.boxShadow = '0 0 25px rgba(0, 224, 255, 0.6), 0 4px 15px rgba(0, 0, 0, 0.3)';  // Blue glow on hover
                     e.target.style.transform = 'translateY(-2px)';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.3)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';  // Return to subtle shadow
                     e.target.style.transform = 'translateY(0px)';
                   }}>
                     <Share2 className="h-4 w-4 mr-2" />
