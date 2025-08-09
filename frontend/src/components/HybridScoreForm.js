@@ -1495,7 +1495,6 @@ const HybridScoreForm = () => {
                     Next
                   </button>
                 ) : (
-                  {/* Calculate Hybrid Score button REMOVED - will be re-added from scratch */}
                   <div className="text-center p-4" style={{ color: 'var(--muted)' }}>
                     Calculate button temporarily removed for debugging
                   </div>
