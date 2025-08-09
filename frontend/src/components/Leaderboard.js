@@ -1372,7 +1372,7 @@ const Leaderboard = () => {
                 fontFamily: 'Inter, sans-serif'
               }}
               onMouseEnter={(e) => {
-                e.target.style.background = '#FF2DDE';
+                e.target.style.background = '#00FF88';
               }}
               onMouseLeave={(e) => {
                 e.target.style.background = '#08F0FF';
