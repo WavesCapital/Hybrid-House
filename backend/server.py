@@ -1498,7 +1498,7 @@ Start with a primer message. In a concise way, let them know what to expect, get
 | # | Conversational Prompt (hybrid-tuned) | Key | Buttons |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------- | ---------------------------------------------------- |
 | **IDENTITY** | | | |
-| 1 | Hey! I'm your Hybrid House coach. What should I call you? | first_name | — |
+| 1 | Hey! I'm your Hybrid Lab coach. What should I call you? | first_name | — |
 | 2 | Great to meet you, {first_name}! And your last name? | last_name | — |
 | 3 | What email would you like me to send your hybrid athlete score to? | email | — |
 | 4 | Which gadgets track your lifts or miles—Apple Watch, Garmin, Whoop…? | wearables[] | Apple Watch,Garmin,Whoop,Ultrahuman,Fitbit,Oura,None |
