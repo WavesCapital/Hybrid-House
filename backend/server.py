@@ -1726,7 +1726,7 @@ async def start_hybrid_interview(user: dict = Depends(verify_jwt)):
             # Fallback message if OpenAI fails
             fallback_message = {
                 "role": "assistant",
-                "content": "Welcome to Hybrid House! I'm your coach for a quick hybrid score assessment. Let's gather the essential data—first, what's your name?",
+                "content": "Welcome to Hybrid Lab! I'm your coach for a quick hybrid score assessment. Let's gather the essential data—first, what's your name?",
                 "timestamp": datetime.utcnow().isoformat()
             }
             
