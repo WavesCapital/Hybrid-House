@@ -287,7 +287,7 @@ Think you can beat this? Get scored at HybridHouse.ai 🚀`;
           files: [new File([blob], 'hybrid-score.png', { type: 'image/png' })]
         });
       } else {
-        // Fallback: Show enhanced share options
+        // Fallback: Show enhanced share options with image ABOVE text (proper order)
         showShareOptions(imageDataUrl, punchyShareText);
       }
     } catch (error) {
