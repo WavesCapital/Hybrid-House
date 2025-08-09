@@ -115,7 +115,7 @@ test_plan:
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "When I'm on the hybrid score form page (filled with data), I click 'Calculate Hybrid Score' button and it doesn't send the webhook to https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c. Previously this was working flawlessly but now it's not working. The form has data but webhook is not being triggered."
+user_problem_statement: "When I click 'Calculate Hybrid Score' the button state changes to say 'Calculating Score...' for about two seconds then it changes back to 'Calculate Hybrid Score' and nothing happens. The webhook isn't being called. During testing the webhook was called perfectly, but in actual usage it fails silently."
 
 backend:
   - task: "GET /api/public-profile/{user_id} Endpoint Testing"
