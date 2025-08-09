@@ -1583,7 +1583,7 @@ ATHLETE_PROFILE:::{JSON}
 **End of hybrid-tuned prompt — follow precisely.**"""
 
 # Hybrid Interview System Message - Essential Questions Only
-HYBRID_INTERVIEW_SYSTEM_MESSAGE = """**Hybrid House Coach GPT—Essential‑Score Prompt v1.0**
+HYBRID_INTERVIEW_SYSTEM_MESSAGE = """**Hybrid Lab Coach GPT—Essential‑Score Prompt v1.0**
 (paste into `instructions` of first `/v1/responses` call)
 
 ---
