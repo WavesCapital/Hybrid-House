@@ -213,10 +213,10 @@ const HybridScoreResults = () => {
     ctx.textAlign = 'center';
     ctx.fillText('What\'s Your Score?', centerX, ctaY);
     
-    // Website - clean with subtle glow
-    ctx.fillStyle = '#00FF88';
+    // Website - clean with blue glow to match main score
+    ctx.fillStyle = '#00E0FF'; // Changed to blue
     ctx.font = 'bold 28px Inter, Arial, sans-serif';
-    ctx.shadowColor = 'rgba(0, 255, 136, 0.6)';
+    ctx.shadowColor = 'rgba(0, 224, 255, 0.6)'; // Blue glow
     ctx.shadowBlur = 12;
     ctx.fillText('HybridHouse.ai', centerX, websiteY);
     ctx.shadowBlur = 0;
