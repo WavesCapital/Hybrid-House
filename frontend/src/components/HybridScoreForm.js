@@ -1536,7 +1536,23 @@ const HybridScoreForm = () => {
                           updated_at: new Date().toISOString()
                         };
                         
-                        const profileResponse = await axios.post(`${BACKEND_URL}/api/athlete-profiles/public`, newProfile);
+                        let profileResponse;
+                        
+                        if (user && session) {
+                          // User is authenticated - use authenticated endpoint
+                          console.log('🔥 STEP 1: User authenticated - using authenticated endpoint');
+                          profileResponse = await axios.post(`${BACKEND_URL}/api/athlete-profiles`, newProfile, {
+                            headers: {
+                              'Authorization': `Bearer ${session.access_token}`,
+                              'Content-Type': 'application/json'
+                            }
+                          });
+                        } else {
+                          // User not authenticated - use public endpoint
+                          console.log('🔥 STEP 1: User not authenticated - using public endpoint');
+                          profileResponse = await axios.post(`${BACKEND_URL}/api/athlete-profiles/public`, newProfile);
+                        }
+                        
                         console.log('🔥 STEP 1 SUCCESS: Profile created in database:', profileResponse.data);
                         
                         // Step 2: Call webhook and get score data
