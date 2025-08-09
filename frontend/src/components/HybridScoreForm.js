@@ -193,19 +193,40 @@ const HybridScoreForm = () => {
       console.log('🔍 WEBHOOK - Score data extracted:', scoreData);
       
       console.log('🔍 WEBHOOK - Storing score data in backend...');
-      // Store score data in Supabase
-      await axios.post(
-        `${BACKEND_URL}/api/athlete-profile/${profileId}/score`,
-        scoreData,
-        {
-          headers: {
-            'Authorization': `Bearer ${currentSession.access_token}`,
-            'Content-Type': 'application/json',
-          },
+      // Store score data in Supabase (only if we have authentication)
+      if (currentSession?.access_token) {
+        await axios.post(
+          `${BACKEND_URL}/api/athlete-profile/${profileId}/score`,
+          scoreData,
+          {
+            headers: {
+              'Authorization': `Bearer ${currentSession.access_token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        console.log('✅ WEBHOOK - Score stored successfully (authenticated)');
+      } else {
+        // For public submissions, try to store without authentication
+        try {
+          await axios.post(
+            `${BACKEND_URL}/api/athlete-profile/${profileId}/score`,
+            scoreData,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          console.log('✅ WEBHOOK - Score stored successfully (public)');
+        } catch (scoreError) {
+          // If score storage fails for public submission, continue anyway since the webhook succeeded
+          console.warn('⚠️ WEBHOOK - Could not store score for public submission, but webhook succeeded');
+          console.warn('⚠️ WEBHOOK - Score error:', scoreError.message);
         }
-      );
+      }
 
-      console.log('✅ WEBHOOK - Score stored successfully, navigating to results...');
+      console.log('✅ WEBHOOK - Navigating to results...');
       // Navigate to score results
       navigate(`/hybrid-score/${profileId}`);
       
