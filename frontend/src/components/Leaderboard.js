@@ -1334,7 +1334,7 @@ const Leaderboard = () => {
           left: '0',
           right: '0',
           height: '72px',
-          background: 'linear-gradient(90deg, rgba(8, 240, 255, 0.08), rgba(255, 45, 222, 0.08))',
+          background: 'linear-gradient(90deg, rgba(8, 240, 255, 0.08), rgba(0, 255, 136, 0.08))',
           borderTop: '1px solid rgba(8, 240, 255, 0.2)',
           display: 'flex',
           alignItems: 'center',
