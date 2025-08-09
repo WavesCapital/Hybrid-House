@@ -1643,4 +1643,120 @@ const HybridScoreForm = () => {
   );
 };
 
+// Beautiful Calculation Modal Component
+const CalculationModal = ({ isVisible }) => {
+  const [progress, setProgress] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0);
+  
+  const steps = [
+    { text: "Analyzing your performance data...", duration: 2000 },
+    { text: "Calculating strength metrics...", duration: 2000 },
+    { text: "Evaluating endurance capabilities...", duration: 2000 },
+    { text: "Processing speed and power scores...", duration: 2000 },
+    { text: "Generating your personalized hybrid score...", duration: 2000 }
+  ];
+
+  useEffect(() => {
+    if (!isVisible) {
+      setProgress(0);
+      setCurrentStep(0);
+      return;
+    }
+
+    // Progress bar animation
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        return prev + 1;
+      });
+    }, 100); // 10 seconds total (100 steps * 100ms)
+
+    // Step text animation
+    const stepInterval = setInterval(() => {
+      setCurrentStep(prev => {
+        if (prev >= steps.length - 1) {
+          clearInterval(stepInterval);
+          return steps.length - 1;
+        }
+        return prev + 1;
+      });
+    }, 2000); // Change every 2 seconds
+
+    return () => {
+      clearInterval(progressInterval);
+      clearInterval(stepInterval);
+    };
+  }, [isVisible]);
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 backdrop-blur-sm">
+      <div className="relative max-w-md w-full mx-4 p-8 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl shadow-2xl border border-slate-700">
+        {/* Glowing border effect */}
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20 blur-xl animate-pulse"></div>
+        
+        <div className="relative z-10">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
+              <div className="text-2xl font-bold text-white">🏆</div>
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-2">
+              Calculating Your Hybrid Score
+            </h2>
+            <p className="text-slate-300 text-sm">
+              Our advanced algorithm is analyzing your athletic profile
+            </p>
+          </div>
+
+          {/* Progress Bar Container */}
+          <div className="mb-6">
+            <div className="relative w-full h-3 bg-slate-700 rounded-full overflow-hidden">
+              {/* Background glow */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-full blur-sm"></div>
+              
+              {/* Progress fill */}
+              <div 
+                className="relative h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-100 ease-out shadow-lg"
+                style={{ 
+                  width: `${progress}%`,
+                  boxShadow: '0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(34, 211, 238, 0.3)'
+                }}
+              >
+                {/* Moving shimmer effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse rounded-full"></div>
+              </div>
+            </div>
+            
+            {/* Progress percentage */}
+            <div className="text-center mt-3">
+              <span className="text-white font-semibold text-lg">{progress}%</span>
+            </div>
+          </div>
+
+          {/* Current Step */}
+          <div className="text-center">
+            <div className="h-12 flex items-center justify-center">
+              <p className="text-slate-300 text-sm animate-pulse">
+                {steps[currentStep]?.text}
+              </p>
+            </div>
+          </div>
+
+          {/* Loading dots */}
+          <div className="flex justify-center space-x-2 mt-4">
+            <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default HybridScoreForm;
