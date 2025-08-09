@@ -1696,7 +1696,7 @@ async def start_hybrid_interview(user: dict = Depends(verify_jwt)):
                 response_text = ""
             
             if not response_text:
-                response_text = "Welcome to Hybrid House! I'm your coach for a quick hybrid score assessment. Let's gather the essential data—first, what's your name?"
+                response_text = "Welcome to Hybrid Lab! I'm your coach for a quick hybrid score assessment. Let's gather the essential data—first, what's your name?"
             
             # Store the initial response and response_id
             initial_message = {
