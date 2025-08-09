@@ -1977,6 +1977,163 @@ class BackendTester:
                 "❌ Response structure analysis failed", str(e))
             return False
     
+    def test_hybrid_score_form_submission_for_share_functionality(self):
+        """Test Hybrid Score Form submission to create a valid hybrid score result for share functionality testing"""
+        try:
+            print("\n🎯 HYBRID SCORE FORM SUBMISSION FOR SHARE FUNCTIONALITY TESTING")
+            print("=" * 80)
+            
+            # Sample data as provided in the review request
+            sample_data = {
+                "first_name": "Test",
+                "last_name": "User", 
+                "gender": "male",
+                "date_of_birth": "1990-01-01",
+                "country": "US",
+                "height_in": 70,
+                "weight_lb": 180,
+                "pb_bench_1rm_lb": 225,
+                "pb_squat_1rm_lb": 315,
+                "pb_deadlift_1rm_lb": 405
+            }
+            
+            # Step 1: Test POST /api/athlete-profiles/public endpoint
+            print("\n📝 Step 1: Testing POST /api/athlete-profiles/public endpoint")
+            
+            # Format data for the public endpoint
+            public_profile_data = {
+                "profile_json": {
+                    "first_name": sample_data["first_name"],
+                    "last_name": sample_data["last_name"],
+                    "sex": sample_data["gender"],
+                    "dob": sample_data["date_of_birth"],
+                    "country": sample_data["country"],
+                    "body_metrics": {
+                        "height_in": sample_data["height_in"],
+                        "weight_lb": sample_data["weight_lb"]
+                    },
+                    "pb_bench_1rm": {"weight_lb": sample_data["pb_bench_1rm_lb"]},
+                    "pb_squat_1rm": {"weight_lb": sample_data["pb_squat_1rm_lb"]},
+                    "pb_deadlift_1rm": {"weight_lb": sample_data["pb_deadlift_1rm_lb"]}
+                },
+                "is_public": True
+            }
+            
+            create_response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=public_profile_data)
+            
+            if create_response.status_code == 200:
+                create_data = create_response.json()
+                profile_id = create_data.get('user_profile', {}).get('id')
+                
+                if profile_id:
+                    print(f"✅ Profile created successfully with ID: {profile_id}")
+                    self.log_test("Create Public Athlete Profile", True, f"Profile created with ID: {profile_id}", create_data)
+                else:
+                    print(f"❌ Profile created but no ID returned: {create_data}")
+                    self.log_test("Create Public Athlete Profile", False, "Profile created but no ID returned", create_data)
+                    return False
+            else:
+                print(f"❌ Profile creation failed: HTTP {create_response.status_code}")
+                print(f"Response: {create_response.text}")
+                self.log_test("Create Public Athlete Profile", False, f"HTTP {create_response.status_code}", create_response.text)
+                return False
+            
+            # Step 2: Test webhook functionality
+            print(f"\n🔗 Step 2: Testing webhook functionality for profile {profile_id}")
+            
+            # Call the webhook endpoint to calculate scores
+            webhook_url = "https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c"
+            webhook_payload = {
+                "profile_id": profile_id,
+                "profile_data": public_profile_data["profile_json"]
+            }
+            
+            try:
+                webhook_response = self.session.post(webhook_url, json=webhook_payload, timeout=30)
+                
+                if webhook_response.status_code == 200:
+                    webhook_data = webhook_response.json()
+                    print(f"✅ Webhook called successfully: {webhook_data}")
+                    self.log_test("Webhook Score Calculation", True, "Webhook responded successfully", webhook_data)
+                    
+                    # Wait a moment for the webhook to process and update the profile
+                    import time
+                    time.sleep(3)
+                else:
+                    print(f"❌ Webhook failed: HTTP {webhook_response.status_code}")
+                    print(f"Response: {webhook_response.text}")
+                    self.log_test("Webhook Score Calculation", False, f"HTTP {webhook_response.status_code}", webhook_response.text)
+                    # Continue with testing even if webhook fails
+                    
+            except Exception as webhook_error:
+                print(f"❌ Webhook call failed: {webhook_error}")
+                self.log_test("Webhook Score Calculation", False, "Webhook call failed", str(webhook_error))
+                # Continue with testing even if webhook fails
+            
+            # Step 3: Test GET /api/athlete-profile/{profile_id} to verify score data
+            print(f"\n📊 Step 3: Testing GET /api/athlete-profile/{profile_id} to verify score data")
+            
+            profile_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            
+            if profile_response.status_code == 200:
+                profile_data = profile_response.json()
+                score_data = profile_data.get('score_data')
+                
+                print(f"✅ Profile retrieved successfully")
+                print(f"Profile ID: {profile_data.get('profile_id')}")
+                print(f"Score Data Present: {score_data is not None}")
+                
+                if score_data:
+                    print(f"Hybrid Score: {score_data.get('hybridScore')}")
+                    print(f"Strength Score: {score_data.get('strengthScore')}")
+                    print(f"Speed Score: {score_data.get('speedScore')}")
+                    print(f"VO2 Score: {score_data.get('vo2Score')}")
+                    print(f"Distance Score: {score_data.get('distanceScore')}")
+                    print(f"Volume Score: {score_data.get('volumeScore')}")
+                    print(f"Recovery Score: {score_data.get('recoveryScore')}")
+                    
+                    # Check if all required scores are present
+                    required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
+                    missing_scores = [score for score in required_scores if score_data.get(score) is None]
+                    
+                    if not missing_scores:
+                        print(f"✅ All required scores present - Profile ready for share functionality!")
+                        self.log_test("Profile Score Data Verification", True, f"Complete score data available for sharing - Profile ID: {profile_id}", {
+                            'profile_id': profile_id,
+                            'scores': {score: score_data.get(score) for score in required_scores}
+                        })
+                        
+                        # Final success message
+                        print(f"\n🎉 SUCCESS: Profile {profile_id} is ready for share functionality testing!")
+                        print(f"   - Profile created successfully")
+                        print(f"   - Score data complete with all required fields")
+                        print(f"   - Profile accessible via GET endpoint")
+                        
+                        self.log_test("Hybrid Score Form Submission for Share Functionality", True, f"Complete flow successful - Profile {profile_id} ready for share testing", {
+                            'profile_id': profile_id,
+                            'hybrid_score': score_data.get('hybridScore'),
+                            'complete_scores': True
+                        })
+                        return profile_id
+                    else:
+                        print(f"⚠️ Missing scores: {missing_scores}")
+                        self.log_test("Profile Score Data Verification", False, f"Missing scores: {missing_scores}", score_data)
+                        return profile_id  # Still return the profile_id for partial testing
+                else:
+                    print(f"⚠️ No score data found - webhook may not have processed yet")
+                    self.log_test("Profile Score Data Verification", False, "No score data found", profile_data)
+                    return profile_id  # Still return the profile_id for testing
+            else:
+                print(f"❌ Profile retrieval failed: HTTP {profile_response.status_code}")
+                print(f"Response: {profile_response.text}")
+                self.log_test("Profile Score Data Verification", False, f"HTTP {profile_response.status_code}", profile_response.text)
+                return False
+                
+        except Exception as e:
+            print(f"❌ Hybrid score form submission test failed: {e}")
+            self.log_test("Hybrid Score Form Submission for Share Functionality", False, "Test failed with exception", str(e))
+            return False
+
     def test_user_profile_data_transformation_check(self):
         """Check for potential data transformation issues between backend and frontend"""
         try:
