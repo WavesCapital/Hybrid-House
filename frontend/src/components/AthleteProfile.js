@@ -523,7 +523,7 @@ const AthleteProfile = () => {
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between h-16">
               <h1 className="text-xl font-bold neo-primary">
-                Hybrid House
+                Hybrid Lab
               </h1>
               <div className="flex space-x-6">
                 <span
