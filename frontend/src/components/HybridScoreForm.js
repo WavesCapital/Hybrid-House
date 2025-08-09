@@ -1495,9 +1495,69 @@ const HybridScoreForm = () => {
                     Next
                   </button>
                 ) : (
-                  <div className="text-center p-4" style={{ color: 'var(--muted)' }}>
-                    Calculate button temporarily removed for debugging
-                  </div>
+                  <button
+                    type="button"
+                    className="neon-button text-sm sm:text-base px-4 sm:px-6 py-3 min-h-[44px] order-1 sm:order-2"
+                    disabled={isSubmitting}
+                    onClick={async () => {
+                      console.log('🚀 FRESH BUTTON CLICKED - Calculate Hybrid Score');
+                      setIsSubmitting(true);
+                      
+                      try {
+                        // Simple direct webhook call like ProfilePage
+                        const profileData = {
+                          first_name: formData.first_name || 'Test',
+                          last_name: formData.last_name || 'User',
+                          sex: formData.sex || 'male',
+                          pb_bench_1rm: parseFloat(formData.pb_bench_1rm) || null,
+                          pb_squat_1rm: parseFloat(formData.pb_squat_1rm) || null,
+                          pb_deadlift_1rm: parseFloat(formData.pb_deadlift_1rm) || null,
+                          schema_version: 'v1.0',
+                          interview_type: 'form'
+                        };
+                        
+                        console.log('🚀 CALLING WEBHOOK DIRECTLY...');
+                        const webhookResponse = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            athleteProfile: profileData,
+                            deliverable: 'score'
+                          })
+                        });
+                        
+                        console.log('🚀 WEBHOOK RESPONSE STATUS:', webhookResponse.status);
+                        
+                        if (webhookResponse.ok) {
+                          const webhookData = await webhookResponse.json();
+                          console.log('🚀 WEBHOOK SUCCESS:', webhookData);
+                          
+                          toast({
+                            title: "Success! 🎉",
+                            description: "Your hybrid score has been calculated!",
+                          });
+                          
+                          // Generate simple ID and navigate
+                          const profileId = uuid();
+                          navigate(`/hybrid-score/${profileId}`);
+                        } else {
+                          throw new Error(`Webhook failed: ${webhookResponse.status}`);
+                        }
+                        
+                      } catch (error) {
+                        console.error('🚀 BUTTON ERROR:', error);
+                        toast({
+                          title: "Error",
+                          description: "Failed to calculate score. Please try again.",
+                          variant: "destructive",
+                        });
+                      } finally {
+                        setIsSubmitting(false);
+                      }
+                    }}
+                  >
+                    {isSubmitting ? 'Calculating Score...' : 'Calculate Hybrid Score'}
+                  </button>
                 )}
               </div>
             </form>
