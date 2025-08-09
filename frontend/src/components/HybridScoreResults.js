@@ -1139,7 +1139,22 @@ Think you can beat this? Get scored at HybridHouse.ai 🚀`;
                   >
                     View Leaderboard
                   </Button>
-                  <Button onClick={handleShare} className="neo-btn-secondary w-full sm:w-auto" size="sm">
+                  <Button onClick={handleShare} className="w-full sm:w-auto" size="sm" style={{
+                    background: 'linear-gradient(135deg, #00FF88, #00E0FF)',
+                    color: '#000000',
+                    border: 'none',
+                    fontWeight: '700',
+                    boxShadow: '0 0 20px rgba(0, 255, 136, 0.3)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.boxShadow = '0 0 30px rgba(0, 255, 136, 0.5)';
+                    e.target.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.3)';
+                    e.target.style.transform = 'translateY(0px)';
+                  }}>
                     <Share2 className="h-4 w-4 mr-2" />
                     Share Score
                   </Button>
