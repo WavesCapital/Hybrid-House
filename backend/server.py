@@ -1013,19 +1013,43 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
             detail=f"Error creating athlete profile: {str(e)}"
         )
 
-# Create unauthenticated athlete profile (for public access)
 @api_router.post("/athlete-profiles/public")
 async def create_public_athlete_profile(profile_data: dict):
     """Create a new athlete profile without authentication (for public access)"""
     try:
-        # Extract individual fields from profile_json
-        individual_fields = extract_individual_fields(profile_data.get('profile_json', {}))
+        profile_json = profile_data.get('profile_json', {})
         
-        # Create profile (provide default user_id if not specified)
+        # For public submissions, create a minimal user profile first
+        user_id = str(uuid.uuid4())
+        minimal_user_profile = {
+            "user_id": user_id,
+            "name": f"{profile_json.get('first_name', '')} {profile_json.get('last_name', '')}".strip() or "Anonymous User",
+            "display_name": f"{profile_json.get('first_name', '')} {profile_json.get('last_name', '')}".strip() or "Anonymous User",
+            "email": profile_json.get('email', f"temp.user.{user_id[:8]}@hybrid-score.com"),
+            "gender": profile_json.get('sex'),
+            "date_of_birth": profile_json.get('dob'),
+            "country": profile_json.get('country'),
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat(),
+            "privacy_level": "public"
+        }
+        
+        # Create user profile first
+        try:
+            user_result = supabase.table('user_profiles').insert(minimal_user_profile).execute()
+            print(f"✅ Created user profile for public submission: {user_id}")
+        except Exception as user_error:
+            print(f"⚠️ Could not create user profile, continuing with athlete profile only: {user_error}")
+            # Continue anyway - athlete profile might work without user profile in some cases
+        
+        # Extract individual fields from profile_json
+        individual_fields = extract_individual_fields(profile_json)
+        
+        # Create athlete profile
         new_profile = {
             **profile_data,
             **individual_fields,  # Add extracted individual fields
-            "user_id": profile_data.get("user_id", str(uuid.uuid4())),  # Generate default user_id
+            "user_id": user_id,
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat()
         }
@@ -1039,7 +1063,7 @@ async def create_public_athlete_profile(profile_data: dict):
                 print(f"⚠️  Individual columns not yet added to database, using JSON-only storage")
                 fallback_profile = {
                     **profile_data,
-                    "user_id": profile_data.get("user_id", str(uuid.uuid4())),
+                    "user_id": user_id,
                     "created_at": datetime.utcnow().isoformat(),
                     "updated_at": datetime.utcnow().isoformat()
                 }
