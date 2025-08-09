@@ -17349,6 +17349,93 @@ def main_share_functionality_test():
         
         return passed_tests >= total_tests * 0.8
 
+    def test_athlete_profile_with_user_data(self):
+        """Test GET /api/athlete-profile/{profile_id} endpoint includes user profile data"""
+        try:
+            print("\n🎯 ATHLETE PROFILE WITH USER DATA TESTING")
+            print("=" * 60)
+            
+            # Test the specific profile ID mentioned in the review request
+            profile_id = "901227ec-0b52-496f-babe-ace27cdd1a8d"
+            
+            response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check if response includes required fields
+                required_fields = ['profile_id', 'profile_json', 'score_data', 'user_id', 'user_profile']
+                missing_fields = []
+                
+                for field in required_fields:
+                    if field not in data:
+                        missing_fields.append(field)
+                
+                if missing_fields:
+                    self.log_test("Athlete Profile with User Data", False, f"Missing required fields: {', '.join(missing_fields)}", data)
+                    return False
+                
+                # Check user_id field
+                user_id = data.get('user_id')
+                if not user_id:
+                    self.log_test("Athlete Profile with User Data", False, "user_id field is missing or null", data)
+                    return False
+                
+                print(f"✅ user_id field present: {user_id}")
+                
+                # Check user_profile field
+                user_profile = data.get('user_profile')
+                if not user_profile:
+                    self.log_test("Athlete Profile with User Data", False, "user_profile field is missing or null", data)
+                    return False
+                
+                print(f"✅ user_profile field present: {type(user_profile)}")
+                
+                # Check if user_profile contains display_name
+                display_name = user_profile.get('display_name') if isinstance(user_profile, dict) else None
+                if not display_name:
+                    self.log_test("Athlete Profile with User Data", False, "user_profile.display_name is missing or null", user_profile)
+                    return False
+                
+                print(f"✅ user_profile.display_name present: {display_name}")
+                
+                # Check for other user profile fields
+                user_profile_fields = ['first_name', 'last_name', 'name', 'email', 'gender', 'country', 'age']
+                available_fields = []
+                
+                for field in user_profile_fields:
+                    if field in user_profile and user_profile[field] is not None:
+                        available_fields.append(f"{field}: {user_profile[field]}")
+                
+                print(f"✅ Additional user profile fields: {', '.join(available_fields) if available_fields else 'None'}")
+                
+                # Check score data
+                score_data = data.get('score_data')
+                if score_data and isinstance(score_data, dict):
+                    hybrid_score = score_data.get('hybridScore')
+                    print(f"✅ Score data present with hybridScore: {hybrid_score}")
+                else:
+                    print("⚠️  Score data missing or invalid")
+                
+                self.log_test("Athlete Profile with User Data", True, f"✅ ALL REQUIREMENTS MET: user_id ({user_id}), user_profile with display_name ({display_name}), and additional fields ({len(available_fields)} fields)", {
+                    'user_id': user_id,
+                    'display_name': display_name,
+                    'available_user_fields': available_fields,
+                    'has_score_data': score_data is not None
+                })
+                return True
+                
+            elif response.status_code == 404:
+                self.log_test("Athlete Profile with User Data", False, f"Profile {profile_id} not found - may need to create test data first", response.text)
+                return False
+            else:
+                self.log_test("Athlete Profile with User Data", False, f"HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Athlete Profile with User Data", False, "Test failed with exception", str(e))
+            return False
+
     def run_all_tests(self):
         """Run all backend tests for mobile optimization review"""
         print("🚀 Starting Backend API Tests for Account Creation and Form Flow Review")
