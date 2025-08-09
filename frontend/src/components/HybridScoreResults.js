@@ -247,7 +247,7 @@ const HybridScoreResults = () => {
     ctx.font = 'bold 28px Inter, Arial, sans-serif';
     ctx.shadowColor = 'rgba(0, 224, 255, 0.6)'; // Blue glow
     ctx.shadowBlur = 12;
-    ctx.fillText('HybridHouse.ai', centerX, websiteY);
+    ctx.fillText('HybridLab.ai', centerX, websiteY);
     ctx.shadowBlur = 0;
     
     return canvas.toDataURL('image/png', 0.95);
