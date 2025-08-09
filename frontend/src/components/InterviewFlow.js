@@ -409,7 +409,7 @@ const InterviewFlow = () => {
         <div className="container mx-auto px-6 py-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold neo-primary">Hybrid House Interview</h1>
+              <h1 className="text-2xl font-bold neo-primary">Hybrid Lab Interview</h1>
               <p className="neo-text-secondary">Building your personalized athlete profile</p>
             </div>
             <div className="text-right">
