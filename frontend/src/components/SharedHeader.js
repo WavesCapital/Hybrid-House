@@ -291,7 +291,7 @@ const SharedHeader = ({
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gray-800">
                     <HomeIcon className="w-5 h-5 text-[#08F0FF]" />
                   </div>
-                  <h2 className="text-lg font-bold brand-text">Hybrid House</h2>
+                  <h2 className="text-lg font-bold brand-text">Hybrid Lab</h2>
                 </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
