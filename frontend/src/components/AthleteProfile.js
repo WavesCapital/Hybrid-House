@@ -261,7 +261,7 @@ const AthleteProfile = () => {
     ctx.fillStyle = '#6B6E71';
     ctx.font = '20px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Get your score at HybridHouse.ai', canvas.width / 2, canvas.height - 30);
+    ctx.fillText('Get your score at HybridLab.ai', canvas.width / 2, canvas.height - 30);
     
     return canvas.toDataURL('image/png', 0.9);
   };
