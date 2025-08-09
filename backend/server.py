@@ -1047,6 +1047,8 @@ async def create_public_athlete_profile(profile_data: dict):
             "email": profile_json.get('email', f"temp.user.{user_id[:8]}@hybrid-score.com"),
             "gender": profile_json.get('sex'),
             "country": profile_json.get('country'),
+            "height_in": profile_json.get('body_metrics', {}).get('height_in'),
+            "weight_lb": profile_json.get('body_metrics', {}).get('weight_lb'),
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat(),
             "privacy_level": "public",
