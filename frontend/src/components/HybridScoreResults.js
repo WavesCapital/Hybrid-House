@@ -199,7 +199,11 @@ const HybridScoreResults = () => {
       
       // Glowing circle background
       const circleGradient = ctx.createRadialGradient(score.x, score.y, 0, score.x, score.y, 80);
-      circleGradient.addColorStop(0, color.replace('#', 'rgba(').replace(color.slice(-6), '') + color.slice(1,3) + ', ' + parseInt(color.slice(3,5), 16) + ', ' + parseInt(color.slice(5,7), 16) + ', 0.3)');
+      // Convert hex to RGB properly
+      const r = parseInt(color.slice(1, 3), 16);
+      const g = parseInt(color.slice(3, 5), 16);  
+      const b = parseInt(color.slice(5, 7), 16);
+      circleGradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.3)`);
       circleGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = circleGradient;
       ctx.beginPath();
