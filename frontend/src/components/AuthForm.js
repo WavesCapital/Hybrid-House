@@ -199,7 +199,7 @@ export default function AuthForm() {
         {/* Header */}
         <div className="text-center">
           <h1 className="text-4xl sm:text-5xl font-bold mb-3 sm:mb-4 neo-primary" style={{ lineHeight: '1.1' }}>
-            Hybrid House
+            Hybrid Lab
           </h1>
           <h2 className="text-xl sm:text-2xl font-semibold neo-text-primary mb-2">
             {isLogin ? 'Welcome back' : 'Join the community'}
