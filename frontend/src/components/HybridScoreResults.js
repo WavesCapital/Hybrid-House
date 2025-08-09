@@ -282,9 +282,9 @@ Think you can beat this? Get scored at HybridHouse.ai 🚀`;
     }
   };
 
-  // Show share options modal (same as AthleteProfile)
+  // Show beautiful share options modal with neon theme
   const showShareOptions = (imageDataUrl, shareText) => {
-    // Create a temporary modal with share options using Neo design
+    // Create enhanced modal with neon design
     const modal = document.createElement('div');
     modal.style.cssText = `
       position: fixed;
@@ -292,24 +292,45 @@ Think you can beat this? Get scored at HybridHouse.ai 🚀`;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.9);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 10000;
+      backdrop-filter: blur(10px);
+      animation: fadeIn 0.3s ease-out;
     `;
     
     const content = document.createElement('div');
     content.style.cssText = `
-      background: #111314;
-      padding: 32px;
-      border-radius: 16px;
-      max-width: 480px;
+      background: linear-gradient(135deg, #111314, #0A0B0C);
+      padding: 40px;
+      border-radius: 24px;
+      max-width: 520px;
       width: 90%;
       text-align: center;
-      border: 1px solid #1A1C1D;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.8);
+      border: 2px solid rgba(0, 255, 136, 0.3);
+      box-shadow: 
+        0 0 30px rgba(0, 255, 136, 0.2),
+        0 20px 40px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
     `;
+    
+    // Add subtle animated background pattern
+    const bgPattern = document.createElement('div');
+    bgPattern.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+    `;
+    content.appendChild(bgPattern);
     
     const encodedText = encodeURIComponent(shareText);
     const encodedUrl = encodeURIComponent('https://HybridHouse.ai');
@@ -324,35 +345,227 @@ Think you can beat this? Get scored at HybridHouse.ai 🚀`;
             'image/png': blob
           })
         ]);
-        alert('Image copied to clipboard!');
+        // Show success feedback
+        const button = document.getElementById('copyImageBtn');
+        button.innerHTML = '✓ Copied!';
+        button.style.background = 'rgba(0, 255, 136, 0.3)';
+        button.style.color = '#00FF88';
+        setTimeout(() => {
+          button.innerHTML = '📋 Copy Image';
+          button.style.background = 'rgba(255, 255, 255, 0.1)';
+          button.style.color = '#FFFFFF';
+        }, 2000);
       } catch (err) {
         console.error('Failed to copy image: ', err);
         alert('Failed to copy image to clipboard');
       }
     };
     
+    const copyText = () => {
+      navigator.clipboard.writeText(shareText);
+      const button = document.getElementById('copyTextBtn');
+      button.innerHTML = '✓ Copied!';
+      button.style.background = 'rgba(0, 255, 136, 0.3)';
+      button.style.color = '#00FF88';
+      setTimeout(() => {
+        button.innerHTML = '📝 Copy Text';
+        button.style.background = 'rgba(255, 255, 255, 0.1)';
+        button.style.color = '#FFFFFF';
+      }, 2000);
+    };
+    
     content.innerHTML = `
-      <h3 style="color: #D9D9D9; margin-bottom: 24px; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 24px; font-weight: 600;">Share Your Hybrid Score</h3>
-      <div style="margin-bottom: 24px;">
-        <img src="${imageDataUrl}" style="max-width: 100%; height: auto; border-radius: 12px; border: 1px solid #1A1C1D;" alt="Hybrid Score" />
+      <style>
+        @keyframes fadeIn {
+          from { opacity: 0; transform: scale(0.9); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes neonPulse {
+          0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 136, 0.5), 0 0 10px rgba(0, 255, 136, 0.3), 0 0 15px rgba(0, 255, 136, 0.1); }
+          50% { box-shadow: 0 0 10px rgba(0, 255, 136, 0.8), 0 0 20px rgba(0, 255, 136, 0.5), 0 0 30px rgba(0, 255, 136, 0.2); }
+        }
+        
+        .share-button {
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .share-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .share-button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.5s;
+        }
+        
+        .share-button:hover::before {
+          left: 100%;
+        }
+      </style>
+      
+      <div style="position: relative; z-index: 1;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px;">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(45deg, #00FF88, #00E0FF); display: flex; align-items: center; justify-content: center; animation: neonPulse 2s infinite;">
+            <span style="font-size: 20px;">🚀</span>
+          </div>
+          <h3 style="color: #FFFFFF; margin: 0; font-family: Inter, sans-serif; font-size: 28px; font-weight: 700; text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);">
+            Share Your Score
+          </h3>
+        </div>
+        
+        <div style="margin-bottom: 32px;">
+          <img src="${imageDataUrl}" style="max-width: 100%; height: auto; border-radius: 16px; border: 2px solid rgba(0, 255, 136, 0.3); box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);" alt="Hybrid Score Card" />
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px;">
+          <a href="https://twitter.com/intent/tweet?text=${encodedText}" target="_blank" style="
+            background: linear-gradient(135deg, #1DA1F2, #1a91da);
+            color: #FFFFFF;
+            padding: 16px 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            font-family: Inter, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;" 
+            class="share-button">
+            <span style="font-size: 16px;">🐦</span>
+            Twitter
+          </a>
+          
+          <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}" target="_blank" style="
+            background: linear-gradient(135deg, #4267B2, #365899);
+            color: #FFFFFF;
+            padding: 16px 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            font-family: Inter, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;" 
+            class="share-button">
+            <span style="font-size: 16px;">📘</span>
+            Facebook
+          </a>
+          
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}&summary=${encodedText}" target="_blank" style="
+            background: linear-gradient(135deg, #0077b5, #005885);
+            color: #FFFFFF;
+            padding: 16px 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            font-family: Inter, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;" 
+            class="share-button">
+            <span style="font-size: 16px;">💼</span>
+            LinkedIn
+          </a>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+          <button id="copyImageBtn" style="
+            background: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: Inter, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;" 
+            class="share-button">
+            📋 Copy Image
+          </button>
+          
+          <button id="copyTextBtn" onclick="this.copyText()" style="
+            background: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: Inter, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;" 
+            class="share-button">
+            📝 Copy Text
+          </button>
+        </div>
+        
+        <a href="${imageDataUrl}" download="hybrid-athlete-score.png" style="
+          background: linear-gradient(135deg, #00FF88, #00E0FF);
+          color: #000000;
+          padding: 16px 24px;
+          border-radius: 12px;
+          text-decoration: none;
+          font-weight: 700;
+          font-size: 16px;
+          font-family: Inter, sans-serif;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          margin-bottom: 20px;
+          box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);" 
+          class="share-button">
+          ⬇️ Download Score Card
+        </a>
+        
+        <div>
+          <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            font-family: Inter, sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;">
+            ✕ Close
+          </button>
+        </div>
       </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 12px; margin-bottom: 24px;">
-        <a href="https://twitter.com/intent/tweet?text=${encodedText}" target="_blank" style="background: #79CFF7; color: #0A0B0C; padding: 12px 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Twitter</a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}" target="_blank" style="background: #8D5CFF; color: #D9D9D9; padding: 12px 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Facebook</a>
-        <a href="instagram://library?AssetPath=${encodeURIComponent(imageDataUrl)}" style="background: #85E26E; color: #0A0B0C; padding: 12px 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Instagram</a>
-        <button id="copyImageBtn" style="background: #1A1C1D; color: #9FA1A3; padding: 12px 8px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Copy Image</button>
-        <button onclick="navigator.clipboard.writeText('${shareText.replace(/'/g, "\\'")}'); alert('Text copied to clipboard!')" style="background: #1A1C1D; color: #9FA1A3; padding: 12px 8px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Copy Text</button>
-        <a href="${imageDataUrl}" download="hybrid-score.png" style="background: #85E26E; color: #0A0B0C; padding: 12px 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Download</a>
-      </div>
-      <button onclick="this.parentElement.parentElement.remove()" style="background: transparent; color: #6B6E71; padding: 8px 16px; border-radius: 8px; border: 2px solid #6B6E71; cursor: pointer; font-family: Inter, sans-serif; transition: all 200ms ease-out;">Close</button>
     `;
     
     modal.appendChild(content);
     document.body.appendChild(modal);
     
-    // Add event listener for copy image button
+    // Add event listeners
     const copyImageBtn = content.querySelector('#copyImageBtn');
     copyImageBtn.addEventListener('click', copyImageToClipboard);
+    
+    const copyTextBtn = content.querySelector('#copyTextBtn');
+    copyTextBtn.copyText = copyText;
     
     // Close on click outside
     modal.addEventListener('click', (e) => {
@@ -360,6 +573,15 @@ Think you can beat this? Get scored at HybridHouse.ai 🚀`;
         modal.remove();
       }
     });
+    
+    // Close on Escape key
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        modal.remove();
+        document.removeEventListener('keydown', handleEscape);
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
   };
 
   // Animate score numbers and circle
