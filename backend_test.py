@@ -2458,6 +2458,186 @@ def main_original():
 
 if __name__ == "__main__":
     main()
+    def test_athlete_profile_endpoint_for_share_functionality(self):
+        """Test GET /api/athlete-profile/{profile_id} endpoint for share functionality"""
+        try:
+            print("\n🎯 ATHLETE PROFILE ENDPOINT FOR SHARE FUNCTIONALITY TESTING")
+            print("=" * 70)
+            
+            # Test the specific profile ID mentioned in the review request
+            profile_id = "901227ec-0b52-496f-babe-ace27cdd1a8d"
+            
+            print(f"🔍 Testing GET /api/athlete-profile/{profile_id}")
+            
+            response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                print(f"✅ Profile found! HTTP {response.status_code}")
+                print(f"📊 Response structure:")
+                
+                # Check what fields are included in the response
+                available_fields = list(data.keys())
+                print(f"   Available fields: {available_fields}")
+                
+                # Print the actual response data for analysis
+                print(f"\n📋 Full response data:")
+                for key, value in data.items():
+                    if key == 'profile_json' and isinstance(value, dict):
+                        print(f"   {key}: {list(value.keys())} (dict with {len(value)} fields)")
+                        # Show some key profile_json fields
+                        if 'first_name' in value:
+                            print(f"     first_name: {value.get('first_name')}")
+                        if 'last_name' in value:
+                            print(f"     last_name: {value.get('last_name')}")
+                    elif key == 'score_data' and isinstance(value, dict):
+                        print(f"   {key}: {list(value.keys())} (dict with {len(value)} fields)")
+                        # Show hybrid score
+                        if 'hybridScore' in value:
+                            print(f"     hybridScore: {value.get('hybridScore')}")
+                    else:
+                        print(f"   {key}: {value}")
+                
+                # Check specifically for user_id field
+                user_id = data.get('user_id')
+                if user_id:
+                    print(f"\n✅ user_id field found: {user_id}")
+                    
+                    # Test if GET /api/public-profile/{user_id} works with that user_id
+                    print(f"\n🔍 Testing GET /api/public-profile/{user_id}")
+                    
+                    public_profile_response = self.session.get(f"{API_BASE_URL}/public-profile/{user_id}")
+                    
+                    if public_profile_response.status_code == 200:
+                        public_data = public_profile_response.json()
+                        print(f"✅ Public profile found! HTTP {public_profile_response.status_code}")
+                        
+                        # Check for display_name or user profile data
+                        display_name = public_data.get('display_name') or public_data.get('public_profile', {}).get('display_name')
+                        
+                        print(f"\n📋 Public profile response structure:")
+                        for key, value in public_data.items():
+                            if isinstance(value, dict):
+                                print(f"   {key}: {list(value.keys())} (dict with {len(value)} fields)")
+                                # Show display_name if in nested structure
+                                if key == 'public_profile' and 'display_name' in value:
+                                    print(f"     display_name: {value.get('display_name')}")
+                            else:
+                                print(f"   {key}: {value}")
+                        
+                        if display_name:
+                            print(f"\n✅ display_name found: '{display_name}'")
+                        else:
+                            print(f"\n❌ display_name not found in public profile response")
+                        
+                        self.log_test("Athlete Profile Endpoint for Share Functionality", True, 
+                                    f"Profile endpoint returns user_id, public profile endpoint works, display_name: '{display_name}'", 
+                                    {
+                                        'profile_fields': available_fields,
+                                        'user_id': user_id,
+                                        'public_profile_works': True,
+                                        'display_name': display_name,
+                                        'public_profile_structure': list(public_data.keys()),
+                                        'profile_response_sample': {k: v for k, v in data.items() if k != 'profile_json'},
+                                        'public_response_sample': public_data
+                                    })
+                        return True
+                    else:
+                        print(f"❌ Public profile endpoint failed: HTTP {public_profile_response.status_code}")
+                        print(f"   Error: {public_profile_response.text}")
+                        
+                        self.log_test("Athlete Profile Endpoint for Share Functionality", False, 
+                                    f"Profile endpoint returns user_id but public profile endpoint fails with HTTP {public_profile_response.status_code}", 
+                                    {
+                                        'profile_fields': available_fields,
+                                        'user_id': user_id,
+                                        'public_profile_error': public_profile_response.text,
+                                        'profile_response_sample': {k: v for k, v in data.items() if k != 'profile_json'}
+                                    })
+                        return False
+                else:
+                    print(f"\n❌ user_id field not found in response")
+                    print(f"   Available fields: {available_fields}")
+                    
+                    # Check if there are any other ID fields that might be used
+                    id_fields = [field for field in available_fields if 'id' in field.lower()]
+                    print(f"   ID-related fields: {id_fields}")
+                    
+                    # Check profile_json for user-related data
+                    profile_json = data.get('profile_json', {})
+                    if profile_json:
+                        print(f"\n📋 profile_json contains:")
+                        for key, value in profile_json.items():
+                            if 'name' in key.lower() or 'email' in key.lower():
+                                print(f"     {key}: {value}")
+                    
+                    self.log_test("Athlete Profile Endpoint for Share Functionality", False, 
+                                "Profile endpoint does not include user_id field", 
+                                {
+                                    'profile_fields': available_fields,
+                                    'id_fields': id_fields,
+                                    'profile_json_sample': {k: v for k, v in profile_json.items() if 'name' in k.lower() or 'email' in k.lower()},
+                                    'full_response_structure': {k: type(v).__name__ for k, v in data.items()}
+                                })
+                    return False
+                    
+            elif response.status_code == 404:
+                print(f"❌ Profile not found: HTTP {response.status_code}")
+                self.log_test("Athlete Profile Endpoint for Share Functionality", False, 
+                            f"Profile {profile_id} not found", response.text)
+                return False
+            else:
+                print(f"❌ Unexpected response: HTTP {response.status_code}")
+                self.log_test("Athlete Profile Endpoint for Share Functionality", False, 
+                            f"Unexpected HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Athlete Profile Endpoint for Share Functionality", False, 
+                        "Test failed with exception", str(e))
+            return False
+
+def main_share_functionality_test():
+    """Main test runner focused on share functionality testing"""
+    tester = BackendTester()
+    
+    print("🚀 ATHLETE PROFILE ENDPOINT FOR SHARE FUNCTIONALITY TESTING")
+    print("="*80)
+    print("TESTING THE SPECIFIC REQUEST:")
+    print("1. Test GET /api/athlete-profile/901227ec-0b52-496f-babe-ace27cdd1a8d")
+    print("2. Check if the response includes a user_id field")
+    print("3. Check what fields are included in the response")
+    print("4. If user_id is included, test if GET /api/public-profile/{user_id} works")
+    print("5. Verify what display_name or user profile data is available")
+    print("="*80)
+    
+    # Run the specific test
+    print("\n🔍 Running Athlete Profile Endpoint Test...")
+    test_success = tester.test_athlete_profile_endpoint_for_share_functionality()
+    
+    # Print final summary
+    print(f"\n🏁 SHARE FUNCTIONALITY TEST SUMMARY")
+    print("="*50)
+    
+    total_tests = len(tester.test_results)
+    passed_tests = len([r for r in tester.test_results if r['success']])
+    
+    print(f"Total tests run: {total_tests}")
+    print(f"Tests passed: {passed_tests}")
+    print(f"Tests failed: {total_tests - passed_tests}")
+    print(f"Success rate: {(passed_tests/total_tests)*100:.1f}%" if total_tests > 0 else "No tests run")
+    
+    if test_success:
+        print("\n✅ SHARE FUNCTIONALITY TEST: SUCCESSFUL")
+        print("   ✅ Profile endpoint accessible")
+        print("   ✅ Response structure analyzed")
+        print("   ✅ User ID and display name availability checked")
+    else:
+        print("\n❌ SHARE FUNCTIONALITY TEST: ISSUES DETECTED")
+        print("   ❌ Check the detailed test results above")
+    
+    return test_success
 
     # ===== NICK BARE PROFILE LINKING FIX TESTS =====
     
