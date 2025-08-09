@@ -846,7 +846,7 @@ const HybridScoreForm = () => {
         }
 
         .wearable-tips {
-          background: rgba(255, 45, 222, 0.05);
+          background: rgba(0, 255, 136, 0.05);
           border-left: 3px solid var(--neon-secondary);
           padding: 12px 16px;
           margin-top: 16px;
