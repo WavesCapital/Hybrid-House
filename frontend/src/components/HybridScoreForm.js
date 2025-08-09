@@ -1495,19 +1495,10 @@ const HybridScoreForm = () => {
                     Next
                   </button>
                 ) : (
-                  <button
-                    type="button"
-                    className="neon-button text-sm sm:text-base px-4 sm:px-6 py-3 min-h-[44px] order-1 sm:order-2"
-                    disabled={isSubmitting}
-                    onClick={(e) => {
-                      console.log('🔍 DEBUG - Calculate Hybrid Score button clicked!');
-                      console.log('🔍 DEBUG - Event target:', e.target);
-                      console.log('🔍 DEBUG - Event type:', e.type);
-                      handleSubmit(e);
-                    }}
-                  >
-                    {isSubmitting ? 'Calculating Score...' : 'Calculate Hybrid Score'}
-                  </button>
+                  {/* Calculate Hybrid Score button REMOVED - will be re-added from scratch */}
+                  <div className="text-center p-4" style={{ color: 'var(--muted)' }}>
+                    Calculate button temporarily removed for debugging
+                  </div>
                 )}
               </div>
             </form>
