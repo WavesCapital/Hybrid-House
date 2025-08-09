@@ -84,7 +84,7 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Hybrid Score Form Submission Bug Fix"
+    - "User Profile Data Storage and Hybrid Score History Display"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
