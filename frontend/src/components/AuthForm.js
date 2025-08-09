@@ -74,7 +74,7 @@ export default function AuthForm() {
         if (!isLogin) {
           // Check if user is immediately logged in (no email confirmation)
           if (result.data?.session) {
-            setMessage(postAuthRedirect ? 'Account created successfully! Redirecting to your interview...' : 'Account created successfully! Welcome to Hybrid House!');
+            setMessage(postAuthRedirect ? 'Account created successfully! Redirecting to your interview...' : 'Account created successfully! Welcome to Hybrid Lab!');
             
             // Handle immediate redirect for successful signup with session
             if (postAuthRedirect === '/hybrid-interview') {
