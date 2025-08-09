@@ -137,7 +137,7 @@ async def get_current_user(payload: dict = Depends(verify_jwt)):
 # Routes
 @api_router.get("/")
 async def read_root():
-    return {"message": "Hybrid House API with Supabase"}
+    return {"message": "Hybrid Lab API with Supabase"}
 
 @api_router.get("/test-score")
 async def get_test_score():
