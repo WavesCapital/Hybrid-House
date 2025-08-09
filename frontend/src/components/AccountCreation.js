@@ -216,7 +216,7 @@ const AccountCreation = () => {
         {/* Header */}
         <div className="text-center">
           <h1 className="text-5xl font-bold mb-4 neo-primary" style={{ lineHeight: '1.1' }}>
-            Hybrid House
+            Hybrid Lab
           </h1>
           <h2 className="text-2xl font-semibold neo-text-primary mb-2">
             Create Your Account
