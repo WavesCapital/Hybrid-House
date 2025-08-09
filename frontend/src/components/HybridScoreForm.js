@@ -346,7 +346,7 @@ const HybridScoreForm = () => {
         console.log('🔍 DEBUGGING - Profile data:', profileData);
 
         // Generate unique profile ID like ProfilePage does
-        const profileId = require('uuid').v4();
+        const profileId = uuid();
         
         // Create athlete profile using public endpoint (same structure as ProfilePage)
         const newProfile = {
