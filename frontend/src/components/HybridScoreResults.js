@@ -52,18 +52,22 @@ const HybridScoreResults = () => {
     canvas.width = 1080;
     canvas.height = 1080;
     
-    // Create dark gradient background
-    const gradient = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width/2);
-    gradient.addColorStop(0, '#111314');
-    gradient.addColorStop(0.7, '#0A0B0C');
-    gradient.addColorStop(1, '#000000');
-    ctx.fillStyle = gradient;
+    // Clear canvas completely
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Create stunning dark gradient background
+    const bgGradient = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width);
+    bgGradient.addColorStop(0, '#1A1B23');
+    bgGradient.addColorStop(0.4, '#0F1419');
+    bgGradient.addColorStop(0.8, '#0A0D12');
+    bgGradient.addColorStop(1, '#000000');
+    ctx.fillStyle = bgGradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Add neon grid pattern
-    ctx.strokeStyle = 'rgba(0, 255, 136, 0.08)';
-    ctx.lineWidth = 1;
-    const gridSize = 60;
+    // Add animated neon grid pattern
+    ctx.strokeStyle = 'rgba(0, 255, 136, 0.12)';
+    ctx.lineWidth = 2;
+    const gridSize = 80;
     for (let i = 0; i < canvas.width; i += gridSize) {
       ctx.beginPath();
       ctx.moveTo(i, 0);
@@ -77,188 +81,202 @@ const HybridScoreResults = () => {
       ctx.stroke();
     }
     
-    // Add floating circles with neon glow
-    const circles = [
-      { x: 150, y: 200, r: 80, alpha: 0.15 },
-      { x: 950, y: 150, r: 60, alpha: 0.1 },
-      { x: 200, y: 800, r: 100, alpha: 0.12 },
-      { x: 900, y: 900, r: 70, alpha: 0.08 },
-      { x: 750, y: 400, r: 40, alpha: 0.2 }
+    // Add spectacular floating neon circles
+    const neonCircles = [
+      { x: 200, y: 180, r: 120, alpha: 0.25, color: [0, 255, 136] },
+      { x: 880, y: 200, r: 90, alpha: 0.2, color: [0, 240, 255] },
+      { x: 150, y: 750, r: 140, alpha: 0.18, color: [136, 255, 0] },
+      { x: 900, y: 850, r: 110, alpha: 0.22, color: [255, 136, 0] },
+      { x: 750, y: 450, r: 60, alpha: 0.3, color: [255, 0, 136] }
     ];
     
-    circles.forEach(circle => {
-      // Outer glow
-      const glowGradient = ctx.createRadialGradient(circle.x, circle.y, 0, circle.x, circle.y, circle.r * 1.5);
-      glowGradient.addColorStop(0, `rgba(0, 255, 136, ${circle.alpha})`);
-      glowGradient.addColorStop(1, 'rgba(0, 255, 136, 0)');
-      ctx.fillStyle = glowGradient;
-      ctx.beginPath();
-      ctx.arc(circle.x, circle.y, circle.r * 1.5, 0, 2 * Math.PI);
-      ctx.fill();
+    neonCircles.forEach(circle => {
+      // Multiple glow layers for intense effect
+      for (let layer = 3; layer >= 1; layer--) {
+        const glowGradient = ctx.createRadialGradient(
+          circle.x, circle.y, 0, 
+          circle.x, circle.y, circle.r * (1 + layer * 0.5)
+        );
+        const [r, g, b] = circle.color;
+        glowGradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${circle.alpha / layer})`);
+        glowGradient.addColorStop(0.7, `rgba(${r}, ${g}, ${b}, ${circle.alpha / (layer * 3)})`);
+        glowGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = glowGradient;
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y, circle.r * (1 + layer * 0.5), 0, 2 * Math.PI);
+        ctx.fill();
+      }
       
-      // Inner circle
-      ctx.strokeStyle = `rgba(0, 255, 136, ${circle.alpha * 2})`;
-      ctx.lineWidth = 2;
+      // Inner circle with bright border
+      ctx.strokeStyle = `rgba(${circle.color[0]}, ${circle.color[1]}, ${circle.color[2]}, ${circle.alpha * 1.5})`;
+      ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
       ctx.stroke();
     });
     
-    // Main content area with subtle border
-    const contentY = 250;
-    const contentHeight = 580;
-    ctx.strokeStyle = 'rgba(0, 255, 136, 0.3)';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(80, contentY, canvas.width - 160, contentHeight);
+    // Main content container with neon border
+    const contentX = 120;
+    const contentY = 200;
+    const contentWidth = canvas.width - 240;
+    const contentHeight = 680;
     
-    // Title with neon glow effect
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 52px Inter, sans-serif';
-    ctx.shadowColor = 'rgba(0, 255, 136, 0.8)';
-    ctx.shadowBlur = 20;
-    ctx.fillText('HYBRID ATHLETE', canvas.width / 2, contentY + 80);
-    ctx.shadowBlur = 0;
-    
-    // Main score circle with animated rings
-    const centerX = canvas.width / 2;
-    const centerY = contentY + 250;
-    const mainRadius = 140;
-    
-    // Outer ring with glow
+    // Container glow effect
     ctx.strokeStyle = 'rgba(0, 255, 136, 0.6)';
-    ctx.lineWidth = 8;
+    ctx.lineWidth = 6;
     ctx.shadowColor = 'rgba(0, 255, 136, 0.8)';
-    ctx.shadowBlur = 15;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, mainRadius, 0, 2 * Math.PI);
-    ctx.stroke();
+    ctx.shadowBlur = 25;
+    ctx.strokeRect(contentX, contentY, contentWidth, contentHeight);
     ctx.shadowBlur = 0;
     
-    // Progress ring
+    // Title with massive neon glow
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 64px Inter, Arial, sans-serif';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.shadowColor = 'rgba(0, 255, 136, 1)';
+    ctx.shadowBlur = 40;
+    ctx.fillText('HYBRID ATHLETE', canvas.width / 2, contentY + 100);
+    ctx.shadowBlur = 0;
+    
+    // Spectacular main score circle
+    const centerX = canvas.width / 2;
+    const centerY = contentY + 320;
+    const mainRadius = 180;
+    
+    // Multiple ring layers for depth
+    for (let ring = 3; ring >= 1; ring--) {
+      const ringRadius = mainRadius + (ring * 15);
+      ctx.strokeStyle = `rgba(0, 255, 136, ${0.3 / ring})`;
+      ctx.lineWidth = 8;
+      ctx.shadowColor = 'rgba(0, 255, 136, 0.8)';
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, ringRadius, 0, 2 * Math.PI);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+    
+    // Animated progress ring
     const progress = (hybridScoreValue / 100) * 2 * Math.PI;
     ctx.strokeStyle = '#00FF88';
-    ctx.lineWidth = 12;
+    ctx.lineWidth = 16;
     ctx.lineCap = 'round';
     ctx.shadowColor = 'rgba(0, 255, 136, 1)';
-    ctx.shadowBlur = 25;
+    ctx.shadowBlur = 35;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, mainRadius - 20, -Math.PI/2, -Math.PI/2 + progress);
+    ctx.arc(centerX, centerY, mainRadius - 30, -Math.PI/2, -Math.PI/2 + progress);
     ctx.stroke();
     ctx.shadowBlur = 0;
     
-    // Score number with massive glow
+    // Score number with explosive glow
     ctx.fillStyle = '#00FF88';
-    ctx.font = 'bold 120px Inter, sans-serif';
+    ctx.font = 'bold 140px Inter, Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.shadowColor = 'rgba(0, 255, 136, 1)';
-    ctx.shadowBlur = 30;
-    ctx.fillText(hybridScoreValue.toString(), centerX, centerY + 20);
+    ctx.shadowBlur = 50;
+    ctx.fillText(hybridScoreValue.toString(), centerX, centerY + 25);
     ctx.shadowBlur = 0;
     
-    // Score label
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.font = '28px Inter, sans-serif';
-    ctx.fillText('SCORE', centerX, centerY + 65);
+    // Score label with glow
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.font = 'bold 36px Inter, Arial, sans-serif';
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+    ctx.shadowBlur = 15;
+    ctx.fillText('HYBRID SCORE', centerX, centerY + 85);
+    ctx.shadowBlur = 0;
     
-    // Breakdown scores in corners with neon accents
+    // Spectacular breakdown scores with neon accents
+    const breakdownColors = ['#00FF88', '#00E0FF', '#FF88E0', '#FFE000'];
     const breakdownScores = [
-      { label: 'STR', value: Math.round(parseFloat(scoreData.strengthScore)), x: centerX - 120, y: centerY + 150 },
-      { label: 'SPD', value: Math.round(parseFloat(scoreData.speedScore)), x: centerX + 120, y: centerY + 150 },
-      { label: 'VO₂', value: Math.round(parseFloat(scoreData.vo2Score)), x: centerX - 120, y: centerY - 150 },
-      { label: 'END', value: Math.round(parseFloat(scoreData.enduranceScore)), x: centerX + 120, y: centerY - 150 }
+      { label: 'STR', value: Math.round(parseFloat(scoreData.strengthScore)), x: centerX - 160, y: centerY + 180 },
+      { label: 'SPD', value: Math.round(parseFloat(scoreData.speedScore)), x: centerX + 160, y: centerY + 180 },
+      { label: 'VO₂', value: Math.round(parseFloat(scoreData.vo2Score)), x: centerX - 160, y: centerY - 180 },
+      { label: 'END', value: Math.round(parseFloat(scoreData.enduranceScore)), x: centerX + 160, y: centerY - 180 }
     ];
     
-    breakdownScores.forEach(score => {
-      // Mini circle background
-      ctx.fillStyle = 'rgba(0, 255, 136, 0.15)';
+    breakdownScores.forEach((score, index) => {
+      const color = breakdownColors[index % breakdownColors.length];
+      
+      // Glowing circle background
+      const circleGradient = ctx.createRadialGradient(score.x, score.y, 0, score.x, score.y, 80);
+      circleGradient.addColorStop(0, color.replace('#', 'rgba(').replace(color.slice(-6), '') + color.slice(1,3) + ', ' + parseInt(color.slice(3,5), 16) + ', ' + parseInt(color.slice(5,7), 16) + ', 0.3)');
+      circleGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = circleGradient;
       ctx.beginPath();
-      ctx.arc(score.x, score.y, 45, 0, 2 * Math.PI);
+      ctx.arc(score.x, score.y, 80, 0, 2 * Math.PI);
       ctx.fill();
       
-      // Circle border with glow
-      ctx.strokeStyle = '#00FF88';
-      ctx.lineWidth = 3;
-      ctx.shadowColor = 'rgba(0, 255, 136, 0.6)';
-      ctx.shadowBlur = 10;
+      // Circle border with intense glow
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 6;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 20;
       ctx.beginPath();
-      ctx.arc(score.x, score.y, 45, 0, 2 * Math.PI);
+      ctx.arc(score.x, score.y, 60, 0, 2 * Math.PI);
       ctx.stroke();
       ctx.shadowBlur = 0;
       
-      // Score value
+      // Score value with glow
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 28px Inter, sans-serif';
+      ctx.font = 'bold 36px Inter, Arial, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(score.value.toString(), score.x, score.y + 10);
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 15;
+      ctx.fillText(score.value.toString(), score.x, score.y + 12);
+      ctx.shadowBlur = 0;
       
-      // Label
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-      ctx.font = '14px Inter, sans-serif';
-      ctx.fillText(score.label, score.x, score.y - 60);
+      // Label with subtle glow
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.font = 'bold 18px Inter, Arial, sans-serif';
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+      ctx.shadowBlur = 8;
+      ctx.fillText(score.label, score.x, score.y - 85);
+      ctx.shadowBlur = 0;
     });
     
-    // Ranking badge (if available)
+    // Ranking badge with neon effect (if available)
     if (leaderboardPosition && totalAthletes) {
-      const badgeX = canvas.width - 150;
-      const badgeY = contentY + 50;
-      const badgeWidth = 140;
-      const badgeHeight = 50;
-      const radius = 25;
+      const badgeX = canvas.width - 180;
+      const badgeY = contentY + 80;
       
-      // Badge background with glow
-      ctx.fillStyle = 'rgba(0, 255, 136, 0.2)';
-      ctx.shadowColor = 'rgba(0, 255, 136, 0.6)';
-      ctx.shadowBlur = 15;
+      // Badge glow background
+      ctx.fillStyle = 'rgba(255, 215, 0, 0.3)';
+      ctx.shadowColor = 'rgba(255, 215, 0, 0.8)';
+      ctx.shadowBlur = 25;
       ctx.beginPath();
-      ctx.moveTo(badgeX - badgeWidth/2 + radius, badgeY - badgeHeight/2);
-      ctx.lineTo(badgeX + badgeWidth/2 - radius, badgeY - badgeHeight/2);
-      ctx.quadraticCurveTo(badgeX + badgeWidth/2, badgeY - badgeHeight/2, badgeX + badgeWidth/2, badgeY - badgeHeight/2 + radius);
-      ctx.lineTo(badgeX + badgeWidth/2, badgeY + badgeHeight/2 - radius);
-      ctx.quadraticCurveTo(badgeX + badgeWidth/2, badgeY + badgeHeight/2, badgeX + badgeWidth/2 - radius, badgeY + badgeHeight/2);
-      ctx.lineTo(badgeX - badgeWidth/2 + radius, badgeY + badgeHeight/2);
-      ctx.quadraticCurveTo(badgeX - badgeWidth/2, badgeY + badgeHeight/2, badgeX - badgeWidth/2, badgeY + badgeHeight/2 - radius);
-      ctx.lineTo(badgeX - badgeWidth/2, badgeY - badgeHeight/2 + radius);
-      ctx.quadraticCurveTo(badgeX - badgeWidth/2, badgeY - badgeHeight/2, badgeX - badgeWidth/2 + radius, badgeY - badgeHeight/2);
-      ctx.closePath();
+      ctx.arc(badgeX, badgeY, 50, 0, 2 * Math.PI);
       ctx.fill();
       ctx.shadowBlur = 0;
       
       // Badge border
-      ctx.strokeStyle = '#00FF88';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.moveTo(badgeX - badgeWidth/2 + radius, badgeY - badgeHeight/2);
-      ctx.lineTo(badgeX + badgeWidth/2 - radius, badgeY - badgeHeight/2);
-      ctx.quadraticCurveTo(badgeX + badgeWidth/2, badgeY - badgeHeight/2, badgeX + badgeWidth/2, badgeY - badgeHeight/2 + radius);
-      ctx.lineTo(badgeX + badgeWidth/2, badgeY + badgeHeight/2 - radius);
-      ctx.quadraticCurveTo(badgeX + badgeWidth/2, badgeY + badgeHeight/2, badgeX + badgeWidth/2 - radius, badgeY + badgeHeight/2);
-      ctx.lineTo(badgeX - badgeWidth/2 + radius, badgeY + badgeHeight/2);
-      ctx.quadraticCurveTo(badgeX - badgeWidth/2, badgeY + badgeHeight/2, badgeX - badgeWidth/2, badgeY + badgeHeight/2 - radius);
-      ctx.lineTo(badgeX - badgeWidth/2, badgeY - badgeHeight/2 + radius);
-      ctx.quadraticCurveTo(badgeX - badgeWidth/2, badgeY - badgeHeight/2, badgeX - badgeWidth/2 + radius, badgeY - badgeHeight/2);
-      ctx.closePath();
+      ctx.arc(badgeX, badgeY, 50, 0, 2 * Math.PI);
       ctx.stroke();
       
       // Ranking text
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 18px Inter, sans-serif';
+      ctx.font = 'bold 22px Inter, Arial, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(`#${leaderboardPosition}`, badgeX, badgeY + 6);
+      ctx.fillText(`#${leaderboardPosition}`, badgeX, badgeY + 8);
     }
     
-    // Call to action with neon accent
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.font = 'bold 32px Inter, sans-serif';
+    // Call to action with electric effect
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.font = 'bold 42px Inter, Arial, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('What\'s Your Score?', canvas.width / 2, contentY + 480);
+    ctx.shadowColor = 'rgba(0, 255, 136, 0.6)';
+    ctx.shadowBlur = 20;
+    ctx.fillText('What\'s Your Score?', canvas.width / 2, contentY + 560);
+    ctx.shadowBlur = 0;
     
-    // Website with glow
+    // Website with massive neon glow
     ctx.fillStyle = '#00FF88';
-    ctx.font = 'bold 28px Inter, sans-serif';
-    ctx.shadowColor = 'rgba(0, 255, 136, 0.8)';
-    ctx.shadowBlur = 10;
-    ctx.fillText('HybridHouse.ai', canvas.width / 2, contentY + 520);
+    ctx.font = 'bold 38px Inter, Arial, sans-serif';
+    ctx.shadowColor = 'rgba(0, 255, 136, 1)';
+    ctx.shadowBlur = 30;
+    ctx.fillText('HybridHouse.ai', canvas.width / 2, contentY + 620);
     ctx.shadowBlur = 0;
     
     return canvas.toDataURL('image/png', 0.95);
