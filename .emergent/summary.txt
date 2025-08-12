@@ -1,5 +1,5 @@
 <analysis>
-The AI engineer's work primarily focused on resolving critical bugs and implementing UI/UX enhancements for the Hybrid House application. Initially, the challenge was fixing the Hybrid Score Form submission, which involved a misdiagnosis regarding authentication. The engineer discovered the form's intended public submission flow via  and refactored the frontend to utilize this, while ensuring backend foreign key constraints were met for public user profiles. Subsequent efforts tackled backend instability (file watch limits) and frontend silent failures (null-safe string operations, robust error handling). Finally, significant UI/UX changes were implemented, including a full-screen calculation modal with a glowing progress bar, refined through user feedback for badass neon vibes, and a sitewide replacement of pink/magenta accent colors with neon green for consistency. The trajectory concludes with all these reported as successfully implemented.
+The AI engineer's work in this trajectory primarily focused on refining the Hybrid House application's UI/UX and addressing critical bug reports. Initially, the engineer tackled enhancements to the Share Score card, iterating through multiple design fixes to achieve a stunning, on-brand neon aesthetic, resolve text positioning, and fix image rendering issues. A major update involved dynamically displaying the user's  on the share card, which required synchronizing frontend (React) and backend (FastAPI) data fetching to retrieve information from the  table. Subsequent efforts included correcting the order of content for native sharing (iMessage fix), restyling the Share Score button, and executing a comprehensive site-wide rebrand from Hybrid House to Hybrid Lab, alongside a URL correction from  to . The trajectory concluded with implementing a glowing effect for the Get Hybrid Score button on the home page, successfully enhancing its visual prominence.
 </analysis>
 
 <product_requirements>
@@ -9,19 +9,28 @@ The Hybrid House application aims to assess athletes and calculate a Hybrid Scor
 3.  **Authentication Flow**: Streamlining onboarding; ideally, allowing unauthenticated form filling with later account creation.
 4.  **UI/UX Enhancements**: Dynamic tips, section explainers, improved inputs, mobile responsiveness.
 5.  **Profile Page Improvements**: Adding navigation, standardizing inputs, and fixing data display.
-6.  **Bug Fixes**: Resolving  page data mismatch and crucially, the Calculate Hybrid Score button not triggering its webhook or redirecting correctly. This bug re-emerged multiple times throughout the trajectory.
+6.  **Bug Fixes**: Resolving  page data mismatch and crucially, the Calculate Hybrid Score button not triggering its webhook or redirecting correctly.
 7.  **Header and Navigation Audit**: Ensuring consistent and easy navigation across the app.
 8.  **Leaderboard Enhancements**: Visual cleanup and making entries clickable.
 9.  **Hybrid Score Page Improvements**: Score number glow, animated circular progress.
 10. **Calculation Modal**: A full-page, on-brand, glowing progress bar popup during score calculation.
-11. **Color Theme Update**: Replacing all pink/magenta accent colors with neon green, especially for button hover effects.
+11. **Color Theme Update**: Replacing all pink/magenta accent colors with neon green.
+
+The most recent development cycle added:
+1.  **Share Card Enhancement**: Create an incredibly beautiful, on-brand, neon-themed share card (with circles and punchy copy) for the  page, ensuring text is below the image.
+2.  **Share Card Personalization**: Replace HYBRID ATHLETE with the user's  from the  table, linked by .
+3.  **Native Sharing Order**: Fix iMessage sharing to display the image before the text.
+4.  **Share Score Button Styling**: Change the button to solid blue with a glow on hover instead of a gradient.
+5.  **Application Rebranding**: Change all instances of Hybrid House to Hybrid Lab site-wide.
+6.  **URL Correction**: Update all  URLs to .
+7.  **Home Page Button Glow**: Make the Get Hybrid Score button on the home page glow.
 </product_requirements>
 
 <key_technical_concepts>
--   **Frontend**: React.js, Tailwind CSS, Radix UI, , , React Context (AuthContext),  for ID generation.
--   **Backend**: FastAPI (Python), Supabase Python Client (PostgreSQL), .
--   **Database**: Supabase PostgreSQL (, ), Foreign Key constraints, JSONB.
--   **Core Concepts**: Data normalization, Webhook integration, Authentication state management, Form validation, Dynamic UI rendering, Error handling, Environment variable usage.
+-   **Frontend**: React.js, Tailwind CSS, Canvas API (for image generation), , , React Context (AuthContext), .
+-   **Backend**: FastAPI (Python), Supabase Python Client (PostgreSQL).
+-   **Database**: Supabase PostgreSQL (, ), Foreign Key constraints.
+-   **Core Concepts**: Data fetching/manipulation, UI rendering, Client-side image generation, Native sharing (), Environment variables.
 </key_technical_concepts>
 
 <code_architecture>
@@ -30,32 +39,30 @@ The application utilizes a React.js frontend and a FastAPI (Python) backend, int
 
 
 -   ****:
-    -   **Importance**: Core backend API handling routing and DB interaction.
-    -   **Changes**: Initially updated for  and  mapping. Significant changes to  (public endpoint) to ensure proper user profile creation for foreign key satisfaction (handling  and including , ).
+    -   **Importance**: Handles core backend API routes and database interactions.
+    -   **Changes**: The  GET endpoint was modified to fetch and include related  data (specifically ) by performing a join with the  table, enabling personalization of the share card.
 -   ****:
     -   **Importance**: Defines application-wide routing and protected routes.
-    -   **Changes**:  was temporarily removed from  for debugging and later re-evaluated.
+    -   **Changes**: No recent changes.
 -   ****:
-    -   **Importance**: Multi-section form for athlete data collection and webhook submission.
-    -   **Changes**: Extensive debugging and refactoring. Initial attempt to force authentication and use  for data preservation was reverted. Modified  and  to use  for unauthenticated users (with  generation) and the authenticated endpoint otherwise. Added robust  blocks and null-safe string operations (). The Calculate Hybrid Score button was completely removed and re-integrated multiple times to fix persistent issues. Implemented and refined a full-page calculation modal with a glowing progress bar, including design iterations (neon vibes, stable borders, typography). Updated styling for various elements to replace pink with neon green.
+    -   **Importance**: Core component for displaying hybrid scores and managing share functionality.
+    -   **Changes**:
+        -   The  function was extensively refactored to create a visually appealing, neon-themed share card canvas, resolving issues with element overlap, spacing, color parsing, and ensuring the image is generated with the desired Lab branding and  URL.
+        -   Display name logic was updated to retrieve and utilize  from the newly available  data, with robust fallbacks.
+        -   The Share Score button styling was changed from a gradient to a solid blue with a blue glow effect on hover.
+        -   The  function was modified to optimize  parameters, ensuring the image appears before text in native sharing applications like iMessage.
 -   ****:
-    -   **Importance**: Supervisor configuration for backend process.
-    -   **Changes**: Modified backend command to exclude problematic directories, resolving server instability due to file watch limits.
+    -   **Importance**: Serves as the application's home page and the starting point for score calculation.
+    -   **Changes**: The  styling within this component was modified to add a constant cyan blue glow to the Get Hybrid Score button, which intensifies on hover, enhancing its visual impact. The component's branding was updated from Hybrid House to Hybrid Lab.
 -   ****:
-    -   **Importance**: User's personal profile management and history display.
-    -   **Changes**: Examined for its working pattern of profile creation and webhook submission. Modified styling to replace pink hover effects with neon green/blue glow.
+    -   **Importance**: The main HTML file; controls document title and meta information.
+    -   **Changes**: Updated various HTML meta tags (title, descriptions, Open Graph, Twitter Card) to reflect Hybrid Lab branding and corrected URLs from  to  for consistency.
+-   **Various Frontend Components (e.g., , , , , , , )**:
+    -   **Importance**: Core UI elements across the application.
+    -   **Changes**: All instances of Hybrid House were systematically replaced with Hybrid Lab, and HybridHouse.ai was updated to HybridLab.io to ensure a consistent site-wide rebrand.
 -   ****:
-    -   **Importance**: Home page and primary navigation hub.
-    -   **Changes**: Modified gradient background color from pink to neon green and updated hover effects.
--   ****:
-    -   **Importance**: Handles user logout.
-    -   **Changes**: Modified gradient background color from pink to neon green.
--   ****:
-    -   **Importance**: Displays global athlete rankings.
-    -   **Changes**: Updated styling for error states, borders, and gradients to use neon green.
--   ****:
-    -   **Importance**: Used for logging internal test results, plans, and debugging information.
-    -   **Changes**: Continuously updated with detailed summaries of findings, fixes, and test outcomes.
+    -   **Importance**: Serves as an internal log for testing, debugging, and progress tracking.
+    -   **Changes**: Continuously updated with detailed summaries of findings, fixes, and test outcomes throughout the share card, display name, rebranding, and URL correction tasks.
 </code_architecture>
 
 <pending_tasks>
@@ -63,21 +70,22 @@ The application utilizes a React.js frontend and a FastAPI (Python) backend, int
 -   Implement dynamic branching logic for questions based on user answers in the interview.
 -   Implement dynamic  based on  answer for Q29 (partially addressed but not for Q29 of the original interview flow).
 -   Refine the full 55-question flow for completeness and accuracy.
+-   Confirm with the user if they are satisfied with the implemented color changes and if there are any further UI/UX enhancements or issues to address.
 </pending_tasks>
 
 <current_work>
-Immediately prior to this summary, the AI engineer was addressing UI/UX refinement based on user feedback. The most recent task involved replacing all instances of pink/magenta accent colors throughout the application with a consistent neon green (), and updating button hover effects to use blue glow instead of pink.
+Immediately prior to this summary, the AI engineer completed the task of adding a constant glowing effect to the Get Hybrid Score button, located on the home page () within the  component.
 
-This work primarily involved modifying CSS properties and Tailwind CSS classes within several frontend components:
--   : Changed  CSS variable, updated hover effects and background colors.
--   : Updated hover background and glow effects.
--   : Modified gradient background and  variable.
--   : Updated gradient.
--   : Changed error states, borders, and gradients.
+This involved modifying the CSS properties associated with the  class to include:
+-   A subtle, multi-layered cyan blue  to create a continuous glow when the button is at rest.
+-   An enhanced, more intense  (using a 5-layer system) that activates on hover, providing a dynamic and visually striking effect.
+-   Maintaining the existing  and  for smooth lift and animation on hover.
 
-The engineer performed  searches to identify all occurrences of pink/magenta color codes and references (, , , , ) across the frontend source code and CSS files, ensuring a comprehensive replacement with neon green ( and ). The frontend was restarted after these changes to apply them. This task was completed and confirmed by the AI engineer.
+This enhancement ensures the primary Call-to-Action button now visually pops, aligning perfectly with the application's neon aesthetic and drawing user attention effectively. The changes were successfully applied and verified via a screenshot.
+
+Preceding this, the engineer performed a comprehensive rebranding, changing all instances of Hybrid House to Hybrid Lab across the frontend (e.g., , , , , , , , , and  meta tags) and backend. Subsequently, all  URLs were corrected to . Significant work was also dedicated to revamping the Share Score card, including personalizing it with the  from the  table (requiring updates to  and ), fixing the image/text order for native sharing, and restyling the share button.
 </current_work>
 
 <optional_next_step>
-Confirm with the user if they are satisfied with the implemented color changes and if there are any further UI/UX enhancements or issues to address.
+Ask the user for confirmation on the recently implemented Get Hybrid Score button glow and the overall design changes, and if there are any further UI/UX enhancements.
 </optional_next_step>
