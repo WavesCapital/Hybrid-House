@@ -676,7 +676,7 @@ const HybridScoreForm = () => {
           border-radius: 12px;
           padding: 20px 40px;
           font-size: 18px;
-          font-weight: 700;
+          font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;
           display: flex;
