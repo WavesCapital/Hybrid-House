@@ -734,6 +734,7 @@ const HybridScoreForm = () => {
           border-radius: 0 8px 8px 0 !important;
           padding: 12px 16px !important;
           margin-top: 8px !important;
+          margin-bottom: 12px !important;
           transition: all 0.3s ease !important;
           display: block !important;
         }
