@@ -46,6 +46,8 @@ const HybridScoreForm = () => {
     long_run: '',
     
     // Strength Performance
+    strengthApp: '',
+    customStrengthApp: '',
     pb_bench_1rm: '',
     pb_squat_1rm: '',
     pb_deadlift_1rm: ''
