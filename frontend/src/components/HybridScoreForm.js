@@ -746,7 +746,7 @@ const HybridScoreForm = () => {
         /* Wearable Chips - Unified */
         .wearables-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          grid-template-columns: repeat(4, 1fr);
           gap: 12px;
           margin-top: 12px;
         }
@@ -756,7 +756,7 @@ const HybridScoreForm = () => {
           border: 1px solid var(--border);
           border-radius: 25px;
           color: var(--txt);
-          padding: 14px 18px;
+          padding: 10px 16px;
           font-size: 14px;
           font-weight: 500;
           cursor: pointer;
@@ -765,7 +765,8 @@ const HybridScoreForm = () => {
           align-items: center;
           justify-content: center;
           text-align: center;
-          min-height: 50px;
+          min-height: 40px;
+          width: 100%;
         }
 
         .wearable-chip:hover {
