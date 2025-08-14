@@ -716,154 +716,187 @@ const HybridScoreForm = () => {
       <div className="min-h-screen" style={{ background: '#0E0E11' }}>
       <style>
         {`
-        /* Flat-Neon "Laser Pop" Color System */
+        /* Unified Design System */
         :root {
           --bg: #0E0E11;
           --card: #15161A;
+          --card-secondary: #1A1B20;
           --border: #1F2025;
+          --border-subtle: #2A2B30;
           --txt: #F5FAFF;
-          --muted: #8D9299;
+          --txt-muted: #8D9299;
+          --txt-subtle: #6B7280;
           --neon-primary: #08F0FF;
           --neon-secondary: #00FF88;
+          --neon-accent: #FFA42D;
+          --gradient-primary: linear-gradient(135deg, #08F0FF 0%, #0EA5E9 100%);
+          --shadow-glow: 0 0 20px rgba(8, 240, 255, 0.15);
+          --shadow-glow-hover: 0 0 30px rgba(8, 240, 255, 0.25);
         }
 
-        /* Field Explanation Styles - High Priority */
-        .field-explanation {
-          background: rgba(8, 240, 255, 0.08) !important;
-          border-left: 3px solid #08F0FF !important;
-          border-radius: 0 8px 8px 0 !important;
-          padding: 12px 16px !important;
-          margin-top: 8px !important;
-          margin-bottom: 12px !important;
-          transition: all 0.3s ease !important;
-          display: block !important;
+        /* Unified Section Styling */
+        .assessment-section {
+          background: var(--card-secondary);
+          border: 1px solid var(--border);
+          border-radius: 16px;
+          padding: 32px;
+          margin-bottom: 24px;
+          transition: all 0.4s ease;
+          box-shadow: var(--shadow-glow);
         }
 
-        .field-explanation:hover {
-          background: rgba(8, 240, 255, 0.12) !important;
-          border-left-color: #00FF88 !important;
+        .assessment-section:hover {
+          border-color: var(--neon-primary);
+          box-shadow: var(--shadow-glow-hover);
+          transform: translateY(-2px);
         }
 
-        .field-explanation-header {
-          color: #08F0FF !important;
-          font-weight: 600 !important;
-          font-size: 13px !important;
-          margin-bottom: 6px !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.5px !important;
+        .section-header {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 32px;
+          padding-bottom: 16px;
+          border-bottom: 1px solid var(--border-subtle);
         }
 
-        .field-explanation-text {
-          color: #F5FAFF !important;
-          font-size: 13px !important;
-          line-height: 1.5 !important;
-          margin: 0 !important;
+        .section-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          background: var(--gradient-primary);
+          color: #000000;
         }
 
-        /* Optional Label Styles */
-        .optional-label {
-          display: inline !important;
-          background: none !important;
-          color: #8D9299 !important;
-          font-size: 12px !important;
-          font-weight: 400 !important;
-          padding: 0 !important;
-          border-radius: 0 !important;
-          margin-left: 8px !important;
-          text-transform: none !important;
-          letter-spacing: 0 !important;
-          border: none !important;
-          font-style: italic !important;
+        .section-title {
+          color: var(--txt);
+          font-size: 28px;
+          font-weight: 700;
+          margin: 0;
+          letter-spacing: -0.02em;
         }
 
-        /* Wearable Tips Styles */
-        .wearable-tips {
-          background: rgba(0, 255, 136, 0.08) !important;
-          border-left: 3px solid #00FF88 !important;
-          border-radius: 0 8px 8px 0 !important;
-          padding: 10px 14px !important;
-          margin-top: 6px !important;
-          transition: all 0.3s ease !important;
+        .section-subtitle {
+          color: var(--txt-muted);
+          font-size: 16px;
+          margin: 4px 0 0 0;
+          font-weight: 400;
         }
 
-        .wearable-tips:hover {
-          background: rgba(0, 255, 136, 0.12) !important;
-          border-left-color: #33FF99 !important;
+        /* Unified Field Styling */
+        .field-group {
+          margin-bottom: 32px;
         }
 
-        .wearable-tips-header {
-          color: #00FF88 !important;
-          font-weight: 600 !important;
-          font-size: 12px !important;
-          margin-bottom: 8px !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.5px !important;
+        .field-label {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: var(--txt);
+          font-size: 16px;
+          font-weight: 600;
+          margin-bottom: 8px;
         }
 
-        .wearable-tip {
-          display: flex !important;
-          flex-direction: column !important;
-          margin-bottom: 6px !important;
-          padding-left: 4px !important;
+        .field-description {
+          color: var(--txt-muted);
+          font-size: 14px;
+          line-height: 1.6;
+          margin-bottom: 12px;
+          padding-left: 4px;
         }
 
-        .wearable-tip:last-child {
-          margin-bottom: 0 !important;
+        .field-description-highlight {
+          color: var(--neon-primary);
+          font-weight: 600;
         }
 
-        .wearable-tip-device {
-          color: #00FF88 !important;
-          font-weight: 600 !important;
-          font-size: 11px !important;
-          margin-bottom: 2px !important;
+        .required-indicator {
+          color: var(--neon-primary);
+          font-size: 18px;
         }
 
-        .wearable-tip-instruction {
-          color: #F5FAFF !important;
-          font-size: 11px !important;
-          line-height: 1.4 !important;
-          padding-left: 8px !important;
-          border-left: 2px solid rgba(0, 255, 136, 0.3) !important;
+        .optional-indicator {
+          background: rgba(141, 146, 153, 0.2);
+          color: var(--txt-subtle);
+          font-size: 12px;
+          font-weight: 400;
+          padding: 2px 8px;
+          border-radius: 4px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
 
-        /* Running App Selector Styles */
-        .running-app-section {
-          margin-bottom: 24px !important;
+        /* Device Tips - Unified */
+        .device-tips {
+          background: rgba(0, 255, 136, 0.06);
+          border: 1px solid rgba(0, 255, 136, 0.2);
+          border-radius: 12px;
+          padding: 16px;
+          margin-top: 12px;
         }
 
-        /* Running App Tips Styles */
-        .running-app-tips {
-          background: rgba(255, 164, 45, 0.08) !important;
-          border-left: 3px solid #FFA42D !important;
-          border-radius: 0 8px 8px 0 !important;
-          padding: 12px 16px !important;
-          margin-top: 8px !important;
-          transition: all 0.3s ease !important;
+        .device-tips-header {
+          color: var(--neon-secondary);
+          font-size: 14px;
+          font-weight: 600;
+          margin-bottom: 12px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
 
-        .running-app-tips:hover {
-          background: rgba(255, 164, 45, 0.12) !important;
-          border-left-color: #FFB85C !important;
+        .device-tip-item {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          margin-bottom: 12px;
         }
 
-        .running-app-tips-header {
-          color: #FFA42D !important;
-          font-weight: 600 !important;
-          font-size: 12px !important;
-          margin-bottom: 8px !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.5px !important;
+        .device-tip-item:last-child {
+          margin-bottom: 0;
         }
 
-        .running-app-tip-instruction {
-          color: #F5FAFF !important;
-          font-size: 13px !important;
-          line-height: 1.5 !important;
+        .device-tip-device {
+          color: var(--neon-secondary);
+          font-weight: 600;
+          font-size: 13px;
         }
 
-        /* Strength App Selector Styles */
-        .strength-app-section {
-          margin-bottom: 24px !important;
+        .device-tip-instruction {
+          color: var(--txt);
+          font-size: 13px;
+          line-height: 1.5;
+          padding-left: 12px;
+          border-left: 2px solid rgba(0, 255, 136, 0.3);
+        }
+
+        /* App Tips - Unified */
+        .app-tips {
+          background: rgba(255, 164, 45, 0.06);
+          border: 1px solid rgba(255, 164, 45, 0.2);
+          border-radius: 12px;
+          padding: 16px;
+          margin-top: 12px;
+        }
+
+        .app-tips-header {
+          color: var(--neon-accent);
+          font-size: 14px;
+          font-weight: 600;
+          margin-bottom: 12px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .app-tip-instruction {
+          color: var(--txt);
+          font-size: 14px;
+          line-height: 1.6;
         }
 
         .neon-button {
