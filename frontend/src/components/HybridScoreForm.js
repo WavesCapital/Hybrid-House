@@ -754,7 +754,7 @@ const HybridScoreForm = () => {
         .wearable-chip {
           background: var(--card);
           border: 1px solid var(--border);
-          border-radius: 12px;
+          border-radius: 25px;
           color: var(--txt);
           padding: 14px 18px;
           font-size: 14px;
