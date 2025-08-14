@@ -1844,157 +1844,154 @@ const HybridScoreForm = () => {
                 </div>
               )}
 
-              {/* Running PRs Section */}
-              {currentSection === 2 && (
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--txt)' }}>
-                    Running Performance
-                  </h2>
-                  
-                  {/* Running App Selector */}
-                  <div className="running-app-section">
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Which app do you use to track runs?
-                        <span className="optional-label">Optional</span>
-                      </label>
-                      <select
-                        className="form-select"
-                        value={formData.runningApp}
-                        onChange={(e) => handleInputChange('runningApp', e.target.value)}
-                      >
-                        <option value="">Select running app</option>
-                        <option value="Strava">Strava</option>
-                        <option value="Nike Run Club">Nike Run Club</option>
-                        <option value="Garmin Connect">Garmin Connect</option>
-                        <option value="Apple Fitness">Apple Fitness/Health</option>
-                        <option value="Fitbit">Fitbit</option>
-                        <option value="MapMyRun">MapMyRun (Under Armour)</option>
-                        <option value="Runkeeper">Runkeeper</option>
-                        <option value="Adidas Running">Adidas Running</option>
-                        <option value="Polar Flow">Polar Flow</option>
-                      </select>
-                    </div>
-                    
-                    {getRunningAppTips() && (
-                      <div className="running-app-tips">
-                        <div className="running-app-tips-header">
-                          How to Find Your Best Times in {getRunningAppTips().appName}
-                        </div>
-                        <div className="running-app-tip">
-                          <span className="running-app-tip-instruction">
-                            {getRunningAppTips().instructions}
-                          </span>
-                        </div>
-                      </div>
-                    )}
+            {/* Running Performance Section */}
+            {currentSection === 2 && (
+              <div className="assessment-section">
+                <div className="section-header">
+                  <div className="section-icon">
+                    <Target className="w-6 h-6" />
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
-                    <div>
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Speed Score</div>
-                        <div className="field-explanation-text">
-                          Determines your speed score (25% of endurance). Elite targets: <strong>sub-5:30 for males, sub-6:15 for females</strong>. Used to estimate VO₂ max if not provided.
-                        </div>
-                      </div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Mile PR (MM:SS)
-                        <span className="optional-label">Optional</span>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        value={formData.pb_mile}
-                        onChange={(e) => handleInputChange('pb_mile', e.target.value)}
-                        placeholder="4:59"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        5K PR (MM:SS)
-                        <span className="optional-label">Optional</span>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        value={formData.pb_5k}
-                        onChange={(e) => handleInputChange('pb_5k', e.target.value)}
-                        placeholder="18:30"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        10K PR (MM:SS)
-                        <span className="optional-label">Optional</span>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        value={formData.pb_10k}
-                        onChange={(e) => handleInputChange('pb_10k', e.target.value)}
-                        placeholder="38:00"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Half Marathon PR (HH:MM:SS)
-                        <span className="optional-label">Optional</span>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        value={formData.pb_half_marathon}
-                        onChange={(e) => handleInputChange('pb_half_marathon', e.target.value)}
-                        placeholder="1:25:00"
-                      />
-                    </div>
-
-                    <div>
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Volume Score</div>
-                        <div className="field-explanation-text">
-                          Creates your volume score with thresholds at <strong>20/40/50+ miles</strong>. Higher weekly mileage indicates greater aerobic base and endurance capacity.
-                        </div>
-                      </div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Weekly Miles
-                        <span className="optional-label">Optional</span>
-                      </label>
-                      <input
-                        type="number"
-                        className="form-input"
-                        value={formData.weekly_miles}
-                        onChange={(e) => handleInputChange('weekly_miles', e.target.value)}
-                        placeholder="40"
-                      />
-                    </div>
-
-                    <div>
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Distance Score</div>
-                        <div className="field-explanation-text">
-                          Builds your distance score with benchmarks at <strong>half-marathon (13.1mi), marathon (26.2mi), and ultra (50mi+)</strong> distances.
-                        </div>
-                      </div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Long Run (miles)
-                        <span className="optional-label">Optional</span>
-                      </label>
-                      <input
-                        type="number"
-                        className="form-input"
-                        value={formData.long_run}
-                        onChange={(e) => handleInputChange('long_run', e.target.value)}
-                        placeholder="26"
-                      />
-                    </div>
+                  <div>
+                    <h2 className="section-title">Running Performance</h2>
+                    <p className="section-subtitle">Your personal records and running volume</p>
                   </div>
                 </div>
-              )}
+                
+                {/* Running App Selector */}
+                <div className="field-group">
+                  <label className="field-label">
+                    <span>Running Tracking App</span>
+                    <span className="optional-indicator">Optional</span>
+                  </label>
+                  <p className="field-description">
+                    Select your primary running app to receive specific instructions for finding your personal records.
+                  </p>
+                  <select
+                    className="form-select"
+                    value={formData.runningApp}
+                    onChange={(e) => handleInputChange('runningApp', e.target.value)}
+                  >
+                    <option value="">Select running app</option>
+                    <option value="Strava">Strava</option>
+                    <option value="Nike Run Club">Nike Run Club</option>
+                    <option value="Garmin Connect">Garmin Connect</option>
+                    <option value="Apple Fitness">Apple Fitness/Health</option>
+                    <option value="Fitbit">Fitbit</option>
+                    <option value="MapMyRun">MapMyRun (Under Armour)</option>
+                    <option value="Runkeeper">Runkeeper</option>
+                    <option value="Adidas Running">Adidas Running</option>
+                    <option value="Polar Flow">Polar Flow</option>
+                  </select>
+                  
+                  {getRunningAppTips() && (
+                    <div className="app-tips">
+                      <div className="app-tips-header">
+                        <Target className="w-4 h-4" />
+                        How to Find Your Best Times in {getRunningAppTips().appName}
+                      </div>
+                      <div className="app-tip-instruction">
+                        {getRunningAppTips().instructions}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="fields-grid">
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>Mile PR (MM:SS)</span>
+                      <span className="optional-indicator">Optional</span>
+                    </label>
+                    <p className="field-description">
+                      Determines your speed score (25% of endurance). Elite targets: <span className="field-description-highlight">sub-5:30 for males, sub-6:15 for females</span>. Used to estimate VO₂ max if not provided.
+                    </p>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={formData.pb_mile}
+                      onChange={(e) => handleInputChange('pb_mile', e.target.value)}
+                      placeholder="4:59"
+                    />
+                  </div>
+
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>5K PR (MM:SS)</span>
+                      <span className="optional-indicator">Optional</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={formData.pb_5k}
+                      onChange={(e) => handleInputChange('pb_5k', e.target.value)}
+                      placeholder="18:30"
+                    />
+                  </div>
+
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>10K PR (MM:SS)</span>
+                      <span className="optional-indicator">Optional</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={formData.pb_10k}
+                      onChange={(e) => handleInputChange('pb_10k', e.target.value)}
+                      placeholder="38:00"
+                    />
+                  </div>
+
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>Half Marathon PR (HH:MM:SS)</span>
+                      <span className="optional-indicator">Optional</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={formData.pb_half_marathon}
+                      onChange={(e) => handleInputChange('pb_half_marathon', e.target.value)}
+                      placeholder="1:25:00"
+                    />
+                  </div>
+
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>Weekly Miles</span>
+                      <span className="optional-indicator">Optional</span>
+                    </label>
+                    <p className="field-description">
+                      Creates your volume score with thresholds at <span className="field-description-highlight">20/40/50+ miles</span>. Higher weekly mileage indicates greater aerobic base and endurance capacity.
+                    </p>
+                    <input
+                      type="number"
+                      className="form-input"
+                      value={formData.weekly_miles}
+                      onChange={(e) => handleInputChange('weekly_miles', e.target.value)}
+                      placeholder="40"
+                    />
+                  </div>
+
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>Long Run (miles)</span>
+                      <span className="optional-indicator">Optional</span>
+                    </label>
+                    <p className="field-description">
+                      Builds your distance score with benchmarks at <span className="field-description-highlight">half-marathon (13.1mi), marathon (26.2mi), and ultra (50mi+)</span> distances.
+                    </p>
+                    <input
+                      type="number"
+                      className="form-input"
+                      value={formData.long_run}
+                      onChange={(e) => handleInputChange('long_run', e.target.value)}
+                      placeholder="26"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
               {/* Strength PRs Section */}
               {currentSection === 3 && (
