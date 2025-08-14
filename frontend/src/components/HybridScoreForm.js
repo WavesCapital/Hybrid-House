@@ -1386,22 +1386,7 @@ const HybridScoreForm = () => {
                   
 
 
-                  {/* Dynamic Wearable Tips */}
-                  {getWearableTips() && (
-                    <div className="wearable-tips">
-                      <h4 style={{ color: 'var(--neon-secondary)', fontSize: '14px', fontWeight: '600', marginBottom: '12px' }}>
-                        📱 How to Find These Metrics on Your Devices:
-                      </h4>
-                      {getWearableTips().map((tip, index) => (
-                        <div key={index} className="wearable-tip">
-                          <div className="wearable-tip-device">{tip.device}:</div>
-                          <div className="wearable-tip-instruction">• VO₂ Max: {tip.vo2}</div>
-                          <div className="wearable-tip-instruction">• Resting HR: {tip.rhr}</div>
-                          <div className="wearable-tip-instruction">• HRV: {tip.hrv}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
