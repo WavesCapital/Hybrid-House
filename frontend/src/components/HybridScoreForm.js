@@ -1993,119 +1993,117 @@ const HybridScoreForm = () => {
               </div>
             )}
 
-              {/* Strength PRs Section */}
-              {currentSection === 3 && (
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--txt)' }}>
-                    Strength Performance
-                  </h2>
-                  
-                  {/* Strength App Selector */}
-                  <div className="strength-app-section">
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Which app do you use to track strength workouts?
-                        <span className="optional-label">Optional</span>
-                      </label>
-                      <select
-                        className="form-select"
-                        value={formData.strengthApp}
-                        onChange={(e) => handleInputChange('strengthApp', e.target.value)}
-                      >
-                        <option value="">Select strength app</option>
-                        <option value="Strong">Strong (iOS)</option>
-                        <option value="Jefit">Jefit</option>
-                        <option value="StrongApp 5x5">StrongApp 5x5</option>
-                        <option value="Hevy">Hevy</option>
-                        <option value="Gym Buddy">Gym Buddy</option>
-                        <option value="FitNotes">FitNotes (Android)</option>
-                        <option value="Simple Workout Log">Simple Workout Log</option>
-                        <option value="RepCount">RepCount</option>
-                        <option value="WorkIt">WorkIt</option>
-                        <option value="GymBook">GymBook</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
-                    
-                    {formData.strengthApp === 'Other' && (
-                      <div style={{ marginTop: '12px' }}>
-                        <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                          Please specify your strength tracking app
-                        </label>
-                        <input
-                          type="text"
-                          className="form-input"
-                          value={formData.customStrengthApp}
-                          onChange={(e) => handleInputChange('customStrengthApp', e.target.value)}
-                          placeholder="Enter app name"
-                        />
-                      </div>
-                    )}
+            {/* Strength Performance Section */}
+            {currentSection === 3 && (
+              <div className="assessment-section">
+                <div className="section-header">
+                  <div className="section-icon">
+                    <Dumbbell className="w-6 h-6" />
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
-                    <div>
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Upper Body Power</div>
-                        <div className="field-explanation-text">
-                          Target: <strong>1.5x bodyweight for males, 1.0x for females</strong>. Missing lifts carry penalties, but even partial data significantly improves your score accuracy.
-                        </div>
-                      </div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Bench Press 1RM (lbs)
-                        <span className="optional-label">Optional</span>
-                      </label>
-                      <input
-                        type="number"
-                        className="form-input"
-                        value={formData.pb_bench_1rm}
-                        onChange={(e) => handleInputChange('pb_bench_1rm', e.target.value)}
-                        placeholder="315"
-                      />
-                    </div>
-
-                    <div>
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Lower Body Power</div>
-                        <div className="field-explanation-text">
-                          Target: <strong>2.0x bodyweight for males, 1.5x for females</strong>. Your 1-rep maxes directly determine 40% of your hybrid score through bodyweight ratio calculations.
-                        </div>
-                      </div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Squat 1RM (lbs)
-                        <span className="optional-label">Optional</span>
-                      </label>
-                      <input
-                        type="number"
-                        className="form-input"
-                        value={formData.pb_squat_1rm}
-                        onChange={(e) => handleInputChange('pb_squat_1rm', e.target.value)}
-                        placeholder="405"
-                      />
-                    </div>
-
-                    <div>
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Posterior Chain</div>
-                        <div className="field-explanation-text">
-                          Target: <strong>2.4x bodyweight for males, 1.8x for females</strong>. The deadlift tests total-body strength and is crucial for hybrid athletic performance.
-                        </div>
-                      </div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Deadlift 1RM (lbs)
-                        <span className="optional-label">Optional</span>
-                      </label>
-                      <input
-                        type="number"
-                        className="form-input"
-                        value={formData.pb_deadlift_1rm}
-                        onChange={(e) => handleInputChange('pb_deadlift_1rm', e.target.value)}
-                        placeholder="500"
-                      />
-                    </div>
+                  <div>
+                    <h2 className="section-title">Strength Performance</h2>
+                    <p className="section-subtitle">Your one-rep maximums and strength training</p>
                   </div>
                 </div>
-              )}
+                
+                {/* Strength App Selector */}
+                <div className="field-group">
+                  <label className="field-label">
+                    <span>Strength Tracking App</span>
+                    <span className="optional-indicator">Optional</span>
+                  </label>
+                  <p className="field-description">
+                    Track how you record your strength training to help us understand your lifting data.
+                  </p>
+                  <select
+                    className="form-select"
+                    value={formData.strengthApp}
+                    onChange={(e) => handleInputChange('strengthApp', e.target.value)}
+                  >
+                    <option value="">Select strength app</option>
+                    <option value="Strong">Strong (iOS)</option>
+                    <option value="Jefit">Jefit</option>
+                    <option value="StrongApp 5x5">StrongApp 5x5</option>
+                    <option value="Hevy">Hevy</option>
+                    <option value="Gym Buddy">Gym Buddy</option>
+                    <option value="FitNotes">FitNotes (Android)</option>
+                    <option value="Simple Workout Log">Simple Workout Log</option>
+                    <option value="RepCount">RepCount</option>
+                    <option value="WorkIt">WorkIt</option>
+                    <option value="GymBook">GymBook</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  
+                  {formData.strengthApp === 'Other' && (
+                    <div className="field-group" style={{ marginTop: '16px', marginBottom: '0' }}>
+                      <label className="field-label">
+                        <span>Specify Your App</span>
+                      </label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={formData.customStrengthApp}
+                        onChange={(e) => handleInputChange('customStrengthApp', e.target.value)}
+                        placeholder="Enter app name"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="fields-grid">
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>Bench Press 1RM (lbs)</span>
+                      <span className="optional-indicator">Optional</span>
+                    </label>
+                    <p className="field-description">
+                      Target: <span className="field-description-highlight">1.5x bodyweight for males, 1.0x for females</span>. Missing lifts carry penalties, but even partial data significantly improves your score accuracy.
+                    </p>
+                    <input
+                      type="number"
+                      className="form-input"
+                      value={formData.pb_bench_1rm}
+                      onChange={(e) => handleInputChange('pb_bench_1rm', e.target.value)}
+                      placeholder="315"
+                    />
+                  </div>
+
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>Squat 1RM (lbs)</span>
+                      <span className="optional-indicator">Optional</span>
+                    </label>
+                    <p className="field-description">
+                      Target: <span className="field-description-highlight">2.0x bodyweight for males, 1.5x for females</span>. Your 1-rep maxes directly determine 40% of your hybrid score through bodyweight ratio calculations.
+                    </p>
+                    <input
+                      type="number"
+                      className="form-input"
+                      value={formData.pb_squat_1rm}
+                      onChange={(e) => handleInputChange('pb_squat_1rm', e.target.value)}
+                      placeholder="405"
+                    />
+                  </div>
+
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>Deadlift 1RM (lbs)</span>
+                      <span className="optional-indicator">Optional</span>
+                    </label>
+                    <p className="field-description">
+                      Target: <span className="field-description-highlight">2.4x bodyweight for males, 1.8x for females</span>. The deadlift tests total-body strength and is crucial for hybrid athletic performance.
+                    </p>
+                    <input
+                      type="number"
+                      className="form-input"
+                      value={formData.pb_deadlift_1rm}
+                      onChange={(e) => handleInputChange('pb_deadlift_1rm', e.target.value)}
+                      placeholder="500"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
               {/* Navigation Buttons */}
               <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t" style={{ borderColor: 'var(--border)' }}>
