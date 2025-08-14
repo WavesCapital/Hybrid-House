@@ -1471,7 +1471,7 @@ const HybridScoreForm = () => {
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         10K PR (MM:SS)
-                        <span className="text-xs" style={{ color: 'var(--muted)' }}> - Optional</span>
+                        <span className="optional-label">Optional</span>
                       </label>
                       <input
                         type="text"
