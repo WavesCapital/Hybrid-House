@@ -1241,6 +1241,12 @@ const HybridScoreForm = () => {
                         placeholder="190"
                         required
                       />
+                      <div className="field-explanation">
+                        <div className="field-explanation-header">Strength Foundation</div>
+                        <div className="field-explanation-text">
+                          Your body weight is fundamental to hybrid scoring - all strength calculations compare your lifts to bodyweight ratios for accurate performance assessment.
+                        </div>
+                      </div>
                     </div>
 
                     <div>
