@@ -762,17 +762,18 @@ const HybridScoreForm = () => {
 
         /* Optional Label Styles */
         .optional-label {
-          display: inline-block !important;
-          background: rgba(141, 146, 153, 0.15) !important;
+          display: inline !important;
+          background: none !important;
           color: #8D9299 !important;
-          font-size: 10px !important;
-          font-weight: 600 !important;
-          padding: 2px 6px !important;
-          border-radius: 4px !important;
+          font-size: 12px !important;
+          font-weight: 400 !important;
+          padding: 0 !important;
+          border-radius: 0 !important;
           margin-left: 8px !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.5px !important;
-          border: 1px solid rgba(141, 146, 153, 0.3) !important;
+          text-transform: none !important;
+          letter-spacing: 0 !important;
+          border: none !important;
+          font-style: italic !important;
         }
 
         /* Wearable Tips Styles */
