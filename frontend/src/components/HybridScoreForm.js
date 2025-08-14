@@ -1280,6 +1280,10 @@ const HybridScoreForm = () => {
           .running-app-tip-instruction {
             font-size: 12px !important;
           }
+
+          .strength-app-section {
+            margin-bottom: 20px !important;
+          }
         }
 
         @media (max-width: 480px) {
