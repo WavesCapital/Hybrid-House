@@ -1819,8 +1819,49 @@ const HybridScoreForm = () => {
                     Strength Performance
                   </h2>
                   
+                  {/* Strength App Selector */}
+                  <div className="strength-app-section">
+                    <div>
+                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
+                        Which app do you use to track strength workouts?
+                        <span className="optional-label">Optional</span>
+                      </label>
+                      <select
+                        className="form-select"
+                        value={formData.strengthApp}
+                        onChange={(e) => handleInputChange('strengthApp', e.target.value)}
+                      >
+                        <option value="">Select strength app</option>
+                        <option value="Strong">Strong (iOS)</option>
+                        <option value="Jefit">Jefit</option>
+                        <option value="StrongApp 5x5">StrongApp 5x5</option>
+                        <option value="Hevy">Hevy</option>
+                        <option value="Gym Buddy">Gym Buddy</option>
+                        <option value="FitNotes">FitNotes (Android)</option>
+                        <option value="Simple Workout Log">Simple Workout Log</option>
+                        <option value="RepCount">RepCount</option>
+                        <option value="WorkIt">WorkIt</option>
+                        <option value="GymBook">GymBook</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    
+                    {formData.strengthApp === 'Other' && (
+                      <div style={{ marginTop: '12px' }}>
+                        <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
+                          Please specify your strength tracking app
+                        </label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          value={formData.customStrengthApp}
+                          onChange={(e) => handleInputChange('customStrengthApp', e.target.value)}
+                          placeholder="Enter app name"
+                        />
+                      </div>
+                    )}
+                  </div>
 
-                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
