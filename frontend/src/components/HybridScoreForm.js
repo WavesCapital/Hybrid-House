@@ -1478,7 +1478,7 @@ const HybridScoreForm = () => {
                       </div>
                       {formData.wearables.length > 0 && (
                         <div className="wearable-tips">
-                          <div className="wearable-tips-header">📱 How to Find on Your Device</div>
+                          <div className="wearable-tips-header">How to Find on Your Device</div>
                           {getWearableTips()?.map((tip, index) => (
                             <div key={index} className="wearable-tip">
                               <span className="wearable-tip-device">{tip.device}:</span>
