@@ -17,7 +17,6 @@ const HybridScoreForm = () => {
   const navigate = useNavigate();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentSection, setCurrentSection] = useState(0);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [formData, setFormData] = useState({
     // Personal Information
