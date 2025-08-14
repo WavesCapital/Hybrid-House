@@ -100,7 +100,7 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "User Profile Data Storage and Hybrid Score History Display"
+    - "Hybrid Score Form Backend Functionality After Unified Design Implementation"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
