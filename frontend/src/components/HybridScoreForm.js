@@ -1726,16 +1726,16 @@ const HybridScoreForm = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Mile PR (MM:SS)
-                        <span className="optional-label">Optional</span>
-                      </label>
                       <div className="field-explanation">
                         <div className="field-explanation-header">Speed Score</div>
                         <div className="field-explanation-text">
                           Determines your speed score (25% of endurance). Elite targets: <strong>sub-5:30 for males, sub-6:15 for females</strong>. Used to estimate VO₂ max if not provided.
                         </div>
                       </div>
+                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
+                        Mile PR (MM:SS)
+                        <span className="optional-label">Optional</span>
+                      </label>
                       <input
                         type="text"
                         className="form-input"
