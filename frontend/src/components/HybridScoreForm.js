@@ -1287,12 +1287,7 @@ const HybridScoreForm = () => {
                     Body Metrics
                   </h2>
                   
-                  <div className="section-explainer">
-                    <h3>Understanding Your Physiological Foundation</h3>
-                    <p>
-                      <strong>Height & weight</strong> establish your strength-to-bodyweight ratios - the core of hybrid scoring. <strong>VO₂ max</strong> contributes 25% of your endurance score, compared against elite standards (70 for males, 60 for females). <strong>HRV carries 70% weight</strong> in your recovery score, while <strong>resting heart rate carries 30%</strong> - together they form a critical 10% of your total hybrid score.
-                    </p>
-                  </div>
+
 
                   {/* Dynamic Wearable Tips */}
                   {getWearableTips() && (
