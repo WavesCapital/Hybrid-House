@@ -638,6 +638,52 @@ const HybridScoreForm = () => {
     return tips;
   };
 
+  const getRunningAppTips = () => {
+    const selectedApp = formData.runningApp;
+    if (!selectedApp) return null;
+
+    const appTips = {
+      'Strava': {
+        appName: 'Strava',
+        instructions: 'Open Strava app → Go to Your Profile → Tap "Personal Records" → Find your best times for Mile, 5K, 10K, and Half Marathon distances'
+      },
+      'Nike Run Club': {
+        appName: 'Nike Run Club',
+        instructions: 'Open Nike Run Club → Go to Profile → Tap "Achievements" → Scroll to "Personal Records" section to find your fastest times'
+      },
+      'Garmin Connect': {
+        appName: 'Garmin Connect',
+        instructions: 'Open Garmin Connect → Go to More → Personal Records → Select "Running" → View your best times for different distances'
+      },
+      'Apple Fitness': {
+        appName: 'Apple Fitness',
+        instructions: 'Open Apple Health app → Browse → Activity → Workouts → Show All Data → Filter by "Running" to find your fastest recorded times'
+      },
+      'Fitbit': {
+        appName: 'Fitbit',
+        instructions: 'Open Fitbit app → Today tab → Exercise tile → View exercise history → Find your fastest running workouts by distance'
+      },
+      'MapMyRun': {
+        appName: 'MapMyRun',
+        instructions: 'Open MapMyRun → Go to Profile → Tap "Personal Records" → View your best times across different running distances'
+      },
+      'Runkeeper': {
+        appName: 'Runkeeper',
+        instructions: 'Open Runkeeper → Go to Progress → Personal Records → View your fastest times for Mile, 5K, 10K, and longer distances'
+      },
+      'Adidas Running': {
+        appName: 'Adidas Running',
+        instructions: 'Open Adidas Running → Go to Progress → Personal Records → Find your best running times organized by distance'
+      },
+      'Polar Flow': {
+        appName: 'Polar Flow',
+        instructions: 'Open Polar Flow app → Diary → Filter by "Running" → Review your workout history to find your fastest times by distance'
+      }
+    };
+
+    return appTips[selectedApp] || null;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#0E0E11' }}>
