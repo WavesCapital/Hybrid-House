@@ -720,8 +720,8 @@ const HybridScoreForm = () => {
 
         /* Wearable Tips Styles */
         .wearable-tips {
-          background: rgba(255, 164, 45, 0.08) !important;
-          border-left: 3px solid #FFA42D !important;
+          background: rgba(0, 255, 136, 0.08) !important;
+          border-left: 3px solid #00FF88 !important;
           border-radius: 0 8px 8px 0 !important;
           padding: 10px 14px !important;
           margin-top: 6px !important;
@@ -729,20 +729,17 @@ const HybridScoreForm = () => {
         }
 
         .wearable-tips:hover {
-          background: rgba(255, 164, 45, 0.12) !important;
-          border-left-color: #FFB85C !important;
+          background: rgba(0, 255, 136, 0.12) !important;
+          border-left-color: #33FF99 !important;
         }
 
         .wearable-tips-header {
-          color: #FFA42D !important;
+          color: #00FF88 !important;
           font-weight: 600 !important;
           font-size: 12px !important;
           margin-bottom: 8px !important;
           text-transform: uppercase !important;
           letter-spacing: 0.5px !important;
-          display: flex !important;
-          align-items: center !important;
-          gap: 6px !important;
         }
 
         .wearable-tip {
@@ -757,7 +754,7 @@ const HybridScoreForm = () => {
         }
 
         .wearable-tip-device {
-          color: #FFA42D !important;
+          color: #00FF88 !important;
           font-weight: 600 !important;
           font-size: 11px !important;
           margin-bottom: 2px !important;
@@ -768,7 +765,7 @@ const HybridScoreForm = () => {
           font-size: 11px !important;
           line-height: 1.4 !important;
           padding-left: 8px !important;
-          border-left: 2px solid rgba(255, 164, 45, 0.3) !important;
+          border-left: 2px solid rgba(0, 255, 136, 0.3) !important;
         }
 
         .neon-button {
