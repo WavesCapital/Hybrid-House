@@ -2981,6 +2981,8 @@ async def handle_hybrid_score_webhook_with_auth(webhook_data: List[WebhookReques
             user_profile_updates['wearables'] = wearables
         if athlete_profile.running_app:
             user_profile_updates['running_app'] = athlete_profile.running_app
+        if athlete_profile.strength_app:
+            user_profile_updates['strength_app'] = athlete_profile.strength_app
         
         # Handle user profile creation/update with explicit user_id
         user_profile = None
