@@ -1315,6 +1315,27 @@ const HybridScoreForm = () => {
             font-size: 9px !important;
             padding-left: 4px !important;
           }
+
+          .strava-toggle-section {
+            margin-bottom: 16px !important;
+          }
+
+          .strava-toggle-label {
+            font-size: 12px !important;
+          }
+
+          .strava-tips {
+            padding: 8px 12px !important;
+          }
+
+          .strava-tips-header {
+            font-size: 10px !important;
+            margin-bottom: 4px !important;
+          }
+
+          .strava-tip-instruction {
+            font-size: 11px !important;
+          }
         }
         `}
       </style>
