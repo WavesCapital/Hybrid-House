@@ -1073,52 +1073,7 @@ const HybridScoreForm = () => {
             margin-left: 6px;
           }
 
-        /* Field Explanation Styles */
-        .field-explanation {
-          background: rgba(8, 240, 255, 0.08) !important;
-          border-left: 3px solid #08F0FF !important;
-          border-radius: 0 8px 8px 0 !important;
-          padding: 12px 16px !important;
-          margin-top: 8px !important;
-          transition: all 0.3s ease !important;
-          display: block !important;
-        }
 
-        .field-explanation:hover {
-          background: rgba(8, 240, 255, 0.12) !important;
-          border-left-color: #00FF88 !important;
-        }
-
-        .field-explanation-header {
-          color: #08F0FF !important;
-          font-weight: 600 !important;
-          font-size: 13px !important;
-          margin-bottom: 6px !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.5px !important;
-        }
-
-        .field-explanation-text {
-          color: #F5FAFF !important;
-          font-size: 13px !important;
-          line-height: 1.5 !important;
-          margin: 0 !important;
-        }
-
-        /* Optional Label Styles */
-        .optional-label {
-          display: inline-block;
-          background: rgba(0, 255, 136, 0.15);
-          color: #00FF88;
-          font-size: 10px;
-          font-weight: 600;
-          padding: 2px 6px;
-          border-radius: 4px;
-          margin-left: 8px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          border: 1px solid rgba(0, 255, 136, 0.3);
-        }
 
         @media (max-width: 768px) {
           .field-explanation {
