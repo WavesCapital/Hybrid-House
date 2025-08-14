@@ -1340,6 +1340,10 @@ const HybridScoreForm = () => {
           .running-app-tip-instruction {
             font-size: 11px !important;
           }
+
+          .strength-app-section {
+            margin-bottom: 16px !important;
+          }
         }
         `}
       </style>
