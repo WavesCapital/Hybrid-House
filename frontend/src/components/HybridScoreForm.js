@@ -125,6 +125,177 @@ const HybridScoreForm = () => {
     'Apple Watch', 'Garmin', 'Whoop', 'Ultrahuman Ring', 'Fitbit', 'Oura', 'None', 'Other'
   ];
 
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleWearableToggle = (wearable) => {
+    setFormData(prev => ({
+      ...prev,
+      wearables: prev.wearables.includes(wearable)
+        ? prev.wearables.filter(w => w !== wearable)
+        : [...prev.wearables, wearable]
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
+    
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      toast({
+        title: "Processing your data! 🚀",
+        description: "Calculating your hybrid score...",
+        duration: 3000,
+      });
+
+      // Calculate height in inches
+      const heightInches = (parseInt(formData.height_ft) || 0) * 12 + (parseInt(formData.height_in) || 0);
+
+      // Structure the data for submission
+      const profileData = {
+        first_name: (formData.first_name || '').substring(0, 20),
+        last_name: (formData.last_name || '').substring(0, 20),
+        email: user?.email || `${formData.first_name?.toLowerCase() || 'user'}.${formData.last_name?.toLowerCase() || 'temp'}@temp-hybrid-score.com`,
+        sex: formData.sex,
+        dob: formData.dob,
+        country: (formData.country || 'US').substring(0, 2),
+        wearables: formData.wearables,
+        running_app: formData.runningApp || null,
+        strength_app: formData.strengthApp === 'Other' ? formData.customStrengthApp : formData.strengthApp || null,
+        body_metrics: {
+          weight_lb: parseFloat(formData.weight_lb) || null,
+          height_in: heightInches || null,
+          vo2max: parseFloat(formData.vo2max) || null,
+          resting_hr_bpm: parseInt(formData.resting_hr_bpm) || null,
+          hrv_ms: parseInt(formData.hrv_ms) || null
+        },
+        pb_mile: formData.pb_mile || null,
+        pb_5k: formData.pb_5k || null,
+        pb_10k: formData.pb_10k || null,
+        pb_half_marathon: formData.pb_half_marathon || null,
+        weekly_miles: parseFloat(formData.weekly_miles) || null,
+        long_run: parseFloat(formData.long_run) || null,
+        pb_bench_1rm: parseFloat(formData.pb_bench_1rm) || null,
+        pb_squat_1rm: parseFloat(formData.pb_squat_1rm) || null,
+        pb_deadlift_1rm: parseFloat(formData.pb_deadlift_1rm) || null,
+        schema_version: "v1.0",
+        interview_type: "form"
+      };
+
+      // Generate unique profile ID
+      const profileId = uuid();
+      
+      let response;
+      
+      if (user && session) {
+        // Authenticated user
+        response = await axios.post(
+          `${BACKEND_URL}/api/athlete-profiles`,
+          {
+            profile_json: profileData,
+            is_public: true
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+      } else {
+        // Public submission
+        const newProfile = {
+          id: profileId,
+          profile_json: profileData,
+          is_public: true,
+          completed_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+
+        response = await axios.post(
+          `${BACKEND_URL}/api/athlete-profiles/public`,
+          newProfile,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+      }
+
+      const finalProfileId = user && session ? response.data?.profile?.id : profileId;
+
+      if (finalProfileId) {
+        toast({
+          title: "Profile Created! 🚀",
+          description: "Calculating your hybrid score...",
+          duration: 3000,
+        });
+
+        // Call webhook
+        const webhookResponse = await fetch(
+          'https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              athleteProfile: profileData,
+              deliverable: 'score'
+            })
+          }
+        );
+
+        if (webhookResponse.ok) {
+          const webhookData = await webhookResponse.json();
+          const scoreData = Array.isArray(webhookData) ? webhookData[0] : webhookData;
+
+          // Store score data
+          try {
+            const scoreHeaders = user && session ? 
+              { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' } :
+              { 'Content-Type': 'application/json' };
+              
+            await axios.post(`${BACKEND_URL}/api/athlete-profile/${finalProfileId}/score`, scoreData, {
+              headers: scoreHeaders
+            });
+          } catch (scoreError) {
+            console.warn('Could not store score:', scoreError.message);
+          }
+
+          // Navigate to results
+          navigate(`/hybrid-score/${finalProfileId}`);
+        } else {
+          throw new Error('Webhook failed');
+        }
+      } else {
+        throw new Error('No profile ID returned');
+      }
+
+    } catch (error) {
+      console.error('Error in submission:', error);
+      
+      toast({
+        title: "Submission Error",
+        description: error.response?.data?.message || error.message || "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const getWearableTips = () => {
     const selectedWearables = formData.wearables;
     if (selectedWearables.length === 0) return null;
