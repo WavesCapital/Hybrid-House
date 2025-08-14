@@ -1246,9 +1246,8 @@ const HybridScoreForm = () => {
           }
 
           .optional-label {
-            font-size: 9px;
-            padding: 1px 4px;
-            margin-left: 6px;
+            font-size: 11px !important;
+            margin-left: 6px !important;
           }
 
           .wearable-tips {
