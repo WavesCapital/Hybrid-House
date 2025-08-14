@@ -671,6 +671,53 @@ const HybridScoreForm = () => {
           --neon-secondary: #00FF88;
         }
 
+        /* Field Explanation Styles - High Priority */
+        .field-explanation {
+          background: rgba(8, 240, 255, 0.08) !important;
+          border-left: 3px solid #08F0FF !important;
+          border-radius: 0 8px 8px 0 !important;
+          padding: 12px 16px !important;
+          margin-top: 8px !important;
+          transition: all 0.3s ease !important;
+          display: block !important;
+        }
+
+        .field-explanation:hover {
+          background: rgba(8, 240, 255, 0.12) !important;
+          border-left-color: #00FF88 !important;
+        }
+
+        .field-explanation-header {
+          color: #08F0FF !important;
+          font-weight: 600 !important;
+          font-size: 13px !important;
+          margin-bottom: 6px !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.5px !important;
+        }
+
+        .field-explanation-text {
+          color: #F5FAFF !important;
+          font-size: 13px !important;
+          line-height: 1.5 !important;
+          margin: 0 !important;
+        }
+
+        /* Optional Label Styles */
+        .optional-label {
+          display: inline-block !important;
+          background: rgba(0, 255, 136, 0.15) !important;
+          color: #00FF88 !important;
+          font-size: 10px !important;
+          font-weight: 600 !important;
+          padding: 2px 6px !important;
+          border-radius: 4px !important;
+          margin-left: 8px !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.5px !important;
+          border: 1px solid rgba(0, 255, 136, 0.3) !important;
+        }
+
         .neon-button {
           background: var(--neon-primary);
           border: none;
