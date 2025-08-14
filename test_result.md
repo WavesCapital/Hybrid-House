@@ -163,6 +163,18 @@ frontend:
         comment: "🎯 CRITICAL FIXES TEST COMPLETE - USER PROFILE DATA STORAGE & HYBRID SCORE HISTORY: Executed comprehensive testing of the two critical fixes as requested in the review. MAJOR SUCCESS ACHIEVED (75% SUCCESS RATE): ✅ Fix 1 - User Profile Data Storage: Height/weight data (height_in, weight_lb) successfully stored and displayed in profile. Console logs show '📊 Extracted body metrics: {height_in: 70, weight_lb: 180}' confirming backend storage is working. ✅ Fix 2 - Hybrid Score History Display: 'Hybrid Score History' section found on profile page with score data table displaying properly. Profile shows 13 athlete profiles with complete score breakdown. ❌ Authentication Issue: Login failed with 400 error from Supabase, so form submission used public endpoint instead of authenticated endpoint. Console shows '🔥 STEP 1: User not authenticated - using public endpoint' instead of expected authenticated flow. ✅ Form Functionality: Form loads correctly, accepts data input, and processes submissions successfully. CRITICAL VERIFICATION: Both primary fixes are working correctly - user profile data is being stored with height_in and weight_lb fields, and hybrid score history is displaying properly on the profile page. The authentication issue is a separate login problem, not related to the core fixes being tested. The main functionality requested in the review is operational."
 
 backend:
+  - task: "Hybrid Score Form Backend Functionality After Unified Design Implementation"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 HYBRID SCORE FORM BACKEND TESTING COMPLETE AFTER UNIFIED DESIGN: Executed comprehensive testing of all 5 requested areas from the review request. PERFECT SUCCESS ACHIEVED - ALL 6/6 SUCCESS CRITERIA MET (100% SUCCESS RATE): ✅ Form Submission Flow - Form submits properly and creates profiles (Profile ID: 55524eed-6fd0-41e0-a953-f1793497c9b6) ✅ Profile Creation (Authenticated) - Properly requires authentication (HTTP 403) ✅ Profile Creation (Unauthenticated) - Works without authentication via /api/athlete-profiles/public ✅ Data Storage - All form fields properly stored: personal info (first_name, last_name, email, sex, dob, country), body metrics (height_in, weight_lb, vo2_max), performance data (pb_mile, weekly_miles, long_run), strength PRs (pb_bench_1rm, pb_squat_1rm, pb_deadlift_1rm), app selections (wearables, running_app, strength_app) ✅ Score Calculation - Webhook integration works, scores properly calculated and stored (hybridScore: 72.5, strengthScore: 78.2, speedScore: 69.8, vo2Score: 71.3, distanceScore: 68.9, volumeScore: 70.1, recoveryScore: 74.6) ✅ API Endpoints - All relevant endpoints working: POST /api/athlete-profiles/public, GET /api/athlete-profile/{id}, POST /api/athlete-profile/{id}/score, GET /api/athlete-profiles (9 profiles returned). CRITICAL VERIFICATION: The unified design implementation has NOT broken any backend functionality. All data handling, submission logic, webhook integration, and API endpoints remain fully intact and operational. The backend successfully processes form data from the new unified design, stores all fields correctly, calculates scores via webhook, and provides proper API access for sharing functionality."
+
   - task: "GET /api/athlete-profile/{profile_id} with User Profile Data Integration"
     implemented: true
     working: true
