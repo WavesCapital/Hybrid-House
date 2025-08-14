@@ -1028,33 +1028,34 @@ const HybridScoreForm = () => {
 
         /* Field Explanation Styles */
         .field-explanation {
-          background: rgba(8, 240, 255, 0.08);
-          border-left: 3px solid #08F0FF;
-          border-radius: 0 8px 8px 0;
-          padding: 12px 16px;
-          margin-top: 8px;
-          transition: all 0.3s ease;
+          background: rgba(8, 240, 255, 0.08) !important;
+          border-left: 3px solid #08F0FF !important;
+          border-radius: 0 8px 8px 0 !important;
+          padding: 12px 16px !important;
+          margin-top: 8px !important;
+          transition: all 0.3s ease !important;
+          display: block !important;
         }
 
         .field-explanation:hover {
-          background: rgba(8, 240, 255, 0.12);
-          border-left-color: #00FF88;
+          background: rgba(8, 240, 255, 0.12) !important;
+          border-left-color: #00FF88 !important;
         }
 
         .field-explanation-header {
-          color: #08F0FF;
-          font-weight: 600;
-          font-size: 13px;
-          margin-bottom: 6px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
+          color: #08F0FF !important;
+          font-weight: 600 !important;
+          font-size: 13px !important;
+          margin-bottom: 6px !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.5px !important;
         }
 
         .field-explanation-text {
-          color: #F5FAFF;
-          font-size: 13px;
-          line-height: 1.5;
-          margin: 0;
+          color: #F5FAFF !important;
+          font-size: 13px !important;
+          line-height: 1.5 !important;
+          margin: 0 !important;
         }
 
         /* Optional Label Styles */
