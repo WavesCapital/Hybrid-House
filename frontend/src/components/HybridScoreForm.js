@@ -1529,15 +1529,15 @@ const HybridScoreForm = () => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Weight (lbs) *
-                      </label>
                       <div className="field-explanation">
                         <div className="field-explanation-header">Strength Foundation</div>
                         <div className="field-explanation-text">
                           Your body weight is fundamental to hybrid scoring - all strength calculations compare your lifts to bodyweight ratios for accurate performance assessment.
                         </div>
                       </div>
+                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
+                        Weight (lbs) *
+                      </label>
                       <input
                         type="number"
                         className="form-input"
