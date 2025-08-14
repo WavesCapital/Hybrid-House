@@ -1885,6 +1885,12 @@ const HybridScoreForm = () => {
                         Bench Press 1RM (lbs)
                         <span className="optional-label">Optional</span>
                       </label>
+                      <div className="field-explanation">
+                        <div className="field-explanation-header">Upper Body Power</div>
+                        <div className="field-explanation-text">
+                          Target: <strong>1.5x bodyweight for males, 1.0x for females</strong>. Missing lifts carry penalties, but even partial data significantly improves your score accuracy.
+                        </div>
+                      </div>
                       <input
                         type="number"
                         className="form-input"
@@ -1892,12 +1898,6 @@ const HybridScoreForm = () => {
                         onChange={(e) => handleInputChange('pb_bench_1rm', e.target.value)}
                         placeholder="315"
                       />
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Upper Body Power</div>
-                        <div className="field-explanation-text">
-                          Target: <strong>1.5x bodyweight for males, 1.0x for females</strong>. Missing lifts carry penalties, but even partial data significantly improves your score accuracy.
-                        </div>
-                      </div>
                     </div>
 
                     <div>
