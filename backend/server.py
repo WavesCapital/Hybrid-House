@@ -2681,6 +2681,7 @@ class AthleteProfile(BaseModel):
     sex: Optional[str] = None
     dob: Optional[str] = None  # MM/DD/YYYY format
     wearables: Optional[List[str]] = []
+    running_app: Optional[str] = None
     body_metrics: Optional[BodyMetrics] = None
     pb_mile: Optional[str] = None
     weekly_miles: Optional[str] = None
