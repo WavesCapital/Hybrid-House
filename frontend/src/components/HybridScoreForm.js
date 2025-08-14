@@ -896,7 +896,67 @@ const HybridScoreForm = () => {
           line-height: 1.6;
         }
 
-        /* Submit Button - Single */
+        /* Height Input - Unified */
+        .height-input-group {
+          display: flex;
+          gap: 16px;
+          align-items: flex-end;
+        }
+
+        .height-input-wrapper {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .height-input {
+          width: 100px;
+        }
+
+        .height-unit-label {
+          color: var(--txt-muted);
+          font-size: 14px;
+          font-weight: 500;
+          text-align: center;
+        }
+
+        /* Grid Layout - Unified */
+        .fields-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 32px;
+        }
+
+        /* Welcome Message - Unified */
+        .welcome-message {
+          background: rgba(8, 240, 255, 0.06);
+          border: 1px solid rgba(8, 240, 255, 0.2);
+          border-radius: 16px;
+          padding: 24px;
+          margin-bottom: 32px;
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+        }
+
+        .welcome-icon {
+          color: var(--neon-primary);
+          margin-top: 2px;
+        }
+
+        .welcome-content h3 {
+          color: var(--neon-primary);
+          font-size: 18px;
+          font-weight: 700;
+          margin: 0 0 8px 0;
+        }
+
+        .welcome-content p {
+          color: var(--txt);
+          font-size: 15px;
+          line-height: 1.6;
+          margin: 0;
+        }
         .submit-button {
           background: var(--neon-primary);
           color: #000000;
