@@ -37,7 +37,7 @@ const HybridScoreForm = () => {
     hrv_ms: '',
     
     // Running Performance
-    useStrava: false,
+    runningApp: '',
     pb_mile: '',
     pb_5k: '',
     pb_10k: '',
