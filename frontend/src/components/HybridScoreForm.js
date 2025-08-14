@@ -769,6 +769,89 @@ const HybridScoreForm = () => {
           border-left: 2px solid rgba(0, 255, 136, 0.3) !important;
         }
 
+        /* Strava Toggle Styles */
+        .strava-toggle-section {
+          margin-bottom: 24px !important;
+        }
+
+        .strava-toggle-container {
+          display: flex !important;
+          align-items: center !important;
+          cursor: pointer !important;
+          margin-bottom: 16px !important;
+        }
+
+        .strava-toggle-input {
+          display: none !important;
+        }
+
+        .strava-toggle-slider {
+          position: relative !important;
+          width: 50px !important;
+          height: 24px !important;
+          background: rgba(141, 146, 153, 0.3) !important;
+          border-radius: 24px !important;
+          transition: all 0.3s ease !important;
+          margin-right: 12px !important;
+        }
+
+        .strava-toggle-slider:before {
+          content: '' !important;
+          position: absolute !important;
+          top: 2px !important;
+          left: 2px !important;
+          width: 20px !important;
+          height: 20px !important;
+          background: #8D9299 !important;
+          border-radius: 50% !important;
+          transition: all 0.3s ease !important;
+        }
+
+        .strava-toggle-input:checked + .strava-toggle-slider {
+          background: rgba(255, 164, 45, 0.3) !important;
+        }
+
+        .strava-toggle-input:checked + .strava-toggle-slider:before {
+          transform: translateX(26px) !important;
+          background: #FFA42D !important;
+        }
+
+        .strava-toggle-label {
+          color: #F5FAFF !important;
+          font-size: 14px !important;
+          font-weight: 600 !important;
+        }
+
+        /* Strava Tips Styles */
+        .strava-tips {
+          background: rgba(255, 164, 45, 0.08) !important;
+          border-left: 3px solid #FFA42D !important;
+          border-radius: 0 8px 8px 0 !important;
+          padding: 12px 16px !important;
+          margin-top: 8px !important;
+          transition: all 0.3s ease !important;
+        }
+
+        .strava-tips:hover {
+          background: rgba(255, 164, 45, 0.12) !important;
+          border-left-color: #FFB85C !important;
+        }
+
+        .strava-tips-header {
+          color: #FFA42D !important;
+          font-weight: 600 !important;
+          font-size: 12px !important;
+          margin-bottom: 8px !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.5px !important;
+        }
+
+        .strava-tip-instruction {
+          color: #F5FAFF !important;
+          font-size: 13px !important;
+          line-height: 1.5 !important;
+        }
+
         .neon-button {
           background: var(--neon-primary);
           border: none;
