@@ -1788,16 +1788,16 @@ const HybridScoreForm = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Weekly Miles
-                        <span className="optional-label">Optional</span>
-                      </label>
                       <div className="field-explanation">
                         <div className="field-explanation-header">Volume Score</div>
                         <div className="field-explanation-text">
                           Creates your volume score with thresholds at <strong>20/40/50+ miles</strong>. Higher weekly mileage indicates greater aerobic base and endurance capacity.
                         </div>
                       </div>
+                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
+                        Weekly Miles
+                        <span className="optional-label">Optional</span>
+                      </label>
                       <input
                         type="number"
                         className="form-input"
