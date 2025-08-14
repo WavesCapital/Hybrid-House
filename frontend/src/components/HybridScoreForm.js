@@ -1905,6 +1905,12 @@ const HybridScoreForm = () => {
                         Squat 1RM (lbs)
                         <span className="optional-label">Optional</span>
                       </label>
+                      <div className="field-explanation">
+                        <div className="field-explanation-header">Lower Body Power</div>
+                        <div className="field-explanation-text">
+                          Target: <strong>2.0x bodyweight for males, 1.5x for females</strong>. Your 1-rep maxes directly determine 40% of your hybrid score through bodyweight ratio calculations.
+                        </div>
+                      </div>
                       <input
                         type="number"
                         className="form-input"
@@ -1912,12 +1918,6 @@ const HybridScoreForm = () => {
                         onChange={(e) => handleInputChange('pb_squat_1rm', e.target.value)}
                         placeholder="405"
                       />
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Lower Body Power</div>
-                        <div className="field-explanation-text">
-                          Target: <strong>2.0x bodyweight for males, 1.5x for females</strong>. Your 1-rep maxes directly determine 40% of your hybrid score through bodyweight ratio calculations.
-                        </div>
-                      </div>
                     </div>
 
                     <div>
