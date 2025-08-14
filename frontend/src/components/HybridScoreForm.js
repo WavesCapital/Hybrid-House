@@ -1540,13 +1540,7 @@ const HybridScoreForm = () => {
             </div>
           </div>
 
-            {/* Form Content */}
-            <form onSubmit={(e) => e.preventDefault()} onKeyDown={(e) => {
-              if (e.key === 'Enter' && currentSection !== sections.length - 1) {
-                e.preventDefault(); // Prevent accidental submission when not on final section
-                console.log('⚠️ Enter key blocked - not on final section');
-              }
-            }}>
+          <form onSubmit={(e) => e.preventDefault()}>
               
               {/* Loading state for profile data */}
               {isLoadingProfile && user && (
