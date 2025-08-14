@@ -2270,7 +2270,6 @@ const HybridScoreForm = () => {
                 )}
               </div>
             </form>
-          </Card>
         </div>
       </div>
       </div>
