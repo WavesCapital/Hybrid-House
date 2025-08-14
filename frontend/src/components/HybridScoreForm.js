@@ -1547,8 +1547,32 @@ const HybridScoreForm = () => {
                     Running Performance
                   </h2>
                   
+                  {/* Strava Toggle */}
+                  <div className="strava-toggle-section">
+                    <label className="strava-toggle-container">
+                      <input
+                        type="checkbox"
+                        checked={formData.useStrava}
+                        onChange={(e) => handleInputChange('useStrava', e.target.checked)}
+                        className="strava-toggle-input"
+                      />
+                      <span className="strava-toggle-slider"></span>
+                      <span className="strava-toggle-label">Do you use Strava?</span>
+                    </label>
+                    
+                    {formData.useStrava && (
+                      <div className="strava-tips">
+                        <div className="strava-tips-header">How to Find Your Best Efforts on Strava</div>
+                        <div className="strava-tip">
+                          <span className="strava-tip-instruction">
+                            Open Strava app → Go to Your Profile → Tap "Personal Records" → 
+                            Find your best times for Mile, 5K, 10K, and Half Marathon distances
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
-                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
