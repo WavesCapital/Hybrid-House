@@ -1194,6 +1194,25 @@ const HybridScoreForm = () => {
             padding: 1px 3px;
             margin-left: 4px;
           }
+
+          .wearable-tips {
+            padding: 6px 10px !important;
+            margin-top: 4px !important;
+          }
+
+          .wearable-tips-header {
+            font-size: 10px !important;
+            margin-bottom: 4px !important;
+          }
+
+          .wearable-tip-device {
+            font-size: 9px !important;
+          }
+
+          .wearable-tip-instruction {
+            font-size: 9px !important;
+            padding-left: 4px !important;
+          }
         }
         `}
       </style>
