@@ -1552,128 +1552,135 @@ const HybridScoreForm = () => {
                 </div>
               )}
               
-              {/* Personal Info Section */}
-              {currentSection === 0 && (
-                <div className="space-y-4 sm:space-y-6">
-                  <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6" style={{ color: 'var(--txt)' }}>
-                    Personal Information
-                  </h2>
-
-                  {/* Welcome message for authenticated users */}
-                  {user && !isLoadingProfile && (
-                    <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg" style={{ 
-                      background: 'rgba(8, 240, 255, 0.1)', 
-                      border: '1px solid rgba(8, 240, 255, 0.3)' 
-                    }}>
-                      <div className="flex items-center space-x-2 mb-2">
-                        <User className="w-4 h-4" style={{ color: 'var(--neon-primary)' }} />
-                        <span className="text-sm sm:text-base" style={{ color: 'var(--neon-primary)', fontWeight: '600' }}>
-                          Account Created Successfully! 🎉
-                        </span>
-                      </div>
-                      <p className="text-xs sm:text-sm" style={{ color: 'var(--txt)' }}>
-                        Now let's collect your performance data to calculate your hybrid score. Any pre-filled information can be updated below.
-                      </p>
-                    </div>
-                  )}
-                  
-
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        First Name *
-                      </label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        value={formData.first_name}
-                        onChange={(e) => handleInputChange('first_name', e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Last Name *
-                      </label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        value={formData.last_name}
-                        onChange={(e) => handleInputChange('last_name', e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Performance Targets</div>
-                        <div className="field-explanation-text">
-                          Determines your performance targets: <strong>Males target</strong> 1.5x/2.0x/2.4x bodyweight for bench/squat/deadlift, while <strong>females target</strong> 1.0x/1.5x/1.8x bodyweight.
-                        </div>
-                      </div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Gender *
-                      </label>
-                      <select
-                        className="form-select"
-                        value={formData.sex}
-                        onChange={(e) => handleInputChange('sex', e.target.value)}
-                        required
-                      >
-                        <option value="">Select Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Prefer not to say">Prefer not to say</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Date of Birth *
-                      </label>
-                      <input
-                        type="date"
-                        className="form-input"
-                        value={formData.dob}
-                        onChange={(e) => handleInputChange('dob', e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Country
-                      </label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        value={formData.country}
-                        onChange={(e) => handleInputChange('country', e.target.value)}
-                        placeholder="US"
-                      />
-                    </div>
+            {/* Personal Info Section */}
+            {currentSection === 0 && (
+              <div className="assessment-section">
+                <div className="section-header">
+                  <div className="section-icon">
+                    <User className="w-6 h-6" />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium mb-4" style={{ color: 'var(--txt)' }}>
-                      Wearables (select all that apply)
-                    </label>
-                    <div className="flex flex-wrap">
-                      {wearableOptions.map((wearable) => (
-                        <div
-                          key={wearable}
-                          className={`wearable-chip ${formData.wearables.includes(wearable) ? 'selected' : ''}`}
-                          onClick={() => handleWearableToggle(wearable)}
-                        >
-                          {wearable}
-                        </div>
-                      ))}
-                    </div>
+                    <h2 className="section-title">Personal Foundation</h2>
+                    <p className="section-subtitle">Essential information for accurate assessment</p>
                   </div>
                 </div>
-              )}
+
+                {/* Welcome message for authenticated users */}
+                {user && !isLoadingProfile && (
+                  <div className="welcome-message">
+                    <div className="welcome-icon">
+                      <User className="w-5 h-5" />
+                    </div>
+                    <div className="welcome-content">
+                      <h3>Account Created Successfully!</h3>
+                      <p>Now let's collect your performance data to calculate your hybrid score. Any pre-filled information can be updated below.</p>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="fields-grid">
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>First Name</span>
+                      <span className="required-indicator">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={formData.first_name}
+                      onChange={(e) => handleInputChange('first_name', e.target.value)}
+                      placeholder="Enter your first name"
+                      required
+                    />
+                  </div>
+
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>Last Name</span>
+                      <span className="required-indicator">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={formData.last_name}
+                      onChange={(e) => handleInputChange('last_name', e.target.value)}
+                      placeholder="Enter your last name"
+                      required
+                    />
+                  </div>
+
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>Gender</span>
+                      <span className="required-indicator">*</span>
+                    </label>
+                    <p className="field-description">
+                      Determines your performance targets: <span className="field-description-highlight">Males target</span> 1.5x/2.0x/2.4x bodyweight for bench/squat/deadlift, while <span className="field-description-highlight">females target</span> 1.0x/1.5x/1.8x bodyweight.
+                    </p>
+                    <select
+                      className="form-select"
+                      value={formData.sex}
+                      onChange={(e) => handleInputChange('sex', e.target.value)}
+                      required
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                  </div>
+
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>Date of Birth</span>
+                      <span className="required-indicator">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      className="form-input"
+                      value={formData.dob}
+                      onChange={(e) => handleInputChange('dob', e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="field-group">
+                    <label className="field-label">
+                      <span>Country</span>
+                      <span className="optional-indicator">Optional</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={formData.country}
+                      onChange={(e) => handleInputChange('country', e.target.value)}
+                      placeholder="US"
+                    />
+                  </div>
+                </div>
+
+                <div className="field-group" style={{ marginTop: '48px' }}>
+                  <label className="field-label">
+                    <span>Wearable Devices</span>
+                    <span className="optional-indicator">Select all that apply</span>
+                  </label>
+                  <p className="field-description">
+                    Help us provide device-specific instructions for finding your health metrics.
+                  </p>
+                  <div className="wearables-grid">
+                    {wearableOptions.map((wearable) => (
+                      <div
+                        key={wearable}
+                        className={`wearable-chip ${formData.wearables.includes(wearable) ? 'selected' : ''}`}
+                        onClick={() => handleWearableToggle(wearable)}
+                      >
+                        {wearable}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
               {/* Body Metrics Section */}
               {currentSection === 1 && (
