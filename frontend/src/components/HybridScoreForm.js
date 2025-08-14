@@ -1182,12 +1182,7 @@ const HybridScoreForm = () => {
                     </div>
                   )}
                   
-                  <div className="section-explainer">
-                    <h3>Why We Need Your Personal Details</h3>
-                    <p>
-                      Your <strong>body weight</strong> is fundamental to hybrid scoring - all strength calculations compare your lifts to bodyweight ratios (e.g., 1.5x bodyweight bench press for males). <strong>Gender</strong> determines your performance targets: males target 1.5x/2.0x/2.4x bodyweight for bench/squat/deadlift, while females target 1.0x/1.5x/1.8x. Your demographic profile ensures accurate peer comparison in the global leaderboard rankings.
-                    </p>
-                  </div>
+
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
