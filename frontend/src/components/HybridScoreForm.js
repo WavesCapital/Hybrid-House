@@ -899,207 +899,341 @@ const HybridScoreForm = () => {
           line-height: 1.6;
         }
 
-        .neon-button {
-          background: var(--neon-primary);
-          border: none;
-          border-radius: 8px;
-          color: #000000;
-          font-weight: 600;
-          padding: 16px 32px;
-          font-size: 16px;
-          transition: all 0.3s ease;
-          cursor: pointer;
-        }
-
-        .neon-button:hover {
-          transform: translateY(-2px);
-          background: var(--neon-primary);
-          box-shadow: 
-            0 8px 32px rgba(8, 240, 255, 0.6),
-            0 4px 16px rgba(8, 240, 255, 0.4),
-            0 0 20px rgba(8, 240, 255, 0.8);
-        }
-
-        .neon-button:disabled {
-          opacity: 0.6;
-          transform: none;
-          cursor: not-allowed;
-        }
-
+        /* Form Controls - Unified */
         .form-input {
           background: var(--card);
           border: 1px solid var(--border);
-          border-radius: 8px;
+          border-radius: 12px;
           color: var(--txt);
-          padding: 12px 16px;
-          font-size: 14px;
+          padding: 16px;
+          font-size: 16px;
           transition: all 0.3s ease;
           width: 100%;
+          font-weight: 400;
         }
 
         .form-input:focus {
           outline: none;
           border-color: var(--neon-primary);
-          box-shadow: 0 0 0 2px rgba(8, 240, 255, 0.2);
+          box-shadow: 0 0 0 3px rgba(8, 240, 255, 0.1);
+          background: var(--card-secondary);
+        }
+
+        .form-input::placeholder {
+          color: var(--txt-subtle);
         }
 
         .form-select {
           background: var(--card);
           border: 1px solid var(--border);
-          border-radius: 8px;
+          border-radius: 12px;
           color: var(--txt);
-          padding: 12px 16px;
-          font-size: 14px;
+          padding: 16px;
+          font-size: 16px;
           transition: all 0.3s ease;
           width: 100%;
           cursor: pointer;
+          font-weight: 400;
         }
 
         .form-select:focus {
           outline: none;
           border-color: var(--neon-primary);
-          box-shadow: 0 0 0 2px rgba(8, 240, 255, 0.2);
+          box-shadow: 0 0 0 3px rgba(8, 240, 255, 0.1);
+          background: var(--card-secondary);
+        }
+
+        /* Wearable Chips - Unified */
+        .wearables-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 12px;
+          margin-top: 12px;
         }
 
         .wearable-chip {
           background: var(--card);
           border: 1px solid var(--border);
-          border-radius: 20px;
+          border-radius: 12px;
           color: var(--txt);
-          padding: 8px 16px;
+          padding: 14px 18px;
           font-size: 14px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          display: inline-flex;
-          align-items: center;
-          margin: 4px;
-        }
-
-        .wearable-chip:hover {
-          border-color: var(--neon-primary);
-        }
-
-        .wearable-chip.selected {
-          background: var(--neon-primary);
-          color: #000000;
-          border-color: var(--neon-primary);
-        }
-
-        .section-nav {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 8px;
-          margin-bottom: 32px;
-        }
-
-        .section-tab {
-          background: var(--card);
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          padding: 12px;
-          text-align: center;
+          font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;
           display: flex;
           align-items: center;
           justify-content: center;
-          flex-direction: column;
-          gap: 8px;
-          font-size: 14px;
-          min-height: 70px;
+          text-align: center;
+          min-height: 50px;
         }
 
-        .section-tab.active {
-          background: var(--neon-primary);
+        .wearable-chip:hover {
+          border-color: var(--neon-primary);
+          background: rgba(8, 240, 255, 0.05);
+          transform: translateY(-1px);
+        }
+
+        .wearable-chip.selected {
+          background: var(--gradient-primary);
           color: #000000;
           border-color: var(--neon-primary);
+          box-shadow: var(--shadow-glow);
         }
 
-        .section-tab.completed {
-          border-color: var(--neon-primary);
-          color: var(--neon-primary);
-        }
-
-        .info-box {
-          background: rgba(8, 240, 255, 0.1);
-          border: 1px solid rgba(8, 240, 255, 0.3);
-          border-radius: 8px;
-          padding: 16px;
-          margin-bottom: 24px;
-        }
-
-        .section-explainer {
-          background: rgba(8, 240, 255, 0.05);
-          border-left: 3px solid var(--neon-primary);
-          padding: 16px 20px;
-          margin-bottom: 32px;
-          border-radius: 0 8px 8px 0;
-        }
-
-        .section-explainer h3 {
-          margin: 0 0 8px 0;
-          color: var(--neon-primary);
-          font-size: 16px;
-          font-weight: 600;
-        }
-
-        .section-explainer p {
-          margin: 0;
-          color: var(--txt);
-          font-size: 14px;
-          line-height: 1.5;
-        }
-
+        /* Height Input - Unified */
         .height-input-group {
           display: flex;
-          gap: 12px;
-          align-items: center;
+          gap: 16px;
+          align-items: flex-end;
         }
 
         .height-input-wrapper {
           display: flex;
-          align-items: center;
+          flex-direction: column;
           gap: 8px;
         }
 
         .height-input {
-          width: 80px;
+          width: 100px;
         }
 
-        .height-label {
-          color: var(--txt);
+        .height-unit-label {
+          color: var(--txt-muted);
           font-size: 14px;
           font-weight: 500;
-          min-width: 20px;
+          text-align: center;
         }
 
-        .wearable-tips {
-          background: rgba(0, 255, 136, 0.05);
-          border-left: 3px solid var(--neon-secondary);
-          padding: 12px 16px;
-          margin-top: 16px;
-          border-radius: 0 8px 8px 0;
+        /* Grid Layout - Unified */
+        .fields-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 32px;
         }
 
-        .wearable-tip {
-          margin-bottom: 8px;
+        /* Navigation - Unified */
+        .form-navigation {
+          display: flex;
+          justify-content: center;
+          gap: 24px;
+          padding: 32px 0;
+          margin-top: 48px;
+          border-top: 1px solid var(--border-subtle);
         }
 
-        .wearable-tip:last-child {
-          margin-bottom: 0;
-        }
-
-        .wearable-tip-device {
-          color: var(--neon-secondary);
+        .nav-button {
+          background: var(--card);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          color: var(--txt-muted);
+          padding: 16px 32px;
+          font-size: 16px;
           font-weight: 600;
-          font-size: 14px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          min-width: 120px;
         }
 
-        .wearable-tip-instruction {
+        .nav-button:hover:not(:disabled) {
+          border-color: var(--neon-primary);
           color: var(--txt);
-          font-size: 13px;
-          margin-left: 16px;
-          line-height: 1.4;
+          transform: translateY(-1px);
+        }
+
+        .nav-button:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+
+        .nav-button-primary {
+          background: var(--gradient-primary);
+          color: #000000;
+          border-color: var(--neon-primary);
+          box-shadow: var(--shadow-glow);
+        }
+
+        .nav-button-primary:hover:not(:disabled) {
+          box-shadow: var(--shadow-glow-hover);
+          transform: translateY(-2px);
+        }
+
+        /* Progress Indicator - Unified */
+        .progress-container {
+          margin-bottom: 48px;
+        }
+
+        .progress-bar {
+          background: var(--card);
+          border-radius: 8px;
+          height: 8px;
+          overflow: hidden;
+          border: 1px solid var(--border);
+        }
+
+        .progress-fill {
+          background: var(--gradient-primary);
+          height: 100%;
+          transition: width 0.6s ease;
+          box-shadow: 0 0 10px rgba(8, 240, 255, 0.5);
+        }
+
+        .progress-text {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 12px;
+        }
+
+        .progress-label {
+          color: var(--txt-muted);
+          font-size: 14px;
+          font-weight: 500;
+        }
+
+        .progress-value {
+          color: var(--neon-primary);
+          font-size: 14px;
+          font-weight: 600;
+        }
+
+        /* Welcome Message - Unified */
+        .welcome-message {
+          background: rgba(8, 240, 255, 0.06);
+          border: 1px solid rgba(8, 240, 255, 0.2);
+          border-radius: 16px;
+          padding: 24px;
+          margin-bottom: 32px;
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+        }
+
+        .welcome-icon {
+          color: var(--neon-primary);
+          margin-top: 2px;
+        }
+
+        .welcome-content h3 {
+          color: var(--neon-primary);
+          font-size: 18px;
+          font-weight: 700;
+          margin: 0 0 8px 0;
+        }
+
+        .welcome-content p {
+          color: var(--txt);
+          font-size: 15px;
+          line-height: 1.6;
+          margin: 0;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+          .assessment-section {
+            padding: 24px 20px;
+            border-radius: 12px;
+          }
+
+          .section-header {
+            margin-bottom: 24px;
+          }
+
+          .section-icon {
+            width: 40px;
+            height: 40px;
+          }
+
+          .section-title {
+            font-size: 24px;
+          }
+
+          .section-subtitle {
+            font-size: 14px;
+          }
+
+          .fields-grid {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+
+          .field-group {
+            margin-bottom: 24px;
+          }
+
+          .wearables-grid {
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+          }
+
+          .wearable-chip {
+            padding: 12px 14px;
+            font-size: 13px;
+            min-height: 44px;
+          }
+
+          .height-input-group {
+            gap: 12px;
+          }
+
+          .height-input {
+            width: 80px;
+          }
+
+          .form-navigation {
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .nav-button {
+            padding: 16px 24px;
+            font-size: 16px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .assessment-section {
+            padding: 20px 16px;
+            margin-bottom: 20px;
+          }
+
+          .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            text-align: left;
+          }
+
+          .section-title {
+            font-size: 22px;
+          }
+
+          .fields-grid {
+            gap: 20px;
+          }
+
+          .field-group {
+            margin-bottom: 20px;
+          }
+
+          .form-input, .form-select {
+            font-size: 16px; /* Prevent zoom on iOS */
+            padding: 14px;
+          }
+
+          .wearables-grid {
+            grid-template-columns: 1fr 1fr;
+          }
+
+          .welcome-message {
+            padding: 20px 16px;
+            flex-direction: column;
+            gap: 12px;
+          }
         }
 
         @media (max-width: 768px) {
