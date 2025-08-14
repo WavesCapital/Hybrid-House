@@ -1988,6 +1988,13 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                         if isinstance(running_app, str):
                             # Truncate if needed (max 50 chars should be plenty for app names)
                             personal_data['running_app'] = running_app[:50]
+
+                    # Handle strength app preference
+                    if profile_json.get('strength_app'):
+                        strength_app = profile_json.get('strength_app')
+                        if isinstance(strength_app, str):
+                            # Truncate if needed (max 50 chars should be plenty for app names)
+                            personal_data['strength_app'] = strength_app[:50]
                     
                     # Create or update user profile with personal data
                     try:
