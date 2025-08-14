@@ -975,7 +975,7 @@ const HybridScoreForm = () => {
         }
 
         .wearable-chip.selected {
-          background: var(--gradient-primary);
+          background: var(--neon-primary);
           color: #000000;
           border-color: var(--neon-primary);
           box-shadow: var(--shadow-glow);
