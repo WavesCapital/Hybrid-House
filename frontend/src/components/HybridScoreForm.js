@@ -1683,26 +1683,26 @@ const HybridScoreForm = () => {
 
               {/* Body Metrics Section */}
               {currentSection === 1 && (
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--txt)' }}>
-                    Body Metrics
-                  </h2>
-                  
-
-
-
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
+                <div className="assessment-section">
+                  <div className="section-header">
+                    <div className="section-icon">
+                      <Activity className="w-6 h-6" />
+                    </div>
                     <div>
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Strength Foundation</div>
-                        <div className="field-explanation-text">
-                          Your body weight is fundamental to hybrid scoring - all strength calculations compare your lifts to bodyweight ratios for accurate performance assessment.
-                        </div>
-                      </div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Weight (lbs) *
+                      <h2 className="section-title">Body Metrics</h2>
+                      <p className="section-subtitle">Physical measurements and health indicators</p>
+                    </div>
+                  </div>
+                  
+                  <div className="fields-grid">
+                    <div className="field-group">
+                      <label className="field-label">
+                        <span>Weight (lbs)</span>
+                        <span className="required-indicator">*</span>
                       </label>
+                      <p className="field-description">
+                        Your body weight is fundamental to hybrid scoring - all <span className="field-description-highlight">strength calculations compare your lifts to bodyweight ratios</span> for accurate performance assessment.
+                      </p>
                       <input
                         type="number"
                         className="form-input"
@@ -1713,9 +1713,10 @@ const HybridScoreForm = () => {
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Height *
+                    <div className="field-group">
+                      <label className="field-label">
+                        <span>Height</span>
+                        <span className="required-indicator">*</span>
                       </label>
                       <div className="height-input-group">
                         <div className="height-input-wrapper">
@@ -1729,7 +1730,7 @@ const HybridScoreForm = () => {
                             max="8"
                             required
                           />
-                          <span className="height-label">ft</span>
+                          <span className="height-unit-label">feet</span>
                         </div>
                         <div className="height-input-wrapper">
                           <input
@@ -1742,22 +1743,19 @@ const HybridScoreForm = () => {
                             max="11"
                             required
                           />
-                          <span className="height-label">in</span>
+                          <span className="height-unit-label">inches</span>
                         </div>
                       </div>
                     </div>
 
-                    <div>
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Aerobic Engine</div>
-                        <div className="field-explanation-text">
-                          Contributes 25% of your endurance score, compared against elite standards (70 for males, 60 for females). Can be estimated from mile time if not provided.
-                        </div>
-                      </div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        VO₂ Max
-                        <span className="optional-label">Optional</span>
+                    <div className="field-group">
+                      <label className="field-label">
+                        <span>VO₂ Max</span>
+                        <span className="optional-indicator">Optional</span>
                       </label>
+                      <p className="field-description">
+                        Contributes <span className="field-description-highlight">25% of your endurance score</span>, compared against elite standards (70 for males, 60 for females). Can be estimated from mile time if not provided.
+                      </p>
                       <input
                         type="number"
                         className="form-input"
@@ -1766,29 +1764,29 @@ const HybridScoreForm = () => {
                         placeholder="55"
                       />
                       {formData.wearables.length > 0 && (
-                        <div className="wearable-tips">
-                          <div className="wearable-tips-header">How to Find on Your Device</div>
+                        <div className="device-tips">
+                          <div className="device-tips-header">
+                            <Info className="w-4 h-4" />
+                            How to Find on Your Device
+                          </div>
                           {getWearableTips()?.map((tip, index) => (
-                            <div key={index} className="wearable-tip">
-                              <span className="wearable-tip-device">{tip.device}:</span>
-                              <span className="wearable-tip-instruction">{tip.vo2}</span>
+                            <div key={index} className="device-tip-item">
+                              <span className="device-tip-device">{tip.device}</span>
+                              <span className="device-tip-instruction">{tip.vo2}</span>
                             </div>
                           ))}
                         </div>
                       )}
                     </div>
 
-                    <div>
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Recovery Metric</div>
-                        <div className="field-explanation-text">
-                          Carries 30% weight in your recovery score. Lower resting heart rate typically indicates better cardiovascular fitness and recovery capacity.
-                        </div>
-                      </div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Resting Heart Rate (bpm)
-                        <span className="optional-label">Optional</span>
+                    <div className="field-group">
+                      <label className="field-label">
+                        <span>Resting Heart Rate (bpm)</span>
+                        <span className="optional-indicator">Optional</span>
                       </label>
+                      <p className="field-description">
+                        Carries <span className="field-description-highlight">30% weight in your recovery score</span>. Lower resting heart rate typically indicates better cardiovascular fitness and recovery capacity.
+                      </p>
                       <input
                         type="number"
                         className="form-input"
@@ -1797,29 +1795,29 @@ const HybridScoreForm = () => {
                         placeholder="45"
                       />
                       {formData.wearables.length > 0 && (
-                        <div className="wearable-tips">
-                          <div className="wearable-tips-header">How to Find on Your Device</div>
+                        <div className="device-tips">
+                          <div className="device-tips-header">
+                            <Info className="w-4 h-4" />
+                            How to Find on Your Device
+                          </div>
                           {getWearableTips()?.map((tip, index) => (
-                            <div key={index} className="wearable-tip">
-                              <span className="wearable-tip-device">{tip.device}:</span>
-                              <span className="wearable-tip-instruction">{tip.rhr}</span>
+                            <div key={index} className="device-tip-item">
+                              <span className="device-tip-device">{tip.device}</span>
+                              <span className="device-tip-instruction">{tip.rhr}</span>
                             </div>
                           ))}
                         </div>
                       )}
                     </div>
 
-                    <div>
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Recovery Power</div>
-                        <div className="field-explanation-text">
-                          <strong>HRV carries 70% weight</strong> in your recovery score - a critical 10% of your total hybrid score. Higher HRV indicates better recovery and stress adaptation.
-                        </div>
-                      </div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        HRV (ms)
-                        <span className="optional-label">Optional</span>
+                    <div className="field-group">
+                      <label className="field-label">
+                        <span>HRV (ms)</span>
+                        <span className="optional-indicator">Optional</span>
                       </label>
+                      <p className="field-description">
+                        <span className="field-description-highlight">HRV carries 70% weight</span> in your recovery score - a critical 10% of your total hybrid score. Higher HRV indicates better recovery and stress adaptation.
+                      </p>
                       <input
                         type="number"
                         className="form-input"
@@ -1828,12 +1826,15 @@ const HybridScoreForm = () => {
                         placeholder="195"
                       />
                       {formData.wearables.length > 0 && (
-                        <div className="wearable-tips">
-                          <div className="wearable-tips-header">How to Find on Your Device</div>
+                        <div className="device-tips">
+                          <div className="device-tips-header">
+                            <Info className="w-4 h-4" />
+                            How to Find on Your Device
+                          </div>
                           {getWearableTips()?.map((tip, index) => (
-                            <div key={index} className="wearable-tip">
-                              <span className="wearable-tip-device">{tip.device}:</span>
-                              <span className="wearable-tip-instruction">{tip.hrv}</span>
+                            <div key={index} className="device-tip-item">
+                              <span className="device-tip-device">{tip.device}</span>
+                              <span className="device-tip-instruction">{tip.hrv}</span>
                             </div>
                           ))}
                         </div>
