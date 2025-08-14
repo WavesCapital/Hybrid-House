@@ -876,6 +876,12 @@ const HybridScoreForm = () => {
             grid-template-columns: 1fr 1fr;
           }
 
+          .wearable-chip {
+            padding: 8px 12px;
+            font-size: 12px;
+            min-height: 36px;
+          }
+
           .welcome-message {
             padding: 20px 16px;
             flex-direction: column;
