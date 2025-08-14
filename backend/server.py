@@ -420,6 +420,7 @@ class UserProfileUpdate(BaseModel):
     height_in: Optional[float] = None  # New field
     wearables: Optional[list] = None   # New field
     running_app: Optional[str] = None  # New field for tracking running app preference
+    strength_app: Optional[str] = None  # New field for tracking strength app preference
 
 @api_router.post("/auth/signup")
 async def handle_signup(signup_data: dict):
