@@ -1586,6 +1586,12 @@ const HybridScoreForm = () => {
                         VO₂ Max
                         <span className="optional-label">Optional</span>
                       </label>
+                      <div className="field-explanation">
+                        <div className="field-explanation-header">Aerobic Engine</div>
+                        <div className="field-explanation-text">
+                          Contributes 25% of your endurance score, compared against elite standards (70 for males, 60 for females). Can be estimated from mile time if not provided.
+                        </div>
+                      </div>
                       <input
                         type="number"
                         className="form-input"
@@ -1593,12 +1599,6 @@ const HybridScoreForm = () => {
                         onChange={(e) => handleInputChange('vo2max', e.target.value)}
                         placeholder="55"
                       />
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Aerobic Engine</div>
-                        <div className="field-explanation-text">
-                          Contributes 25% of your endurance score, compared against elite standards (70 for males, 60 for females). Can be estimated from mile time if not provided.
-                        </div>
-                      </div>
                       {formData.wearables.length > 0 && (
                         <div className="wearable-tips">
                           <div className="wearable-tips-header">How to Find on Your Device</div>
