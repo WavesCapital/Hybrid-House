@@ -1524,7 +1524,7 @@ const HybridScoreForm = () => {
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         Deadlift 1RM (lbs)
-                        <span className="text-xs" style={{ color: 'var(--muted)' }}> - Optional</span>
+                        <span className="optional-label">Optional</span>
                       </label>
                       <input
                         type="number"
@@ -1533,6 +1533,12 @@ const HybridScoreForm = () => {
                         onChange={(e) => handleInputChange('pb_deadlift_1rm', e.target.value)}
                         placeholder="500"
                       />
+                      <div className="field-explanation">
+                        <div className="field-explanation-header">Posterior Chain</div>
+                        <div className="field-explanation-text">
+                          Target: <strong>2.4x bodyweight for males, 1.8x for females</strong>. The deadlift tests total-body strength and is crucial for hybrid athletic performance.
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
