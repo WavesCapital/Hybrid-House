@@ -1143,6 +1143,12 @@ const HybridScoreForm = () => {
                         <option value="Female">Female</option>
                         <option value="Prefer not to say">Prefer not to say</option>
                       </select>
+                      <div className="field-explanation">
+                        <div className="field-explanation-header">Performance Targets</div>
+                        <div className="field-explanation-text">
+                          Determines your performance targets: <strong>Males target</strong> 1.5x/2.0x/2.4x bodyweight for bench/squat/deadlift, while <strong>females target</strong> 1.0x/1.5x/1.8x bodyweight.
+                        </div>
+                      </div>
                     </div>
 
                     <div>
