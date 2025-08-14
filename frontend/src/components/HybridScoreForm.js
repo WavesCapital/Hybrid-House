@@ -1546,12 +1546,7 @@ const HybridScoreForm = () => {
                     Strength Performance
                   </h2>
                   
-                  <div className="section-explainer">
-                    <h3>Assessing Your Anaerobic Power</h3>
-                    <p>
-                      Your <strong>1-rep maxes directly determine 40% of your hybrid score</strong> through bodyweight ratio calculations. <strong>Males target:</strong> 1.5x bench, 2.0x squat, 2.4x deadlift. <strong>Females target:</strong> 1.0x bench, 1.5x squat, 1.8x deadlift. <strong>Missing lifts carry penalties:</strong> 8-point penalty for no lifts, 4-point penalty for only one lift. Even partial data significantly improves your score accuracy.
-                    </p>
-                  </div>
+
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
