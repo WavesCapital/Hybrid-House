@@ -1446,7 +1446,7 @@ const HybridScoreForm = () => {
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         Long Run (miles)
-                        <span className="text-xs" style={{ color: 'var(--muted)' }}> - Optional</span>
+                        <span className="optional-label">Optional</span>
                       </label>
                       <input
                         type="number"
@@ -1455,6 +1455,12 @@ const HybridScoreForm = () => {
                         onChange={(e) => handleInputChange('long_run', e.target.value)}
                         placeholder="26"
                       />
+                      <div className="field-explanation">
+                        <div className="field-explanation-header">Distance Score</div>
+                        <div className="field-explanation-text">
+                          Builds your distance score with benchmarks at <strong>half-marathon (13.1mi), marathon (26.2mi), and ultra (50mi+)</strong> distances.
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
