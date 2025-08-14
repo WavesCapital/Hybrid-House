@@ -1025,6 +1025,94 @@ const HybridScoreForm = () => {
             font-size: 11px;
             margin-left: 6px;
           }
+
+        /* Field Explanation Styles */
+        .field-explanation {
+          background: rgba(8, 240, 255, 0.08);
+          border-left: 3px solid var(--neon-primary);
+          border-radius: 0 8px 8px 0;
+          padding: 12px 16px;
+          margin-top: 8px;
+          transition: all 0.3s ease;
+        }
+
+        .field-explanation:hover {
+          background: rgba(8, 240, 255, 0.12);
+          border-left-color: var(--neon-secondary);
+        }
+
+        .field-explanation-header {
+          color: var(--neon-primary);
+          font-weight: 600;
+          font-size: 13px;
+          margin-bottom: 6px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .field-explanation-text {
+          color: var(--txt);
+          font-size: 13px;
+          line-height: 1.5;
+          margin: 0;
+        }
+
+        /* Optional Label Styles */
+        .optional-label {
+          display: inline-block;
+          background: rgba(0, 255, 136, 0.15);
+          color: var(--neon-secondary);
+          font-size: 10px;
+          font-weight: 600;
+          padding: 2px 6px;
+          border-radius: 4px;
+          margin-left: 8px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        @media (max-width: 768px) {
+          .field-explanation {
+            padding: 10px 12px;
+            margin-top: 6px;
+          }
+
+          .field-explanation-header {
+            font-size: 12px;
+            margin-bottom: 4px;
+          }
+
+          .field-explanation-text {
+            font-size: 12px;
+            line-height: 1.4;
+          }
+
+          .optional-label {
+            font-size: 9px;
+            padding: 1px 4px;
+            margin-left: 6px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .field-explanation {
+            padding: 8px 10px;
+          }
+
+          .field-explanation-header {
+            font-size: 11px;
+          }
+
+          .field-explanation-text {
+            font-size: 11px;
+          }
+
+          .optional-label {
+            font-size: 8px;
+            padding: 1px 3px;
+            margin-left: 4px;
+          }
         }
         `}
       </style>
