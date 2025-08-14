@@ -1326,6 +1326,7 @@ const HybridScoreForm = () => {
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         HRV (ms)
+                        <span className="optional-label">Optional</span>
                       </label>
                       <input
                         type="number"
@@ -1334,9 +1335,12 @@ const HybridScoreForm = () => {
                         onChange={(e) => handleInputChange('hrv_ms', e.target.value)}
                         placeholder="195"
                       />
-                      <p className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
-                        Heart Rate Variability - check your fitness tracker
-                      </p>
+                      <div className="field-explanation">
+                        <div className="field-explanation-header">Recovery Power</div>
+                        <div className="field-explanation-text">
+                          <strong>HRV carries 70% weight</strong> in your recovery score - a critical 10% of your total hybrid score. Higher HRV indicates better recovery and stress adaptation.
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
