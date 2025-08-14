@@ -1973,6 +1973,13 @@ async def hybrid_interview_chat(user_message: UserMessageRequest, user: dict = D
                             personal_data['wearables'] = truncated_wearables
                         else:
                             personal_data['wearables'] = wearables
+
+                    # Handle running app preference
+                    if profile_json.get('running_app'):
+                        running_app = profile_json.get('running_app')
+                        if isinstance(running_app, str):
+                            # Truncate if needed (max 50 chars should be plenty for app names)
+                            personal_data['running_app'] = running_app[:50]
                     
                     # Create or update user profile with personal data
                     try:
