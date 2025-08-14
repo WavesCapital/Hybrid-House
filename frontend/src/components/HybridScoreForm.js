@@ -1029,7 +1029,7 @@ const HybridScoreForm = () => {
         /* Field Explanation Styles */
         .field-explanation {
           background: rgba(8, 240, 255, 0.08);
-          border-left: 3px solid var(--neon-primary);
+          border-left: 3px solid #08F0FF;
           border-radius: 0 8px 8px 0;
           padding: 12px 16px;
           margin-top: 8px;
@@ -1038,11 +1038,11 @@ const HybridScoreForm = () => {
 
         .field-explanation:hover {
           background: rgba(8, 240, 255, 0.12);
-          border-left-color: var(--neon-secondary);
+          border-left-color: #00FF88;
         }
 
         .field-explanation-header {
-          color: var(--neon-primary);
+          color: #08F0FF;
           font-weight: 600;
           font-size: 13px;
           margin-bottom: 6px;
@@ -1051,7 +1051,7 @@ const HybridScoreForm = () => {
         }
 
         .field-explanation-text {
-          color: var(--txt);
+          color: #F5FAFF;
           font-size: 13px;
           line-height: 1.5;
           margin: 0;
@@ -1061,7 +1061,7 @@ const HybridScoreForm = () => {
         .optional-label {
           display: inline-block;
           background: rgba(0, 255, 136, 0.15);
-          color: var(--neon-secondary);
+          color: #00FF88;
           font-size: 10px;
           font-weight: 600;
           padding: 2px 6px;
