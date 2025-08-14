@@ -1882,16 +1882,16 @@ const HybridScoreForm = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 form-grid">
                     <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Bench Press 1RM (lbs)
-                        <span className="optional-label">Optional</span>
-                      </label>
                       <div className="field-explanation">
                         <div className="field-explanation-header">Upper Body Power</div>
                         <div className="field-explanation-text">
                           Target: <strong>1.5x bodyweight for males, 1.0x for females</strong>. Missing lifts carry penalties, but even partial data significantly improves your score accuracy.
                         </div>
                       </div>
+                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
+                        Bench Press 1RM (lbs)
+                        <span className="optional-label">Optional</span>
+                      </label>
                       <input
                         type="number"
                         className="form-input"
