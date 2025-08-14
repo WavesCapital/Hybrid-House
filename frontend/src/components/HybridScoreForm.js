@@ -2105,34 +2105,39 @@ const HybridScoreForm = () => {
               </div>
             )}
 
-              {/* Navigation Buttons */}
-              <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t" style={{ borderColor: 'var(--border)' }}>
+            {/* Navigation */}
+            <div className="form-navigation">
+              <button
+                type="button"
+                className={`nav-button ${currentSection === 0 ? '' : 'nav-button-secondary'}`}
+                onClick={prevSection}
+                disabled={currentSection === 0}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous
+              </button>
+
+              {currentSection < sections.length - 1 ? (
                 <button
                   type="button"
-                  className="px-4 sm:px-6 py-3 text-sm sm:text-base border border-gray-600 rounded-lg text-gray-300 hover:border-[#08F0FF] transition-colors min-h-[44px] order-2 sm:order-1"
-                  onClick={prevSection}
-                  disabled={currentSection === 0}
-                  style={{ opacity: currentSection === 0 ? 0.5 : 1 }}
+                  className="nav-button nav-button-primary"
+                  onClick={nextSection}
                 >
-                  Previous
+                  Next
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </button>
-
-                {currentSection < sections.length - 1 ? (
-                  <button
-                    type="button"
-                    className="neon-button text-sm sm:text-base px-4 sm:px-6 py-3 min-h-[44px] order-1 sm:order-2"
-                    onClick={nextSection}
-                  >
-                    Next
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="neon-button text-sm sm:text-base px-4 sm:px-6 py-3 min-h-[44px] order-1 sm:order-2"
-                    disabled={isSubmitting}
-                    onClick={async () => {
-                      console.log('🔥 CALCULATE BUTTON CLICKED - FULL IMPLEMENTATION');
-                      setIsSubmitting(true);
+              ) : (
+                <button
+                  type="button"
+                  className="nav-button nav-button-primary"
+                  disabled={isSubmitting}
+                  onClick={async () => {
+                    console.log('🔥 CALCULATE BUTTON CLICKED - FULL IMPLEMENTATION');
+                    setIsSubmitting(true);
                       
                       try {
                         // Step 1: Create athlete profile in database FIRST
