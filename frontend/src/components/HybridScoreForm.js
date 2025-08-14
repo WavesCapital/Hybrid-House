@@ -1524,22 +1524,21 @@ const HybridScoreForm = () => {
         <div className="max-w-4xl mx-auto">
           <Card className="p-4 sm:p-8" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
             
-            {/* Section Navigation */}
-            <div className="section-nav">
-              {sections.map((section, index) => (
-                <div
-                  key={index}
-                  className={`section-tab ${
-                    index === currentSection ? 'active' : 
-                    index < currentSection ? 'completed' : ''
-                  }`}
-                  onClick={() => setCurrentSection(index)}
-                >
-                  {section.icon}
-                  <span className="text-xs sm:text-sm">{section.title}</span>
-                </div>
-              ))}
+          {/* Progress Indicator */}
+          <div className="progress-container">
+            <div className="progress-bar">
+              <div 
+                className="progress-fill"
+                style={{ width: `${((currentSection + 1) / sections.length) * 100}%` }}
+              ></div>
             </div>
+            <div className="progress-text">
+              <span className="progress-label">Assessment Progress</span>
+              <span className="progress-value">
+                Step {currentSection + 1} of {sections.length}
+              </span>
+            </div>
+          </div>
 
             {/* Form Content */}
             <form onSubmit={(e) => e.preventDefault()} onKeyDown={(e) => {
