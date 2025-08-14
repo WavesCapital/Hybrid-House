@@ -100,6 +100,7 @@ const HybridScoreForm = () => {
               dob: userProfile.dob || '',
               country: userProfile.country || 'US',
               wearables: Array.isArray(userProfile.wearables) ? userProfile.wearables : [],
+              runningApp: userProfile.running_app || '',
               weight_lb: userProfile.weight_lb || '',
               height_ft: feet > 0 ? feet.toString() : '',
               height_in: inches > 0 ? inches.toString() : '',
