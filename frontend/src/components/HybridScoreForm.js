@@ -1617,6 +1617,12 @@ const HybridScoreForm = () => {
                         Resting Heart Rate (bpm)
                         <span className="optional-label">Optional</span>
                       </label>
+                      <div className="field-explanation">
+                        <div className="field-explanation-header">Recovery Metric</div>
+                        <div className="field-explanation-text">
+                          Carries 30% weight in your recovery score. Lower resting heart rate typically indicates better cardiovascular fitness and recovery capacity.
+                        </div>
+                      </div>
                       <input
                         type="number"
                         className="form-input"
@@ -1624,12 +1630,6 @@ const HybridScoreForm = () => {
                         onChange={(e) => handleInputChange('resting_hr_bpm', e.target.value)}
                         placeholder="45"
                       />
-                      <div className="field-explanation">
-                        <div className="field-explanation-header">Recovery Metric</div>
-                        <div className="field-explanation-text">
-                          Carries 30% weight in your recovery score. Lower resting heart rate typically indicates better cardiovascular fitness and recovery capacity.
-                        </div>
-                      </div>
                       {formData.wearables.length > 0 && (
                         <div className="wearable-tips">
                           <div className="wearable-tips-header">How to Find on Your Device</div>
