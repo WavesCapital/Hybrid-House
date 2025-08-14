@@ -1286,6 +1286,7 @@ const HybridScoreForm = () => {
                     <div>
                       <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
                         VO₂ Max
+                        <span className="optional-label">Optional</span>
                       </label>
                       <input
                         type="number"
@@ -1294,6 +1295,12 @@ const HybridScoreForm = () => {
                         onChange={(e) => handleInputChange('vo2max', e.target.value)}
                         placeholder="55"
                       />
+                      <div className="field-explanation">
+                        <div className="field-explanation-header">Aerobic Engine</div>
+                        <div className="field-explanation-text">
+                          Contributes 25% of your endurance score, compared against elite standards (70 for males, 60 for females). Can be estimated from mile time if not provided.
+                        </div>
+                      </div>
                     </div>
 
                     <div>
