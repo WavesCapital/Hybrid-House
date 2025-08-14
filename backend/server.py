@@ -2783,6 +2783,8 @@ async def handle_hybrid_score_webhook(webhook_data: List[WebhookRequest]):
                 user_profile_updates['height_in'] = body_metrics.height_in
         if wearables:
             user_profile_updates['wearables'] = wearables
+        if athlete_profile.running_app:
+            user_profile_updates['running_app'] = athlete_profile.running_app
         
         # Find user by email if provided
         user_profile = None
