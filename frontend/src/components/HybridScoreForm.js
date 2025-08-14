@@ -1254,24 +1254,20 @@ const HybridScoreForm = () => {
             padding-left: 6px !important;
           }
 
-          .strava-toggle-section {
+          .running-app-section {
             margin-bottom: 20px !important;
           }
 
-          .strava-toggle-label {
-            font-size: 13px !important;
-          }
-
-          .strava-tips {
+          .running-app-tips {
             padding: 10px 14px !important;
           }
 
-          .strava-tips-header {
+          .running-app-tips-header {
             font-size: 11px !important;
             margin-bottom: 6px !important;
           }
 
-          .strava-tip-instruction {
+          .running-app-tip-instruction {
             font-size: 12px !important;
           }
         }
