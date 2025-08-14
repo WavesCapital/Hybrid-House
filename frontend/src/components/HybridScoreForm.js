@@ -103,6 +103,8 @@ const HybridScoreForm = () => {
               country: userProfile.country || 'US',
               wearables: Array.isArray(userProfile.wearables) ? userProfile.wearables : [],
               runningApp: userProfile.running_app || '',
+              strengthApp: userProfile.strength_app || '',
+              customStrengthApp: userProfile.strength_app && !['Strong', 'Jefit', 'StrongApp 5x5', 'Hevy', 'Gym Buddy', 'FitNotes', 'Simple Workout Log', 'RepCount', 'WorkIt', 'GymBook'].includes(userProfile.strength_app) ? userProfile.strength_app : '',
               weight_lb: userProfile.weight_lb || '',
               height_ft: feet > 0 ? feet.toString() : '',
               height_in: inches > 0 ? inches.toString() : '',
