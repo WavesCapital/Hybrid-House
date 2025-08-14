@@ -706,8 +706,8 @@ const HybridScoreForm = () => {
         /* Optional Label Styles */
         .optional-label {
           display: inline-block !important;
-          background: rgba(0, 255, 136, 0.15) !important;
-          color: #00FF88 !important;
+          background: rgba(141, 146, 153, 0.15) !important;
+          color: #8D9299 !important;
           font-size: 10px !important;
           font-weight: 600 !important;
           padding: 2px 6px !important;
@@ -715,7 +715,7 @@ const HybridScoreForm = () => {
           margin-left: 8px !important;
           text-transform: uppercase !important;
           letter-spacing: 0.5px !important;
-          border: 1px solid rgba(0, 255, 136, 0.3) !important;
+          border: 1px solid rgba(141, 146, 153, 0.3) !important;
         }
 
         /* Wearable Tips Styles */
