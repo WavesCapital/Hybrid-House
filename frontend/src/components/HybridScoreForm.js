@@ -327,6 +327,7 @@ const HybridScoreForm = () => {
           country: (formData.country || 'US').substring(0, 2),
           wearables: formData.wearables,
           running_app: formData.runningApp || null,
+          strength_app: formData.strengthApp === 'Other' ? formData.customStrengthApp : formData.strengthApp || null,
           body_metrics: {
             weight_lb: parseFloat(formData.weight_lb) || null,
             height_in: heightInches || null,
