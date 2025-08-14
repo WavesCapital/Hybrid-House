@@ -2135,136 +2135,7 @@ const HybridScoreForm = () => {
                   type="button"
                   className="nav-button nav-button-primary"
                   disabled={isSubmitting}
-                  onClick={async () => {
-                    console.log('🔥 CALCULATE BUTTON CLICKED - FULL IMPLEMENTATION');
-                    setIsSubmitting(true);
-                      
-                      try {
-                        // Step 1: Create athlete profile in database FIRST
-                        console.log('🔥 STEP 1: Creating athlete profile in database...');
-                        
-                        const profileId = uuid(); // Generate unique ID
-                        const profileData = {
-                          first_name: formData.first_name || 'Test',
-                          last_name: formData.last_name || 'User',
-                          email: `${(formData.first_name || 'test').toLowerCase()}.${(formData.last_name || 'user').toLowerCase()}@temp.com`,
-                          sex: formData.sex || 'male',
-                          dob: formData.dob || '1990-01-01',
-                          country: formData.country || 'US',
-                          body_metrics: {
-                            weight_lb: parseFloat(formData.weight_lb) || null,
-                            height_in: (parseInt(formData.height_ft) || 0) * 12 + (parseInt(formData.height_in) || 0) || null,
-                          },
-                          pb_bench_1rm: parseFloat(formData.pb_bench_1rm) || null,
-                          pb_squat_1rm: parseFloat(formData.pb_squat_1rm) || null,
-                          pb_deadlift_1rm: parseFloat(formData.pb_deadlift_1rm) || null,
-                          schema_version: 'v1.0',
-                          interview_type: 'form'
-                        };
-                        
-                        // Create the profile in database
-                        const newProfile = {
-                          id: profileId,
-                          profile_json: profileData,
-                          is_public: true,
-                          completed_at: new Date().toISOString(),
-                          created_at: new Date().toISOString(),
-                          updated_at: new Date().toISOString()
-                        };
-                        
-                        let profileResponse;
-                        
-                        if (user && session) {
-                          // User is authenticated - use authenticated endpoint
-                          console.log('🔥 STEP 1: User authenticated - using authenticated endpoint');
-                          profileResponse = await axios.post(`${BACKEND_URL}/api/athlete-profiles`, newProfile, {
-                            headers: {
-                              'Authorization': `Bearer ${session.access_token}`,
-                              'Content-Type': 'application/json'
-                            }
-                          });
-                        } else {
-                          // User not authenticated - use public endpoint
-                          console.log('🔥 STEP 1: User not authenticated - using public endpoint');
-                          profileResponse = await axios.post(`${BACKEND_URL}/api/athlete-profiles/public`, newProfile);
-                        }
-                        
-                        console.log('🔥 STEP 1 SUCCESS: Profile created in database:', profileResponse.data);
-                        
-                        // Step 2: Call webhook and get score data
-                        console.log('🔥 STEP 2: Calling webhook for score calculation...');
-                        
-                        const webhookResponse = await fetch('https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            athleteProfile: profileData,
-                            deliverable: 'score'
-                          })
-                        });
-                        
-                        console.log('🔥 STEP 2: Webhook status:', webhookResponse.status);
-                        
-                        if (!webhookResponse.ok) {
-                          throw new Error(`Webhook failed with status: ${webhookResponse.status}`);
-                        }
-                        
-                        const webhookData = await webhookResponse.json();
-                        const scoreData = Array.isArray(webhookData) ? webhookData[0] : webhookData;
-                        console.log('🔥 STEP 2 SUCCESS: Score data received:', scoreData);
-                        
-                        // Step 3: Store score data in database
-                        console.log('🔥 STEP 3: Storing score data in database...');
-                        
-                        try {
-                          if (user && session) {
-                            // User authenticated - include auth header
-                            await axios.post(`${BACKEND_URL}/api/athlete-profile/${profileId}/score`, scoreData, {
-                              headers: {
-                                'Authorization': `Bearer ${session.access_token}`,
-                                'Content-Type': 'application/json'
-                              }
-                            });
-                          } else {
-                            // User not authenticated - public submission
-                            await axios.post(`${BACKEND_URL}/api/athlete-profile/${profileId}/score`, scoreData, {
-                              headers: { 'Content-Type': 'application/json' }
-                            });
-                          }
-                          console.log('🔥 STEP 3 SUCCESS: Score data stored in database');
-                        } catch (scoreError) {
-                          console.warn('🔥 STEP 3 WARNING: Could not store score in database:', scoreError.message);
-                          // Continue anyway - we have the score data
-                        }
-                        
-                        // Step 4: Navigate to results page
-                        console.log('🔥 STEP 4: Navigating to results page...');
-                        console.log('🔥 STEP 4: Profile ID:', profileId);
-                        console.log('🔥 STEP 4: Hybrid Score:', scoreData.hybridScore);
-                        
-                        toast({
-                          title: "Success! 🎉",
-                          description: `Hybrid Score calculated: ${scoreData.hybridScore || 'N/A'}`,
-                          duration: 5000,
-                        });
-                        
-                        // Navigate to results page with real profile ID
-                        navigate(`/hybrid-score/${profileId}`);
-                        
-                      } catch (error) {
-                        console.error('🔥 ERROR in Calculate button:', error);
-                        console.error('🔥 ERROR message:', error.message);
-                        console.error('🔥 ERROR stack:', error.stack);
-                        
-                        toast({
-                          title: "Error",
-                          description: error.message || "Failed to calculate score. Please try again.",
-                          variant: "destructive",
-                        });
-                      } finally {
-                        setIsSubmitting(false);
-                      }
-                  }
+                  onClick={handleSubmit}
                 >
                   {isSubmitting ? (
                     <>
@@ -2280,7 +2151,7 @@ const HybridScoreForm = () => {
                 </button>
               )}
             </div>
-            </form>
+          </form>
         </div>
       </div>
       </div>
