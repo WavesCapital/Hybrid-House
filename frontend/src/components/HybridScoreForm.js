@@ -1484,476 +1484,282 @@ const HybridScoreForm = () => {
               </div>
             </div>
 
-              {/* Body Metrics Section */}
-              {currentSection === 1 && (
-                <div className="assessment-section">
-                  <div className="section-header">
-                    <div className="section-icon">
-                      <Activity className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h2 className="section-title">Body Metrics</h2>
-                      <p className="section-subtitle">Physical measurements and health indicators</p>
-                    </div>
-                  </div>
-                  
-                  <div className="fields-grid">
-                    <div className="field-group">
-                      <label className="field-label">
-                        <span>Weight (lbs)</span>
-                        <span className="required-indicator">*</span>
-                      </label>
-                      <p className="field-description">
-                        Your body weight is fundamental to hybrid scoring - all <span className="field-description-highlight">strength calculations compare your lifts to bodyweight ratios</span> for accurate performance assessment.
-                      </p>
-                      <input
-                        type="number"
-                        className="form-input"
-                        value={formData.weight_lb}
-                        onChange={(e) => handleInputChange('weight_lb', e.target.value)}
-                        placeholder="190"
-                        required
-                      />
-                    </div>
-
-                    <div className="field-group">
-                      <label className="field-label">
-                        <span>Height</span>
-                        <span className="required-indicator">*</span>
-                      </label>
-                      <div className="height-input-group">
-                        <div className="height-input-wrapper">
-                          <input
-                            type="number"
-                            className="form-input height-input"
-                            value={formData.height_ft}
-                            onChange={(e) => handleInputChange('height_ft', e.target.value)}
-                            placeholder="5"
-                            min="3"
-                            max="8"
-                            required
-                          />
-                          <span className="height-unit-label">feet</span>
-                        </div>
-                        <div className="height-input-wrapper">
-                          <input
-                            type="number"
-                            className="form-input height-input"
-                            value={formData.height_in}
-                            onChange={(e) => handleInputChange('height_in', e.target.value)}
-                            placeholder="10"
-                            min="0"
-                            max="11"
-                            required
-                          />
-                          <span className="height-unit-label">inches</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="field-group">
-                      <label className="field-label">
-                        <span>VO₂ Max</span>
-                        <span className="optional-indicator">Optional</span>
-                      </label>
-                      <p className="field-description">
-                        Contributes <span className="field-description-highlight">25% of your endurance score</span>, compared against elite standards (70 for males, 60 for females). Can be estimated from mile time if not provided.
-                      </p>
-                      <input
-                        type="number"
-                        className="form-input"
-                        value={formData.vo2max}
-                        onChange={(e) => handleInputChange('vo2max', e.target.value)}
-                        placeholder="55"
-                      />
-                      {formData.wearables.length > 0 && (
-                        <div className="device-tips">
-                          <div className="device-tips-header">
-                            <Info className="w-4 h-4" />
-                            How to Find on Your Device
-                          </div>
-                          {getWearableTips()?.map((tip, index) => (
-                            <div key={index} className="device-tip-item">
-                              <span className="device-tip-device">{tip.device}</span>
-                              <span className="device-tip-instruction">{tip.vo2}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="field-group">
-                      <label className="field-label">
-                        <span>Resting Heart Rate (bpm)</span>
-                        <span className="optional-indicator">Optional</span>
-                      </label>
-                      <p className="field-description">
-                        Carries <span className="field-description-highlight">30% weight in your recovery score</span>. Lower resting heart rate typically indicates better cardiovascular fitness and recovery capacity.
-                      </p>
-                      <input
-                        type="number"
-                        className="form-input"
-                        value={formData.resting_hr_bpm}
-                        onChange={(e) => handleInputChange('resting_hr_bpm', e.target.value)}
-                        placeholder="45"
-                      />
-                      {formData.wearables.length > 0 && (
-                        <div className="device-tips">
-                          <div className="device-tips-header">
-                            <Info className="w-4 h-4" />
-                            How to Find on Your Device
-                          </div>
-                          {getWearableTips()?.map((tip, index) => (
-                            <div key={index} className="device-tip-item">
-                              <span className="device-tip-device">{tip.device}</span>
-                              <span className="device-tip-instruction">{tip.rhr}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="field-group">
-                      <label className="field-label">
-                        <span>HRV (ms)</span>
-                        <span className="optional-indicator">Optional</span>
-                      </label>
-                      <p className="field-description">
-                        <span className="field-description-highlight">HRV carries 70% weight</span> in your recovery score - a critical 10% of your total hybrid score. Higher HRV indicates better recovery and stress adaptation.
-                      </p>
-                      <input
-                        type="number"
-                        className="form-input"
-                        value={formData.hrv_ms}
-                        onChange={(e) => handleInputChange('hrv_ms', e.target.value)}
-                        placeholder="195"
-                      />
-                      {formData.wearables.length > 0 && (
-                        <div className="device-tips">
-                          <div className="device-tips-header">
-                            <Info className="w-4 h-4" />
-                            How to Find on Your Device
-                          </div>
-                          {getWearableTips()?.map((tip, index) => (
-                            <div key={index} className="device-tip-item">
-                              <span className="device-tip-device">{tip.device}</span>
-                              <span className="device-tip-instruction">{tip.hrv}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
             {/* Running Performance Section */}
-            {currentSection === 2 && (
-              <div className="assessment-section">
-                <div className="section-header">
-                  <div className="section-icon">
-                    <Target className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h2 className="section-title">Running Performance</h2>
-                    <p className="section-subtitle">Your personal records and running volume</p>
-                  </div>
+            <div className="assessment-section">
+              <div className="section-header">
+                <div className="section-icon">
+                  <Target className="w-6 h-6" />
                 </div>
-                
-                {/* Running App Selector */}
-                <div className="field-group">
-                  <label className="field-label">
-                    <span>Running Tracking App</span>
-                    <span className="optional-indicator">Optional</span>
-                  </label>
-                  <p className="field-description">
-                    Select your primary running app to receive specific instructions for finding your personal records.
-                  </p>
-                  <select
-                    className="form-select"
-                    value={formData.runningApp}
-                    onChange={(e) => handleInputChange('runningApp', e.target.value)}
-                  >
-                    <option value="">Select running app</option>
-                    <option value="Strava">Strava</option>
-                    <option value="Nike Run Club">Nike Run Club</option>
-                    <option value="Garmin Connect">Garmin Connect</option>
-                    <option value="Apple Fitness">Apple Fitness/Health</option>
-                    <option value="Fitbit">Fitbit</option>
-                    <option value="MapMyRun">MapMyRun (Under Armour)</option>
-                    <option value="Runkeeper">Runkeeper</option>
-                    <option value="Adidas Running">Adidas Running</option>
-                    <option value="Polar Flow">Polar Flow</option>
-                  </select>
-                  
-                  {getRunningAppTips() && (
-                    <div className="app-tips">
-                      <div className="app-tips-header">
-                        <Target className="w-4 h-4" />
-                        How to Find Your Best Times in {getRunningAppTips().appName}
-                      </div>
-                      <div className="app-tip-instruction">
-                        {getRunningAppTips().instructions}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="fields-grid">
-                  <div className="field-group">
-                    <label className="field-label">
-                      <span>Mile PR (MM:SS)</span>
-                      <span className="optional-indicator">Optional</span>
-                    </label>
-                    <p className="field-description">
-                      Determines your speed score (25% of endurance). Elite targets: <span className="field-description-highlight">sub-5:30 for males, sub-6:15 for females</span>. Used to estimate VO₂ max if not provided.
-                    </p>
-                    <input
-                      type="text"
-                      className="form-input"
-                      value={formData.pb_mile}
-                      onChange={(e) => handleInputChange('pb_mile', e.target.value)}
-                      placeholder="4:59"
-                    />
-                  </div>
-
-                  <div className="field-group">
-                    <label className="field-label">
-                      <span>5K PR (MM:SS)</span>
-                      <span className="optional-indicator">Optional</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      value={formData.pb_5k}
-                      onChange={(e) => handleInputChange('pb_5k', e.target.value)}
-                      placeholder="18:30"
-                    />
-                  </div>
-
-                  <div className="field-group">
-                    <label className="field-label">
-                      <span>10K PR (MM:SS)</span>
-                      <span className="optional-indicator">Optional</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      value={formData.pb_10k}
-                      onChange={(e) => handleInputChange('pb_10k', e.target.value)}
-                      placeholder="38:00"
-                    />
-                  </div>
-
-                  <div className="field-group">
-                    <label className="field-label">
-                      <span>Half Marathon PR (HH:MM:SS)</span>
-                      <span className="optional-indicator">Optional</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      value={formData.pb_half_marathon}
-                      onChange={(e) => handleInputChange('pb_half_marathon', e.target.value)}
-                      placeholder="1:25:00"
-                    />
-                  </div>
-
-                  <div className="field-group">
-                    <label className="field-label">
-                      <span>Weekly Miles</span>
-                      <span className="optional-indicator">Optional</span>
-                    </label>
-                    <p className="field-description">
-                      Creates your volume score with thresholds at <span className="field-description-highlight">20/40/50+ miles</span>. Higher weekly mileage indicates greater aerobic base and endurance capacity.
-                    </p>
-                    <input
-                      type="number"
-                      className="form-input"
-                      value={formData.weekly_miles}
-                      onChange={(e) => handleInputChange('weekly_miles', e.target.value)}
-                      placeholder="40"
-                    />
-                  </div>
-
-                  <div className="field-group">
-                    <label className="field-label">
-                      <span>Long Run (miles)</span>
-                      <span className="optional-indicator">Optional</span>
-                    </label>
-                    <p className="field-description">
-                      Builds your distance score with benchmarks at <span className="field-description-highlight">half-marathon (13.1mi), marathon (26.2mi), and ultra (50mi+)</span> distances.
-                    </p>
-                    <input
-                      type="number"
-                      className="form-input"
-                      value={formData.long_run}
-                      onChange={(e) => handleInputChange('long_run', e.target.value)}
-                      placeholder="26"
-                    />
-                  </div>
+                <div>
+                  <h2 className="section-title">Running Performance</h2>
+                  <p className="section-subtitle">Your personal records and running volume</p>
                 </div>
               </div>
-            )}
+              
+              {/* Running App Selector */}
+              <div className="field-group">
+                <label className="field-label">
+                  <span>Running Tracking App</span>
+                  <span className="optional-indicator">optional</span>
+                </label>
+                <p className="field-description">
+                  Select your primary running app to receive specific instructions for finding your personal records.
+                </p>
+                <select
+                  className="form-select"
+                  value={formData.runningApp}
+                  onChange={(e) => handleInputChange('runningApp', e.target.value)}
+                >
+                  <option value="">Select running app</option>
+                  <option value="Strava">Strava</option>
+                  <option value="Nike Run Club">Nike Run Club</option>
+                  <option value="Garmin Connect">Garmin Connect</option>
+                  <option value="Apple Fitness">Apple Fitness/Health</option>
+                  <option value="Fitbit">Fitbit</option>
+                  <option value="MapMyRun">MapMyRun (Under Armour)</option>
+                  <option value="Runkeeper">Runkeeper</option>
+                  <option value="Adidas Running">Adidas Running</option>
+                  <option value="Polar Flow">Polar Flow</option>
+                </select>
+                
+                {getRunningAppTips() && (
+                  <div className="app-tips">
+                    <div className="app-tips-header">
+                      <Target className="w-4 h-4" />
+                      How to Find Your Best Times in {getRunningAppTips().appName}
+                    </div>
+                    <div className="app-tip-instruction">
+                      {getRunningAppTips().instructions}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="fields-grid">
+                <div className="field-group">
+                  <label className="field-label">
+                    <span>Mile PR (MM:SS)</span>
+                    <span className="optional-indicator">optional</span>
+                  </label>
+                  <p className="field-description">
+                    Determines your speed score (25% of endurance). Elite targets: <span className="field-description-highlight">sub-5:30 for males, sub-6:15 for females</span>. Used to estimate VO₂ max if not provided.
+                  </p>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={formData.pb_mile}
+                    onChange={(e) => handleInputChange('pb_mile', e.target.value)}
+                    placeholder="4:59"
+                  />
+                </div>
+
+                <div className="field-group">
+                  <label className="field-label">
+                    <span>5K PR (MM:SS)</span>
+                    <span className="optional-indicator">optional</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={formData.pb_5k}
+                    onChange={(e) => handleInputChange('pb_5k', e.target.value)}
+                    placeholder="18:30"
+                  />
+                </div>
+
+                <div className="field-group">
+                  <label className="field-label">
+                    <span>10K PR (MM:SS)</span>
+                    <span className="optional-indicator">optional</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={formData.pb_10k}
+                    onChange={(e) => handleInputChange('pb_10k', e.target.value)}
+                    placeholder="38:00"
+                  />
+                </div>
+
+                <div className="field-group">
+                  <label className="field-label">
+                    <span>Half Marathon PR (HH:MM:SS)</span>
+                    <span className="optional-indicator">optional</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={formData.pb_half_marathon}
+                    onChange={(e) => handleInputChange('pb_half_marathon', e.target.value)}
+                    placeholder="1:25:00"
+                  />
+                </div>
+
+                <div className="field-group">
+                  <label className="field-label">
+                    <span>Weekly Miles</span>
+                    <span className="optional-indicator">optional</span>
+                  </label>
+                  <p className="field-description">
+                    Creates your volume score with thresholds at <span className="field-description-highlight">20/40/50+ miles</span>. Higher weekly mileage indicates greater aerobic base and endurance capacity.
+                  </p>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={formData.weekly_miles}
+                    onChange={(e) => handleInputChange('weekly_miles', e.target.value)}
+                    placeholder="40"
+                  />
+                </div>
+
+                <div className="field-group">
+                  <label className="field-label">
+                    <span>Long Run (miles)</span>
+                    <span className="optional-indicator">optional</span>
+                  </label>
+                  <p className="field-description">
+                    Builds your distance score with benchmarks at <span className="field-description-highlight">half-marathon (13.1mi), marathon (26.2mi), and ultra (50mi+)</span> distances.
+                  </p>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={formData.long_run}
+                    onChange={(e) => handleInputChange('long_run', e.target.value)}
+                    placeholder="26"
+                  />
+                </div>
+              </div>
+            </div>
 
             {/* Strength Performance Section */}
-            {currentSection === 3 && (
-              <div className="assessment-section">
-                <div className="section-header">
-                  <div className="section-icon">
-                    <Dumbbell className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h2 className="section-title">Strength Performance</h2>
-                    <p className="section-subtitle">Your one-rep maximums and strength training</p>
-                  </div>
+            <div className="assessment-section">
+              <div className="section-header">
+                <div className="section-icon">
+                  <Dumbbell className="w-6 h-6" />
                 </div>
-                
-                {/* Strength App Selector */}
-                <div className="field-group">
-                  <label className="field-label">
-                    <span>Strength Tracking App</span>
-                    <span className="optional-indicator">Optional</span>
-                  </label>
-                  <p className="field-description">
-                    Track how you record your strength training to help us understand your lifting data.
-                  </p>
-                  <select
-                    className="form-select"
-                    value={formData.strengthApp}
-                    onChange={(e) => handleInputChange('strengthApp', e.target.value)}
-                  >
-                    <option value="">Select strength app</option>
-                    <option value="Strong">Strong (iOS)</option>
-                    <option value="Jefit">Jefit</option>
-                    <option value="StrongApp 5x5">StrongApp 5x5</option>
-                    <option value="Hevy">Hevy</option>
-                    <option value="Gym Buddy">Gym Buddy</option>
-                    <option value="FitNotes">FitNotes (Android)</option>
-                    <option value="Simple Workout Log">Simple Workout Log</option>
-                    <option value="RepCount">RepCount</option>
-                    <option value="WorkIt">WorkIt</option>
-                    <option value="GymBook">GymBook</option>
-                    <option value="Other">Other</option>
-                  </select>
-                  
-                  {formData.strengthApp === 'Other' && (
-                    <div className="field-group" style={{ marginTop: '16px', marginBottom: '0' }}>
-                      <label className="field-label">
-                        <span>Specify Your App</span>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        value={formData.customStrengthApp}
-                        onChange={(e) => handleInputChange('customStrengthApp', e.target.value)}
-                        placeholder="Enter app name"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="fields-grid">
-                  <div className="field-group">
-                    <label className="field-label">
-                      <span>Bench Press 1RM (lbs)</span>
-                      <span className="optional-indicator">Optional</span>
-                    </label>
-                    <p className="field-description">
-                      Target: <span className="field-description-highlight">1.5x bodyweight for males, 1.0x for females</span>. Missing lifts carry penalties, but even partial data significantly improves your score accuracy.
-                    </p>
-                    <input
-                      type="number"
-                      className="form-input"
-                      value={formData.pb_bench_1rm}
-                      onChange={(e) => handleInputChange('pb_bench_1rm', e.target.value)}
-                      placeholder="315"
-                    />
-                  </div>
-
-                  <div className="field-group">
-                    <label className="field-label">
-                      <span>Squat 1RM (lbs)</span>
-                      <span className="optional-indicator">Optional</span>
-                    </label>
-                    <p className="field-description">
-                      Target: <span className="field-description-highlight">2.0x bodyweight for males, 1.5x for females</span>. Your 1-rep maxes directly determine 40% of your hybrid score through bodyweight ratio calculations.
-                    </p>
-                    <input
-                      type="number"
-                      className="form-input"
-                      value={formData.pb_squat_1rm}
-                      onChange={(e) => handleInputChange('pb_squat_1rm', e.target.value)}
-                      placeholder="405"
-                    />
-                  </div>
-
-                  <div className="field-group">
-                    <label className="field-label">
-                      <span>Deadlift 1RM (lbs)</span>
-                      <span className="optional-indicator">Optional</span>
-                    </label>
-                    <p className="field-description">
-                      Target: <span className="field-description-highlight">2.4x bodyweight for males, 1.8x for females</span>. The deadlift tests total-body strength and is crucial for hybrid athletic performance.
-                    </p>
-                    <input
-                      type="number"
-                      className="form-input"
-                      value={formData.pb_deadlift_1rm}
-                      onChange={(e) => handleInputChange('pb_deadlift_1rm', e.target.value)}
-                      placeholder="500"
-                    />
-                  </div>
+                <div>
+                  <h2 className="section-title">Strength Performance</h2>
+                  <p className="section-subtitle">Your one-rep maximums and strength training</p>
                 </div>
               </div>
-            )}
-
-            {/* Navigation */}
-            <div className="form-navigation">
-              <button
-                type="button"
-                className={`nav-button ${currentSection === 0 ? '' : 'nav-button-secondary'}`}
-                onClick={prevSection}
-                disabled={currentSection === 0}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Previous
-              </button>
-
-              {currentSection < sections.length - 1 ? (
-                <button
-                  type="button"
-                  className="nav-button nav-button-primary"
-                  onClick={nextSection}
+              
+              {/* Strength App Selector */}
+              <div className="field-group">
+                <label className="field-label">
+                  <span>Strength Tracking App</span>
+                  <span className="optional-indicator">optional</span>
+                </label>
+                <p className="field-description">
+                  Track how you record your strength training to help us understand your lifting data.
+                </p>
+                <select
+                  className="form-select"
+                  value={formData.strengthApp}
+                  onChange={(e) => handleInputChange('strengthApp', e.target.value)}
                 >
-                  Next
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="nav-button nav-button-primary"
-                  disabled={isSubmitting}
-                  onClick={handleSubmit}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Calculating Score...
-                    </>
-                  ) : (
-                    'Calculate Hybrid Score'
-                  )}
-                </button>
-              )}
+                  <option value="">Select strength app</option>
+                  <option value="Strong">Strong (iOS)</option>
+                  <option value="Jefit">Jefit</option>
+                  <option value="StrongApp 5x5">StrongApp 5x5</option>
+                  <option value="Hevy">Hevy</option>
+                  <option value="Gym Buddy">Gym Buddy</option>
+                  <option value="FitNotes">FitNotes (Android)</option>
+                  <option value="Simple Workout Log">Simple Workout Log</option>
+                  <option value="RepCount">RepCount</option>
+                  <option value="WorkIt">WorkIt</option>
+                  <option value="GymBook">GymBook</option>
+                  <option value="Other">Other</option>
+                </select>
+                
+                {formData.strengthApp === 'Other' && (
+                  <div className="field-group" style={{ marginTop: '16px', marginBottom: '0' }}>
+                    <label className="field-label">
+                      <span>Specify Your App</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={formData.customStrengthApp}
+                      onChange={(e) => handleInputChange('customStrengthApp', e.target.value)}
+                      placeholder="Enter app name"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="fields-grid">
+                <div className="field-group">
+                  <label className="field-label">
+                    <span>Bench Press 1RM (lbs)</span>
+                    <span className="optional-indicator">optional</span>
+                  </label>
+                  <p className="field-description">
+                    Target: <span className="field-description-highlight">1.5x bodyweight for males, 1.0x for females</span>. Missing lifts carry penalties, but even partial data significantly improves your score accuracy.
+                  </p>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={formData.pb_bench_1rm}
+                    onChange={(e) => handleInputChange('pb_bench_1rm', e.target.value)}
+                    placeholder="315"
+                  />
+                </div>
+
+                <div className="field-group">
+                  <label className="field-label">
+                    <span>Squat 1RM (lbs)</span>
+                    <span className="optional-indicator">optional</span>
+                  </label>
+                  <p className="field-description">
+                    Target: <span className="field-description-highlight">2.0x bodyweight for males, 1.5x for females</span>. Your 1-rep maxes directly determine 40% of your hybrid score through bodyweight ratio calculations.
+                  </p>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={formData.pb_squat_1rm}
+                    onChange={(e) => handleInputChange('pb_squat_1rm', e.target.value)}
+                    placeholder="405"
+                  />
+                </div>
+
+                <div className="field-group">
+                  <label className="field-label">
+                    <span>Deadlift 1RM (lbs)</span>
+                    <span className="optional-indicator">optional</span>
+                  </label>
+                  <p className="field-description">
+                    Target: <span className="field-description-highlight">2.4x bodyweight for males, 1.8x for females</span>. The deadlift tests total-body strength and is crucial for hybrid athletic performance.
+                  </p>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={formData.pb_deadlift_1rm}
+                    onChange={(e) => handleInputChange('pb_deadlift_1rm', e.target.value)}
+                    placeholder="500"
+                  />
+                </div>
+              </div>
             </div>
+
+            {/* Submit Button */}
+            <button
+              type="button"
+              className="submit-button"
+              disabled={isSubmitting}
+              onClick={handleSubmit}
+            >
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Calculating Score...
+                </>
+              ) : (
+                'Calculate Hybrid Score'
+              )}
+            </button>
           </form>
         </div>
       </div>
