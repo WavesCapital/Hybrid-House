@@ -1522,8 +1522,7 @@ const HybridScoreForm = () => {
       {/* Main Form */}
       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-12">
         <div className="max-w-5xl mx-auto">
-          <Card className="p-4 sm:p-8" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-            
+          
           {/* Progress Indicator */}
           <div className="progress-container">
             <div className="progress-bar">
