@@ -1382,6 +1382,17 @@ const HybridScoreForm = () => {
                           Contributes 25% of your endurance score, compared against elite standards (70 for males, 60 for females). Can be estimated from mile time if not provided.
                         </div>
                       </div>
+                      {formData.wearables.length > 0 && (
+                        <div className="wearable-tips">
+                          <div className="wearable-tips-header">📱 How to Find on Your Device</div>
+                          {getWearableTips()?.map((tip, index) => (
+                            <div key={index} className="wearable-tip">
+                              <span className="wearable-tip-device">{tip.device}:</span>
+                              <span className="wearable-tip-instruction">{tip.vo2}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div>
