@@ -1444,6 +1444,17 @@ const HybridScoreForm = () => {
                           <strong>HRV carries 70% weight</strong> in your recovery score - a critical 10% of your total hybrid score. Higher HRV indicates better recovery and stress adaptation.
                         </div>
                       </div>
+                      {formData.wearables.length > 0 && (
+                        <div className="wearable-tips">
+                          <div className="wearable-tips-header">📱 How to Find on Your Device</div>
+                          {getWearableTips()?.map((tip, index) => (
+                            <div key={index} className="wearable-tip">
+                              <span className="wearable-tip-device">{tip.device}:</span>
+                              <span className="wearable-tip-instruction">{tip.hrv}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
