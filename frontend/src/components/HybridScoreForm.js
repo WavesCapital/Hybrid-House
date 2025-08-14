@@ -1009,162 +1009,12 @@ const HybridScoreForm = () => {
           box-shadow: var(--shadow-glow);
         }
 
-        /* Height Input - Unified */
-        .height-input-group {
-          display: flex;
-          gap: 16px;
-          align-items: flex-end;
-        }
-
-        .height-input-wrapper {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .height-input {
-          width: 100px;
-        }
-
-        .height-unit-label {
-          color: var(--txt-muted);
-          font-size: 14px;
-          font-weight: 500;
-          text-align: center;
-        }
-
-        /* Grid Layout - Unified */
-        .fields-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 32px;
-        }
-
-        /* Navigation - Unified */
-        .form-navigation {
-          display: flex;
-          justify-content: center;
-          gap: 24px;
-          padding: 32px 0;
-          margin-top: 48px;
-          border-top: 1px solid var(--border-subtle);
-        }
-
-        .nav-button {
-          background: var(--card);
-          border: 1px solid var(--border);
-          border-radius: 12px;
-          color: var(--txt-muted);
-          padding: 16px 32px;
-          font-size: 16px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          min-width: 120px;
-        }
-
-        .nav-button:hover:not(:disabled) {
-          border-color: var(--neon-primary);
-          color: var(--txt);
-          transform: translateY(-1px);
-        }
-
-        .nav-button:disabled {
-          opacity: 0.4;
-          cursor: not-allowed;
-        }
-
-        .nav-button-primary {
-          background: var(--gradient-primary);
-          color: #000000;
-          border-color: var(--neon-primary);
-          box-shadow: var(--shadow-glow);
-        }
-
-        .nav-button-primary:hover:not(:disabled) {
-          box-shadow: var(--shadow-glow-hover);
-          transform: translateY(-2px);
-        }
-
-        /* Progress Indicator - Unified */
-        .progress-container {
-          margin-bottom: 48px;
-        }
-
-        .progress-bar {
-          background: var(--card);
-          border-radius: 8px;
-          height: 8px;
-          overflow: hidden;
-          border: 1px solid var(--border);
-        }
-
-        .progress-fill {
-          background: var(--gradient-primary);
-          height: 100%;
-          transition: width 0.6s ease;
-          box-shadow: 0 0 10px rgba(8, 240, 255, 0.5);
-        }
-
-        .progress-text {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-top: 12px;
-        }
-
-        .progress-label {
-          color: var(--txt-muted);
-          font-size: 14px;
-          font-weight: 500;
-        }
-
-        .progress-value {
-          color: var(--neon-primary);
-          font-size: 14px;
-          font-weight: 600;
-        }
-
-        /* Welcome Message - Unified */
-        .welcome-message {
-          background: rgba(8, 240, 255, 0.06);
-          border: 1px solid rgba(8, 240, 255, 0.2);
-          border-radius: 16px;
-          padding: 24px;
-          margin-bottom: 32px;
-          display: flex;
-          align-items: flex-start;
-          gap: 16px;
-        }
-
-        .welcome-icon {
-          color: var(--neon-primary);
-          margin-top: 2px;
-        }
-
-        .welcome-content h3 {
-          color: var(--neon-primary);
-          font-size: 18px;
-          font-weight: 700;
-          margin: 0 0 8px 0;
-        }
-
-        .welcome-content p {
-          color: var(--txt);
-          font-size: 15px;
-          line-height: 1.6;
-          margin: 0;
-        }
-
         /* Mobile Optimizations */
         @media (max-width: 768px) {
           .assessment-section {
             padding: 24px 20px;
             border-radius: 12px;
+            margin-bottom: 20px;
           }
 
           .section-header {
@@ -1212,21 +1062,17 @@ const HybridScoreForm = () => {
             width: 80px;
           }
 
-          .form-navigation {
-            flex-direction: column;
-            gap: 12px;
-          }
-
-          .nav-button {
-            padding: 16px 24px;
+          .submit-button {
+            padding: 16px 32px;
             font-size: 16px;
+            min-width: 240px;
           }
         }
 
         @media (max-width: 480px) {
           .assessment-section {
             padding: 20px 16px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
           }
 
           .section-header {
@@ -1261,6 +1107,12 @@ const HybridScoreForm = () => {
             padding: 20px 16px;
             flex-direction: column;
             gap: 12px;
+          }
+
+          .submit-button {
+            padding: 14px 28px;
+            font-size: 16px;
+            min-width: 200px;
           }
         }
 
