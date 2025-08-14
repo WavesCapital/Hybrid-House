@@ -820,14 +820,11 @@ const HybridScoreForm = () => {
         }
 
         .optional-indicator {
-          background: rgba(141, 146, 153, 0.2);
           color: var(--txt-subtle);
-          font-size: 12px;
+          font-size: 14px;
           font-weight: 400;
-          padding: 2px 8px;
-          border-radius: 4px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
+          font-style: italic;
+          margin-left: 8px;
         }
 
         /* Device Tips - Unified */
@@ -897,6 +894,37 @@ const HybridScoreForm = () => {
           color: var(--txt);
           font-size: 14px;
           line-height: 1.6;
+        }
+
+        /* Submit Button - Single */
+        .submit-button {
+          background: var(--neon-primary);
+          color: #000000;
+          border: none;
+          border-radius: 12px;
+          padding: 20px 40px;
+          font-size: 18px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          margin: 48px auto 0;
+          min-width: 280px;
+          box-shadow: var(--shadow-glow);
+        }
+
+        .submit-button:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-glow-hover);
+        }
+
+        .submit-button:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          transform: none;
         }
 
         /* Form Controls - Unified */
