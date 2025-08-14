@@ -1718,26 +1718,39 @@ const HybridScoreForm = () => {
                     Running Performance
                   </h2>
                   
-                  {/* Strava Toggle */}
-                  <div className="strava-toggle-section">
-                    <label className="strava-toggle-container">
-                      <input
-                        type="checkbox"
-                        checked={formData.useStrava}
-                        onChange={(e) => handleInputChange('useStrava', e.target.checked)}
-                        className="strava-toggle-input"
-                      />
-                      <span className="strava-toggle-slider"></span>
-                      <span className="strava-toggle-label">Do you use Strava?</span>
-                    </label>
+                  {/* Running App Selector */}
+                  <div className="running-app-section">
+                    <div>
+                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
+                        Which app do you use to track runs?
+                        <span className="optional-label">Optional</span>
+                      </label>
+                      <select
+                        className="form-select"
+                        value={formData.runningApp}
+                        onChange={(e) => handleInputChange('runningApp', e.target.value)}
+                      >
+                        <option value="">Select running app</option>
+                        <option value="Strava">Strava</option>
+                        <option value="Nike Run Club">Nike Run Club</option>
+                        <option value="Garmin Connect">Garmin Connect</option>
+                        <option value="Apple Fitness">Apple Fitness/Health</option>
+                        <option value="Fitbit">Fitbit</option>
+                        <option value="MapMyRun">MapMyRun (Under Armour)</option>
+                        <option value="Runkeeper">Runkeeper</option>
+                        <option value="Adidas Running">Adidas Running</option>
+                        <option value="Polar Flow">Polar Flow</option>
+                      </select>
+                    </div>
                     
-                    {formData.useStrava && (
-                      <div className="strava-tips">
-                        <div className="strava-tips-header">How to Find Your Best Efforts on Strava</div>
-                        <div className="strava-tip">
-                          <span className="strava-tip-instruction">
-                            Open Strava app → Go to Your Profile → Tap "Personal Records" → 
-                            Find your best times for Mile, 5K, 10K, and Half Marathon distances
+                    {getRunningAppTips() && (
+                      <div className="running-app-tips">
+                        <div className="running-app-tips-header">
+                          How to Find Your Best Times in {getRunningAppTips().appName}
+                        </div>
+                        <div className="running-app-tip">
+                          <span className="running-app-tip-instruction">
+                            {getRunningAppTips().instructions}
                           </span>
                         </div>
                       </div>
