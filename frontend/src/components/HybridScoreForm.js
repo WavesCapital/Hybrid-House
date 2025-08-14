@@ -855,6 +855,11 @@ const HybridScoreForm = () => {
           line-height: 1.5 !important;
         }
 
+        /* Strength App Selector Styles */
+        .strength-app-section {
+          margin-bottom: 24px !important;
+        }
+
         .neon-button {
           background: var(--neon-primary);
           border: none;
