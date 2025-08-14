@@ -817,14 +817,14 @@ const HybridScoreForm = () => {
           }
 
           .wearables-grid {
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 8px;
           }
 
           .wearable-chip {
-            padding: 12px 14px;
+            padding: 10px 14px;
             font-size: 13px;
-            min-height: 44px;
+            min-height: 40px;
           }
 
           .height-input-group {
