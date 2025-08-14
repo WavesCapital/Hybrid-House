@@ -30,6 +30,14 @@ print(f"Testing Hybrid Score Form backend at: {API_BASE_URL}")
 class HybridFormBackendTester:
     def __init__(self):
         self.session = requests.Session()
+        # Add SSL verification and timeout settings
+        self.session.verify = True
+        self.session.timeout = 30
+        # Add headers
+        self.session.headers.update({
+            'Content-Type': 'application/json',
+            'User-Agent': 'HybridFormBackendTester/1.0'
+        })
         self.test_results = []
         
     def log_test(self, test_name, success, message, details=None):
