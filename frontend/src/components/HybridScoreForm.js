@@ -1902,16 +1902,16 @@ const HybridScoreForm = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Squat 1RM (lbs)
-                        <span className="optional-label">Optional</span>
-                      </label>
                       <div className="field-explanation">
                         <div className="field-explanation-header">Lower Body Power</div>
                         <div className="field-explanation-text">
                           Target: <strong>2.0x bodyweight for males, 1.5x for females</strong>. Your 1-rep maxes directly determine 40% of your hybrid score through bodyweight ratio calculations.
                         </div>
                       </div>
+                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
+                        Squat 1RM (lbs)
+                        <span className="optional-label">Optional</span>
+                      </label>
                       <input
                         type="number"
                         className="form-input"
