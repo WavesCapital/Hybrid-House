@@ -1614,16 +1614,16 @@ const HybridScoreForm = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
-                        Resting Heart Rate (bpm)
-                        <span className="optional-label">Optional</span>
-                      </label>
                       <div className="field-explanation">
                         <div className="field-explanation-header">Recovery Metric</div>
                         <div className="field-explanation-text">
                           Carries 30% weight in your recovery score. Lower resting heart rate typically indicates better cardiovascular fitness and recovery capacity.
                         </div>
                       </div>
+                      <label className="block text-sm font-medium mb-2" style={{ color: 'var(--txt)' }}>
+                        Resting Heart Rate (bpm)
+                        <span className="optional-label">Optional</span>
+                      </label>
                       <input
                         type="number"
                         className="form-input"
