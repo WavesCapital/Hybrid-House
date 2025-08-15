@@ -7,12 +7,6 @@ const PRLifts = ({ prsData, style, baseStyle }) => {
   const formatWeight = (weight) => {
     return weight ? `${Math.round(weight)}` : '—';
   };
-  
-  const calculateMultiplier = (weight, bodyweight) => {
-    if (!weight || !bodyweight) return '—';
-    const multiplier = weight / bodyweight;
-    return `${multiplier.toFixed(1)}×`;
-  };
 
   const lifts = [
     { name: 'Squat', weight: strength.squat_lb },
@@ -29,19 +23,17 @@ const PRLifts = ({ prsData, style, baseStyle }) => {
         WebkitBackdropFilter: `blur(${glassBlur}px)`
       }}
     >
-      <div className="bg-black/20 border border-white/20 rounded-2xl p-6 h-full">
-        <h3 className="text-xl font-bold text-white mb-4 text-center">Strength PRs</h3>
-        
-        <div className="space-y-4">
-          {lifts.map((lift, index) => (
-            <div key={index} className="flex items-center justify-between">
-              <span className="text-white/80 font-medium">{lift.name}</span>
-              <span className="text-white font-bold text-lg">
-                {formatWeight(lift.weight)} lb
-              </span>
-            </div>
-          ))}
-        </div>
+      <h3 className="text-xl font-bold text-white mb-4 text-center">Strength PRs</h3>
+      
+      <div className="space-y-4">
+        {lifts.map((lift, index) => (
+          <div key={index} className="flex items-center justify-between">
+            <span className="text-white/80 font-medium">{lift.name}</span>
+            <span className="text-white font-bold text-lg">
+              {formatWeight(lift.weight)} lb
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
