@@ -711,6 +711,12 @@ const ShareCardStudio = () => {
                   }}
                   onDrop={(e) => e.preventDefault()}
                   onDragOver={(e) => e.preventDefault()}
+                  onClick={(e) => {
+                    // Only deselect if clicking on canvas background (not on components)
+                    if (e.target === e.currentTarget) {
+                      setSelectedComponent(null);
+                    }
+                  }}
                 >
                   {/* Grid Glow Overlay */}
                   {gridGlow && (
