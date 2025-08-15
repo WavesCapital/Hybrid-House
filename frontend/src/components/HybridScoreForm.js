@@ -279,16 +279,20 @@ const HybridScoreForm = () => {
         );
 
         clearTimeout(timeoutId);
+        
+        console.log('🔥 WEBHOOK RESPONSE STATUS:', webhookResponse.status);
+        console.log('🔥 WEBHOOK RESPONSE HEADERS:', Object.fromEntries(webhookResponse.headers.entries()));
 
         if (webhookResponse.ok) {
           const responseText = await webhookResponse.text();
-          console.log('Webhook response text:', responseText);
+          console.log('🔥 WEBHOOK RESPONSE TEXT LENGTH:', responseText.length);
+          console.log('🔥 WEBHOOK RESPONSE TEXT:', responseText);
           
           if (!responseText || responseText.trim() === '') {
-            console.error('Webhook returned empty response');
+            console.error('🚨 WEBHOOK RETURNED EMPTY RESPONSE - This means the n8n.cloud webhook is not configured correctly!');
             toast({
-              title: "Score Calculation Issue",
-              description: "The scoring service returned an empty response. Your profile has been created successfully.",
+              title: "Webhook Configuration Issue",
+              description: "The scoring service returned an empty response. Please check the n8n.cloud webhook configuration.",
               variant: "destructive",
               duration: 5000,
             });
