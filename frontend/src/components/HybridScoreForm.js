@@ -318,11 +318,22 @@ const HybridScoreForm = () => {
 
     } catch (error) {
       console.error('Error in submission:', error);
+      console.error('Error stack:', error.stack);
+      console.error('Error message:', error.message);
+      
+      let errorMessage = "Failed to calculate your hybrid score. Please try again.";
+      
+      if (error.message.includes('Webhook failed')) {
+        errorMessage = "The scoring service is currently unavailable. Please try again later.";
+      } else if (error.message.includes('JSON')) {
+        errorMessage = "There was an issue processing your score. Your profile has been created.";
+      }
       
       toast({
         title: "Submission Error",
-        description: error.response?.data?.message || error.message || "Please try again.",
+        description: errorMessage,
         variant: "destructive",
+        duration: 6000,
       });
     } finally {
       setIsSubmitting(false);
