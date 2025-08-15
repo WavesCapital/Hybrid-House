@@ -633,6 +633,90 @@ const DesignSystemPage = () => {
           align-items: center;
           justify-items: center;
         }
+
+        /* Neon Score Circle */
+        .score-circle {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 200px;
+          height: 200px;
+          margin: 0 auto;
+        }
+
+        .score-circle-bg {
+          position: absolute;
+          width: 200px;
+          height: 200px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(8, 240, 255, 0.1) 0%, rgba(8, 240, 255, 0.05) 40%, transparent 70%);
+          border: 3px solid rgba(8, 240, 255, 0.3);
+        }
+
+        .score-circle-ring {
+          position: absolute;
+          width: 200px;
+          height: 200px;
+          border-radius: 50%;
+          background: conic-gradient(var(--neon-primary) 0deg, var(--neon-primary) calc(var(--score-percentage) * 3.6deg), rgba(8, 240, 255, 0.2) calc(var(--score-percentage) * 3.6deg), rgba(8, 240, 255, 0.2) 360deg);
+          mask: radial-gradient(circle, transparent 85px, black 88px);
+          -webkit-mask: radial-gradient(circle, transparent 85px, black 88px);
+        }
+
+        .score-circle-glow {
+          position: absolute;
+          width: 220px;
+          height: 220px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(8, 240, 255, 0.4) 0%, rgba(8, 240, 255, 0.2) 30%, rgba(8, 240, 255, 0.1) 60%, transparent 80%);
+          filter: blur(8px);
+          animation: pulse-glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+          0% { 
+            transform: scale(1);
+            opacity: 0.6;
+          }
+          100% { 
+            transform: scale(1.05);
+            opacity: 1;
+          }
+        }
+
+        .score-content {
+          position: relative;
+          z-index: 10;
+          text-align: center;
+        }
+
+        .score-value-large {
+          color: var(--neon-primary);
+          font-size: 64px;
+          font-weight: 700;
+          margin: 0;
+          line-height: 1;
+          text-shadow: 0 0 20px rgba(8, 240, 255, 0.8);
+        }
+
+        .score-label-large {
+          color: var(--txt);
+          font-size: 18px;
+          font-weight: 600;
+          margin: 8px 0 0 0;
+          text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .score-circles-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 40px;
+          align-items: center;
+          justify-items: center;
+        }
+
+        @media (max-width: 768px) {
           .design-title {
             font-size: 36px;
           }
