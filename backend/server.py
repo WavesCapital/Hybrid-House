@@ -1418,7 +1418,7 @@ async def get_athlete_profile(profile_id: str):
 
 @api_router.post("/athlete-profile/{profile_id}/score")
 async def update_athlete_profile_score(profile_id: str, score_data: dict):
-    """Update athlete profile with score data from webhook"""
+    """Update athlete profile with score data from webhook - FIXED: Only stores JSON, no individual field extraction"""
     try:
         # Get current profile to verify it exists
         current_profile_result = supabase.table('athlete_profiles').select('*').eq('id', profile_id).execute()
@@ -1429,17 +1429,19 @@ async def update_athlete_profile_score(profile_id: str, score_data: dict):
                 detail="Profile not found"
             )
         
-        print(f"✅ Updating profile {profile_id} with score data")
+        print(f"✅ FIXED SCORE STORAGE: Updating profile {profile_id} with score data (JSON only)")
         print(f"✅ Score data: {score_data}")
         
-        # Update athlete profile with score data only (no individual fields that might not exist in schema)
+        # CRITICAL FIX: Only update score_data JSON field, no individual field extraction
+        # This prevents PGRST204 database schema conflicts
         update_data = {
             "score_data": score_data,
             "updated_at": datetime.utcnow().isoformat()
         }
         
-        print(f"✅ Update data: {update_data}")
+        print(f"✅ Update data (JSON only): {update_data}")
         
+        # Direct update without any individual field processing
         update_result = supabase.table('athlete_profiles').update(update_data).eq('id', profile_id).execute()
         
         print(f"✅ Update result: {update_result}")
@@ -1451,10 +1453,10 @@ async def update_athlete_profile_score(profile_id: str, score_data: dict):
                 detail="Profile not found or update failed"
             )
         
-        print(f"✅ Score data updated successfully for profile {profile_id}")
+        print(f"✅ FIXED: Score data updated successfully for profile {profile_id} - no schema conflicts")
         
         return {
-            "message": "Score data updated successfully",
+            "message": "Score data updated successfully (fixed - no individual field extraction)",
             "profile_id": profile_id,
             "updated_at": update_result.data[0]['updated_at']
         }
