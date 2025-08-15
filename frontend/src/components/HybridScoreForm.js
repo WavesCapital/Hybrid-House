@@ -1476,7 +1476,7 @@ const HybridScoreForm = () => {
                     className="form-input"
                     value={formData.weight_lb}
                     onChange={(e) => handleInputChange('weight_lb', e.target.value)}
-                    placeholder="190"
+                    placeholder="170"
                     required
                   />
                 </div>
