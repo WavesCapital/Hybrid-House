@@ -1384,7 +1384,7 @@ const HybridScoreForm = () => {
                     <span className="required-indicator">*</span>
                   </label>
                   <p className="field-description">
-                    Determines your performance targets: <span className="field-description-highlight">Males target</span> 1.5x/2.0x/2.4x bodyweight for bench/squat/deadlift, while <span className="field-description-highlight">females target</span> 1.0x/1.5x/1.8x bodyweight.
+                    Used to personalize your hybrid score calculation and recommendations.
                   </p>
                   <select
                     className="form-select"
