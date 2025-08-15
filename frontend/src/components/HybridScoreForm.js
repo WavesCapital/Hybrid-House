@@ -425,7 +425,7 @@ const HybridScoreForm = () => {
           }
 
           // Navigate to results
-          console.log('Navigating to results page...');
+          console.log('🔥 STEP 13: Navigating to results page');
           navigate(`/hybrid-score/${finalProfileId}`);
         } else {
           throw new Error('Webhook failed');
