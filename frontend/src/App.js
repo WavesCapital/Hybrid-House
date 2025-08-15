@@ -112,6 +112,14 @@ function AppContent() {
             element={<DesignSystemPage />} 
           />
           <Route 
+            path="/share" 
+            element={
+              <ProtectedRoute>
+                <ShareCardStudio />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
             path="/interview" 
             element={
               <ProtectedRoute>
