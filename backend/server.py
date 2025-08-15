@@ -1025,6 +1025,7 @@ async def create_athlete_profile(profile_data: dict, user: dict = Depends(verify
                 print(f"⚠️  Individual columns not yet added to database, using JSON-only storage")
                 fallback_profile = {
                     **profile_data,
+                    "profile_json": enhanced_profile_json,  # Use enhanced profile_json even in fallback
                     "user_id": user_id,
                     "is_public": profile_data.get('is_public', True),
                     "created_at": datetime.utcnow().isoformat(),
