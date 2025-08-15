@@ -1096,7 +1096,10 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
           borderRadius: '50%',
           top: '-9px',
           left: '-9px',
-          zIndex: 1001
+          zIndex: 1001,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+          transition: 'all 0.2s ease',
+          cursor: 'nwse-resize'
         },
         top: { 
           width: '18px', 
@@ -1107,7 +1110,10 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
           top: '-9px',
           left: '50%',
           marginLeft: '-9px',
-          zIndex: 1001
+          zIndex: 1001,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+          transition: 'all 0.2s ease',
+          cursor: 'ns-resize'
         },
         topRight: { 
           width: '18px', 
@@ -1117,7 +1123,10 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
           borderRadius: '50%',
           top: '-9px',
           right: '-9px',
-          zIndex: 1001
+          zIndex: 1001,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+          transition: 'all 0.2s ease',
+          cursor: 'nesw-resize'
         },
         right: { 
           width: '18px', 
@@ -1128,7 +1137,10 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
           right: '-9px',
           top: '50%',
           marginTop: '-9px',
-          zIndex: 1001
+          zIndex: 1001,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+          transition: 'all 0.2s ease',
+          cursor: 'ew-resize'
         },
         bottomRight: { 
           width: '18px', 
@@ -1138,7 +1150,10 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
           borderRadius: '50%',
           bottom: '-9px',
           right: '-9px',
-          zIndex: 1001
+          zIndex: 1001,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+          transition: 'all 0.2s ease',
+          cursor: 'nwse-resize'
         },
         bottom: { 
           width: '18px', 
@@ -1149,7 +1164,10 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
           bottom: '-9px',
           left: '50%',
           marginLeft: '-9px',
-          zIndex: 1001
+          zIndex: 1001,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+          transition: 'all 0.2s ease',
+          cursor: 'ns-resize'
         },
         bottomLeft: { 
           width: '18px', 
@@ -1159,7 +1177,10 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
           borderRadius: '50%',
           bottom: '-9px',
           left: '-9px',
-          zIndex: 1001
+          zIndex: 1001,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+          transition: 'all 0.2s ease',
+          cursor: 'nesw-resize'
         },
         left: { 
           width: '18px', 
@@ -1170,7 +1191,10 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
           left: '-9px',
           top: '50%',
           marginTop: '-9px',
-          zIndex: 1001
+          zIndex: 1001,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+          transition: 'all 0.2s ease',
+          cursor: 'ew-resize'
         }
       } : {}}
       onClick={handleSelect}
