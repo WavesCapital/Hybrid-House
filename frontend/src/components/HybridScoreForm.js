@@ -416,6 +416,12 @@ const HybridScoreForm = () => {
           } catch (scoreError) {
             console.warn('⚠️ SCORE STORAGE FAILED:', scoreError.message);
             console.warn('⚠️ SCORE ERROR DETAILS:', scoreError.response?.data);
+            toast({
+              title: "Score Storage Warning",
+              description: "Score was calculated but couldn't be saved. Your profile has been created.",
+              variant: "destructive",
+              duration: 5000,
+            });
           }
 
           // Navigate to results
