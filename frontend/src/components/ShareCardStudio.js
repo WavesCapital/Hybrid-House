@@ -801,7 +801,7 @@ const BalanceChipsPreview = ({ prsData }) => {
 };
 
 // Component Renderer
-const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate, onDelete, onDuplicate }) => {
+const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate, onDelete, onDuplicate, scale = 1 }) => {
   const handleSelect = (e) => {
     e.stopPropagation();
     onSelect(component);
@@ -809,16 +809,17 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
 
   return (
     <Rnd
-      size={{ width: component.width, height: component.height }}
-      position={{ x: component.x, y: component.y }}
+      size={{ width: component.width * scale, height: component.height * scale }}
+      position={{ x: component.x * scale, y: component.y * scale }}
       onDragStop={(e, d) => {
-        onUpdate(component.id, { x: d.x, y: d.y });
+        onUpdate(component.id, { x: d.x / scale, y: d.y / scale });
       }}
       onResizeStop={(e, direction, ref, delta, position) => {
         onUpdate(component.id, {
-          width: ref.style.width,
-          height: ref.style.height,
-          ...position
+          width: parseInt(ref.style.width) / scale,
+          height: parseInt(ref.style.height) / scale,
+          x: position.x / scale,
+          y: position.y / scale
         });
       }}
       className={`${isSelected ? 'ring-2 ring-[#08F0FF]' : ''} ${component.locked ? 'cursor-not-allowed' : ''}`}
@@ -830,7 +831,9 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
         transform: `rotate(${component.rotationDeg || 0}deg)`
       }}
     >
-      <ComponentContent component={component} prsData={prsData} />
+      <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+        <ComponentContent component={component} prsData={prsData} />
+      </div>
     </Rnd>
   );
 };
