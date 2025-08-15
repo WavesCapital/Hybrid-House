@@ -558,38 +558,40 @@ const ShareCardStudio = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="backgrounds" className="p-4 space-y-4 bg-[#0A0B0C] flex-1">
-              <div className="text-sm text-white/60 mb-4">
-                Click a gradient to apply it to your canvas
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                {Object.entries(GRADIENTS).map(([id, gradient]) => (
-                  <GradientTile
-                    key={id}
-                    id={id}
-                    gradient={gradient}
-                    isSelected={backgroundId === id}
-                    onClick={() => {
-                      setBackgroundId(id);
-                      saveToHistory();
-                      toast({
-                        title: "Background applied",
-                        description: `${gradient.name} gradient applied to canvas.`
-                      });
-                    }}
+            <TabsContent value="backgrounds" className="bg-[#0A0B0C] flex-1 flex flex-col">
+              <div className="p-4 space-y-4 overflow-y-auto flex-1">
+                <div className="text-sm text-white/60 mb-4">
+                  Click a gradient to apply it to your canvas
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {Object.entries(GRADIENTS).map(([id, gradient]) => (
+                    <GradientTile
+                      key={id}
+                      id={id}
+                      gradient={gradient}
+                      isSelected={backgroundId === id}
+                      onClick={() => {
+                        setBackgroundId(id);
+                        saveToHistory();
+                        toast({
+                          title: "Background applied",
+                          description: `${gradient.name} gradient applied to canvas.`
+                        });
+                      }}
+                    />
+                  ))}
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="grid-glow" className="text-sm text-white/70">
+                    Grid Glow
+                  </Label>
+                  <Switch
+                    id="grid-glow"
+                    checked={gridGlow}
+                    onCheckedChange={setGridGlow}
                   />
-                ))}
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <Label htmlFor="grid-glow" className="text-sm text-white/70">
-                  Grid Glow
-                </Label>
-                <Switch
-                  id="grid-glow"
-                  checked={gridGlow}
-                  onCheckedChange={setGridGlow}
-                />
+                </div>
               </div>
             </TabsContent>
 
