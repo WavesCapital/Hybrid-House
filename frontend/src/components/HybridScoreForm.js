@@ -385,7 +385,7 @@ const HybridScoreForm = () => {
           
           // Handle both array and object responses
           const scoreData = Array.isArray(webhookData) ? webhookData[0] : webhookData;
-          console.log('Score data extracted:', scoreData);
+          console.log('🔥 STEP 11: Score data extracted:', scoreData);
 
           // Verify we have valid score data
           if (!scoreData || typeof scoreData !== 'object') {
