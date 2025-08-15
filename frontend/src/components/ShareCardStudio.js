@@ -76,14 +76,14 @@ const COMPONENT_TYPES = {
   nameplate: 'nameplate'
 };
 
-// Default positions and sizes for smart anchoring (scaled for iPhone mockup)
+// Default positions and sizes for smart anchoring (iPhone Pro Max real dimensions: 375x812)
 const DEFAULT_POSITIONS = {
-  dial: { x: 65, y: 80, width: 302, height: 160 }, // Upper center third (scaled)
-  scoreChip: { x: 130, y: 60, width: 173, height: 32 }, // Above dial (scaled)
-  prLifts: { x: 22, y: 480, width: 173, height: 120 }, // Bottom-left (scaled)
-  prRuns: { x: 238, y: 480, width: 173, height: 120 }, // Bottom-right (scaled)
-  balanceChips: { x: 108, y: 260, width: 216, height: 48 }, // Below dial (scaled)
-  nameplate: { x: 86, y: 660, width: 259, height: 48 } // Bottom-center (scaled)
+  dial: { x: 80, y: 150, width: 220, height: 180 }, // Upper center third
+  scoreChip: { x: 95, y: 100, width: 185, height: 40 }, // Above dial
+  prLifts: { x: 20, y: 580, width: 160, height: 140 }, // Bottom-left
+  prRuns: { x: 195, y: 580, width: 160, height: 140 }, // Bottom-right
+  balanceChips: { x: 60, y: 350, width: 255, height: 60 }, // Below dial
+  nameplate: { x: 75, y: 730, width: 225, height: 50 } // Bottom-center
 };
 
 const ShareCardStudio = () => {
