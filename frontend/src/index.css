@@ -34,7 +34,7 @@ code {
     height: 12px !important;
     background-color: #08F0FF !important;
     border: 3px solid #fff !important;
-    border-radius: 3px !important;
+    border-radius: 50% !important;
     box-shadow: 0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3) !important;
     transition: all 0.2s ease !important;
     z-index: 1001 !important;
