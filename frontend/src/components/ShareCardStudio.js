@@ -179,6 +179,8 @@ const ShareCardStudio = () => {
 
   // Component management
   const addComponent = (type) => {
+    console.log('Adding component:', type, 'PRs Data:', prsData);
+    
     if (!prsData) {
       toast({
         title: "No data available",
@@ -199,8 +201,23 @@ const ShareCardStudio = () => {
       style: getDefaultStyle(type)
     };
 
-    setComponents(prev => [...prev, newComponent]);
-    saveToHistory();
+    console.log('New component created:', newComponent);
+    
+    setComponents(prev => {
+      const updated = [...prev, newComponent];
+      console.log('Updated components:', updated);
+      return updated;
+    });
+    
+    // Save to history after state update
+    setTimeout(() => {
+      saveToHistory();
+    }, 100);
+    
+    toast({
+      title: "Component added",
+      description: `${type} component added to canvas.`
+    });
   };
 
   const getDefaultStyle = (type) => {
