@@ -1529,7 +1529,7 @@ const HybridScoreForm = () => {
                     className="form-input"
                     value={formData.vo2max}
                     onChange={(e) => handleInputChange('vo2max', e.target.value)}
-                    placeholder="55"
+                    placeholder="50"
                   />
                   {formData.wearables.length > 0 && (
                     <div className="device-tips">
