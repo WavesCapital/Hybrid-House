@@ -979,6 +979,110 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
     });
   };
 
+  // Custom resize handle styles - Hybrid Lab branded
+  const resizeHandleStyles = {
+    bottom: {
+      width: '10px',
+      height: '10px',
+      backgroundColor: '#08F0FF',
+      border: '2px solid #fff',
+      borderRadius: '2px',
+      position: 'absolute',
+      bottom: '-5px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      cursor: 'ns-resize',
+      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+    },
+    bottomLeft: {
+      width: '10px',
+      height: '10px',
+      backgroundColor: '#08F0FF',
+      border: '2px solid #fff',
+      borderRadius: '2px',
+      position: 'absolute',
+      bottom: '-5px',
+      left: '-5px',
+      cursor: 'nesw-resize',
+      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+    },
+    bottomRight: {
+      width: '10px',
+      height: '10px',
+      backgroundColor: '#08F0FF',
+      border: '2px solid #fff',
+      borderRadius: '2px',
+      position: 'absolute',
+      bottom: '-5px',
+      right: '-5px',
+      cursor: 'nwse-resize',
+      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+    },
+    left: {
+      width: '10px',
+      height: '10px',
+      backgroundColor: '#08F0FF',
+      border: '2px solid #fff',
+      borderRadius: '2px',
+      position: 'absolute',
+      left: '-5px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      cursor: 'ew-resize',
+      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+    },
+    right: {
+      width: '10px',
+      height: '10px',
+      backgroundColor: '#08F0FF',
+      border: '2px solid #fff',
+      borderRadius: '2px',
+      position: 'absolute',
+      right: '-5px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      cursor: 'ew-resize',
+      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+    },
+    top: {
+      width: '10px',
+      height: '10px',
+      backgroundColor: '#08F0FF',
+      border: '2px solid #fff',
+      borderRadius: '2px',
+      position: 'absolute',
+      top: '-5px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      cursor: 'ns-resize',
+      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+    },
+    topLeft: {
+      width: '10px',
+      height: '10px',
+      backgroundColor: '#08F0FF',
+      border: '2px solid #fff',
+      borderRadius: '2px',
+      position: 'absolute',
+      top: '-5px',
+      left: '-5px',
+      cursor: 'nwse-resize',
+      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+    },
+    topRight: {
+      width: '10px',
+      height: '10px',
+      backgroundColor: '#08F0FF',
+      border: '2px solid #fff',
+      borderRadius: '2px',
+      position: 'absolute',
+      top: '-5px',
+      right: '-5px',
+      cursor: 'nesw-resize',
+      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+    }
+  };
+
   return (
     <Rnd
       size={{ width: component.width, height: component.height }}
@@ -986,14 +1090,27 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
       onDragStop={handleDragStop}
       onResizeStop={handleResizeStop}
       bounds="parent"
-      className={`${isSelected ? 'ring-2 ring-[#08F0FF]' : ''} ${component.locked ? 'cursor-not-allowed' : 'cursor-move'}`}
+      className={`${component.locked ? 'cursor-not-allowed' : 'cursor-move'}`}
       disableDragging={component.locked}
       enableResizing={!component.locked}
       onClick={handleSelect}
+      resizeHandleStyles={isSelected ? resizeHandleStyles : {}}
+      resizeHandleClasses={{
+        bottom: 'resize-handle',
+        bottomLeft: 'resize-handle',
+        bottomRight: 'resize-handle',
+        left: 'resize-handle',
+        right: 'resize-handle',
+        top: 'resize-handle',
+        topLeft: 'resize-handle',
+        topRight: 'resize-handle'
+      }}
       style={{
-        zIndex: component.z + 10, // Ensure components are above other elements
+        zIndex: component.z + 10,
         opacity: component.style.opacity,
-        transform: `rotate(${component.rotationDeg || 0}deg)`
+        transform: `rotate(${component.rotationDeg || 0}deg)`,
+        border: isSelected ? '2px solid rgba(8,240,255,0.6)' : 'none',
+        borderRadius: '4px'
       }}
     >
       <div style={{ width: '100%', height: '100%' }}>
