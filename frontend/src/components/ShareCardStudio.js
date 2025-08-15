@@ -682,7 +682,6 @@ const ShareCardStudio = () => {
                       onUpdate={updateComponent}
                       onDelete={deleteComponent}
                       onDuplicate={duplicateComponent}
-                      scale={0.35} // Scale for iPhone screen size
                     />
                   ))}
                 </div>
