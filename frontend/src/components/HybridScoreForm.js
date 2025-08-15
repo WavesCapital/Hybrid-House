@@ -86,6 +86,8 @@ const HybridScoreForm = () => {
 
           const userProfile = response.data.user_profile;
           if (userProfile) {
+            console.log('🔍 Pre-filling form with user profile data:', Object.keys(userProfile));
+            
             // Parse the name if it exists
             const [firstName = '', lastName = ''] = (userProfile.name || '').split(' ', 2);
             
@@ -94,21 +96,81 @@ const HybridScoreForm = () => {
             const feet = Math.floor(totalHeightInches / 12);
             const inches = totalHeightInches % 12;
 
+            // Convert gender to sex format expected by form
+            const genderToSex = {
+              'male': 'Male',
+              'female': 'Female', 
+              'other': 'Other',
+              'prefer not to say': 'Prefer not to say'
+            };
+            const formattedSex = genderToSex[userProfile.gender?.toLowerCase()] || userProfile.gender || '';
+
+            // Format date of birth for date input
+            let formattedDob = '';
+            if (userProfile.date_of_birth) {
+              // Handle both YYYY-MM-DD and MM/DD/YYYY formats
+              if (userProfile.date_of_birth.includes('-')) {
+                formattedDob = userProfile.date_of_birth; // Already in YYYY-MM-DD format
+              } else if (userProfile.date_of_birth.includes('/')) {
+                // Convert MM/DD/YYYY to YYYY-MM-DD
+                const [month, day, year] = userProfile.date_of_birth.split('/');
+                formattedDob = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+              }
+            }
+
+            // Handle strength app selection
+            const knownStrengthApps = ['Strong', 'Jefit', 'StrongApp 5x5', 'Hevy', 'Gym Buddy', 'FitNotes', 'Simple Workout Log', 'RepCount', 'WorkIt', 'GymBook'];
+            const strengthAppSelection = userProfile.strength_app;
+            const isKnownStrengthApp = strengthAppSelection && knownStrengthApps.includes(strengthAppSelection);
+
             setFormData(prev => ({
               ...prev,
+              // Personal Information
               first_name: firstName,
               last_name: lastName,
-              sex: userProfile.gender || '',
-              dob: userProfile.dob || '',
+              sex: formattedSex,
+              dob: formattedDob,
               country: userProfile.country || 'US',
               wearables: Array.isArray(userProfile.wearables) ? userProfile.wearables : [],
-              runningApp: userProfile.running_app || '',
-              strengthApp: userProfile.strength_app && ['Strong', 'Jefit', 'StrongApp 5x5', 'Hevy', 'Gym Buddy', 'FitNotes', 'Simple Workout Log', 'RepCount', 'WorkIt', 'GymBook'].includes(userProfile.strength_app) ? userProfile.strength_app : userProfile.strength_app ? 'Other' : '',
-              customStrengthApp: userProfile.strength_app && !['Strong', 'Jefit', 'StrongApp 5x5', 'Hevy', 'Gym Buddy', 'FitNotes', 'Simple Workout Log', 'RepCount', 'WorkIt', 'GymBook'].includes(userProfile.strength_app) ? userProfile.strength_app : '',
-              weight_lb: userProfile.weight_lb || '',
+              
+              // Body Metrics
+              weight_lb: userProfile.weight_lb ? userProfile.weight_lb.toString() : '',
               height_ft: feet > 0 ? feet.toString() : '',
               height_in: inches > 0 ? inches.toString() : '',
+              vo2max: userProfile.vo2_max ? userProfile.vo2_max.toString() : '',
+              resting_hr_bpm: userProfile.resting_hr_bpm ? userProfile.resting_hr_bpm.toString() : '',
+              hrv_ms: userProfile.hrv_ms ? userProfile.hrv_ms.toString() : '',
+              
+              // Running Performance
+              runningApp: userProfile.running_app || '',
+              weekly_miles: userProfile.weekly_miles ? userProfile.weekly_miles.toString() : '',
+              long_run: userProfile.long_run_miles ? userProfile.long_run_miles.toString() : '',
+              
+              // Strength Performance
+              strengthApp: isKnownStrengthApp ? strengthAppSelection : (strengthAppSelection ? 'Other' : ''),
+              customStrengthApp: isKnownStrengthApp ? '' : (strengthAppSelection || ''),
             }));
+
+            toast({
+              title: "Form Pre-filled! ✨",
+              description: "Your profile information has been loaded automatically.",
+              duration: 3000,
+            });
+
+            console.log('🔍 Form pre-filled with data:', {
+              name: `${firstName} ${lastName}`,
+              sex: formattedSex,
+              dob: formattedDob,
+              country: userProfile.country,
+              height: `${feet}'${inches}"`,
+              weight: userProfile.weight_lb,
+              apps: {
+                running: userProfile.running_app,
+                strength: strengthAppSelection
+              }
+            });
+          } else {
+            console.log('🔍 No user profile data available for pre-filling');
           }
         } catch (error) {
           console.error('Error loading user profile:', error);
