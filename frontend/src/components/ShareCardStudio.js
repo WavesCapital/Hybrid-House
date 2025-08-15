@@ -554,14 +554,13 @@ const ShareCardStudio = () => {
             <TabsContent value="components" className="p-4 space-y-6">
               {/* Score Components */}
               <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider">
+                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
                   Score Display
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <ComponentPreviewTile
                     type="dial"
                     title="Hybrid Score Dial"
-                    description="Neon ring with large score"
                     prsData={prsData}
                     onAdd={() => addComponent('dial')}
                     preview={<HybridScoreDialPreview prsData={prsData} />}
@@ -569,7 +568,6 @@ const ShareCardStudio = () => {
                   <ComponentPreviewTile
                     type="scoreChip"
                     title="Score Chip"
-                    description="Compact text display"
                     prsData={prsData}
                     onAdd={() => addComponent('scoreChip')}
                     preview={<ScoreChipPreview prsData={prsData} />}
@@ -579,14 +577,13 @@ const ShareCardStudio = () => {
 
               {/* Personal Records */}
               <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider">
+                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
                   Personal Records
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <ComponentPreviewTile
                     type="prLifts"
                     title="Strength PRs"
-                    description="Squat • Bench • Deadlift"
                     prsData={prsData}
                     onAdd={() => addComponent('prLifts')}
                     preview={<PRLiftsPreview prsData={prsData} />}
@@ -594,7 +591,6 @@ const ShareCardStudio = () => {
                   <ComponentPreviewTile
                     type="prRuns"
                     title="Running PRs"
-                    description="Mile • 5K • 10K • Half"
                     prsData={prsData}
                     onAdd={() => addComponent('prRuns')}
                     preview={<PRRunsPreview prsData={prsData} />}
@@ -604,14 +600,13 @@ const ShareCardStudio = () => {
 
               {/* Identity & Style */}
               <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider">
+                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
                   Identity & Style
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <ComponentPreviewTile
                     type="nameplate"
                     title="Nameplate"
-                    description="Your name display"
                     prsData={prsData}
                     onAdd={() => addComponent('nameplate')}
                     preview={<NameplatePreview prsData={prsData} />}
@@ -619,7 +614,6 @@ const ShareCardStudio = () => {
                   <ComponentPreviewTile
                     type="balanceChips"
                     title="Balance Chips"
-                    description="Strength • Endurance • Recovery"
                     prsData={prsData}
                     onAdd={() => addComponent('balanceChips')}
                     preview={<BalanceChipsPreview prsData={prsData} />}
