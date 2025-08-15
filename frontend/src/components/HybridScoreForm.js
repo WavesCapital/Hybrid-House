@@ -163,9 +163,12 @@ const HybridScoreForm = () => {
         duration: 3000,
       });
 
+      console.log('🔥 STEP 3: Calculating height in inches');
       // Calculate height in inches
       const heightInches = (parseInt(formData.height_ft) || 0) * 12 + (parseInt(formData.height_in) || 0);
+      console.log('🔥 Height calculation:', { feet: formData.height_ft, inches: formData.height_in, total: heightInches });
 
+      console.log('🔥 STEP 4: Structuring profile data');
       // Structure the data for submission - WEBHOOK FORMAT REQUIREMENTS:
       // The n8n.cloud webhook requires EXACTLY this format with "athleteProfile" and "deliverable": "score"
       // Based on successful webhook call example from user
@@ -199,9 +202,17 @@ const HybridScoreForm = () => {
         schema_version: "v1.0",
         interview_type: "form"
       };
+      
+      console.log('🔥 Profile data structured:', {
+        name: `${profileData.first_name} ${profileData.last_name}`,
+        email: profileData.email,
+        dataKeys: Object.keys(profileData)
+      });
 
+      console.log('🔥 STEP 5: Generating profile ID');
       // Generate unique profile ID
       const profileId = uuid();
+      console.log('🔥 Generated profile ID:', profileId);
       
       let response;
       
