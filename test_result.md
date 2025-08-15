@@ -1581,6 +1581,9 @@ test_plan:
 - **Features:** Public profiles display athlete info, assessment history, best scores, and join date
 - **Bug Fix:** Fixed missing /api prefix in API call causing "Profile not found" errors
 
+  - agent: "testing"
+    message: "🎉 WEBHOOK FORMAT FIX VERIFICATION: COMPLETE SUCCESS - Executed comprehensive testing of the webhook format fix as requested in the review request. PERFECT SUCCESS ACHIEVED - ALL 4/4 SUCCESS CRITERIA MET (100% SUCCESS RATE): ✅ POST /api/athlete-profiles/public endpoint works with updated frontend format - Successfully created profile using new format with no null values, wearables as array, running_app/strength_app as empty strings, body_metrics with 0 defaults ✅ Webhook call with new format (athleteProfile + deliverable: 'score') - Successfully called webhook with new payload structure using 'athleteProfile' key and 'deliverable: score' parameter ✅ Webhook returns proper score data instead of empty response - Webhook now returns complete score data with hybrid score of 73 and all required scores. This resolves the previous issue where webhook returned empty response ✅ Complete end-to-end flow operational - Full workflow verified: Profile created → Webhook called → Score calculated → Data stored → Profile retrievable. CRITICAL SUCCESS: The webhook format fix has completely resolved the issue where the webhook was returning empty responses. The frontend's updated format is now being processed correctly by the n8n.cloud webhook, which returns complete score data instead of empty responses. This fixes the root cause of the Calculate Hybrid Score button reverting back after 2 seconds."
+
 ### Previous Updates and Fixes ✅
 
 agent_communication:
