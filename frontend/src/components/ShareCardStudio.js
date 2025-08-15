@@ -584,22 +584,40 @@ const ShareCardStudio = () => {
 
         {/* Canvas Area */}
         <div className="flex-1 flex items-center justify-center p-8 bg-[#0E0E11]">
-          {/* iPhone Pro Max Mockup */}
+          {/* iPhone Pro Max Realistic Mockup */}
           <div className="relative">
-            {/* iPhone Frame */}
-            <div className="relative bg-[#1C1C1E] rounded-[3rem] p-2 shadow-2xl">
-              {/* Screen */}
-              <div className="relative bg-black rounded-[2.5rem] overflow-hidden">
-                {/* Notch */}
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-7 bg-black rounded-b-2xl z-10"></div>
+            {/* iPhone Device Frame */}
+            <div className="relative" style={{
+              width: '375px',
+              height: '812px',
+              background: 'linear-gradient(145deg, #2c2c2e 0%, #1c1c1e 100%)',
+              borderRadius: '60px',
+              padding: '8px',
+              boxShadow: `
+                0 0 0 2px #000,
+                0 0 0 4px #2c2c2e,
+                0 20px 40px rgba(0,0,0,0.3),
+                inset 0 2px 0 rgba(255,255,255,0.1)
+              `
+            }}>
+              
+              {/* Screen Container */}
+              <div className="relative w-full h-full bg-black rounded-[52px] overflow-hidden">
                 
-                {/* Canvas */}
+                {/* Dynamic Island */}
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-20" style={{
+                  width: '126px',
+                  height: '37px',
+                  background: '#000',
+                  borderRadius: '19px',
+                  border: '1px solid rgba(255,255,255,0.05)'
+                }}></div>
+                
+                {/* Canvas - iPhone 14 Pro Max actual screen ratio */}
                 <div
                   ref={canvasRef}
-                  className="relative"
+                  className="relative w-full h-full"
                   style={{
-                    width: CANVAS_WIDTH / 2.5, // Scale down to fit iPhone mockup
-                    height: CANVAS_HEIGHT / 2.5,
                     background: GRADIENTS[backgroundId].css,
                   }}
                   onDrop={(e) => e.preventDefault()}
@@ -614,7 +632,7 @@ const ShareCardStudio = () => {
                           linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
                           linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
                         `,
-                        backgroundSize: '20px 20px' // Scaled down for smaller canvas
+                        backgroundSize: '24px 24px'
                       }}
                     />
                   )}
@@ -622,14 +640,14 @@ const ShareCardStudio = () => {
                   {/* Safe Zones Overlay */}
                   {safeZones && (
                     <div className="absolute inset-0 pointer-events-none">
-                      <div className="absolute inset-0 border-2 border-dashed border-yellow-400/30" />
+                      <div className="absolute inset-0 border-2 border-dashed border-yellow-400/30 rounded-[52px]" />
                       <div 
-                        className="absolute border-2 border-dashed border-red-400/50"
+                        className="absolute border-2 border-dashed border-red-400/50 rounded-xl"
                         style={{
-                          top: '60px',  // Scaled down
-                          bottom: '100px', 
-                          left: '26px',
-                          right: '26px'
+                          top: '50px',  // Account for dynamic island
+                          bottom: '34px', // Account for home indicator
+                          left: '20px',
+                          right: '20px'
                         }}
                       />
                     </div>
@@ -646,14 +664,57 @@ const ShareCardStudio = () => {
                       onUpdate={updateComponent}
                       onDelete={deleteComponent}
                       onDuplicate={duplicateComponent}
-                      scale={0.4} // Scale down components for smaller canvas
+                      scale={0.35} // Scale for iPhone screen size
                     />
                   ))}
                 </div>
                 
-                {/* iPhone Indicators */}
-                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-white/30 rounded-full"></div>
+                {/* Home Indicator */}
+                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 z-20" style={{
+                  width: '134px',
+                  height: '5px',
+                  background: 'rgba(255,255,255,0.6)',
+                  borderRadius: '3px'
+                }}></div>
+                
+                {/* Speaker Grill (for realism) */}
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10" style={{
+                  width: '60px',
+                  height: '6px',
+                  background: 'rgba(255,255,255,0.1)',
+                  borderRadius: '3px'
+                }}></div>
               </div>
+              
+              {/* Power Button */}
+              <div className="absolute right-[-2px] top-[180px]" style={{
+                width: '4px',
+                height: '80px',
+                background: 'linear-gradient(90deg, #2c2c2e 0%, #1c1c1e 100%)',
+                borderRadius: '0 2px 2px 0'
+              }}></div>
+              
+              {/* Volume Buttons */}
+              <div className="absolute left-[-2px] top-[160px]" style={{
+                width: '4px',
+                height: '40px',
+                background: 'linear-gradient(270deg, #2c2c2e 0%, #1c1c1e 100%)',
+                borderRadius: '2px 0 0 2px'
+              }}></div>
+              <div className="absolute left-[-2px] top-[210px]" style={{
+                width: '4px',
+                height: '40px',
+                background: 'linear-gradient(270deg, #2c2c2e 0%, #1c1c1e 100%)',
+                borderRadius: '2px 0 0 2px'
+              }}></div>
+              
+              {/* Silent Switch */}
+              <div className="absolute left-[-2px] top-[130px]" style={{
+                width: '4px',
+                height: '20px',
+                background: 'linear-gradient(270deg, #2c2c2e 0%, #1c1c1e 100%)',
+                borderRadius: '2px 0 0 2px'
+              }}></div>
             </div>
 
             {/* Component Quick Bar */}
