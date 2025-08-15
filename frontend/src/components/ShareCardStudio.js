@@ -903,36 +903,46 @@ const BalanceChipsPreview = ({ prsData }) => {
 
 // Component Renderer
 const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate, onDelete, onDuplicate, scale = 1 }) => {
+  console.log('Rendering component:', component.type, 'at position:', { x: component.x, y: component.y });
+  
   const handleSelect = (e) => {
     e.stopPropagation();
     onSelect(component);
   };
 
+  const handleDragStop = (e, d) => {
+    console.log('Drag stopped at:', d);
+    onUpdate(component.id, { x: d.x, y: d.y });
+  };
+
+  const handleResizeStop = (e, direction, ref, delta, position) => {
+    console.log('Resize stopped:', { width: ref.offsetWidth, height: ref.offsetHeight, position });
+    onUpdate(component.id, {
+      width: ref.offsetWidth,
+      height: ref.offsetHeight,
+      x: position.x,
+      y: position.y
+    });
+  };
+
   return (
     <Rnd
-      size={{ width: component.width * scale, height: component.height * scale }}
-      position={{ x: component.x * scale, y: component.y * scale }}
-      onDragStop={(e, d) => {
-        onUpdate(component.id, { x: d.x / scale, y: d.y / scale });
-      }}
-      onResizeStop={(e, direction, ref, delta, position) => {
-        onUpdate(component.id, {
-          width: parseInt(ref.style.width) / scale,
-          height: parseInt(ref.style.height) / scale,
-          x: position.x / scale,
-          y: position.y / scale
-        });
-      }}
-      className={`${isSelected ? 'ring-2 ring-[#08F0FF]' : ''} ${component.locked ? 'cursor-not-allowed' : ''}`}
+      size={{ width: component.width, height: component.height }}
+      position={{ x: component.x, y: component.y }}
+      onDragStop={handleDragStop}
+      onResizeStop={handleResizeStop}
+      bounds="parent"
+      className={`${isSelected ? 'ring-2 ring-[#08F0FF]' : ''} ${component.locked ? 'cursor-not-allowed' : 'cursor-move'}`}
       disableDragging={component.locked}
+      enableResizing={!component.locked}
       onClick={handleSelect}
       style={{
-        zIndex: component.z,
+        zIndex: component.z + 10, // Ensure components are above other elements
         opacity: component.style.opacity,
         transform: `rotate(${component.rotationDeg || 0}deg)`
       }}
     >
-      <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+      <div style={{ width: '100%', height: '100%' }}>
         <ComponentContent component={component} prsData={prsData} />
       </div>
     </Rnd>
