@@ -42,7 +42,7 @@ const PRLifts = ({ prsData, style, baseStyle }) => {
                 </span>
                 {strength.bodyweight_lb && (
                   <span className="text-[#08F0FF] text-sm font-medium bg-[#08F0FF]/10 px-2 py-1 rounded">
-                    {calculateMultiplier(lift.weight, strength.bodyweight_lb)}BW
+                    {calculateMultiplier(lift.weight, strength.bodyweight_lb)}
                   </span>
                 )}
               </div>
