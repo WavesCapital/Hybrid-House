@@ -183,6 +183,7 @@ const HybridScoreForm = () => {
         pb_5k: formData.pb_5k || null,
         pb_10k: formData.pb_10k || null,
         pb_half_marathon: formData.pb_half_marathon || null,
+        pb_marathon: formData.pb_marathon || null,
         weekly_miles: parseFloat(formData.weekly_miles) || null,
         long_run: parseFloat(formData.long_run) || null,
         pb_bench_1rm: parseFloat(formData.pb_bench_1rm) || null,
