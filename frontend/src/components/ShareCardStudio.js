@@ -1014,7 +1014,7 @@ const BalanceChipsPreview = ({ prsData }) => {
   );
 };
 
-// Component Renderer with Fixed Scaling
+// Component Renderer with CSS Transform Scaling
 const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate, onDelete, onDuplicate }) => {
   console.log('Rendering component:', component.type, 'size:', { width: component.width, height: component.height });
   
@@ -1044,6 +1044,18 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
     });
   };
 
+  // Calculate scale factor for true image-like scaling
+  const optimalSize = OPTIMAL_SIZES[component.type];
+  const scaleX = component.width / optimalSize.width;
+  const scaleY = component.height / optimalSize.height;
+  const scaleFactor = Math.min(scaleX, scaleY); // Maintain aspect ratio
+  
+  console.log(`${component.type} scaling:`, {
+    container: { width: component.width, height: component.height },
+    optimal: optimalSize,
+    scaleFactor
+  });
+
   return (
     <Rnd
       size={{ width: component.width, height: component.height }}
@@ -1068,16 +1080,21 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
       <div 
         className="component-content" 
         style={{ 
-          width: '100%', 
-          height: '100%',
-          overflow: 'hidden'
+          width: optimalSize.width,
+          height: optimalSize.height,
+          transform: `scale(${scaleFactor})`,
+          transformOrigin: 'center center',
+          overflow: 'visible',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          marginTop: `-${optimalSize.height / 2}px`,
+          marginLeft: `-${optimalSize.width / 2}px`
         }}
       >
         <ComponentContent 
           component={component} 
           prsData={prsData} 
-          containerWidth={component.width}
-          containerHeight={component.height}
           isSelected={isSelected}
         />
       </div>
