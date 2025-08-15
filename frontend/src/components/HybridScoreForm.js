@@ -143,6 +143,10 @@ const HybridScoreForm = () => {
   };
 
   const handleSubmit = async (e) => {
+    // URGENT DEBUG: Test if this function is being called at all
+    console.log('🚨 BUTTON CLICKED - handleSubmit function called');
+    alert('Button clicked! Check console for logs.');
+    
     console.log('🔥 CALCULATE BUTTON CLICKED - Starting handleSubmit function');
     
     if (e) e.preventDefault();
