@@ -595,73 +595,75 @@ const ShareCardStudio = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="components" className="p-4 space-y-6 bg-[#0A0B0C] flex-1">
-              {/* Score Components */}
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
-                  Score Display
-                </h3>
+            <TabsContent value="components" className="bg-[#0A0B0C] flex-1 flex flex-col">
+              <div className="p-4 space-y-6 overflow-y-auto flex-1">
+                {/* Score Components */}
                 <div className="space-y-3">
-                  <ComponentPreviewTile
-                    type="dial"
-                    title="Hybrid Score Dial"
-                    prsData={prsData}
-                    onAdd={() => addComponent('dial')}
-                    preview={<HybridScoreDialPreview prsData={prsData} />}
-                  />
-                  <ComponentPreviewTile
-                    type="scoreChip"
-                    title="Score Chip"
-                    prsData={prsData}
-                    onAdd={() => addComponent('scoreChip')}
-                    preview={<ScoreChipPreview prsData={prsData} />}
-                  />
+                  <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
+                    Score Display
+                  </h3>
+                  <div className="space-y-3">
+                    <ComponentPreviewTile
+                      type="dial"
+                      title="Hybrid Score Dial"
+                      prsData={prsData}
+                      onAdd={() => addComponent('dial')}
+                      preview={<HybridScoreDialPreview prsData={prsData} />}
+                    />
+                    <ComponentPreviewTile
+                      type="scoreChip"
+                      title="Score Chip"
+                      prsData={prsData}
+                      onAdd={() => addComponent('scoreChip')}
+                      preview={<ScoreChipPreview prsData={prsData} />}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* Personal Records */}
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
-                  Personal Records
-                </h3>
+                {/* Personal Records */}
                 <div className="space-y-3">
-                  <ComponentPreviewTile
-                    type="prLifts"
-                    title="Strength PRs"
-                    prsData={prsData}
-                    onAdd={() => addComponent('prLifts')}
-                    preview={<PRLiftsPreview prsData={prsData} />}
-                  />
-                  <ComponentPreviewTile
-                    type="prRuns"
-                    title="Running PRs"
-                    prsData={prsData}
-                    onAdd={() => addComponent('prRuns')}
-                    preview={<PRRunsPreview prsData={prsData} />}
-                  />
+                  <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
+                    Personal Records
+                  </h3>
+                  <div className="space-y-3">
+                    <ComponentPreviewTile
+                      type="prLifts"
+                      title="Strength PRs"
+                      prsData={prsData}
+                      onAdd={() => addComponent('prLifts')}
+                      preview={<PRLiftsPreview prsData={prsData} />}
+                    />
+                    <ComponentPreviewTile
+                      type="prRuns"
+                      title="Running PRs"
+                      prsData={prsData}
+                      onAdd={() => addComponent('prRuns')}
+                      preview={<PRRunsPreview prsData={prsData} />}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* Identity & Style */}
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
-                  Identity & Style
-                </h3>
+                {/* Identity & Style */}
                 <div className="space-y-3">
-                  <ComponentPreviewTile
-                    type="nameplate"
-                    title="Nameplate"
-                    prsData={prsData}
-                    onAdd={() => addComponent('nameplate')}
-                    preview={<NameplatePreview prsData={prsData} />}
-                  />
-                  <ComponentPreviewTile
-                    type="balanceChips"
-                    title="Balance Chips"
-                    prsData={prsData}
-                    onAdd={() => addComponent('balanceChips')}
-                    preview={<BalanceChipsPreview prsData={prsData} />}
-                  />
+                  <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
+                    Identity & Style
+                  </h3>
+                  <div className="space-y-3">
+                    <ComponentPreviewTile
+                      type="nameplate"
+                      title="Nameplate"
+                      prsData={prsData}
+                      onAdd={() => addComponent('nameplate')}
+                      preview={<NameplatePreview prsData={prsData} />}
+                    />
+                    <ComponentPreviewTile
+                      type="balanceChips"
+                      title="Balance Chips"
+                      prsData={prsData}
+                      onAdd={() => addComponent('balanceChips')}
+                      preview={<BalanceChipsPreview prsData={prsData} />}
+                    />
+                  </div>
                 </div>
               </div>
             </TabsContent>
