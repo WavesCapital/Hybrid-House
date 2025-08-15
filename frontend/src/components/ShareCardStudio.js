@@ -271,6 +271,7 @@ const ShareCardStudio = () => {
   };
 
   const updateComponent = (id, updates) => {
+    console.log('Updating component:', id, updates);
     setComponents(prev => prev.map(comp => 
       comp.id === id ? { ...comp, ...updates } : comp
     ));
