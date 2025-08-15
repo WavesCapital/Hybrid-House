@@ -2480,6 +2480,178 @@ class BackendTester:
             self.log_test("Marathon PR Data Conversion", False, "Marathon PR data conversion test failed", str(e))
             return False
     
+    def test_webhook_format_fix_verification(self):
+        """CRITICAL: Test the webhook format fix that was just implemented"""
+        try:
+            print("\n🎯 WEBHOOK FORMAT FIX VERIFICATION - CRITICAL TESTING")
+            print("=" * 70)
+            print("Testing the webhook format fix with updated frontend format:")
+            print("- No null values (uses 0 for numbers, empty strings for text)")
+            print("- wearables as array (not null)")
+            print("- running_app and strength_app without null fallbacks")
+            print("- body_metrics with 0 defaults instead of null")
+            print("=" * 70)
+            
+            # Test data matching the new format as specified in review request
+            test_data = {
+                "profile_json": {
+                    "first_name": "Test",
+                    "last_name": "User", 
+                    "sex": "Male",
+                    "dob": "1990-01-01",
+                    "country": "US",
+                    "email": "test.user@test.com",
+                    "wearables": [],  # Array, not null
+                    "running_app": "",  # Empty string, not null
+                    "strength_app": "",  # Empty string, not null
+                    "body_metrics": {
+                        "weight_lb": 180,  # Number, not null
+                        "height_in": 70,   # Number, not null
+                        "vo2max": 50,      # Number, not null
+                        "resting_hr_bpm": 60,  # Number, not null
+                        "hrv_ms": 30       # Number, not null
+                    },
+                    "pb_mile": "6:30",
+                    "pb_5k": "20:00",
+                    "weekly_miles": 25,
+                    "long_run": 12,
+                    "pb_bench_1rm": 225,
+                    "pb_squat_1rm": 275,
+                    "pb_deadlift_1rm": 315
+                }
+            }
+            
+            print(f"🔍 Step 1: Testing POST /api/athlete-profiles/public with new format")
+            
+            # Test 1: POST /api/athlete-profiles/public endpoint with updated format
+            profile_response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=test_data)
+            
+            if profile_response.status_code == 200:
+                profile_data = profile_response.json()
+                profile_id = profile_data.get('user_profile', {}).get('id')
+                
+                if profile_id:
+                    print(f"✅ Profile created successfully with ID: {profile_id}")
+                    print(f"   Response: {profile_data.get('message', 'No message')}")
+                else:
+                    self.log_test("Webhook Format Fix - Profile Creation", False, "Profile created but no ID returned", profile_data)
+                    return False
+            else:
+                self.log_test("Webhook Format Fix - Profile Creation", False, f"Profile creation failed: HTTP {profile_response.status_code}", profile_response.text)
+                return False
+            
+            print(f"\n🔍 Step 2: Testing webhook call with new format (athleteProfile + deliverable: 'score')")
+            
+            # Test 2: Test webhook call with the new format
+            webhook_payload = {
+                "athleteProfile": test_data["profile_json"],  # New format: athleteProfile key
+                "deliverable": "score"  # New format: deliverable key
+            }
+            
+            # Call the webhook directly to test the new format
+            webhook_url = "https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c"
+            
+            try:
+                webhook_response = self.session.post(webhook_url, json=webhook_payload, timeout=30)
+                
+                if webhook_response.status_code == 200:
+                    try:
+                        webhook_data = webhook_response.json()
+                        
+                        # Check if webhook now returns proper score data instead of empty response
+                        if webhook_data and isinstance(webhook_data, dict):
+                            required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
+                            missing_scores = [score for score in required_scores if score not in webhook_data]
+                            
+                            if not missing_scores:
+                                print(f"✅ Webhook returns complete score data:")
+                                print(f"   Hybrid Score: {webhook_data.get('hybridScore')}")
+                                print(f"   Strength Score: {webhook_data.get('strengthScore')}")
+                                print(f"   Speed Score: {webhook_data.get('speedScore')}")
+                                print(f"   VO2 Score: {webhook_data.get('vo2Score')}")
+                                print(f"   Distance Score: {webhook_data.get('distanceScore')}")
+                                print(f"   Volume Score: {webhook_data.get('volumeScore')}")
+                                print(f"   Recovery Score: {webhook_data.get('recoveryScore')}")
+                            else:
+                                self.log_test("Webhook Format Fix - Score Data", False, f"Webhook returns incomplete score data, missing: {missing_scores}", webhook_data)
+                                return False
+                        else:
+                            self.log_test("Webhook Format Fix - Empty Response", False, "Webhook still returns empty response despite format fix", {
+                                'status_code': webhook_response.status_code,
+                                'content_length': len(webhook_response.content),
+                                'response_text': webhook_response.text[:200]
+                            })
+                            return False
+                    except json.JSONDecodeError:
+                        self.log_test("Webhook Format Fix - Invalid JSON", False, "Webhook returns non-JSON response", webhook_response.text[:200])
+                        return False
+                else:
+                    self.log_test("Webhook Format Fix - HTTP Error", False, f"Webhook call failed: HTTP {webhook_response.status_code}", webhook_response.text)
+                    return False
+                    
+            except requests.exceptions.Timeout:
+                self.log_test("Webhook Format Fix - Timeout", False, "Webhook call timed out after 30 seconds", None)
+                return False
+            except Exception as webhook_error:
+                self.log_test("Webhook Format Fix - Connection Error", False, f"Webhook call failed: {str(webhook_error)}", None)
+                return False
+            
+            print(f"\n🔍 Step 3: Testing score storage with webhook data")
+            
+            # Test 3: Test score storage endpoint with webhook data
+            if profile_id and webhook_data:
+                score_response = self.session.post(f"{API_BASE_URL}/athlete-profile/{profile_id}/score", json=webhook_data)
+                
+                if score_response.status_code == 200:
+                    print(f"✅ Score data stored successfully in backend")
+                else:
+                    self.log_test("Webhook Format Fix - Score Storage", False, f"Score storage failed: HTTP {score_response.status_code}", score_response.text)
+                    return False
+            
+            print(f"\n🔍 Step 4: Testing complete end-to-end flow after fix")
+            
+            # Test 4: Test complete end-to-end flow
+            if profile_id:
+                # Retrieve the profile to verify complete data flow
+                get_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                
+                if get_response.status_code == 200:
+                    profile_data = get_response.json()
+                    stored_score_data = profile_data.get('score_data')
+                    
+                    if stored_score_data and isinstance(stored_score_data, dict):
+                        hybrid_score = stored_score_data.get('hybridScore')
+                        if hybrid_score and hybrid_score > 0:
+                            print(f"✅ End-to-end flow successful:")
+                            print(f"   Profile created → Webhook called → Score calculated → Data stored")
+                            print(f"   Final hybrid score: {hybrid_score}")
+                            
+                            self.log_test("Webhook Format Fix Verification", True, f"COMPLETE SUCCESS: Webhook format fix working perfectly. Profile created, webhook returns score data (hybrid: {hybrid_score}), data stored successfully. End-to-end flow operational.", {
+                                'profile_id': profile_id,
+                                'hybrid_score': hybrid_score,
+                                'webhook_working': True,
+                                'score_storage_working': True,
+                                'format_fix_successful': True
+                            })
+                            return True
+                        else:
+                            self.log_test("Webhook Format Fix - Invalid Score", False, "Score data stored but hybrid score is 0 or null", stored_score_data)
+                            return False
+                    else:
+                        self.log_test("Webhook Format Fix - No Score Data", False, "Profile retrieved but no score data found", profile_data)
+                        return False
+                else:
+                    self.log_test("Webhook Format Fix - Profile Retrieval", False, f"Cannot retrieve profile: HTTP {get_response.status_code}", get_response.text)
+                    return False
+            
+            # If we reach here, something went wrong
+            self.log_test("Webhook Format Fix Verification", False, "End-to-end flow incomplete", None)
+            return False
+            
+        except Exception as e:
+            self.log_test("Webhook Format Fix Verification", False, f"Test failed with exception: {str(e)}", None)
+            return False
+
     def test_complete_hybrid_score_workflow(self):
         """Test the complete end-to-end 'Calculate Hybrid Score' workflow as requested in review"""
         try:
