@@ -1506,7 +1506,7 @@ const HybridScoreForm = () => {
                         className="form-input height-input"
                         value={formData.height_in}
                         onChange={(e) => handleInputChange('height_in', e.target.value)}
-                        placeholder="10"
+                        placeholder="9"
                         min="0"
                         max="11"
                         required
