@@ -17,7 +17,14 @@ code {
 }
 
 /* Hybrid Lab Share Card Studio - Canva-style Resize Handles */
-/* Override default react-rnd resize handles with Hybrid Lab branding */
+/* Hide handles by default */
+.react-resizable-handle {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Show handles when component is selected */
 .rnd-container.selected .react-resizable-handle {
     opacity: 1 !important;
     visibility: visible !important;
@@ -40,12 +47,6 @@ code {
 .rnd-container.selected .react-resizable-handle:active {
     transform: scale(1.1) !important;
     box-shadow: 0 0 20px rgba(8,240,255,0.9), 0 6px 12px rgba(0,0,0,0.5) !important;
-}
-
-/* Hide handles when not selected */
-.rnd-container:not(.selected) .react-resizable-handle {
-    opacity: 0 !important;
-    visibility: hidden !important;
 }
 
 /* Specific handle positioning adjustments */
@@ -84,6 +85,20 @@ code {
     left: -6px !important; 
     top: 50% !important; 
     transform: translateY(-50%) !important; 
+}
+
+/* Hover transforms need to account for existing transforms */
+.rnd-container.selected .react-resizable-handle-n:hover { 
+    transform: translateX(-50%) scale(1.2) !important; 
+}
+.rnd-container.selected .react-resizable-handle-s:hover { 
+    transform: translateX(-50%) scale(1.2) !important; 
+}
+.rnd-container.selected .react-resizable-handle-e:hover { 
+    transform: translateY(-50%) scale(1.2) !important; 
+}
+.rnd-container.selected .react-resizable-handle-w:hover { 
+    transform: translateY(-50%) scale(1.2) !important; 
 }
 
 
