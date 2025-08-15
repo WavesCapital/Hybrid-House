@@ -111,15 +111,21 @@ code {
     box-shadow: 0 0 20px rgba(8,240,255,0.9), 0 6px 12px rgba(0,0,0,0.5) !important;
 }
 
-/* Ensure resizable handles don't interfere with component content */
-.rnd-container .component-content {
-    width: 100% !important;
-    height: 100% !important;
-    pointer-events: none !important;
+/* CSS Transform Scaling Support */
+.component-content {
+    position: relative !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
 }
 
-.rnd-container.selected .component-content {
-    pointer-events: auto !important;
+/* Ensure scaled components don't interfere with each other */
+.rnd-container {
+    overflow: visible !important;
+}
+
+/* Smooth scaling transitions */
+.component-content {
+    transition: transform 0.2s ease !important;
 }
 
 
