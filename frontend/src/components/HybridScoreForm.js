@@ -437,6 +437,28 @@ const HybridScoreForm = () => {
           });
           throw new Error('Webhook failed');
         }
+      } catch (webhookError) {
+        console.error('🚨 WEBHOOK ERROR:', webhookError);
+        if (webhookError.name === 'AbortError') {
+          toast({
+            title: "Request Timeout",
+            description: "Score calculation timed out. Please try again with a stable connection.",
+            variant: "destructive",
+            duration: 5000,
+          });
+        } else {
+          toast({
+            title: "Webhook Error",
+            description: "Failed to calculate score. Your profile has been created successfully.",
+            variant: "destructive",
+            duration: 5000,
+          });
+        }
+        // Navigate to profile anyway
+        if (finalProfileId) {
+          navigate(`/hybrid-score/${finalProfileId}`);
+        }
+      }
       } else {
         throw new Error('No profile ID returned');
       }
