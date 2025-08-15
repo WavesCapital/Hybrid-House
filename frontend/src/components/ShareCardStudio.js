@@ -76,14 +76,14 @@ const COMPONENT_TYPES = {
   nameplate: 'nameplate'
 };
 
-// Default positions and sizes for smart anchoring
+// Default positions and sizes for smart anchoring (scaled for iPhone mockup)
 const DEFAULT_POSITIONS = {
-  dial: { x: 162, y: 200, width: 756, height: 400 }, // Upper center third
-  scoreChip: { x: 324, y: 150, width: 432, height: 80 }, // Above dial
-  prLifts: { x: 54, y: 1200, width: 432, height: 300 }, // Bottom-left
-  prRuns: { x: 594, y: 1200, width: 432, height: 300 }, // Bottom-right
-  balanceChips: { x: 270, y: 650, width: 540, height: 120 }, // Below dial
-  nameplate: { x: 216, y: 1650, width: 648, height: 120 } // Bottom-center
+  dial: { x: 65, y: 80, width: 302, height: 160 }, // Upper center third (scaled)
+  scoreChip: { x: 130, y: 60, width: 173, height: 32 }, // Above dial (scaled)
+  prLifts: { x: 22, y: 480, width: 173, height: 120 }, // Bottom-left (scaled)
+  prRuns: { x: 238, y: 480, width: 173, height: 120 }, // Bottom-right (scaled)
+  balanceChips: { x: 108, y: 260, width: 216, height: 48 }, // Below dial (scaled)
+  nameplate: { x: 86, y: 660, width: 259, height: 48 } // Bottom-center (scaled)
 };
 
 const ShareCardStudio = () => {
