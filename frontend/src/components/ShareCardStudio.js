@@ -595,8 +595,8 @@ const ShareCardStudio = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="components" className="bg-[#0A0B0C] flex-1 flex flex-col">
-              <div className="p-4 space-y-6 overflow-y-auto flex-1">
+            <TabsContent value="components" className="bg-[#0A0B0C] flex-1 overflow-hidden">
+              <div className="h-full p-4 space-y-6 overflow-y-auto">
                 {/* Score Components */}
                 <div className="space-y-3">
                   <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
