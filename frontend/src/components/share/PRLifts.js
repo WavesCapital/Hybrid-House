@@ -36,30 +36,12 @@ const PRLifts = ({ prsData, style, baseStyle }) => {
           {lifts.map((lift, index) => (
             <div key={index} className="flex items-center justify-between">
               <span className="text-white/80 font-medium">{lift.name}</span>
-              <div className="flex items-center gap-4">
-                <span className="text-white font-bold text-lg">
-                  {formatWeight(lift.weight)} lb
-                </span>
-                {strength.bodyweight_lb && (
-                  <span className="text-[#08F0FF] text-sm font-medium bg-[#08F0FF]/10 px-2 py-1 rounded">
-                    {calculateMultiplier(lift.weight, strength.bodyweight_lb)}
-                  </span>
-                )}
-              </div>
+              <span className="text-white font-bold text-lg">
+                {formatWeight(lift.weight)} lb
+              </span>
             </div>
           ))}
         </div>
-        
-        {strength.bodyweight_lb && (
-          <div className="mt-6 pt-4 border-t border-white/20">
-            <div className="flex items-center justify-between">
-              <span className="text-white/60 text-sm">Bodyweight</span>
-              <span className="text-white/80 text-sm">
-                {Math.round(strength.bodyweight_lb)} lb
-              </span>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
