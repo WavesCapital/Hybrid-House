@@ -1418,9 +1418,9 @@ async def get_athlete_profile(profile_id: str):
 
 @api_router.post("/athlete-profile/{profile_id}/score")
 async def update_athlete_profile_score(profile_id: str, score_data: dict):
-    """Update athlete profile with score data from webhook - FIXED: Only stores JSON, no individual field extraction"""
+    """Update athlete profile with score data from webhook and extract individual fields properly"""
     try:
-        # Get current profile to verify it exists
+        # Get current profile to extract individual fields from score data
         current_profile_result = supabase.table('athlete_profiles').select('*').eq('id', profile_id).execute()
         
         if not current_profile_result.data:
@@ -1429,19 +1429,62 @@ async def update_athlete_profile_score(profile_id: str, score_data: dict):
                 detail="Profile not found"
             )
         
-        print(f"✅ FIXED SCORE STORAGE: Updating profile {profile_id} with score data (JSON only)")
+        current_profile = current_profile_result.data[0]
+        print(f"✅ Updating profile {profile_id} with score data and individual fields")
         print(f"✅ Score data: {score_data}")
         
-        # CRITICAL FIX: Only update score_data JSON field, no individual field extraction
-        # This prevents PGRST204 database schema conflicts
+        # Extract individual fields from BOTH profile_json AND score_data
+        # But only include fields that actually exist in the database schema
+        individual_fields = {}
+        
+        # Extract from profile_json (performance data only)
+        profile_json = current_profile.get('profile_json', {})
+        if profile_json:
+            # Use the existing extract_individual_fields function to get performance data
+            extracted_fields = extract_individual_fields(profile_json)
+            individual_fields.update(extracted_fields)
+        
+        # Extract from score_data (main scores only)
+        if score_data and isinstance(score_data, dict):
+            # Helper function to safely convert to decimal
+            def safe_decimal(value):
+                if not value:
+                    return None
+                try:
+                    return float(str(value))
+                except (ValueError, TypeError):
+                    return None
+            
+            score_fields = {
+                'hybrid_score': safe_decimal(score_data.get('hybridScore')),
+                'strength_score': safe_decimal(score_data.get('strengthScore')),
+                'endurance_score': safe_decimal(score_data.get('enduranceScore')),
+                'speed_score': safe_decimal(score_data.get('speedScore')),
+                'vo2_score': safe_decimal(score_data.get('vo2Score')),
+                'distance_score': safe_decimal(score_data.get('distanceScore')),
+                'volume_score': safe_decimal(score_data.get('volumeScore')),
+                'recovery_score': safe_decimal(score_data.get('recoveryScore'))
+            }
+            
+            # Add score fields to individual_fields
+            for key, value in score_fields.items():
+                if value is not None:
+                    individual_fields[key] = value
+        
+        print(f"✅ Individual fields to store: {individual_fields}")
+        
+        # Update athlete profile with both score_data JSON and individual fields
         update_data = {
             "score_data": score_data,
             "updated_at": datetime.utcnow().isoformat()
         }
         
-        print(f"✅ Update data (JSON only): {update_data}")
+        # Add individual fields if any exist
+        if individual_fields:
+            update_data.update(individual_fields)
+            
+        print(f"✅ Complete update data: {update_data}")
         
-        # Direct update without any individual field processing
         update_result = supabase.table('athlete_profiles').update(update_data).eq('id', profile_id).execute()
         
         print(f"✅ Update result: {update_result}")
@@ -1453,11 +1496,12 @@ async def update_athlete_profile_score(profile_id: str, score_data: dict):
                 detail="Profile not found or update failed"
             )
         
-        print(f"✅ FIXED: Score data updated successfully for profile {profile_id} - no schema conflicts")
+        print(f"✅ Score data and individual fields updated successfully for profile {profile_id}")
         
         return {
-            "message": "Score data updated successfully (fixed - no individual field extraction)",
+            "message": "Score data and individual fields updated successfully",
             "profile_id": profile_id,
+            "individual_fields_count": len(individual_fields),
             "updated_at": update_result.data[0]['updated_at']
         }
         
