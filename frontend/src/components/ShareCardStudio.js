@@ -979,107 +979,107 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
     });
   };
 
-  // Custom resize handle styles - Hybrid Lab branded
+  // Custom resize handle styles - Hybrid Lab branded Canva-style
   const resizeHandleStyles = {
     bottom: {
-      width: '10px',
-      height: '10px',
+      width: '12px',
+      height: '12px',
       backgroundColor: '#08F0FF',
-      border: '2px solid #fff',
-      borderRadius: '2px',
+      border: '3px solid #fff',
+      borderRadius: '3px',
       position: 'absolute',
-      bottom: '-5px',
+      bottom: '-6px',
       left: '50%',
       transform: 'translateX(-50%)',
       cursor: 'ns-resize',
-      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
     },
     bottomLeft: {
-      width: '10px',
-      height: '10px',
+      width: '12px',
+      height: '12px',
       backgroundColor: '#08F0FF',
-      border: '2px solid #fff',
-      borderRadius: '2px',
+      border: '3px solid #fff',
+      borderRadius: '3px',
       position: 'absolute',
-      bottom: '-5px',
-      left: '-5px',
+      bottom: '-6px',
+      left: '-6px',
       cursor: 'nesw-resize',
-      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
     },
     bottomRight: {
-      width: '10px',
-      height: '10px',
+      width: '12px',
+      height: '12px',
       backgroundColor: '#08F0FF',
-      border: '2px solid #fff',
-      borderRadius: '2px',
+      border: '3px solid #fff',
+      borderRadius: '3px',
       position: 'absolute',
-      bottom: '-5px',
-      right: '-5px',
+      bottom: '-6px',
+      right: '-6px',
       cursor: 'nwse-resize',
-      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
     },
     left: {
-      width: '10px',
-      height: '10px',
+      width: '12px',
+      height: '12px',
       backgroundColor: '#08F0FF',
-      border: '2px solid #fff',
-      borderRadius: '2px',
+      border: '3px solid #fff',
+      borderRadius: '3px',
       position: 'absolute',
-      left: '-5px',
+      left: '-6px',
       top: '50%',
       transform: 'translateY(-50%)',
       cursor: 'ew-resize',
-      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
     },
     right: {
-      width: '10px',
-      height: '10px',
+      width: '12px',
+      height: '12px',
       backgroundColor: '#08F0FF',
-      border: '2px solid #fff',
-      borderRadius: '2px',
+      border: '3px solid #fff',
+      borderRadius: '3px',
       position: 'absolute',
-      right: '-5px',
+      right: '-6px',
       top: '50%',
       transform: 'translateY(-50%)',
       cursor: 'ew-resize',
-      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
     },
     top: {
-      width: '10px',
-      height: '10px',
+      width: '12px',
+      height: '12px',
       backgroundColor: '#08F0FF',
-      border: '2px solid #fff',
-      borderRadius: '2px',
+      border: '3px solid #fff',
+      borderRadius: '3px',
       position: 'absolute',
-      top: '-5px',
+      top: '-6px',
       left: '50%',
       transform: 'translateX(-50%)',
       cursor: 'ns-resize',
-      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
     },
     topLeft: {
-      width: '10px',
-      height: '10px',
+      width: '12px',
+      height: '12px',
       backgroundColor: '#08F0FF',
-      border: '2px solid #fff',
-      borderRadius: '2px',
+      border: '3px solid #fff',
+      borderRadius: '3px',
       position: 'absolute',
-      top: '-5px',
-      left: '-5px',
+      top: '-6px',
+      left: '-6px',
       cursor: 'nwse-resize',
-      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
     },
     topRight: {
-      width: '10px',
-      height: '10px',
+      width: '12px',
+      height: '12px',
       backgroundColor: '#08F0FF',
-      border: '2px solid #fff',
-      borderRadius: '2px',
+      border: '3px solid #fff',
+      borderRadius: '3px',
       position: 'absolute',
-      top: '-5px',
-      right: '-5px',
+      top: '-6px',
+      right: '-6px',
       cursor: 'nesw-resize',
-      boxShadow: '0 0 8px rgba(8,240,255,0.4), 0 2px 4px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
     }
   };
 
