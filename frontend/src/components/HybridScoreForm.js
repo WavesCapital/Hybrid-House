@@ -267,7 +267,7 @@ const HybridScoreForm = () => {
             console.error('Webhook returned empty response');
             toast({
               title: "Score Calculation Issue",
-              description: "The scoring service is currently unavailable. Your profile has been created successfully.",
+              description: "The scoring service returned an empty response. Your profile has been created successfully.",
               variant: "destructive",
               duration: 5000,
             });
@@ -279,11 +279,13 @@ const HybridScoreForm = () => {
           let webhookData;
           try {
             webhookData = JSON.parse(responseText);
+            console.log('Parsed webhook data:', webhookData);
           } catch (parseError) {
             console.error('Failed to parse webhook response:', parseError);
+            console.error('Response text was:', responseText);
             toast({
               title: "Score Calculation Issue",
-              description: "The scoring service returned an invalid response. Your profile has been created successfully.",
+              description: "The scoring service returned an invalid response format. Your profile has been created successfully.",
               variant: "destructive",
               duration: 5000,
             });
@@ -292,7 +294,22 @@ const HybridScoreForm = () => {
             return;
           }
           
+          // Handle both array and object responses
           const scoreData = Array.isArray(webhookData) ? webhookData[0] : webhookData;
+          console.log('Score data extracted:', scoreData);
+
+          // Verify we have valid score data
+          if (!scoreData || typeof scoreData !== 'object') {
+            console.error('Score data is not valid object:', scoreData);
+            toast({
+              title: "Score Calculation Issue", 
+              description: "The scoring service returned invalid data. Your profile has been created successfully.",
+              variant: "destructive",
+              duration: 5000,
+            });
+            navigate(`/hybrid-score/${finalProfileId}`);
+            return;
+          }
 
           // Store score data
           try {
@@ -300,14 +317,18 @@ const HybridScoreForm = () => {
               { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' } :
               { 'Content-Type': 'application/json' };
               
+            console.log('Storing score data in backend...');
             await axios.post(`${BACKEND_URL}/api/athlete-profile/${finalProfileId}/score`, scoreData, {
               headers: scoreHeaders
             });
+            console.log('Score data stored successfully');
           } catch (scoreError) {
             console.warn('Could not store score:', scoreError.message);
+            console.warn('Score error details:', scoreError.response?.data);
           }
 
           // Navigate to results
+          console.log('Navigating to results page...');
           navigate(`/hybrid-score/${finalProfileId}`);
         } else {
           throw new Error('Webhook failed');
