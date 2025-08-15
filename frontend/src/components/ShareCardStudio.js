@@ -956,7 +956,7 @@ const BalanceChipsPreview = ({ prsData }) => {
 };
 
 // Component Renderer
-const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate, onDelete, onDuplicate, scale = 1 }) => {
+const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate, onDelete, onDuplicate }) => {
   console.log('Rendering component:', component.type, 'at position:', { x: component.x, y: component.y });
   
   const handleSelect = (e) => {
