@@ -170,7 +170,7 @@ frontend:
     file: "/app/frontend/src/components/HybridScoreForm.js"
     stuck_count: 1
     priority: "critical"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "main"
@@ -178,6 +178,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "🎯 CRITICAL FIXES TEST COMPLETE - USER PROFILE DATA STORAGE & HYBRID SCORE HISTORY: Executed comprehensive testing of the two critical fixes as requested in the review. MAJOR SUCCESS ACHIEVED (75% SUCCESS RATE): ✅ Fix 1 - User Profile Data Storage: Height/weight data (height_in, weight_lb) successfully stored and displayed in profile. Console logs show '📊 Extracted body metrics: {height_in: 70, weight_lb: 180}' confirming backend storage is working. ✅ Fix 2 - Hybrid Score History Display: 'Hybrid Score History' section found on profile page with score data table displaying properly. Profile shows 13 athlete profiles with complete score breakdown. ❌ Authentication Issue: Login failed with 400 error from Supabase, so form submission used public endpoint instead of authenticated endpoint. Console shows '🔥 STEP 1: User not authenticated - using public endpoint' instead of expected authenticated flow. ✅ Form Functionality: Form loads correctly, accepts data input, and processes submissions successfully. CRITICAL VERIFICATION: Both primary fixes are working correctly - user profile data is being stored with height_in and weight_lb fields, and hybrid score history is displaying properly on the profile page. The authentication issue is a separate login problem, not related to the core fixes being tested. The main functionality requested in the review is operational."
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL UI BUG ROOT CAUSE IDENTIFIED - BACKEND SCORE STORAGE FAILURE: Executed comprehensive investigation of all 6 requested areas from the review request. MAJOR DISCOVERY - USER'S COMPLAINT ABOUT WEBHOOK NOT BEING CALLED IS INCORRECT: ✅ Form Navigation & Loading - Form loads perfectly at /hybrid-score-form with all sections visible ✅ Form Data Filling - Successfully filled realistic test data: John Doe, Male, 180lbs, 5'10\", complete running PRs (Mile 6:30, Marathon 3:15:00), strength data (Bench 225, Squat 315, Deadlift 405) ✅ Button States - Calculate Hybrid Score button found, visible, enabled, and clickable ✅ Webhook Investigation - WEBHOOK IS WORKING PERFECTLY: Called https://wavewisdom.app.n8n.cloud/webhook/... and returned complete score data (hybridScore: 78.6, strengthScore: 80.1, speedScore: 92.3, vo2Score: 50.0, distanceScore: 82.6, volumeScore: 83.8, recoveryScore: 56.4) ✅ Console Logs Monitoring - All expected logs present: 'Calling webhook for score calculation...', 'Webhook response text: [complete data]', 'Parsed webhook data', 'Score data extracted' ❌ CRITICAL BACKEND ISSUE IDENTIFIED: Score storage fails with HTTP 500 error at /api/athlete-profile/{id}/score endpoint. Error details: 'PGRST204' database error when trying to store score data. ROOT CAUSE CONFIRMED: The frontend webhook integration is working perfectly. The user sees button revert because navigation to results page fails when score data can't be loaded due to backend storage failure. The issue is NOT the webhook (which works) but the backend score storage endpoint having database schema issues. RECOMMENDATION: Fix the backend score storage endpoint database schema issue (PGRST204 error) to resolve the user's complaint."
 
 backend:
   - task: "Hybrid Score Form Backend Functionality After Unified Design Implementation"
