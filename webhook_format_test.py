@@ -65,7 +65,7 @@ def test_webhook_format_fix():
     
     # Test 1: POST /api/athlete-profiles/public endpoint with updated format
     try:
-        profile_response = session.post(f"{API_BASE_URL}/athlete-profiles/public", json=test_data)
+        profile_response = session.post(f"{API_BASE_URL}/athlete-profiles/public", json=test_data, timeout=30)
         
         if profile_response.status_code == 200:
             profile_data = profile_response.json()
@@ -104,6 +104,10 @@ def test_webhook_format_fix():
             try:
                 webhook_data = webhook_response.json()
                 
+                # Handle the case where webhook returns a list with one element
+                if isinstance(webhook_data, list) and len(webhook_data) > 0:
+                    webhook_data = webhook_data[0]  # Extract the first element
+                
                 # Check if webhook now returns proper score data instead of empty response
                 if webhook_data and isinstance(webhook_data, dict):
                     required_scores = ['hybridScore', 'strengthScore', 'speedScore', 'vo2Score', 'distanceScore', 'volumeScore', 'recoveryScore']
@@ -118,9 +122,10 @@ def test_webhook_format_fix():
                         print(f"   Distance Score: {webhook_data.get('distanceScore')}")
                         print(f"   Volume Score: {webhook_data.get('volumeScore')}")
                         print(f"   Recovery Score: {webhook_data.get('recoveryScore')}")
+                        print(f"   Endurance Score: {webhook_data.get('enduranceScore')}")
                     else:
                         print(f"❌ Webhook returns incomplete score data, missing: {missing_scores}")
-                        print(f"   Received data: {webhook_data}")
+                        print(f"   Received data keys: {list(webhook_data.keys())}")
                         return False
                 else:
                     print(f"❌ Webhook still returns empty response despite format fix")
@@ -148,7 +153,7 @@ def test_webhook_format_fix():
     # Test 3: Test score storage endpoint with webhook data
     if profile_id and webhook_data:
         try:
-            score_response = session.post(f"{API_BASE_URL}/athlete-profile/{profile_id}/score", json=webhook_data)
+            score_response = session.post(f"{API_BASE_URL}/athlete-profile/{profile_id}/score", json=webhook_data, timeout=30)
             
             if score_response.status_code == 200:
                 print(f"✅ Score data stored successfully in backend")
@@ -166,7 +171,7 @@ def test_webhook_format_fix():
     if profile_id:
         try:
             # Retrieve the profile to verify complete data flow
-            get_response = session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            get_response = session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}", timeout=30)
             
             if get_response.status_code == 200:
                 profile_data = get_response.json()
@@ -191,7 +196,8 @@ def test_webhook_format_fix():
                         print(f"❌ Score data stored but hybrid score is 0 or null: {stored_score_data}")
                         return False
                 else:
-                    print(f"❌ Profile retrieved but no score data found: {profile_data}")
+                    print(f"❌ Profile retrieved but no score data found")
+                    print(f"   Profile data keys: {list(profile_data.keys())}")
                     return False
             else:
                 print(f"❌ Cannot retrieve profile: HTTP {get_response.status_code}")
