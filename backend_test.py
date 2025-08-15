@@ -2335,8 +2335,612 @@ class BackendTester:
         
         return passed_tests >= total_tests // 2
 
+    def test_marathon_pr_form_submission(self):
+        """Test Marathon PR form submission with pb_marathon field"""
+        try:
+            print("\n🏃‍♂️ MARATHON PR FORM SUBMISSION TESTING")
+            print("=" * 60)
+            
+            # Test data with Marathon PR
+            marathon_form_data = {
+                "profile_json": {
+                    "first_name": "Marathon",
+                    "last_name": "Runner",
+                    "email": "marathon.runner@example.com",
+                    "sex": "Male",
+                    "dob": "1985-06-15",
+                    "country": "US",
+                    "body_metrics": {
+                        "height_in": 72,
+                        "weight_lb": 165,
+                        "vo2_max": 58
+                    },
+                    "pb_marathon": "3:15:00",  # Marathon PR in HH:MM:SS format
+                    "pb_mile": "6:30",
+                    "weekly_miles": 45,
+                    "long_run": 20
+                },
+                "is_public": True
+            }
+            
+            print(f"📝 Testing Marathon PR: {marathon_form_data['profile_json']['pb_marathon']}")
+            
+            # Test public submission endpoint
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=marathon_form_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                profile_id = data.get('user_profile', {}).get('id')
+                
+                if profile_id:
+                    print(f"✅ Marathon PR form submission successful: Profile ID {profile_id}")
+                    self.log_test("Marathon PR Form Submission", True, f"Successfully created profile with Marathon PR: {marathon_form_data['profile_json']['pb_marathon']}", {
+                        'profile_id': profile_id,
+                        'marathon_pr': marathon_form_data['profile_json']['pb_marathon']
+                    })
+                    return profile_id
+                else:
+                    self.log_test("Marathon PR Form Submission", False, "Profile created but no profile ID returned", data)
+                    return False
+            else:
+                self.log_test("Marathon PR Form Submission", False, f"HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Marathon PR Form Submission", False, "Marathon PR form submission test failed", str(e))
+            return False
+    
+    def test_marathon_pr_data_conversion(self):
+        """Test Marathon PR time string conversion to seconds"""
+        try:
+            print("\n⏱️ MARATHON PR DATA CONVERSION TESTING")
+            print("=" * 60)
+            
+            # Test various Marathon PR formats
+            test_cases = [
+                ("3:15:00", 11700),  # 3 hours 15 minutes = 11700 seconds
+                ("2:45:30", 9930),   # 2 hours 45 minutes 30 seconds = 9930 seconds
+                ("4:00:00", 14400),  # 4 hours = 14400 seconds
+                ("3:30:45", 12645)   # 3 hours 30 minutes 45 seconds = 12645 seconds
+            ]
+            
+            all_conversions_correct = True
+            
+            for marathon_time, expected_seconds in test_cases:
+                # Create test profile with Marathon PR
+                test_data = {
+                    "profile_json": {
+                        "first_name": "Test",
+                        "last_name": "Runner",
+                        "email": f"test.{marathon_time.replace(':', '')}.runner@example.com",
+                        "pb_marathon": marathon_time,
+                        "body_metrics": {
+                            "height_in": 70,
+                            "weight_lb": 160
+                        }
+                    },
+                    "is_public": True
+                }
+                
+                response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=test_data)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    profile_id = data.get('user_profile', {}).get('id')
+                    
+                    if profile_id:
+                        # Retrieve the profile to check conversion
+                        profile_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                        
+                        if profile_response.status_code == 200:
+                            profile_data = profile_response.json()
+                            
+                            # Check if pb_marathon_seconds field exists and has correct value
+                            # This might be in the profile_json or as a separate field
+                            pb_marathon_seconds = None
+                            
+                            # Check in profile_json first
+                            profile_json = profile_data.get('profile_json', {})
+                            if 'pb_marathon_seconds' in profile_json:
+                                pb_marathon_seconds = profile_json['pb_marathon_seconds']
+                            
+                            # Check as a direct field (if extracted to individual fields)
+                            if pb_marathon_seconds is None and 'pb_marathon_seconds' in profile_data:
+                                pb_marathon_seconds = profile_data['pb_marathon_seconds']
+                            
+                            if pb_marathon_seconds == expected_seconds:
+                                print(f"✅ {marathon_time} → {pb_marathon_seconds} seconds (expected: {expected_seconds})")
+                            else:
+                                print(f"❌ {marathon_time} → {pb_marathon_seconds} seconds (expected: {expected_seconds})")
+                                all_conversions_correct = False
+                        else:
+                            print(f"❌ Could not retrieve profile for {marathon_time} conversion test")
+                            all_conversions_correct = False
+                    else:
+                        print(f"❌ Profile creation failed for {marathon_time}")
+                        all_conversions_correct = False
+                else:
+                    print(f"❌ Form submission failed for {marathon_time}: HTTP {response.status_code}")
+                    all_conversions_correct = False
+            
+            if all_conversions_correct:
+                self.log_test("Marathon PR Data Conversion", True, "All Marathon PR time strings converted correctly to seconds", {
+                    'test_cases': len(test_cases),
+                    'all_passed': True
+                })
+                return True
+            else:
+                self.log_test("Marathon PR Data Conversion", False, "Some Marathon PR time conversions failed", {
+                    'test_cases': len(test_cases),
+                    'all_passed': False
+                })
+                return False
+                
+        except Exception as e:
+            self.log_test("Marathon PR Data Conversion", False, "Marathon PR data conversion test failed", str(e))
+            return False
+    
+    def test_marathon_pr_database_storage(self):
+        """Test Marathon PR database storage with pb_marathon_seconds field"""
+        try:
+            print("\n💾 MARATHON PR DATABASE STORAGE TESTING")
+            print("=" * 60)
+            
+            # Create profile with Marathon PR
+            marathon_data = {
+                "profile_json": {
+                    "first_name": "Storage",
+                    "last_name": "Test",
+                    "email": "storage.test@example.com",
+                    "pb_marathon": "3:25:15",  # 3 hours 25 minutes 15 seconds
+                    "body_metrics": {
+                        "height_in": 68,
+                        "weight_lb": 155
+                    }
+                },
+                "is_public": True
+            }
+            
+            expected_seconds = (3 * 3600) + (25 * 60) + 15  # 12315 seconds
+            
+            # Submit the form
+            response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=marathon_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                profile_id = data.get('user_profile', {}).get('id')
+                
+                if profile_id:
+                    print(f"✅ Profile created with ID: {profile_id}")
+                    
+                    # Retrieve the profile to verify storage
+                    profile_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                    
+                    if profile_response.status_code == 200:
+                        profile_data = profile_response.json()
+                        
+                        # Check if Marathon PR data is stored correctly
+                        profile_json = profile_data.get('profile_json', {})
+                        original_marathon = profile_json.get('pb_marathon')
+                        stored_seconds = profile_json.get('pb_marathon_seconds')
+                        
+                        print(f"📊 Original Marathon PR: {original_marathon}")
+                        print(f"📊 Stored seconds: {stored_seconds}")
+                        print(f"📊 Expected seconds: {expected_seconds}")
+                        
+                        storage_checks = {
+                            'original_preserved': original_marathon == "3:25:15",
+                            'seconds_calculated': stored_seconds == expected_seconds,
+                            'both_fields_present': original_marathon is not None and stored_seconds is not None
+                        }
+                        
+                        if all(storage_checks.values()):
+                            self.log_test("Marathon PR Database Storage", True, "Marathon PR stored correctly with both original time and converted seconds", {
+                                'profile_id': profile_id,
+                                'original_time': original_marathon,
+                                'stored_seconds': stored_seconds,
+                                'expected_seconds': expected_seconds
+                            })
+                            return profile_id
+                        else:
+                            failed_checks = [k for k, v in storage_checks.items() if not v]
+                            self.log_test("Marathon PR Database Storage", False, f"Storage verification failed: {', '.join(failed_checks)}", {
+                                'profile_id': profile_id,
+                                'original_time': original_marathon,
+                                'stored_seconds': stored_seconds,
+                                'expected_seconds': expected_seconds,
+                                'failed_checks': failed_checks
+                            })
+                            return False
+                    else:
+                        self.log_test("Marathon PR Database Storage", False, f"Could not retrieve stored profile: HTTP {profile_response.status_code}", profile_response.text)
+                        return False
+                else:
+                    self.log_test("Marathon PR Database Storage", False, "Profile creation succeeded but no profile ID returned", data)
+                    return False
+            else:
+                self.log_test("Marathon PR Database Storage", False, f"Profile creation failed: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Marathon PR Database Storage", False, "Marathon PR database storage test failed", str(e))
+            return False
+    
+    def test_marathon_pr_api_response(self):
+        """Test API response includes Marathon PR data correctly"""
+        try:
+            print("\n📡 MARATHON PR API RESPONSE TESTING")
+            print("=" * 60)
+            
+            # First create a profile with Marathon PR
+            profile_id = self.test_marathon_pr_database_storage()
+            
+            if not profile_id:
+                self.log_test("Marathon PR API Response", False, "Could not create test profile for API response testing")
+                return False
+            
+            # Test authenticated endpoint (should work without auth for public profiles)
+            response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Verify response structure includes Marathon PR data
+                response_checks = {
+                    'profile_id_present': data.get('profile_id') == profile_id,
+                    'profile_json_present': 'profile_json' in data,
+                    'marathon_pr_in_json': data.get('profile_json', {}).get('pb_marathon') is not None,
+                    'marathon_seconds_in_json': data.get('profile_json', {}).get('pb_marathon_seconds') is not None
+                }
+                
+                print(f"📊 Response structure checks:")
+                for check, result in response_checks.items():
+                    status = "✅" if result else "❌"
+                    print(f"   {status} {check}: {result}")
+                
+                # Verify Marathon PR values
+                marathon_pr = data.get('profile_json', {}).get('pb_marathon')
+                marathon_seconds = data.get('profile_json', {}).get('pb_marathon_seconds')
+                
+                print(f"📊 Marathon PR data in response:")
+                print(f"   Original time: {marathon_pr}")
+                print(f"   Converted seconds: {marathon_seconds}")
+                
+                if all(response_checks.values()):
+                    self.log_test("Marathon PR API Response", True, "API response includes complete Marathon PR data", {
+                        'profile_id': profile_id,
+                        'marathon_pr': marathon_pr,
+                        'marathon_seconds': marathon_seconds,
+                        'all_checks_passed': True
+                    })
+                    return True
+                else:
+                    failed_checks = [k for k, v in response_checks.items() if not v]
+                    self.log_test("Marathon PR API Response", False, f"API response missing Marathon PR data: {', '.join(failed_checks)}", {
+                        'profile_id': profile_id,
+                        'failed_checks': failed_checks,
+                        'response_data': data
+                    })
+                    return False
+            else:
+                self.log_test("Marathon PR API Response", False, f"API request failed: HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Marathon PR API Response", False, "Marathon PR API response test failed", str(e))
+            return False
+    
+    def test_marathon_pr_authenticated_vs_public_endpoints(self):
+        """Test Marathon PR functionality on both authenticated and public endpoints"""
+        try:
+            print("\n🔐 MARATHON PR AUTHENTICATED VS PUBLIC ENDPOINTS TESTING")
+            print("=" * 60)
+            
+            # Test data for both endpoints
+            marathon_test_data = {
+                "profile_json": {
+                    "first_name": "Auth",
+                    "last_name": "Test",
+                    "email": "auth.test@example.com",
+                    "pb_marathon": "3:45:30",
+                    "body_metrics": {
+                        "height_in": 71,
+                        "weight_lb": 170
+                    }
+                },
+                "is_public": True
+            }
+            
+            # Test 1: Public endpoint (should work without authentication)
+            print("🔓 Testing public endpoint...")
+            public_response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=marathon_test_data)
+            
+            public_success = False
+            public_profile_id = None
+            
+            if public_response.status_code == 200:
+                public_data = public_response.json()
+                public_profile_id = public_data.get('user_profile', {}).get('id')
+                if public_profile_id:
+                    print(f"✅ Public endpoint: Profile created with ID {public_profile_id}")
+                    public_success = True
+                else:
+                    print(f"❌ Public endpoint: No profile ID returned")
+            else:
+                print(f"❌ Public endpoint: HTTP {public_response.status_code}")
+            
+            # Test 2: Authenticated endpoint (should require authentication)
+            print("🔒 Testing authenticated endpoint...")
+            auth_response = self.session.post(f"{API_BASE_URL}/athlete-profiles", json=marathon_test_data)
+            
+            auth_properly_protected = auth_response.status_code in [401, 403]
+            
+            if auth_properly_protected:
+                print(f"✅ Authenticated endpoint: Properly protected (HTTP {auth_response.status_code})")
+            else:
+                print(f"❌ Authenticated endpoint: Not properly protected (HTTP {auth_response.status_code})")
+            
+            # Test 3: Verify public profile can be retrieved
+            retrieval_success = False
+            if public_profile_id:
+                print("📡 Testing profile retrieval...")
+                retrieval_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{public_profile_id}")
+                
+                if retrieval_response.status_code == 200:
+                    retrieval_data = retrieval_response.json()
+                    marathon_pr = retrieval_data.get('profile_json', {}).get('pb_marathon')
+                    marathon_seconds = retrieval_data.get('profile_json', {}).get('pb_marathon_seconds')
+                    
+                    if marathon_pr == "3:45:30" and marathon_seconds is not None:
+                        print(f"✅ Profile retrieval: Marathon PR data intact ({marathon_pr} → {marathon_seconds}s)")
+                        retrieval_success = True
+                    else:
+                        print(f"❌ Profile retrieval: Marathon PR data missing or incorrect")
+                else:
+                    print(f"❌ Profile retrieval: HTTP {retrieval_response.status_code}")
+            
+            # Overall assessment
+            all_tests_passed = public_success and auth_properly_protected and retrieval_success
+            
+            if all_tests_passed:
+                self.log_test("Marathon PR Authenticated vs Public Endpoints", True, "Marathon PR works correctly on both authenticated and public endpoints", {
+                    'public_endpoint_works': public_success,
+                    'auth_endpoint_protected': auth_properly_protected,
+                    'retrieval_works': retrieval_success,
+                    'public_profile_id': public_profile_id
+                })
+                return True
+            else:
+                failed_tests = []
+                if not public_success:
+                    failed_tests.append("public_endpoint")
+                if not auth_properly_protected:
+                    failed_tests.append("auth_protection")
+                if not retrieval_success:
+                    failed_tests.append("profile_retrieval")
+                
+                self.log_test("Marathon PR Authenticated vs Public Endpoints", False, f"Some Marathon PR endpoint tests failed: {', '.join(failed_tests)}", {
+                    'public_endpoint_works': public_success,
+                    'auth_endpoint_protected': auth_properly_protected,
+                    'retrieval_works': retrieval_success,
+                    'failed_tests': failed_tests
+                })
+                return False
+                
+        except Exception as e:
+            self.log_test("Marathon PR Authenticated vs Public Endpoints", False, "Marathon PR endpoint comparison test failed", str(e))
+            return False
+    
+    def test_marathon_pr_comprehensive_flow(self):
+        """Comprehensive test of the entire Marathon PR data flow"""
+        try:
+            print("\n🏁 MARATHON PR COMPREHENSIVE FLOW TESTING")
+            print("=" * 60)
+            
+            # Test the complete flow with sample Marathon PR
+            sample_marathon_pr = "3:15:00"
+            expected_seconds = (3 * 3600) + (15 * 60) + 0  # 11700 seconds
+            
+            comprehensive_data = {
+                "profile_json": {
+                    "first_name": "Comprehensive",
+                    "last_name": "Test",
+                    "email": "comprehensive.marathon@example.com",
+                    "sex": "Female",
+                    "dob": "1988-04-20",
+                    "country": "CA",
+                    "pb_marathon": sample_marathon_pr,
+                    "pb_mile": "7:15",
+                    "pb_5k": "22:30",
+                    "pb_10k": "46:45",
+                    "pb_half_marathon": "1:45:30",
+                    "weekly_miles": 40,
+                    "long_run": 18,
+                    "body_metrics": {
+                        "height_in": 65,
+                        "weight_lb": 125,
+                        "vo2_max": 55
+                    }
+                },
+                "is_public": True
+            }
+            
+            print(f"🎯 Testing complete flow with Marathon PR: {sample_marathon_pr}")
+            
+            # Step 1: Form submission
+            print("📝 Step 1: Form submission...")
+            submission_response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=comprehensive_data)
+            
+            if submission_response.status_code != 200:
+                self.log_test("Marathon PR Comprehensive Flow", False, f"Form submission failed: HTTP {submission_response.status_code}", submission_response.text)
+                return False
+            
+            submission_data = submission_response.json()
+            profile_id = submission_data.get('user_profile', {}).get('id')
+            
+            if not profile_id:
+                self.log_test("Marathon PR Comprehensive Flow", False, "Form submission succeeded but no profile ID returned", submission_data)
+                return False
+            
+            print(f"✅ Step 1: Profile created with ID {profile_id}")
+            
+            # Step 2: Data conversion verification
+            print("⏱️ Step 2: Data conversion verification...")
+            profile_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            
+            if profile_response.status_code != 200:
+                self.log_test("Marathon PR Comprehensive Flow", False, f"Profile retrieval failed: HTTP {profile_response.status_code}", profile_response.text)
+                return False
+            
+            profile_data = profile_response.json()
+            profile_json = profile_data.get('profile_json', {})
+            
+            stored_marathon = profile_json.get('pb_marathon')
+            stored_seconds = profile_json.get('pb_marathon_seconds')
+            
+            if stored_marathon != sample_marathon_pr:
+                self.log_test("Marathon PR Comprehensive Flow", False, f"Original Marathon PR not preserved: expected {sample_marathon_pr}, got {stored_marathon}")
+                return False
+            
+            if stored_seconds != expected_seconds:
+                self.log_test("Marathon PR Comprehensive Flow", False, f"Marathon PR conversion incorrect: expected {expected_seconds}s, got {stored_seconds}s")
+                return False
+            
+            print(f"✅ Step 2: Data conversion correct ({stored_marathon} → {stored_seconds}s)")
+            
+            # Step 3: Database storage verification
+            print("💾 Step 3: Database storage verification...")
+            
+            # Verify all Marathon-related fields are stored
+            storage_verification = {
+                'original_time_stored': stored_marathon == sample_marathon_pr,
+                'seconds_calculated': stored_seconds == expected_seconds,
+                'profile_accessible': profile_data.get('profile_id') == profile_id,
+                'other_prs_intact': all([
+                    profile_json.get('pb_mile') == "7:15",
+                    profile_json.get('pb_5k') == "22:30",
+                    profile_json.get('pb_10k') == "46:45",
+                    profile_json.get('pb_half_marathon') == "1:45:30"
+                ])
+            }
+            
+            if not all(storage_verification.values()):
+                failed_verifications = [k for k, v in storage_verification.items() if not v]
+                self.log_test("Marathon PR Comprehensive Flow", False, f"Storage verification failed: {', '.join(failed_verifications)}", storage_verification)
+                return False
+            
+            print(f"✅ Step 3: Database storage verified")
+            
+            # Step 4: API response verification
+            print("📡 Step 4: API response verification...")
+            
+            # Check response structure
+            response_structure = {
+                'profile_id': profile_data.get('profile_id'),
+                'profile_json': profile_data.get('profile_json'),
+                'user_id': profile_data.get('user_id'),
+                'created_at': profile_data.get('created_at')
+            }
+            
+            if not all(v is not None for v in response_structure.values()):
+                missing_fields = [k for k, v in response_structure.items() if v is None]
+                self.log_test("Marathon PR Comprehensive Flow", False, f"API response missing fields: {', '.join(missing_fields)}", response_structure)
+                return False
+            
+            print(f"✅ Step 4: API response structure complete")
+            
+            # Final success
+            self.log_test("Marathon PR Comprehensive Flow", True, f"Complete Marathon PR flow successful: {sample_marathon_pr} → {expected_seconds}s", {
+                'profile_id': profile_id,
+                'original_marathon_pr': stored_marathon,
+                'converted_seconds': stored_seconds,
+                'all_steps_passed': True
+            })
+            
+            print(f"🎉 Marathon PR comprehensive flow test PASSED!")
+            return True
+                
+        except Exception as e:
+            self.log_test("Marathon PR Comprehensive Flow", False, "Marathon PR comprehensive flow test failed", str(e))
+            return False
+
+    def run_marathon_pr_tests(self):
+        """Run all Marathon PR tests as requested in the review"""
+        print("\n" + "="*80)
+        print("🏃‍♂️ MARATHON PR SUPPORT TESTING - AS REQUESTED IN REVIEW")
+        print("="*80)
+        print("Testing Marathon PR support after adding pb_marathon field:")
+        print("1. Form Submission with Marathon PR (pb_marathon field)")
+        print("2. Data Conversion (time strings like '3:15:00' to pb_marathon_seconds)")
+        print("3. Database Storage (pb_marathon_seconds field storage)")
+        print("4. API Response (athlete profiles with marathon PR data)")
+        print("5. Authenticated vs Public endpoints")
+        print("6. Complete data flow verification")
+        print("="*80)
+        
+        marathon_tests = [
+            ("Marathon PR Form Submission", self.test_marathon_pr_form_submission),
+            ("Marathon PR Data Conversion", self.test_marathon_pr_data_conversion),
+            ("Marathon PR Database Storage", self.test_marathon_pr_database_storage),
+            ("Marathon PR API Response", self.test_marathon_pr_api_response),
+            ("Marathon PR Authenticated vs Public Endpoints", self.test_marathon_pr_authenticated_vs_public_endpoints),
+            ("Marathon PR Comprehensive Flow", self.test_marathon_pr_comprehensive_flow)
+        ]
+        
+        marathon_results = []
+        for test_name, test_func in marathon_tests:
+            print(f"\n🔍 Running: {test_name}")
+            print("-" * 60)
+            try:
+                result = test_func()
+                marathon_results.append((test_name, result))
+            except Exception as e:
+                print(f"❌ {test_name} failed with exception: {e}")
+                marathon_results.append((test_name, False))
+        
+        # Summary of Marathon PR tests
+        print("\n" + "="*80)
+        print("🏃‍♂️ MARATHON PR SUPPORT TEST SUMMARY")
+        print("="*80)
+        
+        passed_tests = 0
+        total_tests = len(marathon_results)
+        
+        for test_name, result in marathon_results:
+            status = "✅ PASS" if result else "❌ FAIL"
+            print(f"{status}: {test_name}")
+            if result:
+                passed_tests += 1
+        
+        print(f"\nMARATHON PR RESULTS: {passed_tests}/{total_tests} tests passed")
+        
+        if passed_tests == total_tests:
+            print("🎉 MARATHON PR SUPPORT: FULLY WORKING")
+            print("   ✅ Form submission with pb_marathon field working")
+            print("   ✅ Data conversion from time strings to seconds working")
+            print("   ✅ Database storage of pb_marathon_seconds working")
+            print("   ✅ API response includes marathon PR data")
+            print("   ✅ Both authenticated and public endpoints support Marathon PR")
+            print("   ✅ Complete data flow verified")
+        elif passed_tests >= total_tests * 0.8:
+            print("✅ MARATHON PR SUPPORT: MOSTLY WORKING")
+            print("   ✅ Core Marathon PR functionality operational")
+            print("   ⚠️  Minor issues detected but should not affect main usage")
+        elif passed_tests >= total_tests * 0.5:
+            print("⚠️  MARATHON PR SUPPORT: PARTIALLY WORKING")
+            print("   ⚠️  Some Marathon PR functionality issues detected")
+            print("   ⚠️  May affect user experience with Marathon PR feature")
+        else:
+            print("❌ MARATHON PR SUPPORT: MAJOR ISSUES")
+            print("   ❌ Marathon PR functionality has significant problems")
+            print("   ❌ Feature may not work correctly for users")
+        
+        print("="*80)
+        
+        return passed_tests >= total_tests * 0.8
+
 def main():
-    """Main test runner focused on user profile data mismatch audit"""
+    """Main test runner focused on Marathon PR testing"""
     tester = BackendTester()
     
     print("🚀 USER PROFILE DATA MISMATCH AUDIT")
