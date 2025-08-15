@@ -32,6 +32,38 @@ code {
     box-shadow: 0 0 16px rgba(8,240,255,0.8), 0 6px 12px rgba(0,0,0,0.5) !important;
 }
 
+/* Custom Resize Handle Components */
+.resize-handle-custom {
+    width: 12px !important;
+    height: 12px !important;
+    background-color: #08F0FF !important;
+    border: 3px solid #fff !important;
+    border-radius: 3px !important;
+    box-shadow: 0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3) !important;
+    transition: all 0.2s ease !important;
+    z-index: 1001 !important;
+}
+
+.resize-handle-custom:hover {
+    transform: scale(1.2) !important;
+    box-shadow: 0 0 16px rgba(8,240,255,0.7), 0 4px 8px rgba(0,0,0,0.4) !important;
+}
+
+.resize-handle-custom:active {
+    transform: scale(1.1) !important;
+    box-shadow: 0 0 20px rgba(8,240,255,0.9), 0 6px 12px rgba(0,0,0,0.5) !important;
+}
+
+/* Position-specific cursors */
+.resize-handle-custom.bottom-right { cursor: nwse-resize !important; }
+.resize-handle-custom.bottom-left { cursor: nesw-resize !important; }
+.resize-handle-custom.top-right { cursor: nesw-resize !important; }
+.resize-handle-custom.top-left { cursor: nwse-resize !important; }
+.resize-handle-custom.right { cursor: ew-resize !important; }
+.resize-handle-custom.left { cursor: ew-resize !important; }
+.resize-handle-custom.top { cursor: ns-resize !important; }
+.resize-handle-custom.bottom { cursor: ns-resize !important; }
+
 /* React-RND specific overrides */
 .react-resizable-handle {
     z-index: 999 !important;
@@ -41,6 +73,23 @@ code {
 .rnd-container.selected .react-resizable-handle {
     opacity: 1 !important;
     visibility: visible !important;
+}
+
+/* Override default react-rnd styles */
+.rnd-container .react-resizable-handle-se,
+.rnd-container .react-resizable-handle-sw,
+.rnd-container .react-resizable-handle-ne,
+.rnd-container .react-resizable-handle-nw,
+.rnd-container .react-resizable-handle-n,
+.rnd-container .react-resizable-handle-s,
+.rnd-container .react-resizable-handle-e,
+.rnd-container .react-resizable-handle-w {
+    width: 12px !important;
+    height: 12px !important;
+    background-color: #08F0FF !important;
+    border: 3px solid #fff !important;
+    border-radius: 3px !important;
+    box-shadow: 0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3) !important;
 }
 
 
