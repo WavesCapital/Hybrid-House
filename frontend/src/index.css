@@ -30,12 +30,12 @@ code {
 .rnd-container.selected .react-resizable-handle {
     opacity: 1 !important;
     visibility: visible !important;
-    width: 14px !important;
-    height: 14px !important;
-    background-color: #08F0FF !important;
-    border: 3px solid #fff !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-color: #ffffff !important;
+    border: 2px solid #08F0FF !important;
     border-radius: 50% !important;
-    box-shadow: 0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
     transition: all 0.2s ease !important;
     z-index: 1001 !important;
     cursor: pointer !important;
