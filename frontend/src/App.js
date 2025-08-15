@@ -113,6 +113,10 @@ function AppContent() {
             element={<DesignSystemPage />} 
           />
           <Route 
+            path="/share-test" 
+            element={<ShareTest />} 
+          />
+          <Route 
             path="/share" 
             element={
               <ProtectedRoute>
