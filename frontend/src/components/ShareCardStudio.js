@@ -990,7 +990,7 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
       minHeight={30}
       className={`rnd-container ${isSelected ? 'selected' : ''} ${component.locked ? 'cursor-not-allowed' : 'cursor-move'}`}
       disableDragging={component.locked}
-      enableResizing={!component.locked && isSelected}
+      enableResizing={!component.locked}
       onClick={handleSelect}
       style={{
         zIndex: component.z + 10,
