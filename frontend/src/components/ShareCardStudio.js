@@ -1043,8 +1043,8 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
   );
 };
 
-// Component Content Renderer
-const ComponentContent = ({ component, prsData }) => {
+// Component Content Renderer with Dynamic Sizing
+const ComponentContent = ({ component, prsData, containerWidth, containerHeight, isSelected }) => {
   const { type, style } = component;
   
   const getGlowStyle = (glowLevel) => {
@@ -1063,21 +1063,31 @@ const ComponentContent = ({ component, prsData }) => {
     height: '100%'
   };
 
+  // Pass container dimensions to components for responsive scaling
+  const componentProps = {
+    prsData,
+    style,
+    baseStyle,
+    containerWidth,
+    containerHeight,
+    isSelected
+  };
+
   switch (type) {
     case 'dial':
-      return <HybridScoreDial prsData={prsData} style={style} baseStyle={baseStyle} />;
+      return <HybridScoreDial {...componentProps} />;
     case 'scoreChip':
-      return <ScoreChip prsData={prsData} style={style} baseStyle={baseStyle} />;
+      return <ScoreChip {...componentProps} />;
     case 'prLifts':
-      return <PRLifts prsData={prsData} style={style} baseStyle={baseStyle} />;
+      return <PRLifts {...componentProps} />;
     case 'prRuns':
-      return <PRRuns prsData={prsData} style={style} baseStyle={baseStyle} />;
+      return <PRRuns {...componentProps} />;
     case 'balanceChips':
-      return <BalanceChips prsData={prsData} style={style} baseStyle={baseStyle} />;
+      return <BalanceChips {...componentProps} />;
     case 'nameplate':
-      return <Nameplate prsData={prsData} style={style} baseStyle={baseStyle} />;
+      return <Nameplate {...componentProps} />;
     default:
-      return <div style={baseStyle}>Unknown component</div>;
+      return <div style={baseStyle}>Unknown component: {type}</div>;
   }
 };
 
