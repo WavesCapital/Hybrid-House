@@ -86,6 +86,16 @@ const DEFAULT_POSITIONS = {
   nameplate: { x: 75, y: 730, width: 225, height: 50 } // Bottom-center
 };
 
+// Optimal fixed sizes for each component type (these are the "native" dimensions)
+const OPTIMAL_SIZES = {
+  dial: { width: 280, height: 280 },
+  scoreChip: { width: 300, height: 60 },
+  prLifts: { width: 240, height: 200 },
+  prRuns: { width: 240, height: 200 },
+  balanceChips: { width: 400, height: 80 },
+  nameplate: { width: 300, height: 80 }
+};
+
 const ShareCardStudio = () => {
   // State management
   const [prsData, setPrsData] = useState(null);
