@@ -208,11 +208,11 @@ user_problem_statement: "When I click 'Calculate Hybrid Score' the button state 
 frontend:
   - task: "Hybrid Score Form Submission and Webhook Integration"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/components/HybridScoreForm.js"
-    stuck_count: 1
+    stuck_count: 2
     priority: "critical"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: false
         agent: "main"
