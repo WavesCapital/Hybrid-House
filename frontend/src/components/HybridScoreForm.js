@@ -1769,7 +1769,7 @@ const HybridScoreForm = () => {
                     className="form-input"
                     value={formData.long_run}
                     onChange={(e) => handleInputChange('long_run', e.target.value)}
-                    placeholder="26"
+                    placeholder="14"
                   />
                 </div>
               </div>
