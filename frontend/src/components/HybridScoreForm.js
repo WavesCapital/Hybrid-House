@@ -246,10 +246,25 @@ const HybridScoreForm = () => {
           duration: 3000,
         });
 
-        // Call webhook
-        console.log('Calling webhook for score calculation...');
+        // Call webhook - CRITICAL REQUIREMENTS FOR n8n.cloud webhook:
+        // 1. Must send "athleteProfile" object with all profile data
+        // 2. Must send "deliverable": "score" (exact spelling and case)
+        // 3. Content-Type must be application/json
+        // 4. Data format must match exactly as shown in successful example
+        console.log('🔥 CALLING WEBHOOK - Sending athleteProfile and deliverable:', {
+          athleteProfileKeys: Object.keys(profileData),
+          deliverable: 'score'
+        });
+        
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 240000); // 4 minutes like other components
+
+        const webhookPayload = {
+          athleteProfile: profileData,
+          deliverable: 'score'  // REQUIRED: exactly "score"
+        };
+        
+        console.log('🔥 WEBHOOK PAYLOAD:', JSON.stringify(webhookPayload, null, 2));
 
         const webhookResponse = await fetch(
           'https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c',
@@ -258,10 +273,7 @@ const HybridScoreForm = () => {
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-              athleteProfile: profileData,
-              deliverable: 'score'
-            }),
+            body: JSON.stringify(webhookPayload),
             signal: controller.signal
           }
         );
