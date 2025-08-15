@@ -428,6 +428,13 @@ const HybridScoreForm = () => {
           console.log('🔥 STEP 13: Navigating to results page');
           navigate(`/hybrid-score/${finalProfileId}`);
         } else {
+          console.error('🚨 WEBHOOK FAILED:', webhookResponse.status, webhookResponse.statusText);
+          toast({
+            title: "Webhook Request Failed",
+            description: `The scoring service returned an error (${webhookResponse.status}). Please try again.`,
+            variant: "destructive",
+            duration: 5000,
+          });
           throw new Error('Webhook failed');
         }
       } else {
