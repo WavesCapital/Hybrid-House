@@ -1,71 +1,58 @@
 <analysis>
-The AI engineer's work focused on enhancing the Hybrid Lab application. Initially, broad UI/UX improvements, branding updates, and the addition of a Marathon PR field were implemented, along with a significant redesign of the Hybrid Score Form into a unified, single-scroll page. A critical part of the trajectory involved extensive debugging and resolution of a major bug: the Calculate Hybrid Score button failing to trigger webhooks and store data. This was meticulously debugged, identifying issues with an empty webhook response, incorrect payload structure, and a crucial frontend error in extracting the profile ID from the backend response. Post-fix, the engineer implemented comprehensive form pre-filling from both user and athlete profiles and refined UI elements by updating placeholder values and removing extraneous text.
+The AI engineer successfully developed the Hybrid Lab application from an MVP to a feature-rich product. Initial efforts focused on comprehensive UI/UX improvements, branding updates, adding a Marathon PR field, and redesigning the Hybrid Score Form into a single-scroll page. A critical bug involving the Calculate Hybrid Score button failing to trigger webhooks and store data was meticulously debugged and resolved.
+
+Subsequently, the main feature developed was the Hybrid Card Studio (accessible at ). This involved establishing new backend APIs ( for GET/POST operations) and a complex frontend implementation. Key aspects included creating a Canva-style design canvas within a realistic iPhone Pro Max mockup, enabling drag-and-drop/click-to-add components with live user data previews, and implementing advanced resizing functionality. A significant challenge was ensuring true dynamic scaling of components rather than cropping, which was resolved using CSS . The latest work involved fixing a persistent visual bug where the page bottom randomly turned white.
 </analysis>
 
 <product_requirements>
-The Hybrid Lab application (formerly Hybrid House) calculates a Hybrid Score (0-100) for athletes, offering recommendations. Key features include a homepage, authentication, leaderboard, and user profiles. Recent development phases, as reflected in this trajectory, addressed several product needs:
-1.  **Share Card Refinement**: Displaying user  with correct native sharing order (image before text) and a neon theme.
-2.  **Branding Consistency**: Site-wide rebrand from Hybrid House to Hybrid Lab and updating the domain to .
-3.  **UI/UX Overhaul for Hybrid Score Form**: Redesigning the form into a single-scroll page, adding clear sections, pill-shaped UI elements, and constant neon glowing buttons. Integrating field explanations, device-specific how-to-find tips, and setting Optional labels to subtle gray italics.
-4.  **App Selector Integration**: Adding dropdowns for running and strength apps with database persistence and specific orange tips for running apps.
-5.  **Data Persistence**: Ensuring the Marathon PR field is correctly added and stored in the Supabase database upon form submission.
-6.  **Design System Documentation**: Creating a comprehensive style guide and a  page showcasing brand elements, including neon score circles.
-7.  **Critical Bug Resolution**: Fixing the Calculate Hybrid Score button, which was failing to send webhooks or store data, addressing issues related to webhook payload, profile ID extraction, and database schema compatibility.
-8.  **Form Prefilling**: Automatically populating form fields for logged-in users with existing data from  and the highest hybrid score from .
-9.  **UI/UX Polish**: Updating placeholder values with realistic numbers for an average hybrid athlete and removing unnecessary descriptive text under form fields like gender.
+The Hybrid Lab application, previously Hybrid House, calculates a Hybrid Score (0-100) for athletes, providing recommendations. User requests included:
+1.  **Share Card Refinement**: Displaying user  with native sharing and a neon theme.
+2.  **Branding Consistency**: Site-wide rebrand to Hybrid Lab and .
+3.  **UI/UX Overhaul (Hybrid Score Form)**: Redesigning to a single-scroll layout with clear sections, pill-shaped elements, neon glowing buttons, field explanations, and Optional labels.
+4.  **App Selector Integration**: Adding running/strength app dropdowns with database persistence.
+5.  **Data Persistence**: Ensuring Marathon PR field storage in Supabase.
+6.  **Design System Documentation**: Creating a comprehensive style guide and  page.
+7.  **Critical Bug Resolution**: Fixing the Calculate Hybrid Score button's failure to send webhooks or store data due to payload, profile ID extraction, and schema issues.
+8.  **Form Prefilling**: Automatically populating fields for logged-in users from  and .
+9.  **UI/UX Polish**: Updating placeholder values and removing extraneous text.
+10. **New Feature: Hybrid Card Studio ()**: A Canva-style studio for athletes to customize and export shareable images. This includes drag-and-click gradient backgrounds, draggable/resizable transparent components (Score Dial, PRs, Nameplate) with live data, in-app PR editing (saving to profile), PNG export, native OS share sheet integration, display within a realistic iPhone Pro Max mockup, Canva-style resize handles, keyboard delete, and true dynamic resizing without cropping.
 </product_requirements>
 
 <key_technical_concepts>
--   **Frontend**: React.js, Tailwind CSS, Canvas API, , , React Context (AuthContext),  hook.
+-   **Frontend**: React.js, Tailwind CSS, , , React Context (AuthContext),  hook,  (drag/resize/rotate),  (PNG export).
 -   **Backend**: FastAPI (Python), Supabase Python Client (PostgreSQL).
 -   **Database**: Supabase PostgreSQL (, ).
--   **Core Concepts**: UI rendering, Client-side image generation, Native sharing, Environment variables, CSS specificity, Responsive Design, API integration, Error Handling, UUID generation, Asynchronous operations.
+-   **Core Concepts**: UI rendering, Client-side image generation, Native Web Share API, Environment variables, CSS , API integration, Error Handling.
 </key_technical_concepts>
 
 <code_architecture>
-The application utilizes a React.js frontend and a FastAPI (Python) backend, interacting primarily with a Supabase PostgreSQL database.
+The application uses a React.js frontend and a FastAPI (Python) backend, with a Supabase PostgreSQL database.
 
 
-
 -   ****:
-    -   **Importance**: Core backend API routes for user/athlete profiles and data storage.
-    -   **Changes**:  and  models updated for , , and .  enhanced. The  endpoint was fixed to correctly extract and store individual fields, gracefully handling missing columns (PGRST204 error). The  endpoint and  endpoint were confirmed for their data return formats.
+    -   **Importance**: Handles core API routes.
+    -   **Changes**: Extended with new  (GET/POST) endpoints to manage athlete PR data for the Share Card Studio, integrating with existing profile models.
 -   ****:
-    -   **Importance**: Central component for collecting athlete data and initiating score calculation. Most significant changes.
-    -   **Changes**:
-        -   **UI Redesign & Enhancements**: Single-scroll layout, field explanations, wearable tips (neon green), Optional labels (gray, italicized). Running/strength app selectors added. Button/pill styling standardized for neon glow.  field added.
-        -   **Bug Fix ( button)**:
-            -   Initial fix for webhook payload: Ensured  and  are always sent with correct types, omitting  values.
-            -   Extensive debugging: Added comprehensive step-by-step logging and toast notifications for all stages of the  function (profile creation, ID extraction, webhook call, score storage, navigation) to pinpoint failure points.
-            -   Syntax corrections: Fixed multiple ESLint parsing errors and incorrect  block structures.
-            -   Critical profile ID extraction fix: Changed  to  for authenticated profile creation.
-        -   **Form Pre-filling**: Enhanced  to fetch and pre-fill data from both  (personal info, basic metrics) and the highest scoring  (PRs, strength, training volume). Smart data conversion (e.g., height inches to feet/inches) and prioritization implemented.
-        -   **Placeholder Values**: Updated all input field  attributes with realistic numerical values for an average hybrid athlete.
-        -   **Text Removal**: Removed specific explanatory text under the Gender field.
--   ****:
-    -   **Importance**: Displays hybrid scores and manages share functionality.
-    -   **Changes**: Refactored  for neon theme, Lab branding,  URL, and  integration. Share Score button restyled.  optimized for native sharing order.
--   ****:
-    -   **Importance**: Home page and starting point for score calculation.
-    -   **Changes**:  styling updated for a constant cyan blue glow on Get Hybrid Score button. Branding updated to Hybrid Lab.
--   ****:
-    -   **Importance**: Main HTML file.
-    -   **Changes**: Updated HTML meta tags and URLs to Hybrid Lab and  domain.
--   **Various Frontend Components (, , , , , , )**:
-    -   **Importance**: Core UI elements.
-    -   **Changes**: Systematic replacement of Hybrid House with Hybrid Lab and HybridHouse.ai with HybridLab.io for site-wide rebranding.
+    -   **Importance**: Manages user input for score calculation.
+    -   **Changes**: Significant UI redesign, added marathon PR field, running/strength app selectors. Critical bug fixes related to webhook payload and correct profile ID extraction. Implemented comprehensive form pre-filling logic.
 -   ** (NEW)**:
-    -   **Importance**: New component created to showcase the Hybrid Lab design system.
-    -   **Changes**: Mock-up page displaying color palette, typography hierarchy, component demonstrations.
+    -   **Importance**: The central component for the new Hybrid Card Studio feature.
+    -   **Changes**: Developed as a comprehensive design canvas, incorporating background selection, draggable/resizable components with live data, an interactive iPhone Pro Max mockup, Canva-style resize handles, and keyboard delete. Crucially, fixed component scaling using  for true dynamic resizing.
+-   ** (NEW DIRECTORY)**:
+    -   **Importance**: Houses individual reusable components for the Share Card Studio.
+    -   **Changes**: Created , , , , ,  to render specific design elements.  was created for the PR editing modal. These components were adapted for proper scaling.
 -   ****:
-    -   **Importance**: Defines main application routes.
-    -   **Changes**: Added a new route for .
+    -   **Importance**: Defines the application's routing.
+    -   **Changes**: Added the  route for the new studio. Also, temporary test routes (, ) were added and subsequently removed for debugging.
 -   ****:
-    -   **Importance**: Internal log for testing, debugging, and progress tracking.
-    -   **Changes**: Continuously updated with detailed summaries of findings, fixes, and test outcomes, including the recent debugging of the form submission, webhook, and profile ID extraction issues.
--   ** (NEW)**:
-    -   **Importance**: New documentation file detailing the brand's visual identity.
-    -   **Changes**: Comprehensive guide covering brand identity, color system, visual effects, typography, layout architecture, component specifications, and responsive strategy.
+    -   **Importance**: Manages frontend dependencies.
+    -   **Changes**:  (for drag/resize) and  (for PNG export) were added to support the studio's functionality.
+-   ****:
+    -   **Importance**: Global CSS styling.
+    -   **Changes**: Updated to include specific styles for  resize handles, ensuring they were visible and functional with a neon aesthetic. Also, explicit dark background colors were added to resolve the white bottom page issue, enforcing consistent theme.
+-   ****:
+    -   **Importance**: Documents testing, debugging, and progress.
+    -   **Changes**: Continuously updated to reflect outcomes of backend API tests, frontend feature validations (e.g., component functionality, resizing), and UI bug fixes.
 </code_architecture>
 
 <pending_tasks>
@@ -75,22 +62,18 @@ The application utilizes a React.js frontend and a FastAPI (Python) backend, int
 </pending_tasks>
 
 <current_work>
-Immediately prior to this summary, the AI engineer was focused on enhancing the  component. The primary work involved resolving a critical bug where the Calculate Hybrid Score button was not triggering the webhook or storing data correctly.
+Immediately prior to this summary, the AI engineer was focused on resolving a visual bug where the bottom of the Hybrid Card Studio page was randomly turning white. This issue occurred after the successful implementation and validation of several key features for the new  route:
 
-The debugging process involved:
-1.  **Initial Diagnosis & Webhook Fix**: Correcting the webhook payload to ensure  and  were always present and that  values were omitted, based on user-provided example.
-2.  **Comprehensive Debugging & Error Handling**: Adding extensive step-by-step console logging and  notifications throughout the  function in  to trace the execution flow and pinpoint errors. This included handling profile creation failures, missing profile IDs, webhook configuration issues, empty/invalid webhook responses, score data validation/storage failures, and network errors.
-3.  **Syntax Corrections**: Addressing multiple ESLint parsing errors and structural issues in  identified during the logging enhancement process.
-4.  **Profile ID Extraction Fix**: Resolving a critical issue where the frontend was attempting to extract the profile ID from  instead of the correct  for authenticated users. This fix allowed the end-to-end flow to complete successfully.
+1.  **Backend API Integration**: Successfully implemented and tested  and  in  to handle athlete Personal Record (PR) data, which is crucial for displaying real user data in the share cards.
+2.  **Core Share Card Studio**: Developed the main  component, which serves as a Canva-style design environment.
+3.  **Realistic iPhone Mockup**: Integrated a highly detailed iPhone Pro Max mockup as the visual canvas, featuring accurate dimensions, dynamic island, physical buttons, and a seamless appearance (after resolving initial visible border issues).
+4.  **Interactive Components**: Implemented various draggable and selectable components (e.g., Hybrid Score Dial, PR Lifts/Runs, Score Chip, Nameplate) that populate with real user data. Initial bugs preventing component addition and drag-and-drop were resolved.
+5.  **Canva-Style Resizing**: Added professional-grade 8-point resize handles with Hybrid Lab's neon branding. A critical bug, where resizing resulted in content cropping instead of true dynamic scaling, was addressed by adopting a CSS  approach, ensuring components maintain perfect proportions.
+6.  **Keyboard Delete**: Enabled deletion of selected components using the Delete/Backspace keys for improved user workflow.
 
-Following the bug fix, the work transitioned to feature enhancements for the :
-1.  **Form Prefilling**: Implementing logic to automatically populate form fields for logged-in users. This involved fetching user data from the  table (personal info, basic metrics) and the highest scoring performance data from the  table (PRs, strength metrics).
-2.  **Placeholder Values**: Updating all input field placeholders to display realistic numerical values representative of an average hybrid athlete, providing better guidance to users.
-3.  **UI Text Removal**: Removing an explicit explanatory text previously present under the Gender field to streamline the UI.
-
-The last completed action was the removal of the gender description text, and the user confirmed that the previous fixes and enhancements (like the button functionality and pre-filling) were working as expected.
+The last completed action was debugging and fixing the persistent white bottom page issue. This was identified as a background styling problem where certain containers lacked explicit dark background colors. The fix involved adding  and  classes to the main flex container, left sidebar, tab content areas, and canvas area in  to ensure consistent dark theming. The user confirmed the resizing functionality was working correctly before this final UI fix.
 </current_work>
 
 <optional_next_step>
-The next logical step is to begin implementing the pending tasks related to the interview flow, starting with suggested response buttons.
+Begin implementing the suggested response buttons (chips) in the frontend for the interview flow.
 </optional_next_step>

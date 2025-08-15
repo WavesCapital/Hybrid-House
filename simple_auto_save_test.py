@@ -11,7 +11,7 @@ import json
 def test_auto_save_endpoint():
     """Test the auto-save endpoint directly"""
     
-    backend_url = "https://score-calc-debug.preview.emergentagent.com/api"
+    backend_url = "https://hybrid-card-studio.preview.emergentagent.com/api"
     
     print("🔍 TESTING AUTO-SAVE PROFILE FUNCTIONALITY")
     print("=" * 60)
