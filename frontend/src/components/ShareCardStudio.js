@@ -744,19 +744,4 @@ const ComponentQuickBar = ({ component, onUpdate, onDelete, onDuplicate, onDesel
   );
 };
 
-// Edit PRs Modal (placeholder - would need full implementation)
-const EditPRsModal = ({ prsData, onSave, onClose }) => {
-  return (
-    <DialogContent className="max-w-2xl">
-      <DialogHeader>
-        <DialogTitle>Edit Personal Records</DialogTitle>
-      </DialogHeader>
-      <div className="p-4">
-        <p className="text-white/70">PR editing modal would go here...</p>
-        {/* Full implementation would include tabs for Lifting/Running with proper form fields */}
-      </div>
-    </DialogContent>
-  );
-};
-
 export default ShareCardStudio;
