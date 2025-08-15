@@ -389,9 +389,9 @@ const HybridScoreForm = () => {
 
           // Verify we have valid score data
           if (!scoreData || typeof scoreData !== 'object') {
-            console.error('Score data is not valid object:', scoreData);
+            console.error('🚨 Score data is not valid object:', scoreData);
             toast({
-              title: "Score Calculation Issue", 
+              title: "Invalid Score Data", 
               description: "The scoring service returned invalid data. Your profile has been created successfully.",
               variant: "destructive",
               duration: 5000,
