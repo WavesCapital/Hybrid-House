@@ -284,14 +284,27 @@ const HybridScoreForm = () => {
         }
       }
 
+      console.log('🔥 STEP 7: Extracting profile ID from response');
       const finalProfileId = user && session ? response.data?.profile?.id : profileId;
+      console.log('🔥 Final profile ID:', finalProfileId);
 
-      if (finalProfileId) {
+      if (!finalProfileId) {
+        console.error('🚨 NO PROFILE ID RETURNED');
         toast({
-          title: "Profile Created! 🚀",
-          description: "Calculating your hybrid score...",
-          duration: 3000,
+          title: "Profile Creation Error",
+          description: "Profile was created but no ID was returned. Please try again.",
+          variant: "destructive",
+          duration: 5000,
         });
+        throw new Error('No profile ID returned');
+      }
+
+      console.log('🔥 STEP 8: Profile created successfully, starting webhook call');
+      toast({
+        title: "Profile Created! 🚀",
+        description: "Calculating your hybrid score...",
+        duration: 3000,
+      });
 
         // Call webhook - CRITICAL REQUIREMENTS FOR n8n.cloud webhook:
         // 1. Must send "athleteProfile" object with all profile data
