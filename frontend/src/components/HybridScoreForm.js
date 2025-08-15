@@ -289,7 +289,10 @@ const HybridScoreForm = () => {
       }
 
       console.log('🔥 STEP 7: Extracting profile ID from response');
-      const finalProfileId = user && session ? response.data?.profile?.id : profileId;
+      console.log('🔥 Response data structure:', response.data);
+      
+      // Fix: Authenticated endpoint returns user_profile, not profile
+      const finalProfileId = user && session ? response.data?.user_profile?.id : profileId;
       console.log('🔥 Final profile ID:', finalProfileId);
 
       if (!finalProfileId) {
