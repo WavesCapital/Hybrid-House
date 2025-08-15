@@ -107,10 +107,42 @@ const ShareCardStudio = () => {
   const CANVAS_WIDTH = 1080;
   const CANVAS_HEIGHT = 1920;
 
-  // Load PRs data on mount
+  // Load PRs data on mount and set up keyboard listeners
   useEffect(() => {
     loadPrsData();
-  }, []);
+    
+    // Add keyboard event listener for delete functionality
+    const handleKeyDown = (event) => {
+      // Delete key (Delete or Backspace) when component is selected
+      if ((event.key === 'Delete' || event.key === 'Backspace') && selectedComponent) {
+        event.preventDefault();
+        console.log('Deleting component:', selectedComponent.id);
+        
+        // Remove component from canvas
+        setComponents(prev => prev.filter(comp => comp.id !== selectedComponent.id));
+        setSelectedComponent(null);
+        
+        // Save to history
+        setTimeout(() => {
+          saveToHistory();
+        }, 100);
+        
+        toast({
+          title: "Component deleted",
+          description: `${selectedComponent.type} component removed from canvas.`,
+          duration: 2000
+        });
+      }
+    };
+
+    // Add event listener
+    document.addEventListener('keydown', handleKeyDown);
+    
+    // Cleanup event listener on unmount
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedComponent]); // Re-run when selectedComponent changes
 
   const loadPrsData = async () => {
     try {
