@@ -1420,7 +1420,7 @@ async def get_athlete_profile(profile_id: str):
 async def update_athlete_profile_score(profile_id: str, score_data: dict):
     """Update athlete profile with score data from webhook"""
     try:
-        # Get current profile to extract individual fields from score data
+        # Get current profile to verify it exists
         current_profile_result = supabase.table('athlete_profiles').select('*').eq('id', profile_id).execute()
         
         if not current_profile_result.data:
@@ -1429,34 +1429,36 @@ async def update_athlete_profile_score(profile_id: str, score_data: dict):
                 detail="Profile not found"
             )
         
-        current_profile = current_profile_result.data[0]
+        print(f"✅ Updating profile {profile_id} with score data")
+        print(f"✅ Score data: {score_data}")
         
-        # Extract individual score fields
-        individual_score_fields = extract_individual_fields(
-            current_profile.get('profile_json', {}), 
-            score_data
-        )
-        
-        # Update athlete profile with score data and individual fields
+        # Update athlete profile with score data only (no individual fields that might not exist in schema)
         update_data = {
             "score_data": score_data,
-            "updated_at": datetime.utcnow().isoformat(),
-            **individual_score_fields  # Include extracted score fields
+            "updated_at": datetime.utcnow().isoformat()
         }
+        
+        print(f"✅ Update data: {update_data}")
         
         update_result = supabase.table('athlete_profiles').update(update_data).eq('id', profile_id).execute()
         
+        print(f"✅ Update result: {update_result}")
+        
         if not update_result.data:
+            print(f"❌ Update failed - no data returned")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Profile not found"
+                detail="Profile not found or update failed"
             )
+        
+        print(f"✅ Score data updated successfully for profile {profile_id}")
         
         return {
             "message": "Score data updated successfully",
             "profile_id": profile_id,
             "updated_at": update_result.data[0]['updated_at']
         }
+        
         
     except HTTPException:
         raise
