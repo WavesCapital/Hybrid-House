@@ -245,6 +245,10 @@ const HybridScoreForm = () => {
         });
 
         // Call webhook
+        console.log('Calling webhook for score calculation...');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 240000); // 4 minutes like other components
+
         const webhookResponse = await fetch(
           'https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c',
           {
@@ -255,9 +259,12 @@ const HybridScoreForm = () => {
             body: JSON.stringify({
               athleteProfile: profileData,
               deliverable: 'score'
-            })
+            }),
+            signal: controller.signal
           }
         );
+
+        clearTimeout(timeoutId);
 
         if (webhookResponse.ok) {
           const responseText = await webhookResponse.text();
