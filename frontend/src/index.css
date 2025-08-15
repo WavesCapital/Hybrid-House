@@ -90,15 +90,23 @@ code {
 
 /* Hover effects with preserved transforms */
 .rnd-container.selected .react-resizable-handle:hover {
-    transform: scale(1.2) !important;
-    box-shadow: 0 0 16px rgba(8,240,255,0.7), 0 4px 8px rgba(0,0,0,0.4) !important;
+    background-color: #08F0FF !important;
+    border-color: #ffffff !important;
+    transform: scale(1.15) !important;
+    box-shadow: 0 4px 12px rgba(8,240,255,0.3) !important;
 }
 
 .rnd-container.selected .react-resizable-handle-n:hover { 
-    transform: translateX(-50%) scale(1.2) !important; 
+    transform: translateX(-50%) scale(1.15) !important; 
 }
 .rnd-container.selected .react-resizable-handle-s:hover { 
-    transform: translateX(-50%) scale(1.2) !important; 
+    transform: translateX(-50%) scale(1.15) !important; 
+}
+.rnd-container.selected .react-resizable-handle-e:hover { 
+    transform: translateY(-50%) scale(1.15) !important; 
+}
+.rnd-container.selected .react-resizable-handle-w:hover { 
+    transform: translateY(-50%) scale(1.15) !important; 
 }
 .rnd-container.selected .react-resizable-handle-e:hover { 
     transform: translateY(-50%) scale(1.2) !important; 
