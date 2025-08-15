@@ -41,6 +41,7 @@ const HybridScoreForm = () => {
     pb_5k: '',
     pb_10k: '',
     pb_half_marathon: '',
+    pb_marathon: '',
     weekly_miles: '',
     long_run: '',
     
