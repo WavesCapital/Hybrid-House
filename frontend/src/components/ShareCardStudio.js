@@ -590,27 +590,28 @@ const ShareCardStudio = () => {
             <div className="relative" style={{
               width: '375px',
               height: '812px',
-              background: 'linear-gradient(145deg, #2c2c2e 0%, #1c1c1e 100%)',
+              background: 'linear-gradient(145deg, #3a3a3c 0%, #2c2c2e 50%, #1c1c1e 100%)',
               borderRadius: '60px',
-              padding: '8px',
+              padding: '6px',
               boxShadow: `
-                0 0 0 2px #000,
-                0 0 0 4px #2c2c2e,
-                0 20px 40px rgba(0,0,0,0.3),
-                inset 0 2px 0 rgba(255,255,255,0.1)
+                0 25px 50px rgba(0,0,0,0.4),
+                0 12px 24px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.1),
+                inset 0 -1px 0 rgba(0,0,0,0.2)
               `
             }}>
               
               {/* Screen Container */}
-              <div className="relative w-full h-full bg-black rounded-[52px] overflow-hidden">
+              <div className="relative w-full h-full bg-black rounded-[54px] overflow-hidden" style={{
+                boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.05)'
+              }}>
                 
                 {/* Dynamic Island */}
                 <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-20" style={{
                   width: '126px',
                   height: '37px',
                   background: '#000',
-                  borderRadius: '19px',
-                  border: '1px solid rgba(255,255,255,0.05)'
+                  borderRadius: '19px'
                 }}></div>
                 
                 {/* Canvas - iPhone 14 Pro Max actual screen ratio */}
@@ -640,7 +641,7 @@ const ShareCardStudio = () => {
                   {/* Safe Zones Overlay */}
                   {safeZones && (
                     <div className="absolute inset-0 pointer-events-none">
-                      <div className="absolute inset-0 border-2 border-dashed border-yellow-400/30 rounded-[52px]" />
+                      <div className="absolute inset-0 border-2 border-dashed border-yellow-400/30 rounded-[54px]" />
                       <div 
                         className="absolute border-2 border-dashed border-red-400/50 rounded-xl"
                         style={{
@@ -676,44 +677,42 @@ const ShareCardStudio = () => {
                   background: 'rgba(255,255,255,0.6)',
                   borderRadius: '3px'
                 }}></div>
-                
-                {/* Speaker Grill (for realism) */}
-                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10" style={{
-                  width: '60px',
-                  height: '6px',
-                  background: 'rgba(255,255,255,0.1)',
-                  borderRadius: '3px'
-                }}></div>
               </div>
               
-              {/* Power Button */}
-              <div className="absolute right-[-2px] top-[180px]" style={{
-                width: '4px',
+              {/* Power Button - seamless with frame */}
+              <div className="absolute right-0 top-[180px]" style={{
+                width: '3px',
                 height: '80px',
-                background: 'linear-gradient(90deg, #2c2c2e 0%, #1c1c1e 100%)',
-                borderRadius: '0 2px 2px 0'
+                background: 'linear-gradient(90deg, rgba(58,58,60,0.8) 0%, rgba(44,44,46,0.9) 50%, rgba(28,28,30,1) 100%)',
+                borderRadius: '0 2px 2px 0',
+                transform: 'translateX(1px)'
               }}></div>
               
-              {/* Volume Buttons */}
-              <div className="absolute left-[-2px] top-[160px]" style={{
-                width: '4px',
-                height: '40px',
-                background: 'linear-gradient(270deg, #2c2c2e 0%, #1c1c1e 100%)',
-                borderRadius: '2px 0 0 2px'
+              {/* Volume Up Button */}
+              <div className="absolute left-0 top-[160px]" style={{
+                width: '3px',
+                height: '32px',
+                background: 'linear-gradient(270deg, rgba(58,58,60,0.8) 0%, rgba(44,44,46,0.9) 50%, rgba(28,28,30,1) 100%)',
+                borderRadius: '2px 0 0 2px',
+                transform: 'translateX(-1px)'
               }}></div>
-              <div className="absolute left-[-2px] top-[210px]" style={{
-                width: '4px',
-                height: '40px',
-                background: 'linear-gradient(270deg, #2c2c2e 0%, #1c1c1e 100%)',
-                borderRadius: '2px 0 0 2px'
+              
+              {/* Volume Down Button */}
+              <div className="absolute left-0 top-[200px]" style={{
+                width: '3px',
+                height: '32px',
+                background: 'linear-gradient(270deg, rgba(58,58,60,0.8) 0%, rgba(44,44,46,0.9) 50%, rgba(28,28,30,1) 100%)',
+                borderRadius: '2px 0 0 2px',
+                transform: 'translateX(-1px)'
               }}></div>
               
               {/* Silent Switch */}
-              <div className="absolute left-[-2px] top-[130px]" style={{
-                width: '4px',
+              <div className="absolute left-0 top-[130px]" style={{
+                width: '2px',
                 height: '20px',
-                background: 'linear-gradient(270deg, #2c2c2e 0%, #1c1c1e 100%)',
-                borderRadius: '2px 0 0 2px'
+                background: 'linear-gradient(270deg, rgba(58,58,60,0.6) 0%, rgba(28,28,30,0.9) 100%)',
+                borderRadius: '1px 0 0 1px',
+                transform: 'translateX(-0.5px)'
               }}></div>
             </div>
 
