@@ -143,15 +143,20 @@ const HybridScoreForm = () => {
   };
 
   const handleSubmit = async (e) => {
+    console.log('🔥 CALCULATE BUTTON CLICKED - Starting handleSubmit function');
+    
     if (e) e.preventDefault();
     
     if (isSubmitting) {
+      console.log('🚨 ALREADY SUBMITTING - Blocking duplicate submission');
       return;
     }
 
+    console.log('🔥 STEP 1: Setting isSubmitting to true');
     setIsSubmitting(true);
 
     try {
+      console.log('🔥 STEP 2: Showing processing toast');
       toast({
         title: "Processing your data! 🚀",
         description: "Calculating your hybrid score...",
