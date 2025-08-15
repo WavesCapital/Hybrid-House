@@ -378,6 +378,7 @@ def extract_individual_fields(profile_json: dict, score_data: dict = None) -> di
         'pb_5k_seconds': convert_time_to_seconds(profile_json.get('pb_5k')),
         'pb_10k_seconds': convert_time_to_seconds(profile_json.get('pb_10k')),
         'pb_half_marathon_seconds': convert_time_to_seconds(profile_json.get('pb_half_marathon')),
+        'pb_marathon_seconds': convert_time_to_seconds(profile_json.get('pb_marathon')),
         'pb_bench_1rm_lb': extract_weight_from_object(profile_json.get('pb_bench_1rm')),
         'pb_squat_1rm_lb': extract_weight_from_object(profile_json.get('pb_squat_1rm')),
         'pb_deadlift_1rm_lb': extract_weight_from_object(profile_json.get('pb_deadlift_1rm'))
