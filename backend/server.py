@@ -1437,12 +1437,87 @@ async def update_athlete_profile_score(profile_id: str, score_data: dict):
         # But only include fields that actually exist in the database schema
         individual_fields = {}
         
+        # Helper functions for data conversion
+        def safe_int(value):
+            if not value:
+                return None
+            try:
+                return int(float(str(value)))
+            except (ValueError, TypeError):
+                return None
+        
+        def safe_decimal(value):
+            if not value:
+                return None
+            try:
+                return float(str(value))
+            except (ValueError, TypeError):
+                return None
+        
+        def convert_time_to_seconds(time_str):
+            if not time_str:
+                return None
+            try:
+                if ':' in str(time_str):
+                    parts = str(time_str).split(':')
+                    if len(parts) == 2:
+                        # MM:SS format (e.g., "7:43" for mile time)
+                        minutes = int(parts[0])
+                        seconds = int(parts[1])
+                        return minutes * 60 + seconds
+                    elif len(parts) == 3:
+                        # HH:MM:SS format (e.g., "3:15:00" for marathon time)
+                        hours = int(parts[0])
+                        minutes = int(parts[1])
+                        seconds = int(parts[2])
+                        return hours * 3600 + minutes * 60 + seconds
+                return safe_int(time_str)
+            except (ValueError, TypeError):
+                return None
+        
+        def extract_weight_from_object(obj):
+            if not obj:
+                return None
+            if isinstance(obj, dict):
+                return safe_decimal(obj.get('weight_lb') or obj.get('weight'))
+            return safe_decimal(obj)
+        
         # Extract from profile_json (performance data only)
         profile_json = current_profile.get('profile_json', {})
         if profile_json:
-            # Use the existing extract_individual_fields function to get performance data
-            extracted_fields = extract_individual_fields(profile_json)
-            individual_fields.update(extracted_fields)
+            # Body metrics (performance data - personal height/weight go to user_profiles)
+            body_metrics = profile_json.get('body_metrics', {})
+            if isinstance(body_metrics, dict):
+                if body_metrics.get('vo2_max') or body_metrics.get('vo2max'):
+                    individual_fields['vo2_max'] = safe_decimal(body_metrics.get('vo2_max') or body_metrics.get('vo2max'))
+                if body_metrics.get('hrv_ms') or body_metrics.get('hrv'):
+                    individual_fields['hrv_ms'] = safe_int(body_metrics.get('hrv_ms') or body_metrics.get('hrv'))
+                if body_metrics.get('resting_hr_bpm') or body_metrics.get('resting_hr'):
+                    individual_fields['resting_hr_bpm'] = safe_int(body_metrics.get('resting_hr_bpm') or body_metrics.get('resting_hr'))
+            
+            # Running performance (convert times to seconds)
+            if profile_json.get('pb_mile'):
+                individual_fields['pb_mile_seconds'] = convert_time_to_seconds(profile_json.get('pb_mile'))
+            if profile_json.get('pb_5k'):
+                individual_fields['pb_5k_seconds'] = convert_time_to_seconds(profile_json.get('pb_5k'))
+            if profile_json.get('pb_10k'):
+                individual_fields['pb_10k_seconds'] = convert_time_to_seconds(profile_json.get('pb_10k'))
+            if profile_json.get('pb_half_marathon'):
+                individual_fields['pb_half_marathon_seconds'] = convert_time_to_seconds(profile_json.get('pb_half_marathon'))
+            if profile_json.get('pb_marathon'):
+                individual_fields['pb_marathon_seconds'] = convert_time_to_seconds(profile_json.get('pb_marathon'))
+            if profile_json.get('weekly_miles'):
+                individual_fields['weekly_miles'] = safe_decimal(profile_json.get('weekly_miles'))
+            if profile_json.get('long_run'):
+                individual_fields['long_run_miles'] = safe_decimal(profile_json.get('long_run'))
+            
+            # Strength performance (extract weights)
+            if profile_json.get('pb_bench_1rm'):
+                individual_fields['pb_bench_1rm_lb'] = extract_weight_from_object(profile_json.get('pb_bench_1rm'))
+            if profile_json.get('pb_squat_1rm'):
+                individual_fields['pb_squat_1rm_lb'] = extract_weight_from_object(profile_json.get('pb_squat_1rm'))
+            if profile_json.get('pb_deadlift_1rm'):
+                individual_fields['pb_deadlift_1rm_lb'] = extract_weight_from_object(profile_json.get('pb_deadlift_1rm'))
         
         # Extract from score_data (main scores only)
         if score_data and isinstance(score_data, dict):
