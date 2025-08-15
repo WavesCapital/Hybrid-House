@@ -547,9 +547,9 @@ const ShareCardStudio = () => {
 
       <div className="flex h-[calc(100vh-73px)] bg-[#0E0E11]">
         {/* Left Dock */}
-        <div className="w-[336px] bg-[#0A0B0C] border-r border-white/10 flex flex-col min-h-full">
-          <Tabs defaultValue="backgrounds" className="flex-1">
-            <TabsList className="grid w-full grid-cols-2 bg-[#0E0E11] border-b border-white/10">
+        <div className="w-[336px] bg-[#0A0B0C] border-r border-white/10 flex flex-col h-full">
+          <Tabs defaultValue="backgrounds" className="flex flex-col h-full">
+            <TabsList className="grid w-full grid-cols-2 bg-[#0E0E11] border-b border-white/10 flex-shrink-0">
               <TabsTrigger value="backgrounds" className="text-white data-[state=active]:bg-[#08F0FF] data-[state=active]:text-black">
                 Backgrounds
               </TabsTrigger>
@@ -558,8 +558,8 @@ const ShareCardStudio = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="backgrounds" className="bg-[#0A0B0C] flex-1 flex flex-col">
-              <div className="p-4 space-y-4 overflow-y-auto flex-1">
+            <TabsContent value="backgrounds" className="bg-[#0A0B0C] flex-1 overflow-hidden">
+              <div className="h-full p-4 space-y-4 overflow-y-auto">
                 <div className="text-sm text-white/60 mb-4">
                   Click a gradient to apply it to your canvas
                 </div>
