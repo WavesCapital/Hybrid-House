@@ -140,6 +140,84 @@ const HybridScoreForm = () => {
             const strengthAppSelection = userProfile.strength_app;
             const isKnownStrengthApp = strengthAppSelection && knownStrengthApps.includes(strengthAppSelection);
 
+            // Find highest scoring athlete profile for performance data pre-filling
+            let bestPerformanceData = {};
+            if (athleteProfiles.length > 0) {
+              // Sort by hybrid score (highest first)
+              const sortedProfiles = athleteProfiles.sort((a, b) => {
+                const scoreA = a.score_data?.hybridScore || 0;
+                const scoreB = b.score_data?.hybridScore || 0;
+                return scoreB - scoreA;
+              });
+
+              const bestProfile = sortedProfiles[0];
+              const bestProfileData = bestProfile.profile_json || {};
+
+              console.log('🔍 Using best profile for performance data:', {
+                profileId: bestProfile.id,
+                hybridScore: bestProfile.score_data?.hybridScore,
+                created: bestProfile.created_at
+              });
+
+              // Extract performance data from best profile
+              bestPerformanceData = {
+                // Running Performance Records
+                pb_mile: bestProfileData.pb_mile || '',
+                pb_5k: bestProfileData.pb_5k || '',
+                pb_10k: bestProfileData.pb_10k || '',
+                pb_half_marathon: bestProfileData.pb_half_marathon || '',
+                pb_marathon: bestProfileData.pb_marathon || '',
+                weekly_miles: bestProfileData.weekly_miles ? bestProfileData.weekly_miles.toString() : '',
+                long_run: bestProfileData.long_run ? bestProfileData.long_run.toString() : '',
+
+                // Strength Performance Records
+                pb_bench_1rm: bestProfileData.pb_bench_1rm ? bestProfileData.pb_bench_1rm.toString() : '',
+                pb_squat_1rm: bestProfileData.pb_squat_1rm ? bestProfileData.pb_squat_1rm.toString() : '',
+                pb_deadlift_1rm: bestProfileData.pb_deadlift_1rm ? bestProfileData.pb_deadlift_1rm.toString() : '',
+
+                // Body Metrics (if better than user profile)
+                vo2max: bestProfileData.body_metrics?.vo2max ? bestProfileData.body_metrics.vo2max.toString() : (userProfile.vo2_max ? userProfile.vo2_max.toString() : ''),
+                resting_hr_bpm: bestProfileData.body_metrics?.resting_hr_bpm ? bestProfileData.body_metrics.resting_hr_bpm.toString() : (userProfile.resting_hr_bpm ? userProfile.resting_hr_bpm.toString() : ''),
+                hrv_ms: bestProfileData.body_metrics?.hrv_ms ? bestProfileData.body_metrics.hrv_ms.toString() : (userProfile.hrv_ms ? userProfile.hrv_ms.toString() : ''),
+
+                // Apps (prefer from best profile, fallback to user profile)
+                runningApp: bestProfileData.running_app || userProfile.running_app || '',
+                strengthApp: (() => {
+                  const bestStrengthApp = bestProfileData.strength_app;
+                  if (bestStrengthApp && knownStrengthApps.includes(bestStrengthApp)) {
+                    return bestStrengthApp;
+                  } else if (bestStrengthApp) {
+                    return 'Other';
+                  } else {
+                    return isKnownStrengthApp ? strengthAppSelection : (strengthAppSelection ? 'Other' : '');
+                  }
+                })(),
+                customStrengthApp: (() => {
+                  const bestStrengthApp = bestProfileData.strength_app;
+                  if (bestStrengthApp && !knownStrengthApps.includes(bestStrengthApp)) {
+                    return bestStrengthApp;
+                  } else {
+                    return isKnownStrengthApp ? '' : (strengthAppSelection || '');
+                  }
+                })(),
+              };
+
+              console.log('🔍 Extracted performance data from best profile:', {
+                runningPRs: {
+                  mile: bestPerformanceData.pb_mile,
+                  '5k': bestPerformanceData.pb_5k,
+                  '10k': bestPerformanceData.pb_10k,
+                  half: bestPerformanceData.pb_half_marathon,
+                  marathon: bestPerformanceData.pb_marathon,
+                },
+                strengthPRs: {
+                  bench: bestPerformanceData.pb_bench_1rm,
+                  squat: bestPerformanceData.pb_squat_1rm,
+                  deadlift: bestPerformanceData.pb_deadlift_1rm,
+                }
+              });
+            }
+
             setFormData(prev => ({
               ...prev,
               // Personal Information
