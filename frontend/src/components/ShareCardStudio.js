@@ -650,38 +650,153 @@ const ShareCardStudio = () => {
 };
 
 // Gradient Tile Component
-const GradientTile = ({ id, gradient, onDrop }) => {
+const GradientTile = ({ id, gradient, isSelected, onClick }) => {
   return (
     <div
-      className="relative group cursor-grab active:cursor-grabbing"
-      draggable
-      onDragEnd={(e) => onDrop(id, e)}
+      className={`relative group cursor-pointer transition-all duration-200 ${
+        isSelected ? 'ring-2 ring-[#08F0FF] ring-offset-2 ring-offset-[#0A0B0C]' : 'hover:ring-1 hover:ring-[#08F0FF]/50'
+      }`}
+      onClick={onClick}
     >
       <div
-        className="w-full h-32 rounded-lg border border-white/20 transition-all duration-200 group-hover:border-[#08F0FF]/50 group-hover:shadow-lg group-hover:shadow-[#08F0FF]/20"
+        className={`w-full h-24 rounded-lg border transition-all duration-200 ${
+          isSelected ? 'border-[#08F0FF]' : 'border-white/20 group-hover:border-[#08F0FF]/50'
+        }`}
         style={{ background: gradient.css }}
       />
-      <p className="text-xs text-white/70 mt-2 text-center group-hover:text-white transition-colors">
+      <p className={`text-xs mt-2 text-center transition-colors ${
+        isSelected ? 'text-[#08F0FF] font-medium' : 'text-white/70 group-hover:text-white'
+      }`}>
         {gradient.name}
       </p>
     </div>
   );
 };
 
-// Component Tile
-const ComponentTile = ({ type, title, description, prsData, onAdd }) => {
+// Component Preview Tile
+const ComponentPreviewTile = ({ type, title, description, prsData, onAdd, preview }) => {
   return (
-    <Card className="bg-[#0E0E11] border-white/20 hover:border-[#08F0FF]/50 transition-all duration-200 cursor-pointer" onClick={onAdd}>
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-medium text-white">{title}</h3>
-            <p className="text-xs text-white/60 mt-1">{description}</p>
+    <Card className="bg-[#0E0E11] border-white/20 hover:border-[#08F0FF]/50 transition-all duration-200 cursor-pointer overflow-hidden" onClick={onAdd}>
+      <CardContent className="p-0">
+        {/* Preview Area */}
+        <div className="h-20 bg-gradient-to-r from-[#0A0B0C] to-[#0E0E11] flex items-center justify-center border-b border-white/10">
+          <div className="scale-50 transform-gpu">
+            {preview}
           </div>
-          <Plus className="w-4 h-4 text-[#08F0FF]" />
+        </div>
+        
+        {/* Info Area */}
+        <div className="p-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-sm font-medium text-white">{title}</h4>
+              <p className="text-xs text-white/60 mt-0.5">{description}</p>
+            </div>
+            <Plus className="w-4 h-4 text-[#08F0FF] flex-shrink-0" />
+          </div>
         </div>
       </CardContent>
     </Card>
+  );
+};
+
+// Preview Components
+const HybridScoreDialPreview = ({ prsData }) => {
+  const hybridScore = prsData?.meta?.hybrid_score || 0;
+  return (
+    <div className="w-16 h-16 relative">
+      <svg width="64" height="64" viewBox="0 0 64 64" className="transform -rotate-90">
+        <circle cx="32" cy="32" r="28" stroke="rgba(255,255,255,0.1)" strokeWidth="4" fill="none" />
+        <circle
+          cx="32" cy="32" r="28"
+          stroke="#08F0FF"
+          strokeWidth="4"
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={`${hybridScore * 1.76} 176`}
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-xs font-bold text-white">{Math.round(hybridScore)}</span>
+      </div>
+    </div>
+  );
+};
+
+const ScoreChipPreview = ({ prsData }) => {
+  const hybridScore = prsData?.meta?.hybrid_score || 0;
+  return (
+    <div className="bg-black/30 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1">
+      <span className="text-xs font-bold text-white">HYBRID {Math.round(hybridScore)}</span>
+    </div>
+  );
+};
+
+const PRLiftsPreview = ({ prsData }) => {
+  const strength = prsData?.strength || {};
+  return (
+    <div className="bg-black/20 border border-white/20 rounded-lg p-2 space-y-1">
+      <div className="flex justify-between items-center">
+        <span className="text-xs text-white/80">Squat</span>
+        <span className="text-xs text-white font-medium">{strength.squat_lb ? `${Math.round(strength.squat_lb)}lb` : '—'}</span>
+      </div>
+      <div className="flex justify-between items-center">
+        <span className="text-xs text-white/80">Bench</span>
+        <span className="text-xs text-white font-medium">{strength.bench_lb ? `${Math.round(strength.bench_lb)}lb` : '—'}</span>
+      </div>
+    </div>
+  );
+};
+
+const PRRunsPreview = ({ prsData }) => {
+  const running = prsData?.running || {};
+  const formatTime = (seconds) => {
+    if (!seconds) return '—';
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+  
+  return (
+    <div className="bg-black/20 border border-white/20 rounded-lg p-2 space-y-1">
+      <div className="flex justify-between items-center">
+        <span className="text-xs text-white/80">Mile</span>
+        <span className="text-xs text-white font-medium">{formatTime(running.mile_s)}</span>
+      </div>
+      <div className="flex justify-between items-center">
+        <span className="text-xs text-white/80">5K</span>
+        <span className="text-xs text-white font-medium">{formatTime(running['5k_s'])}</span>
+      </div>
+    </div>
+  );
+};
+
+const NameplatePreview = ({ prsData }) => {
+  const firstName = prsData?.meta?.first_name || '';
+  const lastName = prsData?.meta?.last_name || '';
+  const displayName = prsData?.meta?.display_name || `${firstName} ${lastName}`.trim() || 'Athlete';
+  
+  return (
+    <div className="text-center">
+      <div className="text-sm font-bold text-white" style={{ textShadow: '0 0 10px rgba(8,240,255,0.3)' }}>
+        {displayName}
+      </div>
+    </div>
+  );
+};
+
+const BalanceChipsPreview = ({ prsData }) => {
+  return (
+    <div className="flex gap-1">
+      <div className="bg-black/30 border border-white/20 rounded-full px-2 py-0.5 flex items-center gap-1">
+        <div className="w-1.5 h-1.5 rounded-full bg-[#FFA42D]" />
+        <span className="text-xs text-white">STR</span>
+      </div>
+      <div className="bg-black/30 border border-white/20 rounded-full px-2 py-0.5 flex items-center gap-1">
+        <div className="w-1.5 h-1.5 rounded-full bg-[#00FF88]" />
+        <span className="text-xs text-white">END</span>
+      </div>
+    </div>
   );
 };
 
