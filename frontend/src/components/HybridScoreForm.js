@@ -304,13 +304,14 @@ const HybridScoreForm = () => {
           let webhookData;
           try {
             webhookData = JSON.parse(responseText);
-            console.log('Parsed webhook data:', webhookData);
+            console.log('🔥 WEBHOOK PARSED DATA:', webhookData);
+            console.log('🔥 WEBHOOK SUCCESS - Score data received!');
           } catch (parseError) {
-            console.error('Failed to parse webhook response:', parseError);
-            console.error('Response text was:', responseText);
+            console.error('🚨 WEBHOOK PARSE ERROR:', parseError);
+            console.error('🚨 WEBHOOK RESPONSE TEXT WAS:', responseText);
             toast({
-              title: "Score Calculation Issue",
-              description: "The scoring service returned an invalid response format. Your profile has been created successfully.",
+              title: "Score Data Format Issue",
+              description: "The scoring service returned data in an unexpected format. Your profile has been created successfully.",
               variant: "destructive",
               duration: 5000,
             });
