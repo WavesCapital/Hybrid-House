@@ -142,6 +142,227 @@ async def get_current_user(payload: dict = Depends(verify_jwt)):
 async def read_root():
     return {"message": "Hybrid Lab API with Supabase"}
 
+# Share Card Studio API Endpoints
+@api_router.get("/me/prs")
+async def get_my_prs(user: dict = Depends(verify_jwt)):
+    """Get current user's personal records for share card studio"""
+    try:
+        user_id = user.get('sub')
+        
+        # Get user profile for basic info
+        user_profile_result = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
+        user_profile = user_profile_result.data[0] if user_profile_result.data else {}
+        
+        # Get latest athlete profile with complete score data for PRs
+        athlete_profiles_result = supabase.table('athlete_profiles').select('*').eq('user_id', user_id).not_.is_('score_data', 'null').order('created_at', desc=True).limit(1).execute()
+        
+        latest_profile = athlete_profiles_result.data[0] if athlete_profiles_result.data else {}
+        profile_json = latest_profile.get('profile_json', {})
+        score_data = latest_profile.get('score_data', {})
+        
+        # Helper function to safely convert seconds to time format
+        def seconds_to_time_format(seconds):
+            if not seconds:
+                return None
+            try:
+                seconds = int(seconds)
+                if seconds >= 3600:  # For marathon times (HH:MM:SS)
+                    hours = seconds // 3600
+                    minutes = (seconds % 3600) // 60
+                    secs = seconds % 60
+                    return f"{hours}:{minutes:02d}:{secs:02d}"
+                else:  # For shorter distances (MM:SS)
+                    minutes = seconds // 60
+                    secs = seconds % 60
+                    return f"{minutes}:{secs:02d}"
+            except:
+                return None
+        
+        # Extract strength data with bodyweight calculation
+        bodyweight_lb = latest_profile.get('weight_lb') or user_profile.get('weight_lb') or profile_json.get('body_metrics', {}).get('weight_lb')
+        
+        # Convert weight objects to just the weight value
+        def extract_weight(weight_obj):
+            if isinstance(weight_obj, dict):
+                return weight_obj.get('weight_lb') or weight_obj.get('weight')
+            return weight_obj
+        
+        squat_lb = extract_weight(profile_json.get('pb_squat_1rm')) or latest_profile.get('pb_squat_1rm_lb')
+        bench_lb = extract_weight(profile_json.get('pb_bench_1rm')) or latest_profile.get('pb_bench_1rm_lb')
+        deadlift_lb = extract_weight(profile_json.get('pb_deadlift_1rm')) or latest_profile.get('pb_deadlift_1rm_lb')
+        
+        # Build response following the specified contract
+        response = {
+            "strength": {
+                "squat_lb": squat_lb,
+                "bench_lb": bench_lb,
+                "deadlift_lb": deadlift_lb,
+                "bodyweight_lb": bodyweight_lb,
+                "tested_at": latest_profile.get('created_at', '').split('T')[0] if latest_profile.get('created_at') else None
+            },
+            "running": {
+                "400m_s": None,  # Not currently tracked
+                "mile_s": latest_profile.get('pb_mile_seconds') or profile_json.get('pb_mile_seconds'),
+                "5k_s": latest_profile.get('pb_5k_seconds') or profile_json.get('pb_5k_seconds'),
+                "10k_s": latest_profile.get('pb_10k_seconds') or profile_json.get('pb_10k_seconds'),
+                "half_s": latest_profile.get('pb_half_marathon_seconds') or profile_json.get('pb_half_marathon_seconds'),
+                "marathon_s": latest_profile.get('pb_marathon_seconds') or profile_json.get('pb_marathon_seconds'),
+                "tested_at": latest_profile.get('created_at', '').split('T')[0] if latest_profile.get('created_at') else None
+            },
+            "meta": {
+                "vo2max": latest_profile.get('vo2_max') or profile_json.get('body_metrics', {}).get('vo2_max'),
+                "hybrid_score": score_data.get('hybridScore'),
+                "display_name": user_profile.get('display_name') or user_profile.get('name', '').split()[0],
+                "first_name": user_profile.get('name', '').split()[0] if user_profile.get('name') else '',
+                "last_name": ' '.join(user_profile.get('name', '').split()[1:]) if user_profile.get('name') and len(user_profile.get('name', '').split()) > 1 else ''
+            }
+        }
+        
+        return response
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error fetching PRs: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching PRs: {str(e)}"
+        )
+
+@api_router.post("/me/prs")
+async def update_my_prs(prs_data: dict, user: dict = Depends(verify_jwt)):
+    """Update current user's personal records and save to profile"""
+    try:
+        user_id = user.get('sub')
+        
+        # Get user profile
+        user_profile_result = supabase.table('user_profiles').select('*').eq('user_id', user_id).execute()
+        
+        # Get latest athlete profile or create new one
+        athlete_profiles_result = supabase.table('athlete_profiles').select('*').eq('user_id', user_id).order('created_at', desc=True).limit(1).execute()
+        
+        # Helper function to convert time format to seconds
+        def time_to_seconds(time_str):
+            if not time_str:
+                return None
+            try:
+                if isinstance(time_str, str) and ':' in time_str:
+                    parts = time_str.split(':')
+                    if len(parts) == 2:  # MM:SS
+                        return int(parts[0]) * 60 + int(parts[1])
+                    elif len(parts) == 3:  # HH:MM:SS
+                        return int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
+                return int(time_str)
+            except:
+                return None
+        
+        # Helper function to safely convert seconds to time format
+        def seconds_to_time_format(seconds):
+            if not seconds:
+                return None
+            try:
+                seconds = int(seconds)
+                if seconds >= 3600:  # For marathon times (HH:MM:SS)
+                    hours = seconds // 3600
+                    minutes = (seconds % 3600) // 60
+                    secs = seconds % 60
+                    return f"{hours}:{minutes:02d}:{secs:02d}"
+                else:  # For shorter distances (MM:SS)
+                    minutes = seconds // 60
+                    secs = seconds % 60
+                    return f"{minutes}:{secs:02d}"
+            except:
+                return None
+        
+        # Update user profile with bodyweight if provided
+        if 'strength' in prs_data and prs_data['strength'].get('bodyweight_lb'):
+            try:
+                user_update = {
+                    'weight_lb': prs_data['strength']['bodyweight_lb'],
+                    'updated_at': datetime.utcnow().isoformat()
+                }
+                supabase.table('user_profiles').update(user_update).eq('user_id', user_id).execute()
+            except Exception as e:
+                print(f"Warning: Could not update user profile weight: {e}")
+        
+        if athlete_profiles_result.data:
+            # Update existing profile
+            profile = athlete_profiles_result.data[0]
+            profile_json = profile.get('profile_json', {})
+            
+            # Update strength data
+            if 'strength' in prs_data:
+                strength_data = prs_data['strength']
+                if strength_data.get('squat_lb'):
+                    profile_json['pb_squat_1rm'] = {'weight_lb': strength_data['squat_lb']}
+                if strength_data.get('bench_lb'):
+                    profile_json['pb_bench_1rm'] = {'weight_lb': strength_data['bench_lb']}
+                if strength_data.get('deadlift_lb'):
+                    profile_json['pb_deadlift_1rm'] = {'weight_lb': strength_data['deadlift_lb']}
+                if strength_data.get('bodyweight_lb'):
+                    if 'body_metrics' not in profile_json:
+                        profile_json['body_metrics'] = {}
+                    profile_json['body_metrics']['weight_lb'] = strength_data['bodyweight_lb']
+            
+            # Update running data
+            if 'running' in prs_data:
+                running_data = prs_data['running']
+                if running_data.get('mile_s'):
+                    profile_json['pb_mile'] = seconds_to_time_format(running_data['mile_s'])
+                if running_data.get('5k_s'):
+                    profile_json['pb_5k'] = seconds_to_time_format(running_data['5k_s'])
+                if running_data.get('10k_s'):
+                    profile_json['pb_10k'] = seconds_to_time_format(running_data['10k_s'])
+                if running_data.get('half_s'):
+                    profile_json['pb_half_marathon'] = seconds_to_time_format(running_data['half_s'])
+                if running_data.get('marathon_s'):
+                    profile_json['pb_marathon'] = seconds_to_time_format(running_data['marathon_s'])
+            
+            # Update meta data
+            if 'meta' in prs_data and prs_data['meta'].get('vo2max'):
+                if 'body_metrics' not in profile_json:
+                    profile_json['body_metrics'] = {}
+                profile_json['body_metrics']['vo2_max'] = prs_data['meta']['vo2max']
+            
+            # Extract individual fields for database optimization
+            individual_fields = extract_individual_fields(profile_json)
+            
+            # Update profile
+            update_data = {
+                'profile_json': profile_json,
+                'updated_at': datetime.utcnow().isoformat(),
+                **individual_fields
+            }
+            
+            try:
+                result = supabase.table('athlete_profiles').update(update_data).eq('id', profile['id']).execute()
+            except Exception as db_error:
+                # Fallback to JSON-only update if individual columns don't exist
+                if "does not exist" in str(db_error).lower():
+                    fallback_data = {
+                        'profile_json': profile_json,
+                        'updated_at': datetime.utcnow().isoformat()
+                    }
+                    result = supabase.table('athlete_profiles').update(fallback_data).eq('id', profile['id']).execute()
+                else:
+                    raise db_error
+                    
+        else:
+            # Create new athlete profile (this should rarely happen for authenticated users)
+            return {"error": "No athlete profile found. Please complete the hybrid score form first."}
+        
+        # Return updated data in the same format as GET
+        return await get_my_prs(user)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error updating PRs: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error updating PRs: {str(e)}"
+        )
+
 @api_router.get("/test-score")
 async def get_test_score():
     """Test endpoint that returns sample score data with new structure"""
