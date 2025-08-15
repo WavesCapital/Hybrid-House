@@ -155,14 +155,17 @@ test_plan:
 user_problem_statement: "When I click 'Calculate Hybrid Score' the button state changes to say 'Calculating Score...' for about two seconds then it changes back to 'Calculate Hybrid Score' and nothing happens. The webhook isn't being called. During testing the webhook was called perfectly, but in actual usage it fails silently."
 
 frontend:
-  - task: "User Profile Data Storage and Hybrid Score History Display"
+  - task: "Hybrid Score Form Submission and Webhook Integration"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/components/HybridScoreForm.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "critical"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
+      - working: false
+        agent: "main"
+        comment: "USER REPORTED CRITICAL BUG: User reports that clicking 'Calculate Hybrid Score' button shows 'Calculating Score...' loading state but then reverts back to 'Calculate Hybrid Score' without submitting form or calling webhook. This is a silent failure that needs immediate investigation. Form was working in testing but failing in actual usage."
       - working: true
         agent: "testing"
         comment: "🎯 CRITICAL FIXES TEST COMPLETE - USER PROFILE DATA STORAGE & HYBRID SCORE HISTORY: Executed comprehensive testing of the two critical fixes as requested in the review. MAJOR SUCCESS ACHIEVED (75% SUCCESS RATE): ✅ Fix 1 - User Profile Data Storage: Height/weight data (height_in, weight_lb) successfully stored and displayed in profile. Console logs show '📊 Extracted body metrics: {height_in: 70, weight_lb: 180}' confirming backend storage is working. ✅ Fix 2 - Hybrid Score History Display: 'Hybrid Score History' section found on profile page with score data table displaying properly. Profile shows 13 athlete profiles with complete score breakdown. ❌ Authentication Issue: Login failed with 400 error from Supabase, so form submission used public endpoint instead of authenticated endpoint. Console shows '🔥 STEP 1: User not authenticated - using public endpoint' instead of expected authenticated flow. ✅ Form Functionality: Form loads correctly, accepts data input, and processes submissions successfully. CRITICAL VERIFICATION: Both primary fixes are working correctly - user profile data is being stored with height_in and weight_lb fields, and hybrid score history is displaying properly on the profile page. The authentication issue is a separate login problem, not related to the core fixes being tested. The main functionality requested in the review is operational."
