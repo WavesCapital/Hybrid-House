@@ -228,41 +228,81 @@ const HybridScoreForm = () => {
               country: userProfile.country || 'US',
               wearables: Array.isArray(userProfile.wearables) ? userProfile.wearables : [],
               
-              // Body Metrics
+              // Body Metrics (prefer performance data, fallback to user profile)
               weight_lb: userProfile.weight_lb ? userProfile.weight_lb.toString() : '',
               height_ft: feet > 0 ? feet.toString() : '',
               height_in: inches > 0 ? inches.toString() : '',
-              vo2max: userProfile.vo2_max ? userProfile.vo2_max.toString() : '',
-              resting_hr_bpm: userProfile.resting_hr_bpm ? userProfile.resting_hr_bpm.toString() : '',
-              hrv_ms: userProfile.hrv_ms ? userProfile.hrv_ms.toString() : '',
+              vo2max: bestPerformanceData.vo2max || (userProfile.vo2_max ? userProfile.vo2_max.toString() : ''),
+              resting_hr_bpm: bestPerformanceData.resting_hr_bpm || (userProfile.resting_hr_bpm ? userProfile.resting_hr_bpm.toString() : ''),
+              hrv_ms: bestPerformanceData.hrv_ms || (userProfile.hrv_ms ? userProfile.hrv_ms.toString() : ''),
               
-              // Running Performance
-              runningApp: userProfile.running_app || '',
-              weekly_miles: userProfile.weekly_miles ? userProfile.weekly_miles.toString() : '',
-              long_run: userProfile.long_run_miles ? userProfile.long_run_miles.toString() : '',
+              // Running Performance (from best profile or user profile)
+              runningApp: bestPerformanceData.runningApp || userProfile.running_app || '',
+              pb_mile: bestPerformanceData.pb_mile || '',
+              pb_5k: bestPerformanceData.pb_5k || '',
+              pb_10k: bestPerformanceData.pb_10k || '',
+              pb_half_marathon: bestPerformanceData.pb_half_marathon || '',
+              pb_marathon: bestPerformanceData.pb_marathon || '',
+              weekly_miles: bestPerformanceData.weekly_miles || (userProfile.weekly_miles ? userProfile.weekly_miles.toString() : ''),
+              long_run: bestPerformanceData.long_run || (userProfile.long_run_miles ? userProfile.long_run_miles.toString() : ''),
               
-              // Strength Performance
-              strengthApp: isKnownStrengthApp ? strengthAppSelection : (strengthAppSelection ? 'Other' : ''),
-              customStrengthApp: isKnownStrengthApp ? '' : (strengthAppSelection || ''),
+              // Strength Performance (from best profile)
+              strengthApp: bestPerformanceData.strengthApp || (isKnownStrengthApp ? strengthAppSelection : (strengthAppSelection ? 'Other' : '')),
+              customStrengthApp: bestPerformanceData.customStrengthApp || (isKnownStrengthApp ? '' : (strengthAppSelection || '')),
+              pb_bench_1rm: bestPerformanceData.pb_bench_1rm || '',
+              pb_squat_1rm: bestPerformanceData.pb_squat_1rm || '',
+              pb_deadlift_1rm: bestPerformanceData.pb_deadlift_1rm || '',
             }));
 
-            toast({
-              title: "Form Pre-filled! ✨",
-              description: "Your profile information has been loaded automatically.",
-              duration: 3000,
-            });
+            // Show different toast messages based on data sources
+            if (athleteProfiles.length > 0) {
+              toast({
+                title: "Form Pre-filled! 🏆",
+                description: `Loaded your profile info and performance data from your best hybrid score (${athleteProfiles[0]?.score_data?.hybridScore || 'N/A'}).`,
+                duration: 4000,
+              });
+            } else {
+              toast({
+                title: "Form Pre-filled! ✨",
+                description: "Your profile information has been loaded automatically.",
+                duration: 3000,
+              });
+            }
 
-            console.log('🔍 Form pre-filled with data:', {
-              name: `${firstName} ${lastName}`,
-              sex: formattedSex,
-              dob: formattedDob,
-              country: userProfile.country,
-              height: `${feet}'${inches}"`,
-              weight: userProfile.weight_lb,
+            console.log('🔍 Form pre-filled with complete data:', {
+              personalInfo: {
+                name: `${firstName} ${lastName}`,
+                sex: formattedSex,
+                dob: formattedDob,
+                country: userProfile.country,
+              },
+              bodyMetrics: {
+                height: `${feet}'${inches}"`,
+                weight: userProfile.weight_lb,
+                vo2max: bestPerformanceData.vo2max || userProfile.vo2_max,
+                rhr: bestPerformanceData.resting_hr_bpm || userProfile.resting_hr_bpm,
+                hrv: bestPerformanceData.hrv_ms || userProfile.hrv_ms,
+              },
+              runningPRs: {
+                mile: bestPerformanceData.pb_mile,
+                '5k': bestPerformanceData.pb_5k,
+                '10k': bestPerformanceData.pb_10k,
+                half: bestPerformanceData.pb_half_marathon,
+                marathon: bestPerformanceData.pb_marathon,
+                weeklyMiles: bestPerformanceData.weekly_miles,
+                longRun: bestPerformanceData.long_run,
+              },
+              strengthPRs: {
+                bench: bestPerformanceData.pb_bench_1rm,
+                squat: bestPerformanceData.pb_squat_1rm,
+                deadlift: bestPerformanceData.pb_deadlift_1rm,
+              },
               apps: {
-                running: userProfile.running_app,
-                strength: strengthAppSelection
-              }
+                running: bestPerformanceData.runningApp,
+                strength: bestPerformanceData.strengthApp,
+                customStrength: bestPerformanceData.customStrengthApp,
+              },
+              dataSource: athleteProfiles.length > 0 ? 'best_profile_and_user_profile' : 'user_profile_only'
             });
           } else {
             console.log('🔍 No user profile data available for pre-filling');
