@@ -113,6 +113,10 @@ function AppContent() {
             element={<DesignSystemPage />} 
           />
           <Route 
+            path="/iphone-test" 
+            element={<IPhoneMockupTest />} 
+          />
+          <Route 
             path="/share" 
             element={
               <ProtectedRoute>
