@@ -798,8 +798,8 @@ const GradientTile = ({ id, gradient, isSelected, onClick }) => {
   );
 };
 
-// Component Preview Tile
-const ComponentPreviewTile = ({ type, title, description, prsData, onAdd, preview }) => {
+// Component Preview Tile - Clean visual-only approach
+const ComponentPreviewTile = ({ type, title, prsData, onAdd, preview }) => {
   const handleClick = () => {
     console.log('Component tile clicked:', type);
     onAdd();
@@ -808,22 +808,22 @@ const ComponentPreviewTile = ({ type, title, description, prsData, onAdd, previe
   return (
     <Card className="bg-[#0E0E11] border-white/20 hover:border-[#08F0FF]/50 transition-all duration-200 cursor-pointer overflow-hidden" onClick={handleClick}>
       <CardContent className="p-0">
-        {/* Preview Area */}
-        <div className="h-20 bg-gradient-to-r from-[#0A0B0C] to-[#0E0E11] flex items-center justify-center border-b border-white/10">
-          <div className="scale-50 transform-gpu">
+        {/* Enlarged Preview Area */}
+        <div className="h-32 bg-gradient-to-r from-[#0A0B0C] to-[#0E0E11] flex items-center justify-center border-b border-white/10 relative">
+          <div className="scale-75 transform-gpu">
             {preview}
+          </div>
+          {/* Add Button Overlay */}
+          <div className="absolute top-2 right-2">
+            <div className="w-6 h-6 bg-[#08F0FF] rounded-full flex items-center justify-center">
+              <Plus className="w-3 h-3 text-black" />
+            </div>
           </div>
         </div>
         
-        {/* Info Area */}
+        {/* Title Only - No Description */}
         <div className="p-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <h4 className="text-sm font-medium text-white">{title}</h4>
-              <p className="text-xs text-white/60 mt-0.5">{description}</p>
-            </div>
-            <Plus className="w-4 h-4 text-[#08F0FF] flex-shrink-0" />
-          </div>
+          <h4 className="text-sm font-medium text-white text-center">{title}</h4>
         </div>
       </CardContent>
     </Card>
