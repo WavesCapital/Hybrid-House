@@ -107,6 +107,10 @@ function AppContent() {
             element={<HybridScoreResults />} 
           />
           <Route 
+            path="/design-system" 
+            element={<DesignSystemPage />} 
+          />
+          <Route 
             path="/interview" 
             element={
               <ProtectedRoute>
