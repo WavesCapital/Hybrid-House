@@ -84,6 +84,23 @@ const HybridScoreForm = () => {
             }
           );
 
+          // Also load user's athlete profiles to pre-fill performance data
+          let athleteProfiles = [];
+          try {
+            const athleteProfilesResponse = await axios.get(
+              `${BACKEND_URL}/api/user-profile/me/athlete-profiles`,
+              {
+                headers: {
+                  'Authorization': `Bearer ${session.access_token}`,
+                },
+              }
+            );
+            athleteProfiles = athleteProfilesResponse.data?.profiles || [];
+            console.log('🔍 Found athlete profiles for pre-filling:', athleteProfiles.length);
+          } catch (profileError) {
+            console.log('🔍 No previous athlete profiles found for pre-filling');
+          }
+
           const userProfile = response.data.user_profile;
           if (userProfile) {
             console.log('🔍 Pre-filling form with user profile data:', Object.keys(userProfile));
