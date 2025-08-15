@@ -1326,6 +1326,23 @@ const HybridScoreForm = () => {
 
                 <div className="field-group">
                   <label className="field-label">
+                    <span>Marathon PR (HH:MM:SS)</span>
+                    <span className="optional-indicator">optional</span>
+                  </label>
+                  <p className="field-description">
+                    Elite targets: <span className="field-description-highlight">sub-3:00 for males, sub-3:30 for females</span>. Marathon performance demonstrates exceptional endurance and pacing strategy.
+                  </p>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={formData.pb_marathon}
+                    onChange={(e) => handleInputChange('pb_marathon', e.target.value)}
+                    placeholder="3:15:00"
+                  />
+                </div>
+
+                <div className="field-group">
+                  <label className="field-label">
                     <span>Weekly Miles</span>
                     <span className="optional-indicator">optional</span>
                   </label>
