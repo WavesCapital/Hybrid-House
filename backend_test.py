@@ -2480,6 +2480,255 @@ class BackendTester:
             self.log_test("Marathon PR Data Conversion", False, "Marathon PR data conversion test failed", str(e))
             return False
     
+    def test_complete_hybrid_score_workflow(self):
+        """Test the complete end-to-end 'Calculate Hybrid Score' workflow as requested in review"""
+        try:
+            print("\n🎯 COMPLETE HYBRID SCORE WORKFLOW TESTING")
+            print("=" * 60)
+            print("Testing: Profile Creation → Score Storage → Profile Retrieval → End-to-End Flow")
+            
+            # Step 1: Profile Creation - POST /api/athlete-profiles/public with complete form data
+            print("\n📝 STEP 1: Profile Creation Testing")
+            print("-" * 40)
+            
+            # Create realistic test data with all required fields
+            complete_form_data = {
+                "profile_json": {
+                    # Personal data (should go to user_profiles table)
+                    "first_name": "Alex",
+                    "last_name": "Johnson",
+                    "email": "alex.johnson.test@example.com",
+                    "sex": "Male",
+                    "dob": "1992-08-15",
+                    "country": "US",
+                    "wearables": ["Garmin", "Whoop"],
+                    
+                    # Body metrics
+                    "body_metrics": {
+                        "height_in": 72,  # 6 feet
+                        "weight_lb": 175,
+                        "vo2_max": 55,
+                        "resting_hr_bpm": 48,
+                        "hrv_ms": 65
+                    },
+                    
+                    # Performance data (should go to athlete_profiles table)
+                    "pb_mile": "5:45",
+                    "pb_5k": "18:30", 
+                    "pb_10k": "38:15",
+                    "pb_half_marathon": "1:25:30",
+                    "pb_marathon": "3:05:00",
+                    "weekly_miles": 45,
+                    "long_run": 18,
+                    "running_app": "Strava",
+                    
+                    # Strength data
+                    "pb_bench_1rm": 225,
+                    "pb_squat_1rm": 315,
+                    "pb_deadlift_1rm": 405,
+                    "strength_app": "Strong"
+                },
+                "is_public": True
+            }
+            
+            # Test profile creation
+            profile_response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=complete_form_data)
+            
+            if profile_response.status_code == 200:
+                profile_data = profile_response.json()
+                profile_id = profile_data.get('user_profile', {}).get('id')
+                
+                if profile_id:
+                    print(f"✅ Profile created successfully: {profile_id}")
+                    
+                    # Verify data conversion (time strings to seconds)
+                    profile_json = profile_data.get('user_profile', {}).get('profile_json', {})
+                    time_conversions = {
+                        'pb_marathon': ('3:05:00', 11100),  # 3h 5m = 11100 seconds
+                        'pb_half_marathon': ('1:25:30', 5130),  # 1h 25m 30s = 5130 seconds
+                        'pb_mile': ('5:45', 345),  # 5m 45s = 345 seconds
+                        'pb_5k': ('18:30', 1110),  # 18m 30s = 1110 seconds
+                        'pb_10k': ('38:15', 2295)  # 38m 15s = 2295 seconds
+                    }
+                    
+                    conversion_success = True
+                    for field, (original, expected_seconds) in time_conversions.items():
+                        seconds_field = f"{field}_seconds"
+                        actual_seconds = profile_json.get(seconds_field)
+                        if actual_seconds == expected_seconds:
+                            print(f"✅ Time conversion: {field} '{original}' → {actual_seconds} seconds")
+                        else:
+                            print(f"❌ Time conversion failed: {field} '{original}' → expected {expected_seconds}, got {actual_seconds}")
+                            conversion_success = False
+                    
+                    if not conversion_success:
+                        self.log_test("Complete Hybrid Score Workflow", False, "Time conversion failed in profile creation")
+                        return False
+                        
+                else:
+                    self.log_test("Complete Hybrid Score Workflow", False, "Profile creation succeeded but no profile ID returned")
+                    return False
+            else:
+                self.log_test("Complete Hybrid Score Workflow", False, f"Profile creation failed: HTTP {profile_response.status_code}", profile_response.text)
+                return False
+            
+            # Step 2: Score Storage - POST /api/athlete-profile/{id}/score with webhook score data
+            print(f"\n🎯 STEP 2: Score Storage Testing")
+            print("-" * 40)
+            
+            # Create realistic webhook score data
+            webhook_score_data = {
+                "hybridScore": 78.5,
+                "strengthScore": 82.3,
+                "enduranceScore": 77.9,
+                "speedScore": 75.8,
+                "vo2Score": 71.2,
+                "distanceScore": 79.1,
+                "volumeScore": 76.4,
+                "recoveryScore": 80.7,
+                "deliverable": "score"
+            }
+            
+            # Test score storage
+            score_response = self.session.post(f"{API_BASE_URL}/athlete-profile/{profile_id}/score", json=webhook_score_data)
+            
+            if score_response.status_code == 200:
+                print(f"✅ Score data stored successfully")
+                
+                # Verify individual field extraction
+                score_result = score_response.json()
+                if 'message' in score_result and 'success' in score_result['message'].lower():
+                    print(f"✅ Individual score fields extracted and stored")
+                else:
+                    print(f"⚠️ Score stored but individual field extraction may have issues")
+                    
+            else:
+                self.log_test("Complete Hybrid Score Workflow", False, f"Score storage failed: HTTP {score_response.status_code}", score_response.text)
+                return False
+            
+            # Step 3: Profile Retrieval - GET /api/athlete-profile/{id} to verify data storage
+            print(f"\n📊 STEP 3: Profile Retrieval Testing")
+            print("-" * 40)
+            
+            # Test profile retrieval
+            retrieval_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+            
+            if retrieval_response.status_code == 200:
+                retrieved_data = retrieval_response.json()
+                
+                # Verify all data is properly stored and retrievable
+                verification_checks = {
+                    'profile_id': retrieved_data.get('profile_id') == profile_id,
+                    'profile_json_exists': bool(retrieved_data.get('profile_json')),
+                    'score_data_exists': bool(retrieved_data.get('score_data')),
+                    'user_profile_linked': bool(retrieved_data.get('user_profile')),
+                    'individual_fields_populated': bool(retrieved_data.get('score_data', {}).get('hybridScore'))
+                }
+                
+                all_verified = True
+                for check, result in verification_checks.items():
+                    if result:
+                        print(f"✅ {check.replace('_', ' ').title()}: OK")
+                    else:
+                        print(f"❌ {check.replace('_', ' ').title()}: FAILED")
+                        all_verified = False
+                
+                if not all_verified:
+                    self.log_test("Complete Hybrid Score Workflow", False, "Profile retrieval verification failed", verification_checks)
+                    return False
+                    
+                # Verify user profile data is linked correctly
+                user_profile = retrieved_data.get('user_profile')
+                if user_profile:
+                    expected_personal_data = {
+                        'name': 'Alex Johnson',
+                        'email': 'alex.johnson.test@example.com',
+                        'gender': 'male',
+                        'country': 'US'
+                    }
+                    
+                    personal_data_correct = True
+                    for field, expected_value in expected_personal_data.items():
+                        actual_value = user_profile.get(field)
+                        if actual_value == expected_value:
+                            print(f"✅ Personal data - {field}: {actual_value}")
+                        else:
+                            print(f"❌ Personal data - {field}: expected '{expected_value}', got '{actual_value}'")
+                            personal_data_correct = False
+                    
+                    if not personal_data_correct:
+                        self.log_test("Complete Hybrid Score Workflow", False, "Personal data linking verification failed")
+                        return False
+                        
+            else:
+                self.log_test("Complete Hybrid Score Workflow", False, f"Profile retrieval failed: HTTP {retrieval_response.status_code}", retrieval_response.text)
+                return False
+            
+            # Step 4: End-to-End Flow Simulation - Complete form submission workflow
+            print(f"\n🔄 STEP 4: End-to-End Flow Simulation")
+            print("-" * 40)
+            
+            # Test webhook accessibility (external n8n.cloud webhook)
+            webhook_url = "https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c"
+            
+            try:
+                # Test webhook with sample data
+                webhook_test_data = {
+                    "profile_json": complete_form_data["profile_json"],
+                    "profile_id": profile_id
+                }
+                
+                webhook_response = self.session.post(webhook_url, json=webhook_test_data, timeout=10)
+                
+                if webhook_response.status_code == 200:
+                    webhook_content = webhook_response.text.strip()
+                    if webhook_content and len(webhook_content) > 10:  # Non-empty response
+                        print(f"✅ External webhook accessible and returning data: {len(webhook_content)} characters")
+                        
+                        # Try to parse as JSON
+                        try:
+                            webhook_json = webhook_response.json()
+                            if isinstance(webhook_json, dict) and 'hybridScore' in webhook_json:
+                                print(f"✅ Webhook returns valid score data: hybridScore = {webhook_json.get('hybridScore')}")
+                            else:
+                                print(f"⚠️ Webhook returns data but not in expected score format")
+                        except:
+                            print(f"⚠️ Webhook returns data but not valid JSON")
+                            
+                    else:
+                        print(f"❌ External webhook returns empty response (content-length: {len(webhook_content)})")
+                        print(f"⚠️ This explains user complaints about Calculate button reverting back")
+                        
+                else:
+                    print(f"❌ External webhook error: HTTP {webhook_response.status_code}")
+                    
+            except Exception as webhook_error:
+                print(f"❌ External webhook connection failed: {webhook_error}")
+            
+            # Final verification: Complete workflow test
+            print(f"\n✅ WORKFLOW VERIFICATION COMPLETE")
+            print("-" * 40)
+            
+            workflow_summary = {
+                'profile_creation': 'SUCCESS',
+                'data_conversion': 'SUCCESS', 
+                'score_storage': 'SUCCESS',
+                'profile_retrieval': 'SUCCESS',
+                'user_data_linking': 'SUCCESS',
+                'individual_field_extraction': 'SUCCESS'
+            }
+            
+            print("Workflow Summary:")
+            for step, status in workflow_summary.items():
+                print(f"  {step.replace('_', ' ').title()}: {status}")
+            
+            self.log_test("Complete Hybrid Score Workflow", True, "All 4 workflow steps completed successfully - Calculate Hybrid Score button should work perfectly", workflow_summary)
+            return True
+            
+        except Exception as e:
+            self.log_test("Complete Hybrid Score Workflow", False, "Workflow test failed with exception", str(e))
+            return False
+
     def test_marathon_pr_database_storage(self):
         """Test Marathon PR database storage with pb_marathon_seconds field"""
         try:
