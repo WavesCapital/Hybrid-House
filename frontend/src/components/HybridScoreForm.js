@@ -348,13 +348,18 @@ const HybridScoreForm = () => {
       console.error('Error in submission:', error);
       console.error('Error stack:', error.stack);
       console.error('Error message:', error.message);
+      console.error('Error name:', error.name);
       
       let errorMessage = "Failed to calculate your hybrid score. Please try again.";
       
-      if (error.message.includes('Webhook failed')) {
+      if (error.name === 'AbortError') {
+        errorMessage = "Score calculation timed out. Please try again with a stable connection.";
+      } else if (error.message.includes('Webhook failed')) {
         errorMessage = "The scoring service is currently unavailable. Please try again later.";
       } else if (error.message.includes('JSON')) {
         errorMessage = "There was an issue processing your score. Your profile has been created.";
+      } else if (error.message.includes('fetch')) {
+        errorMessage = "Network error occurred. Please check your connection and try again.";
       }
       
       toast({
