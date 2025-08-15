@@ -44,7 +44,7 @@ const HybridScoreDial = ({ prsData, style, baseStyle }) => {
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke="url(#neonGradient)"
+            stroke="#08F0FF"
             strokeWidth={strokeWidth}
             fill="none"
             strokeLinecap="round"
