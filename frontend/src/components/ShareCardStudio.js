@@ -545,9 +545,9 @@ const ShareCardStudio = () => {
         </div>
       </div>
 
-      <div className="flex h-[calc(100vh-73px)]">
+      <div className="flex h-[calc(100vh-73px)] bg-[#0E0E11]">
         {/* Left Dock */}
-        <div className="w-[336px] bg-[#0A0B0C] border-r border-white/10 flex flex-col">
+        <div className="w-[336px] bg-[#0A0B0C] border-r border-white/10 flex flex-col min-h-full">
           <Tabs defaultValue="backgrounds" className="flex-1">
             <TabsList className="grid w-full grid-cols-2 bg-[#0E0E11] border-b border-white/10">
               <TabsTrigger value="backgrounds" className="text-white data-[state=active]:bg-[#08F0FF] data-[state=active]:text-black">
@@ -558,7 +558,7 @@ const ShareCardStudio = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="backgrounds" className="p-4 space-y-4">
+            <TabsContent value="backgrounds" className="p-4 space-y-4 bg-[#0A0B0C] flex-1">
               <div className="text-sm text-white/60 mb-4">
                 Click a gradient to apply it to your canvas
               </div>
@@ -593,7 +593,7 @@ const ShareCardStudio = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="components" className="p-4 space-y-6">
+            <TabsContent value="components" className="p-4 space-y-6 bg-[#0A0B0C] flex-1">
               {/* Score Components */}
               <div className="space-y-3">
                 <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
@@ -667,7 +667,7 @@ const ShareCardStudio = () => {
         </div>
 
         {/* Canvas Area */}
-        <div className="flex-1 flex items-center justify-center p-8 bg-[#0E0E11]">
+        <div className="flex-1 flex items-center justify-center p-8 bg-[#0E0E11] min-h-full">
           {/* iPhone Pro Max Realistic Mockup */}
           <div className="relative">
             {/* iPhone Device Frame */}
