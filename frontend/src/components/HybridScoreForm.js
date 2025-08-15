@@ -1560,7 +1560,7 @@ const HybridScoreForm = () => {
                     className="form-input"
                     value={formData.resting_hr_bpm}
                     onChange={(e) => handleInputChange('resting_hr_bpm', e.target.value)}
-                    placeholder="45"
+                    placeholder="60"
                   />
                   {formData.wearables.length > 0 && (
                     <div className="device-tips">
