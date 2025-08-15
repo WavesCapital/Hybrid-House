@@ -260,7 +260,38 @@ const HybridScoreForm = () => {
         );
 
         if (webhookResponse.ok) {
-          const webhookData = await webhookResponse.json();
+          const responseText = await webhookResponse.text();
+          console.log('Webhook response text:', responseText);
+          
+          if (!responseText || responseText.trim() === '') {
+            console.error('Webhook returned empty response');
+            toast({
+              title: "Score Calculation Issue",
+              description: "The scoring service is currently unavailable. Your profile has been created successfully.",
+              variant: "destructive",
+              duration: 5000,
+            });
+            // Navigate anyway so user can see their profile
+            navigate(`/hybrid-score/${finalProfileId}`);
+            return;
+          }
+          
+          let webhookData;
+          try {
+            webhookData = JSON.parse(responseText);
+          } catch (parseError) {
+            console.error('Failed to parse webhook response:', parseError);
+            toast({
+              title: "Score Calculation Issue",
+              description: "The scoring service returned an invalid response. Your profile has been created successfully.",
+              variant: "destructive",
+              duration: 5000,
+            });
+            // Navigate anyway so user can see their profile
+            navigate(`/hybrid-score/${finalProfileId}`);
+            return;
+          }
+          
           const scoreData = Array.isArray(webhookData) ? webhookData[0] : webhookData;
 
           // Store score data
