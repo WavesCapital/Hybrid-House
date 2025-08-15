@@ -335,16 +335,23 @@ def extract_individual_fields(profile_json: dict, score_data: dict = None) -> di
             return None
     
     def convert_time_to_seconds(time_str):
-        """Convert time string like '7:43' to seconds"""
+        """Convert time string like '7:43' or '3:15:00' to seconds"""
         if not time_str:
             return None
         try:
             if ':' in str(time_str):
                 parts = str(time_str).split(':')
                 if len(parts) == 2:
+                    # MM:SS format (e.g., "7:43" for mile time)
                     minutes = int(parts[0])
                     seconds = int(parts[1])
                     return minutes * 60 + seconds
+                elif len(parts) == 3:
+                    # HH:MM:SS format (e.g., "3:15:00" for marathon time)
+                    hours = int(parts[0])
+                    minutes = int(parts[1])
+                    seconds = int(parts[2])
+                    return hours * 3600 + minutes * 60 + seconds
             return safe_int(time_str)
         except (ValueError, TypeError):
             return None
