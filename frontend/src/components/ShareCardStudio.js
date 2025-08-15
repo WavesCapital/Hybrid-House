@@ -807,7 +807,7 @@ const ComponentPreviewTile = ({ type, title, description, prsData, onAdd, previe
 
 // Preview Components
 const HybridScoreDialPreview = ({ prsData }) => {
-  const hybridScore = prsData?.meta?.hybrid_score || 0;
+  const hybridScore = prsData?.meta?.hybrid_score || 85; // Default for preview
   return (
     <div className="w-16 h-16 relative">
       <svg width="64" height="64" viewBox="0 0 64 64" className="transform -rotate-90">
@@ -829,7 +829,7 @@ const HybridScoreDialPreview = ({ prsData }) => {
 };
 
 const ScoreChipPreview = ({ prsData }) => {
-  const hybridScore = prsData?.meta?.hybrid_score || 0;
+  const hybridScore = prsData?.meta?.hybrid_score || 85; // Default for preview
   return (
     <div className="bg-black/30 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1">
       <span className="text-xs font-bold text-white">HYBRID {Math.round(hybridScore)}</span>
@@ -839,15 +839,25 @@ const ScoreChipPreview = ({ prsData }) => {
 
 const PRLiftsPreview = ({ prsData }) => {
   const strength = prsData?.strength || {};
+  // Use real data or defaults for preview
+  const squat = strength.squat_lb || 315;
+  const bench = strength.bench_lb || 225;
+  const deadlift = strength.deadlift_lb || 405;
+  
   return (
-    <div className="bg-black/20 border border-white/20 rounded-lg p-2 space-y-1">
+    <div className="bg-black/20 border border-white/20 rounded-lg p-2 space-y-1 w-24">
+      <div className="text-xs text-white font-semibold mb-1">Strength</div>
       <div className="flex justify-between items-center">
         <span className="text-xs text-white/80">Squat</span>
-        <span className="text-xs text-white font-medium">{strength.squat_lb ? `${Math.round(strength.squat_lb)}lb` : '—'}</span>
+        <span className="text-xs text-white font-medium">{Math.round(squat)}</span>
       </div>
       <div className="flex justify-between items-center">
         <span className="text-xs text-white/80">Bench</span>
-        <span className="text-xs text-white font-medium">{strength.bench_lb ? `${Math.round(strength.bench_lb)}lb` : '—'}</span>
+        <span className="text-xs text-white font-medium">{Math.round(bench)}</span>
+      </div>
+      <div className="flex justify-between items-center">
+        <span className="text-xs text-white/80">Dead</span>
+        <span className="text-xs text-white font-medium">{Math.round(deadlift)}</span>
       </div>
     </div>
   );
@@ -855,6 +865,10 @@ const PRLiftsPreview = ({ prsData }) => {
 
 const PRRunsPreview = ({ prsData }) => {
   const running = prsData?.running || {};
+  // Use real data or defaults for preview
+  const mile = running.mile_s || 390; // 6:30 mile
+  const fiveK = running['5k_s'] || 1230; // 20:30 5k
+  
   const formatTime = (seconds) => {
     if (!seconds) return '—';
     const mins = Math.floor(seconds / 60);
@@ -863,27 +877,28 @@ const PRRunsPreview = ({ prsData }) => {
   };
   
   return (
-    <div className="bg-black/20 border border-white/20 rounded-lg p-2 space-y-1">
+    <div className="bg-black/20 border border-white/20 rounded-lg p-2 space-y-1 w-24">
+      <div className="text-xs text-white font-semibold mb-1">Running</div>
       <div className="flex justify-between items-center">
         <span className="text-xs text-white/80">Mile</span>
-        <span className="text-xs text-white font-medium">{formatTime(running.mile_s)}</span>
+        <span className="text-xs text-white font-medium">{formatTime(mile)}</span>
       </div>
       <div className="flex justify-between items-center">
         <span className="text-xs text-white/80">5K</span>
-        <span className="text-xs text-white font-medium">{formatTime(running['5k_s'])}</span>
+        <span className="text-xs text-white font-medium">{formatTime(fiveK)}</span>
       </div>
     </div>
   );
 };
 
 const NameplatePreview = ({ prsData }) => {
-  const firstName = prsData?.meta?.first_name || '';
-  const lastName = prsData?.meta?.last_name || '';
-  const displayName = prsData?.meta?.display_name || `${firstName} ${lastName}`.trim() || 'Athlete';
+  const firstName = prsData?.meta?.first_name || 'John';
+  const lastName = prsData?.meta?.last_name || 'Doe';
+  const displayName = prsData?.meta?.display_name || `${firstName} ${lastName}`.trim();
   
   return (
     <div className="text-center">
-      <div className="text-sm font-bold text-white" style={{ textShadow: '0 0 10px rgba(8,240,255,0.3)' }}>
+      <div className="text-sm font-bold text-white truncate max-w-[100px]" style={{ textShadow: '0 0 10px rgba(8,240,255,0.3)' }}>
         {displayName}
       </div>
     </div>
@@ -891,15 +906,19 @@ const NameplatePreview = ({ prsData }) => {
 };
 
 const BalanceChipsPreview = ({ prsData }) => {
+  // These would come from actual balance analysis
+  const strengthScore = 75;
+  const enduranceScore = 68;
+  
   return (
     <div className="flex gap-1">
       <div className="bg-black/30 border border-white/20 rounded-full px-2 py-0.5 flex items-center gap-1">
         <div className="w-1.5 h-1.5 rounded-full bg-[#FFA42D]" />
-        <span className="text-xs text-white">STR</span>
+        <span className="text-xs text-white">{strengthScore}</span>
       </div>
       <div className="bg-black/30 border border-white/20 rounded-full px-2 py-0.5 flex items-center gap-1">
         <div className="w-1.5 h-1.5 rounded-full bg-[#00FF88]" />
-        <span className="text-xs text-white">END</span>
+        <span className="text-xs text-white">{enduranceScore}</span>
       </div>
     </div>
   );
