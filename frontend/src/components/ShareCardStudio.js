@@ -972,9 +972,9 @@ const BalanceChipsPreview = ({ prsData }) => {
   );
 };
 
-// Component Renderer
+// Component Renderer with Fixed Scaling
 const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate, onDelete, onDuplicate }) => {
-  console.log('Rendering component:', component.type, 'at position:', { x: component.x, y: component.y });
+  console.log('Rendering component:', component.type, 'size:', { width: component.width, height: component.height });
   
   const handleSelect = (e) => {
     e.stopPropagation();
@@ -987,7 +987,13 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
   };
 
   const handleResizeStop = (e, direction, ref, delta, position) => {
-    console.log('Resize stopped:', { width: ref.offsetWidth, height: ref.offsetHeight, position });
+    console.log('Resize stopped:', { 
+      direction, 
+      width: ref.offsetWidth, 
+      height: ref.offsetHeight, 
+      position 
+    });
+    
     onUpdate(component.id, {
       width: ref.offsetWidth,
       height: ref.offsetHeight,
@@ -1017,8 +1023,21 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
         borderRadius: '4px'
       }}
     >
-      <div style={{ width: '100%', height: '100%' }}>
-        <ComponentContent component={component} prsData={prsData} />
+      <div 
+        className="component-content" 
+        style={{ 
+          width: '100%', 
+          height: '100%',
+          overflow: 'hidden'
+        }}
+      >
+        <ComponentContent 
+          component={component} 
+          prsData={prsData} 
+          containerWidth={component.width}
+          containerHeight={component.height}
+          isSelected={isSelected}
+        />
       </div>
     </Rnd>
   );
