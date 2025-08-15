@@ -459,9 +459,6 @@ const HybridScoreForm = () => {
           navigate(`/hybrid-score/${finalProfileId}`);
         }
       }
-      } else {
-        throw new Error('No profile ID returned');
-      }
 
     } catch (error) {
       console.error('Error in submission:', error);
