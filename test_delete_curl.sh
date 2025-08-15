@@ -3,7 +3,7 @@
 # Test Delete Athlete Profile Functionality using curl
 # Focus on testing the DELETE /api/athlete-profile/{profile_id} endpoint
 
-API_BASE_URL="https://hybrid-lab-ui.preview.emergentagent.com/api"
+API_BASE_URL="https://fitness-fusion.preview.emergentagent.com/api"
 TEST_UUID="550e8400-e29b-41d4-a716-446655440000"
 NONEXISTENT_UUID="550e8400-e29b-41d4-a716-446655440001"
 
