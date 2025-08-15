@@ -13,6 +13,7 @@ import ProfilePage from './components/ProfilePage';
 import PublicProfileView from './components/PublicProfileView';
 import UserProfileSettings from './components/UserProfileSettings';
 import Leaderboard from './components/Leaderboard';
+import DesignSystemPage from './components/DesignSystemPage';
 import Logout from './components/Logout';
 import './App.css';
 
