@@ -15,6 +15,7 @@ import UserProfileSettings from './components/UserProfileSettings';
 import Leaderboard from './components/Leaderboard';
 import DesignSystemPage from './components/DesignSystemPage';
 import ShareCardStudio from './components/ShareCardStudio';
+import ShareTest from './components/ShareTest';
 import Logout from './components/Logout';
 import './App.css';
 
