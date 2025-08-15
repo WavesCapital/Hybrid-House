@@ -461,10 +461,10 @@ const HybridScoreForm = () => {
       }
 
     } catch (error) {
-      console.error('Error in submission:', error);
-      console.error('Error stack:', error.stack);
-      console.error('Error message:', error.message);
-      console.error('Error name:', error.name);
+      console.error('🚨 MAIN ERROR HANDLER - Something went wrong:', error);
+      console.error('🚨 ERROR STACK:', error.stack);
+      console.error('🚨 ERROR MESSAGE:', error.message);
+      console.error('🚨 ERROR NAME:', error.name);
       
       let errorMessage = "Failed to calculate your hybrid score. Please try again.";
       
@@ -476,6 +476,10 @@ const HybridScoreForm = () => {
         errorMessage = "There was an issue processing your score. Your profile has been created.";
       } else if (error.message.includes('fetch')) {
         errorMessage = "Network error occurred. Please check your connection and try again.";
+      } else if (error.message.includes('Profile Creation')) {
+        errorMessage = "Failed to create your profile. Please check your data and try again.";
+      } else if (error.message.includes('No profile ID')) {
+        errorMessage = "Profile creation failed - no ID returned. Please try again.";
       }
       
       toast({
@@ -485,6 +489,7 @@ const HybridScoreForm = () => {
         duration: 6000,
       });
     } finally {
+      console.log('🔥 FINALLY: Setting isSubmitting to false');
       setIsSubmitting(false);
     }
   };
