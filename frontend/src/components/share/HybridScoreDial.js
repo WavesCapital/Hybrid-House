@@ -1,32 +1,28 @@
 import React from 'react';
 
-const HybridScoreDial = ({ prsData, style, baseStyle, containerWidth, containerHeight }) => {
+const HybridScoreDial = ({ prsData, style, baseStyle }) => {
   const hybridScore = prsData?.meta?.hybrid_score || 0;
   const { ringThickness = 'M', ticks = true } = style;
   
-  // Ring thickness mapping
+  // Ring thickness mapping - Fixed sizes for optimal quality
   const thicknessMap = {
     S: 12,
     M: 20,
     L: 28
   };
   
-  // Dynamic sizing based on container dimensions
-  const size = Math.min(containerWidth || 280, containerHeight || 280) * 0.9;
-  const strokeWidth = thicknessMap[ringThickness] * (size / 280); // Scale stroke width
-  const radius = (size / 2) - strokeWidth - 10;
+  // Fixed optimal dimensions (280x280) - will be scaled via CSS transform
+  const size = 280;
+  const strokeWidth = thicknessMap[ringThickness];
+  const radius = 120;
   const circumference = 2 * Math.PI * radius;
   const strokeDasharray = circumference;
   const strokeDashoffset = circumference - (hybridScore / 100) * circumference;
 
-  // Scale font sizes
-  const scoreFontSize = size * 0.2; // Scale main score
-  const labelFontSize = size * 0.04; // Scale label
-
   return (
     <div className="flex items-center justify-center w-full h-full" style={baseStyle}>
       <div className="relative">
-        {/* SVG Ring */}
+        {/* SVG Ring - Fixed optimal size */}
         <svg
           width={size}
           height={size}
@@ -63,8 +59,8 @@ const HybridScoreDial = ({ prsData, style, baseStyle, containerWidth, containerH
               {Array.from({ length: 20 }, (_, i) => {
                 const angle = (i * 18) - 90; // 20 ticks, starting from top
                 const isMainTick = i % 5 === 0; // Every 5th tick is longer
-                const tickLength = isMainTick ? 15 * (size / 280) : 8 * (size / 280);
-                const tickWidth = isMainTick ? 2 * (size / 280) : 1 * (size / 280);
+                const tickLength = isMainTick ? 15 : 8;
+                const tickWidth = isMainTick ? 2 : 1;
                 
                 const x1 = (size / 2) + (radius + 5) * Math.cos(angle * Math.PI / 180);
                 const y1 = (size / 2) + (radius + 5) * Math.sin(angle * Math.PI / 180);
@@ -96,19 +92,13 @@ const HybridScoreDial = ({ prsData, style, baseStyle, containerWidth, containerH
           </defs>
         </svg>
         
-        {/* Score Text */}
+        {/* Score Text - Fixed optimal font sizes */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <div 
-              className="font-bold text-white leading-none"
-              style={{ fontSize: `${scoreFontSize}px` }}
-            >
+            <div className="text-6xl font-bold text-white leading-none">
               {Math.round(hybridScore)}
             </div>
-            <div 
-              className="text-white/60 uppercase tracking-wider mt-1"
-              style={{ fontSize: `${labelFontSize}px` }}
-            >
+            <div className="text-sm text-white/60 uppercase tracking-wider mt-1">
               HYBRID SCORE
             </div>
           </div>
