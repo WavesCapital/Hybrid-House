@@ -1102,8 +1102,8 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
   );
 };
 
-// Component Content Renderer with Dynamic Sizing
-const ComponentContent = ({ component, prsData, containerWidth, containerHeight, isSelected }) => {
+// Component Content Renderer - Fixed Size with CSS Transform Scaling
+const ComponentContent = ({ component, prsData, isSelected }) => {
   const { type, style } = component;
   
   const getGlowStyle = (glowLevel) => {
@@ -1122,13 +1122,11 @@ const ComponentContent = ({ component, prsData, containerWidth, containerHeight,
     height: '100%'
   };
 
-  // Pass container dimensions to components for responsive scaling
+  // Pass only essential props - no container dimensions needed
   const componentProps = {
     prsData,
     style,
     baseStyle,
-    containerWidth,
-    containerHeight,
     isSelected
   };
 
