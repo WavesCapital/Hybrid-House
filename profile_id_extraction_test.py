@@ -296,28 +296,38 @@ class ProfileIdExtractionTester:
                 try:
                     webhook_data = webhook_response.json()
                     
-                    # Check if webhook returned score data
-                    if 'hybridScore' in webhook_data:
+                    # Check if webhook returned score data (could be in array format)
+                    score_data = None
+                    if isinstance(webhook_data, list) and len(webhook_data) > 0:
+                        # Webhook returns array format
+                        score_data = webhook_data[0]
+                    elif isinstance(webhook_data, dict):
+                        # Webhook returns object format
+                        score_data = webhook_data
+                    
+                    if score_data and 'hybridScore' in score_data:
                         self.log_test(
                             "Webhook Integration", 
                             True, 
-                            f"Webhook successfully returned score data: {webhook_data.get('hybridScore')}",
+                            f"Webhook successfully returned score data: {score_data.get('hybridScore')}",
                             {
                                 "webhook_status": webhook_response.status_code,
-                                "hybrid_score": webhook_data.get('hybridScore'),
-                                "has_score_data": 'hybridScore' in webhook_data,
-                                "score_fields": [k for k in webhook_data.keys() if 'Score' in k]
+                                "hybrid_score": score_data.get('hybridScore'),
+                                "has_score_data": 'hybridScore' in score_data,
+                                "score_fields": [k for k in score_data.keys() if 'Score' in k],
+                                "response_format": "array" if isinstance(webhook_data, list) else "object"
                             }
                         )
-                        return webhook_data
+                        return score_data
                     else:
                         self.log_test(
                             "Webhook Integration", 
                             False, 
-                            "Webhook returned 200 but no score data",
+                            "Webhook returned 200 but no score data in expected format",
                             {
                                 "webhook_status": webhook_response.status_code,
-                                "response_data": webhook_data
+                                "response_data": webhook_data,
+                                "response_type": type(webhook_data).__name__
                             }
                         )
                         return None
