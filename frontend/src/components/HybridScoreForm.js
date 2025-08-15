@@ -1845,7 +1845,7 @@ const HybridScoreForm = () => {
                     className="form-input"
                     value={formData.pb_bench_1rm}
                     onChange={(e) => handleInputChange('pb_bench_1rm', e.target.value)}
-                    placeholder="315"
+                    placeholder="185"
                   />
                 </div>
 
