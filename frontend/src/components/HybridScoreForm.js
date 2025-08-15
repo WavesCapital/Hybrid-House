@@ -214,43 +214,74 @@ const HybridScoreForm = () => {
       const profileId = uuid();
       console.log('🔥 Generated profile ID:', profileId);
       
+      console.log('🔥 STEP 6: Determining submission path');
       let response;
       
       if (user && session) {
-        // Authenticated user
-        response = await axios.post(
-          `${BACKEND_URL}/api/athlete-profiles`,
-          {
-            profile_json: profileData,
-            is_public: true
-          },
-          {
-            headers: {
-              'Authorization': `Bearer ${session.access_token}`,
-              'Content-Type': 'application/json',
+        console.log('🔥 USER AUTHENTICATED - Using authenticated endpoint');
+        try {
+          response = await axios.post(
+            `${BACKEND_URL}/api/athlete-profiles`,
+            {
+              profile_json: profileData,
+              is_public: true
             },
-          }
-        );
+            {
+              headers: {
+                'Authorization': `Bearer ${session.access_token}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          console.log('🔥 AUTHENTICATED PROFILE CREATION SUCCESS');
+        } catch (authError) {
+          console.error('🚨 AUTHENTICATED PROFILE CREATION FAILED:', authError);
+          toast({
+            title: "Authentication Error",
+            description: "Failed to create profile with authentication. Please try logging out and back in.",
+            variant: "destructive",
+            duration: 5000,
+          });
+          throw authError;
+        }
       } else {
-        // Public submission
-        const newProfile = {
-          id: profileId,
-          profile_json: profileData,
-          is_public: true,
-          completed_at: new Date().toISOString(),
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
+        console.log('🔥 USER NOT AUTHENTICATED - Using public endpoint');
+        try {
+          const newProfile = {
+            id: profileId,
+            profile_json: profileData,
+            is_public: true,
+            completed_at: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          };
 
-        response = await axios.post(
-          `${BACKEND_URL}/api/athlete-profiles/public`,
-          newProfile,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+          console.log('🔥 CALLING PUBLIC ENDPOINT with profile:', {
+            id: newProfile.id,
+            dataKeys: Object.keys(newProfile.profile_json)
+          });
+
+          response = await axios.post(
+            `${BACKEND_URL}/api/athlete-profiles/public`,
+            newProfile,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          console.log('🔥 PUBLIC PROFILE CREATION SUCCESS:', response.status);
+        } catch (publicError) {
+          console.error('🚨 PUBLIC PROFILE CREATION FAILED:', publicError);
+          console.error('🚨 ERROR RESPONSE:', publicError.response?.data);
+          toast({
+            title: "Profile Creation Error",
+            description: "Failed to create your profile. Please check your data and try again.",
+            variant: "destructive",
+            duration: 5000,
+          });
+          throw publicError;
+        }
       }
 
       const finalProfileId = user && session ? response.data?.profile?.id : profileId;
