@@ -161,7 +161,9 @@ const HybridScoreForm = () => {
       // Calculate height in inches
       const heightInches = (parseInt(formData.height_ft) || 0) * 12 + (parseInt(formData.height_in) || 0);
 
-      // Structure the data for submission
+      // Structure the data for submission - WEBHOOK FORMAT REQUIREMENTS:
+      // The n8n.cloud webhook requires EXACTLY this format with "athleteProfile" and "deliverable": "score"
+      // Based on successful webhook call example from user
       const profileData = {
         first_name: (formData.first_name || '').substring(0, 20),
         last_name: (formData.last_name || '').substring(0, 20),
@@ -169,26 +171,26 @@ const HybridScoreForm = () => {
         sex: formData.sex,
         dob: formData.dob,
         country: (formData.country || 'US').substring(0, 2),
-        wearables: formData.wearables,
-        running_app: formData.runningApp || null,
-        strength_app: formData.strengthApp === 'Other' ? formData.customStrengthApp : formData.strengthApp || null,
+        wearables: formData.wearables || [],
+        running_app: formData.runningApp,
+        strength_app: formData.strengthApp === 'Other' ? formData.customStrengthApp : formData.strengthApp,
         body_metrics: {
-          weight_lb: parseFloat(formData.weight_lb) || null,
-          height_in: heightInches || null,
-          vo2max: parseFloat(formData.vo2max) || null,
-          resting_hr_bpm: parseInt(formData.resting_hr_bpm) || null,
-          hrv_ms: parseInt(formData.hrv_ms) || null
+          weight_lb: parseFloat(formData.weight_lb) || 0,
+          height_in: heightInches || 0,
+          vo2max: parseFloat(formData.vo2max) || 0,
+          resting_hr_bpm: parseInt(formData.resting_hr_bpm) || 0,
+          hrv_ms: parseInt(formData.hrv_ms) || 0
         },
-        pb_mile: formData.pb_mile || null,
-        pb_5k: formData.pb_5k || null,
-        pb_10k: formData.pb_10k || null,
-        pb_half_marathon: formData.pb_half_marathon || null,
-        pb_marathon: formData.pb_marathon || null,
-        weekly_miles: parseFloat(formData.weekly_miles) || null,
-        long_run: parseFloat(formData.long_run) || null,
-        pb_bench_1rm: parseFloat(formData.pb_bench_1rm) || null,
-        pb_squat_1rm: parseFloat(formData.pb_squat_1rm) || null,
-        pb_deadlift_1rm: parseFloat(formData.pb_deadlift_1rm) || null,
+        pb_mile: formData.pb_mile || '',
+        pb_5k: formData.pb_5k || '',
+        pb_10k: formData.pb_10k || '',
+        pb_half_marathon: formData.pb_half_marathon || '',
+        pb_marathon: formData.pb_marathon || '',
+        weekly_miles: parseFloat(formData.weekly_miles) || 0,
+        long_run: parseFloat(formData.long_run) || 0,
+        pb_bench_1rm: parseFloat(formData.pb_bench_1rm) || 0,
+        pb_squat_1rm: parseFloat(formData.pb_squat_1rm) || 0,
+        pb_deadlift_1rm: parseFloat(formData.pb_deadlift_1rm) || 0,
         schema_version: "v1.0",
         interview_type: "form"
       };
