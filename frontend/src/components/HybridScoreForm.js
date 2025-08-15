@@ -306,16 +306,17 @@ const HybridScoreForm = () => {
         duration: 3000,
       });
 
-        // Call webhook - CRITICAL REQUIREMENTS FOR n8n.cloud webhook:
-        // 1. Must send "athleteProfile" object with all profile data
-        // 2. Must send "deliverable": "score" (exact spelling and case)
-        // 3. Content-Type must be application/json
-        // 4. Data format must match exactly as shown in successful example
-        console.log('🔥 CALLING WEBHOOK - Sending athleteProfile and deliverable:', {
-          athleteProfileKeys: Object.keys(profileData),
-          deliverable: 'score'
-        });
-        
+      // Call webhook - CRITICAL REQUIREMENTS FOR n8n.cloud webhook:
+      // 1. Must send "athleteProfile" object with all profile data
+      // 2. Must send "deliverable": "score" (exact spelling and case)
+      // 3. Content-Type must be application/json
+      // 4. Data format must match exactly as shown in successful example
+      console.log('🔥 CALLING WEBHOOK - Sending athleteProfile and deliverable:', {
+        athleteProfileKeys: Object.keys(profileData),
+        deliverable: 'score'
+      });
+      
+      try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 240000); // 4 minutes like other components
 
