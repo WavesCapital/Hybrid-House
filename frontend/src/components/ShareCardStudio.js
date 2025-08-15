@@ -40,6 +40,7 @@ import PRLifts from './share/PRLifts';
 import PRRuns from './share/PRRuns';
 import BalanceChips from './share/BalanceChips';
 import Nameplate from './share/Nameplate';
+import EditPRsModal from './share/EditPRsModal';
 
 // Gradient definitions
 const GRADIENTS = {
