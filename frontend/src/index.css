@@ -44,45 +44,45 @@ code {
 
 /* Individual handle positioning with maximum specificity */
 .rnd-container.selected .react-resizable-handle-se { 
-    bottom: -8px !important; 
-    right: -8px !important; 
+    bottom: -9px !important; 
+    right: -9px !important; 
     cursor: nwse-resize !important;
 }
 .rnd-container.selected .react-resizable-handle-sw { 
-    bottom: -8px !important; 
-    left: -8px !important; 
+    bottom: -9px !important; 
+    left: -9px !important; 
     cursor: nesw-resize !important;
 }
 .rnd-container.selected .react-resizable-handle-ne { 
-    top: -8px !important; 
-    right: -8px !important; 
+    top: -9px !important; 
+    right: -9px !important; 
     cursor: nesw-resize !important;
 }
 .rnd-container.selected .react-resizable-handle-nw { 
-    top: -8px !important; 
-    left: -8px !important; 
+    top: -9px !important; 
+    left: -9px !important; 
     cursor: nwse-resize !important;
 }
 .rnd-container.selected .react-resizable-handle-n { 
-    top: -8px !important; 
+    top: -9px !important; 
     left: 50% !important; 
     transform: translateX(-50%) !important; 
     cursor: ns-resize !important;
 }
 .rnd-container.selected .react-resizable-handle-s { 
-    bottom: -8px !important; 
+    bottom: -9px !important; 
     left: 50% !important; 
     transform: translateX(-50%) !important; 
     cursor: ns-resize !important;
 }
 .rnd-container.selected .react-resizable-handle-e { 
-    right: -8px !important; 
+    right: -9px !important; 
     top: 50% !important; 
     transform: translateY(-50%) !important; 
     cursor: ew-resize !important;
 }
 .rnd-container.selected .react-resizable-handle-w { 
-    left: -8px !important; 
+    left: -9px !important; 
     top: 50% !important; 
     transform: translateY(-50%) !important; 
     cursor: ew-resize !important;
