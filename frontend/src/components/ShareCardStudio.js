@@ -987,12 +987,8 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
       backgroundColor: '#08F0FF',
       border: '3px solid #fff',
       borderRadius: '3px',
-      position: 'absolute',
-      bottom: '-6px',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      cursor: 'ns-resize',
-      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)',
+      zIndex: 1000
     },
     bottomLeft: {
       width: '12px',
@@ -1000,11 +996,8 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
       backgroundColor: '#08F0FF',
       border: '3px solid #fff',
       borderRadius: '3px',
-      position: 'absolute',
-      bottom: '-6px',
-      left: '-6px',
-      cursor: 'nesw-resize',
-      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)',
+      zIndex: 1000
     },
     bottomRight: {
       width: '12px',
@@ -1012,11 +1005,8 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
       backgroundColor: '#08F0FF',
       border: '3px solid #fff',
       borderRadius: '3px',
-      position: 'absolute',
-      bottom: '-6px',
-      right: '-6px',
-      cursor: 'nwse-resize',
-      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)',
+      zIndex: 1000
     },
     left: {
       width: '12px',
@@ -1024,12 +1014,8 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
       backgroundColor: '#08F0FF',
       border: '3px solid #fff',
       borderRadius: '3px',
-      position: 'absolute',
-      left: '-6px',
-      top: '50%',
-      transform: 'translateY(-50%)',
-      cursor: 'ew-resize',
-      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)',
+      zIndex: 1000
     },
     right: {
       width: '12px',
@@ -1037,12 +1023,8 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
       backgroundColor: '#08F0FF',
       border: '3px solid #fff',
       borderRadius: '3px',
-      position: 'absolute',
-      right: '-6px',
-      top: '50%',
-      transform: 'translateY(-50%)',
-      cursor: 'ew-resize',
-      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)',
+      zIndex: 1000
     },
     top: {
       width: '12px',
@@ -1050,12 +1032,8 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
       backgroundColor: '#08F0FF',
       border: '3px solid #fff',
       borderRadius: '3px',
-      position: 'absolute',
-      top: '-6px',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      cursor: 'ns-resize',
-      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)',
+      zIndex: 1000
     },
     topLeft: {
       width: '12px',
@@ -1063,11 +1041,8 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
       backgroundColor: '#08F0FF',
       border: '3px solid #fff',
       borderRadius: '3px',
-      position: 'absolute',
-      top: '-6px',
-      left: '-6px',
-      cursor: 'nwse-resize',
-      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)',
+      zIndex: 1000
     },
     topRight: {
       width: '12px',
@@ -1075,11 +1050,8 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
       backgroundColor: '#08F0FF',
       border: '3px solid #fff',
       borderRadius: '3px',
-      position: 'absolute',
-      top: '-6px',
-      right: '-6px',
-      cursor: 'nesw-resize',
-      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)'
+      boxShadow: '0 0 12px rgba(8,240,255,0.5), 0 3px 6px rgba(0,0,0,0.3)',
+      zIndex: 1000
     }
   };
 
@@ -1090,20 +1062,22 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
       onDragStop={handleDragStop}
       onResizeStop={handleResizeStop}
       bounds="parent"
+      minWidth={50}
+      minHeight={30}
       className={`rnd-container ${isSelected ? 'selected' : ''} ${component.locked ? 'cursor-not-allowed' : 'cursor-move'}`}
       disableDragging={component.locked}
-      enableResizing={!component.locked}
+      enableResizing={!component.locked && isSelected}
       onClick={handleSelect}
-      resizeHandleStyles={isSelected ? resizeHandleStyles : {}}
-      resizeHandleClasses={{
-        bottom: 'resize-handle',
-        bottomLeft: 'resize-handle',
-        bottomRight: 'resize-handle',
-        left: 'resize-handle',
-        right: 'resize-handle',
-        top: 'resize-handle',
-        topLeft: 'resize-handle',
-        topRight: 'resize-handle'
+      resizeHandleStyles={isSelected ? resizeHandleStyles : undefined}
+      resizeHandleComponent={{
+        bottomRight: isSelected ? <div className="resize-handle-custom bottom-right" /> : undefined,
+        bottom: isSelected ? <div className="resize-handle-custom bottom" /> : undefined,
+        bottomLeft: isSelected ? <div className="resize-handle-custom bottom-left" /> : undefined,
+        right: isSelected ? <div className="resize-handle-custom right" /> : undefined,
+        top: isSelected ? <div className="resize-handle-custom top" /> : undefined,
+        topRight: isSelected ? <div className="resize-handle-custom top-right" /> : undefined,
+        topLeft: isSelected ? <div className="resize-handle-custom top-left" /> : undefined,
+        left: isSelected ? <div className="resize-handle-custom left" /> : undefined,
       }}
       style={{
         zIndex: component.z + 10,
