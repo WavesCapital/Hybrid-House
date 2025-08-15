@@ -1383,9 +1383,6 @@ const HybridScoreForm = () => {
                     <span>Gender</span>
                     <span className="required-indicator">*</span>
                   </label>
-                  <p className="field-description">
-                    Used to personalize your hybrid score calculation and recommendations.
-                  </p>
                   <select
                     className="form-select"
                     value={formData.sex}
