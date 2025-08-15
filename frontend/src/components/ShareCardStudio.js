@@ -519,63 +519,76 @@ const ShareCardStudio = () => {
 
         {/* Canvas Area */}
         <div className="flex-1 flex items-center justify-center p-8 bg-[#0E0E11]">
+          {/* iPhone Pro Max Mockup */}
           <div className="relative">
-            <div
-              ref={canvasRef}
-              className="relative overflow-hidden rounded-2xl"
-              style={{
-                width: CANVAS_WIDTH / 2, // Display at 50% for better fit
-                height: CANVAS_HEIGHT / 2,
-                background: GRADIENTS[backgroundId].css,
-                transform: 'scale(0.5)',
-                transformOrigin: 'top left'
-              }}
-              onDrop={(e) => e.preventDefault()}
-              onDragOver={(e) => e.preventDefault()}
-            >
-              {/* Grid Glow Overlay */}
-              {gridGlow && (
+            {/* iPhone Frame */}
+            <div className="relative bg-[#1C1C1E] rounded-[3rem] p-2 shadow-2xl">
+              {/* Screen */}
+              <div className="relative bg-black rounded-[2.5rem] overflow-hidden">
+                {/* Notch */}
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-7 bg-black rounded-b-2xl z-10"></div>
+                
+                {/* Canvas */}
                 <div
-                  className="absolute inset-0 pointer-events-none"
+                  ref={canvasRef}
+                  className="relative"
                   style={{
-                    backgroundImage: `
-                      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
-                    `,
-                    backgroundSize: '48px 48px'
+                    width: CANVAS_WIDTH / 2.5, // Scale down to fit iPhone mockup
+                    height: CANVAS_HEIGHT / 2.5,
+                    background: GRADIENTS[backgroundId].css,
                   }}
-                />
-              )}
+                  onDrop={(e) => e.preventDefault()}
+                  onDragOver={(e) => e.preventDefault()}
+                >
+                  {/* Grid Glow Overlay */}
+                  {gridGlow && (
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        backgroundImage: `
+                          linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
+                        `,
+                        backgroundSize: '20px 20px' // Scaled down for smaller canvas
+                      }}
+                    />
+                  )}
 
-              {/* Safe Zones Overlay */}
-              {safeZones && (
-                <div className="absolute inset-0 pointer-events-none">
-                  <div className="absolute inset-0 border-2 border-dashed border-yellow-400/30" />
-                  <div 
-                    className="absolute border-2 border-dashed border-red-400/50"
-                    style={{
-                      top: '150px',
-                      bottom: '250px', 
-                      left: '64px',
-                      right: '64px'
-                    }}
-                  />
+                  {/* Safe Zones Overlay */}
+                  {safeZones && (
+                    <div className="absolute inset-0 pointer-events-none">
+                      <div className="absolute inset-0 border-2 border-dashed border-yellow-400/30" />
+                      <div 
+                        className="absolute border-2 border-dashed border-red-400/50"
+                        style={{
+                          top: '60px',  // Scaled down
+                          bottom: '100px', 
+                          left: '26px',
+                          right: '26px'
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {/* Components */}
+                  {components.map((component) => (
+                    <ComponentRenderer
+                      key={component.id}
+                      component={component}
+                      prsData={prsData}
+                      isSelected={selectedComponent?.id === component.id}
+                      onSelect={setSelectedComponent}
+                      onUpdate={updateComponent}
+                      onDelete={deleteComponent}
+                      onDuplicate={duplicateComponent}
+                      scale={0.4} // Scale down components for smaller canvas
+                    />
+                  ))}
                 </div>
-              )}
-
-              {/* Components */}
-              {components.map((component) => (
-                <ComponentRenderer
-                  key={component.id}
-                  component={component}
-                  prsData={prsData}
-                  isSelected={selectedComponent?.id === component.id}
-                  onSelect={setSelectedComponent}
-                  onUpdate={updateComponent}
-                  onDelete={deleteComponent}
-                  onDuplicate={duplicateComponent}
-                />
-              ))}
+                
+                {/* iPhone Indicators */}
+                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-white/30 rounded-full"></div>
+              </div>
             </div>
 
             {/* Component Quick Bar */}
