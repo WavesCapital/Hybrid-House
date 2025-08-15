@@ -775,8 +775,13 @@ const GradientTile = ({ id, gradient, isSelected, onClick }) => {
 
 // Component Preview Tile
 const ComponentPreviewTile = ({ type, title, description, prsData, onAdd, preview }) => {
+  const handleClick = () => {
+    console.log('Component tile clicked:', type);
+    onAdd();
+  };
+
   return (
-    <Card className="bg-[#0E0E11] border-white/20 hover:border-[#08F0FF]/50 transition-all duration-200 cursor-pointer overflow-hidden" onClick={onAdd}>
+    <Card className="bg-[#0E0E11] border-white/20 hover:border-[#08F0FF]/50 transition-all duration-200 cursor-pointer overflow-hidden" onClick={handleClick}>
       <CardContent className="p-0">
         {/* Preview Area */}
         <div className="h-20 bg-gradient-to-r from-[#0A0B0C] to-[#0E0E11] flex items-center justify-center border-b border-white/10">
