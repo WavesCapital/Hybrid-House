@@ -2943,38 +2943,28 @@ def main():
     """Main test runner focused on Marathon PR testing"""
     tester = BackendTester()
     
-    print("🚀 USER PROFILE DATA MISMATCH AUDIT")
+    print("🚀 MARATHON PR SUPPORT TESTING")
     print("="*80)
-    print("TESTING THE USER PROFILE DATA MISMATCH ISSUE:")
-    print("- Test /api/user-profile/me endpoint data structure")
-    print("- Check if response key is 'user_profile' or 'profile'")
-    print("- Verify data fields match frontend expectations")
-    print("- Check for data transformation issues")
-    print("- Identify root cause of data mismatch")
+    print("TESTING MARATHON PR SUPPORT AFTER ADDING pb_marathon FIELD:")
+    print("- Form submission with pb_marathon field")
+    print("- Data conversion from time strings like '3:15:00' to pb_marathon_seconds")
+    print("- Database storage of pb_marathon_seconds field")
+    print("- API response with marathon PR data")
+    print("- Both authenticated and public submission endpoints")
+    print("- Complete data flow verification")
     print("="*80)
     
-    # Run the user profile data mismatch audit
-    print("\n🔍 Running User Profile Data Mismatch Audit...")
-    audit_success = tester.run_user_profile_data_mismatch_audit()
+    # Run the Marathon PR tests
+    print("\n🔍 Running Marathon PR Support Tests...")
+    marathon_success = tester.run_marathon_pr_tests()
     
     # Also run basic API health checks
     print("\n🔍 Running Basic API Health Checks...")
     api_health = tester.test_api_root()
-    user_profile_accessible = True
-    
-    try:
-        response = tester.session.get(f"{API_BASE_URL}/user-profile/me")
-        if response.status_code not in [401, 403]:
-            user_profile_accessible = False
-            tester.log_test("User Profile API Accessibility", False, f"HTTP {response.status_code}", response.text)
-        else:
-            tester.log_test("User Profile API Accessibility", True, "User Profile API is accessible and properly protected", response.json())
-    except Exception as e:
-        user_profile_accessible = False
-        tester.log_test("User Profile API Accessibility", False, "Connection failed", str(e))
+    supabase_health = tester.test_supabase_connection()
     
     # Print final summary
-    print(f"\n🏁 USER PROFILE DATA MISMATCH AUDIT SUMMARY")
+    print(f"\n🏁 MARATHON PR TESTING SUMMARY")
     print("="*50)
     
     total_tests = len(tester.test_results)
@@ -2985,20 +2975,22 @@ def main():
     print(f"Tests failed: {total_tests - passed_tests}")
     print(f"Success rate: {(passed_tests/total_tests)*100:.1f}%" if total_tests > 0 else "No tests run")
     
-    if audit_success:
-        print("\n✅ USER PROFILE DATA MISMATCH AUDIT: INVESTIGATION COMPLETE")
-        print("   ✅ Backend endpoint /api/user-profile/me is properly configured")
-        print("   ✅ Response structure uses 'user_profile' key as designed")
-        print("   ✅ Authentication and auto-creation working correctly")
-        print("   🚨 LIKELY ISSUE: Frontend expects 'profile' key but backend returns 'user_profile'")
-        print("   💡 RECOMMENDED FIX: Update frontend to use response.data.user_profile")
+    if marathon_success:
+        print("\n✅ MARATHON PR SUPPORT: TESTING COMPLETE")
+        print("   ✅ Form submission with pb_marathon field working")
+        print("   ✅ Data conversion from '3:15:00' to pb_marathon_seconds working")
+        print("   ✅ Database storage of pb_marathon_seconds working")
+        print("   ✅ API response includes marathon PR data correctly")
+        print("   ✅ Both authenticated and public endpoints support Marathon PR")
+        print("   ✅ Complete Marathon PR data flow verified")
+        print("   🎉 Marathon PR feature is ready for production use!")
     else:
-        print("\n❌ USER PROFILE DATA MISMATCH AUDIT: ISSUES DETECTED")
-        print("   ❌ Some backend endpoint functionality problems found")
-        print("   ❌ Further investigation needed")
-        print("   ❌ Check backend implementation and database connectivity")
+        print("\n❌ MARATHON PR SUPPORT: ISSUES DETECTED")
+        print("   ❌ Some Marathon PR functionality problems found")
+        print("   ❌ Check individual test results for specific issues")
+        print("   ❌ Marathon PR feature may need fixes before production")
     
-    return audit_success
+    return marathon_success
 
 def main_original():
     """Main test runner focused on critical ranking service fix verification"""
