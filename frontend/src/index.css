@@ -16,6 +16,33 @@ code {
         monospace;
 }
 
+/* Hybrid Lab Share Card Studio - Canva-style Resize Handles */
+.resize-handle {
+    transition: all 0.2s ease;
+    z-index: 999 !important;
+}
+
+.resize-handle:hover {
+    transform: scale(1.2) !important;
+    box-shadow: 0 0 12px rgba(8,240,255,0.6), 0 4px 8px rgba(0,0,0,0.4) !important;
+}
+
+.resize-handle:active {
+    transform: scale(1.1) !important;
+    box-shadow: 0 0 16px rgba(8,240,255,0.8), 0 6px 12px rgba(0,0,0,0.5) !important;
+}
+
+/* React-RND specific overrides */
+.react-resizable-handle {
+    z-index: 999 !important;
+}
+
+/* Ensure handles are always visible when component is selected */
+.rnd-container.selected .react-resizable-handle {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
 
 
 @layer base {
