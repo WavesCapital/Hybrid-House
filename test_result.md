@@ -158,9 +158,9 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Webhook Format Fix Verification - COMPLETED SUCCESSFULLY"
+    - "Profile ID Extraction Fix Verification - COMPLETED SUCCESSFULLY"
     - "Backend APIs working correctly - all endpoints operational"
-    - "Webhook integration fully functional - returns score data instead of empty response"
+    - "Webhook integration fully functional - returns score data and profile ID extraction working"
   stuck_tasks: []
   test_all: false
   test_priority: "critical_first"
