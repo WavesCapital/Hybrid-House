@@ -105,10 +105,13 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Marathon PR Support Testing"
-  stuck_tasks: []
+    - "Hybrid Score Form Submission Bug - Critical Issue"
+    - "Button state changes but webhook not called"
+    - "Silent form submission failure investigation"
+  stuck_tasks: 
+    - "Hybrid Score Form Submission and Webhook Integration"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "critical_first"
 
 # Protocol Guidelines for Main agent
 #
