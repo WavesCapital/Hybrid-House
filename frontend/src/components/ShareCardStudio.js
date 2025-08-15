@@ -704,9 +704,6 @@ const ComponentContent = ({ component, prsData }) => {
   }
 };
 
-// Individual Component Implementations will go here...
-// [These would be separate components for each type - HybridScoreDial, ScoreChip, etc.]
-
 // Component Quick Bar
 const ComponentQuickBar = ({ component, onUpdate, onDelete, onDuplicate, onDeselect }) => {
   return (
