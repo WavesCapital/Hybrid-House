@@ -146,9 +146,9 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Backend Score Storage Endpoint Fix - PGRST204 Database Error - RESOLVED"
-    - "POST /api/athlete-profile/{id}/score endpoint database schema issue - FIXED"
-    - "Webhook integration working - backend storage now working"
+    - "Hybrid Score Form Submission and Webhook Integration - RESOLVED"
+    - "Calculate Hybrid Score button no longer gets stuck - WORKING PERFECTLY"
+    - "Complete end-to-end flow verified - SUCCESS"
   stuck_tasks: []
   test_all: false
   test_priority: "critical_first"
