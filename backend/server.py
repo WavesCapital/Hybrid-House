@@ -1090,10 +1090,28 @@ async def create_public_athlete_profile(profile_data: dict):
         # Extract individual fields from profile_json
         individual_fields = extract_individual_fields(profile_json)
         
-        # Create athlete profile
+        # Add converted time fields back to profile_json for easy access
+        enhanced_profile_json = profile_json.copy()
+        
+        # Add converted seconds to profile_json
+        time_conversions = {
+            'pb_marathon_seconds': individual_fields.get('pb_marathon_seconds'),
+            'pb_half_marathon_seconds': individual_fields.get('pb_half_marathon_seconds'),
+            'pb_10k_seconds': individual_fields.get('pb_10k_seconds'),
+            'pb_5k_seconds': individual_fields.get('pb_5k_seconds'),
+            'pb_mile_seconds': individual_fields.get('pb_mile_seconds')
+        }
+        
+        # Only add non-None conversions
+        for key, value in time_conversions.items():
+            if value is not None:
+                enhanced_profile_json[key] = value
+        
+        # Create athlete profile with enhanced profile_json
         new_profile = {
             **profile_data,
-            **individual_fields,  # Add extracted individual fields
+            "profile_json": enhanced_profile_json,  # Use enhanced profile_json with converted seconds
+            **individual_fields,  # Add extracted individual fields for database columns
             "user_id": user_id,
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat()
