@@ -252,26 +252,6 @@ const ShareCardStudio = () => {
     }
   };
 
-  // Background drag handler
-  const handleBackgroundDrop = (gradientId, e) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    // Check if dropped on canvas
-    if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
-      setBackgroundId(gradientId);
-      saveToHistory();
-      toast({
-        title: "Background applied",
-        description: `${GRADIENTS[gradientId].name} gradient applied to canvas.`
-      });
-    }
-  };
-
   // Export functionality
   const exportCanvas = async () => {
     if (!canvasRef.current) return;
