@@ -401,6 +401,7 @@ const HybridScoreForm = () => {
           }
 
           // Store score data
+          console.log('🔥 STEP 12: Storing score data in backend');
           try {
             const scoreHeaders = user && session ? 
               { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' } :
