@@ -113,11 +113,11 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Hybrid Score Form Submission Bug - Critical Issue"
-    - "Button state changes but webhook not called"
-    - "Silent form submission failure investigation"
+    - "Backend Score Storage Endpoint Fix - PGRST204 Database Error"
+    - "POST /api/athlete-profile/{id}/score endpoint database schema issue"
+    - "Webhook integration working - backend storage failing"
   stuck_tasks: 
-    - "Hybrid Score Form Submission and Webhook Integration"
+    - "Backend Score Storage Database Schema Issue"
   test_all: false
   test_priority: "critical_first"
 
