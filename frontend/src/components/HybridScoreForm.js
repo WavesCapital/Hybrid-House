@@ -343,14 +343,15 @@ const HybridScoreForm = () => {
               { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' } :
               { 'Content-Type': 'application/json' };
               
-            console.log('Storing score data in backend...');
-            await axios.post(`${BACKEND_URL}/api/athlete-profile/${finalProfileId}/score`, scoreData, {
+            console.log('🔥 STORING SCORE DATA in backend...');
+            console.log('🔥 SCORE DATA TO STORE:', scoreData);
+            const storeResponse = await axios.post(`${BACKEND_URL}/api/athlete-profile/${finalProfileId}/score`, scoreData, {
               headers: scoreHeaders
             });
-            console.log('Score data stored successfully');
+            console.log('🔥 SCORE STORAGE SUCCESS:', storeResponse.status);
           } catch (scoreError) {
-            console.warn('Could not store score:', scoreError.message);
-            console.warn('Score error details:', scoreError.response?.data);
+            console.warn('⚠️ SCORE STORAGE FAILED:', scoreError.message);
+            console.warn('⚠️ SCORE ERROR DETAILS:', scoreError.response?.data);
           }
 
           // Navigate to results
