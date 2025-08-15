@@ -33,6 +33,14 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 
+// Import individual component renderers
+import HybridScoreDial from './share/HybridScoreDial';
+import ScoreChip from './share/ScoreChip';
+import PRLifts from './share/PRLifts';
+import PRRuns from './share/PRRuns';
+import BalanceChips from './share/BalanceChips';
+import Nameplate from './share/Nameplate';
+
 // Gradient definitions
 const GRADIENTS = {
   cyanDrift: {
