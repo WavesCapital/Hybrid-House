@@ -445,13 +445,24 @@ const ShareCardStudio = () => {
             </TabsList>
 
             <TabsContent value="backgrounds" className="p-4 space-y-4">
+              <div className="text-sm text-white/60 mb-4">
+                Click a gradient to apply it to your canvas
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 {Object.entries(GRADIENTS).map(([id, gradient]) => (
                   <GradientTile
                     key={id}
                     id={id}
                     gradient={gradient}
-                    onDrop={handleBackgroundDrop}
+                    isSelected={backgroundId === id}
+                    onClick={() => {
+                      setBackgroundId(id);
+                      saveToHistory();
+                      toast({
+                        title: "Background applied",
+                        description: `${gradient.name} gradient applied to canvas.`
+                      });
+                    }}
                   />
                 ))}
               </div>
@@ -468,50 +479,80 @@ const ShareCardStudio = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="components" className="p-4 space-y-4">
+            <TabsContent value="components" className="p-4 space-y-6">
+              {/* Score Components */}
               <div className="space-y-3">
-                <ComponentTile
-                  type="dial"
-                  title="Hybrid Score Dial"
-                  description="Neon ring with score"
-                  prsData={prsData}
-                  onAdd={() => addComponent('dial')}
-                />
-                <ComponentTile
-                  type="scoreChip"
-                  title="Score Chip"
-                  description="Text-only score display"
-                  prsData={prsData}
-                  onAdd={() => addComponent('scoreChip')}
-                />
-                <ComponentTile
-                  type="prLifts"
-                  title="PR — Lifts"
-                  description="Squat, Bench, Deadlift"
-                  prsData={prsData}
-                  onAdd={() => addComponent('prLifts')}
-                />
-                <ComponentTile
-                  type="prRuns"
-                  title="PR — Runs" 
-                  description="Mile, 5K, 10K times"
-                  prsData={prsData}
-                  onAdd={() => addComponent('prRuns')}
-                />
-                <ComponentTile
-                  type="balanceChips"
-                  title="Balance Chips"
-                  description="Strength/Endurance/Recovery"
-                  prsData={prsData}
-                  onAdd={() => addComponent('balanceChips')}
-                />
-                <ComponentTile
-                  type="nameplate"
-                  title="Nameplate"
-                  description="First & Last name"
-                  prsData={prsData}
-                  onAdd={() => addComponent('nameplate')}
-                />
+                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider">
+                  Score Display
+                </h3>
+                <div className="space-y-2">
+                  <ComponentPreviewTile
+                    type="dial"
+                    title="Hybrid Score Dial"
+                    description="Neon ring with large score"
+                    prsData={prsData}
+                    onAdd={() => addComponent('dial')}
+                    preview={<HybridScoreDialPreview prsData={prsData} />}
+                  />
+                  <ComponentPreviewTile
+                    type="scoreChip"
+                    title="Score Chip"
+                    description="Compact text display"
+                    prsData={prsData}
+                    onAdd={() => addComponent('scoreChip')}
+                    preview={<ScoreChipPreview prsData={prsData} />}
+                  />
+                </div>
+              </div>
+
+              {/* Personal Records */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider">
+                  Personal Records
+                </h3>
+                <div className="space-y-2">
+                  <ComponentPreviewTile
+                    type="prLifts"
+                    title="Strength PRs"
+                    description="Squat • Bench • Deadlift"
+                    prsData={prsData}
+                    onAdd={() => addComponent('prLifts')}
+                    preview={<PRLiftsPreview prsData={prsData} />}
+                  />
+                  <ComponentPreviewTile
+                    type="prRuns"
+                    title="Running PRs"
+                    description="Mile • 5K • 10K • Half"
+                    prsData={prsData}
+                    onAdd={() => addComponent('prRuns')}
+                    preview={<PRRunsPreview prsData={prsData} />}
+                  />
+                </div>
+              </div>
+
+              {/* Identity & Style */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider">
+                  Identity & Style
+                </h3>
+                <div className="space-y-2">
+                  <ComponentPreviewTile
+                    type="nameplate"
+                    title="Nameplate"
+                    description="Your name display"
+                    prsData={prsData}
+                    onAdd={() => addComponent('nameplate')}
+                    preview={<NameplatePreview prsData={prsData} />}
+                  />
+                  <ComponentPreviewTile
+                    type="balanceChips"
+                    title="Balance Chips"
+                    description="Strength • Endurance • Recovery"
+                    prsData={prsData}
+                    onAdd={() => addComponent('balanceChips')}
+                    preview={<BalanceChipsPreview prsData={prsData} />}
+                  />
+                </div>
               </div>
             </TabsContent>
           </Tabs>
