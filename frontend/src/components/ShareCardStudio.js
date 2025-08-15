@@ -830,24 +830,34 @@ const ComponentPreviewTile = ({ type, title, prsData, onAdd, preview }) => {
   );
 };
 
-// Preview Components
+// Enhanced Preview Components with Better Data Visibility
 const HybridScoreDialPreview = ({ prsData }) => {
   const hybridScore = prsData?.meta?.hybrid_score || 85; // Default for preview
   return (
-    <div className="w-16 h-16 relative">
-      <svg width="64" height="64" viewBox="0 0 64 64" className="transform -rotate-90">
-        <circle cx="32" cy="32" r="28" stroke="rgba(255,255,255,0.1)" strokeWidth="4" fill="none" />
+    <div className="w-24 h-24 relative">
+      <svg width="96" height="96" viewBox="0 0 96 96" className="transform -rotate-90">
+        <circle cx="48" cy="48" r="40" stroke="rgba(255,255,255,0.1)" strokeWidth="6" fill="none" />
         <circle
-          cx="32" cy="32" r="28"
-          stroke="#08F0FF"
-          strokeWidth="4"
+          cx="48" cy="48" r="40"
+          stroke="url(#previewGradient)"
+          strokeWidth="6"
           fill="none"
           strokeLinecap="round"
-          strokeDasharray={`${hybridScore * 1.76} 176`}
+          strokeDasharray={`${hybridScore * 2.51} 251`}
         />
+        <defs>
+          <linearGradient id="previewGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#08F0FF" />
+            <stop offset="50%" stopColor="#00FF88" />
+            <stop offset="100%" stopColor="#FFA42D" />
+          </linearGradient>
+        </defs>
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xs font-bold text-white">{Math.round(hybridScore)}</span>
+        <div className="text-center">
+          <div className="text-xl font-bold text-white">{Math.round(hybridScore)}</div>
+          <div className="text-xs text-white/60 uppercase">SCORE</div>
+        </div>
       </div>
     </div>
   );
@@ -856,8 +866,8 @@ const HybridScoreDialPreview = ({ prsData }) => {
 const ScoreChipPreview = ({ prsData }) => {
   const hybridScore = prsData?.meta?.hybrid_score || 85; // Default for preview
   return (
-    <div className="bg-black/30 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1">
-      <span className="text-xs font-bold text-white">HYBRID {Math.round(hybridScore)}</span>
+    <div className="bg-black/30 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2">
+      <span className="text-sm font-bold text-white">HYBRID {Math.round(hybridScore)}</span>
     </div>
   );
 };
@@ -870,19 +880,21 @@ const PRLiftsPreview = ({ prsData }) => {
   const deadlift = strength.deadlift_lb || 405;
   
   return (
-    <div className="bg-black/20 border border-white/20 rounded-lg p-2 space-y-1 w-24">
-      <div className="text-xs text-white font-semibold mb-1">Strength</div>
-      <div className="flex justify-between items-center">
-        <span className="text-xs text-white/80">Squat</span>
-        <span className="text-xs text-white font-medium">{Math.round(squat)}</span>
-      </div>
-      <div className="flex justify-between items-center">
-        <span className="text-xs text-white/80">Bench</span>
-        <span className="text-xs text-white font-medium">{Math.round(bench)}</span>
-      </div>
-      <div className="flex justify-between items-center">
-        <span className="text-xs text-white/80">Dead</span>
-        <span className="text-xs text-white font-medium">{Math.round(deadlift)}</span>
+    <div className="bg-black/20 border border-white/20 rounded-xl p-3 w-36">
+      <div className="text-sm text-white font-semibold mb-2 text-center">Strength PRs</div>
+      <div className="space-y-1">
+        <div className="flex justify-between items-center">
+          <span className="text-xs text-white/80">Squat</span>
+          <span className="text-xs text-white font-medium">{Math.round(squat)} lb</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-xs text-white/80">Bench</span>
+          <span className="text-xs text-white font-medium">{Math.round(bench)} lb</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-xs text-white/80">Dead</span>
+          <span className="text-xs text-white font-medium">{Math.round(deadlift)} lb</span>
+        </div>
       </div>
     </div>
   );
@@ -902,15 +914,21 @@ const PRRunsPreview = ({ prsData }) => {
   };
   
   return (
-    <div className="bg-black/20 border border-white/20 rounded-lg p-2 space-y-1 w-24">
-      <div className="text-xs text-white font-semibold mb-1">Running</div>
-      <div className="flex justify-between items-center">
-        <span className="text-xs text-white/80">Mile</span>
-        <span className="text-xs text-white font-medium">{formatTime(mile)}</span>
-      </div>
-      <div className="flex justify-between items-center">
-        <span className="text-xs text-white/80">5K</span>
-        <span className="text-xs text-white font-medium">{formatTime(fiveK)}</span>
+    <div className="bg-black/20 border border-white/20 rounded-xl p-3 w-36">
+      <div className="text-sm text-white font-semibold mb-2 text-center">Running PRs</div>
+      <div className="space-y-1">
+        <div className="flex justify-between items-center">
+          <span className="text-xs text-white/80">Mile</span>
+          <span className="text-xs text-white font-medium">{formatTime(mile)}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-xs text-white/80">5K</span>
+          <span className="text-xs text-white font-medium">{formatTime(fiveK)}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-xs text-white/80">10K</span>
+          <span className="text-xs text-white font-medium">42:00</span>
+        </div>
       </div>
     </div>
   );
@@ -923,7 +941,7 @@ const NameplatePreview = ({ prsData }) => {
   
   return (
     <div className="text-center">
-      <div className="text-sm font-bold text-white truncate max-w-[100px]" style={{ textShadow: '0 0 10px rgba(8,240,255,0.3)' }}>
+      <div className="text-lg font-bold text-white truncate max-w-[140px]" style={{ textShadow: '0 0 10px rgba(8,240,255,0.3)' }}>
         {displayName}
       </div>
     </div>
@@ -934,16 +952,21 @@ const BalanceChipsPreview = ({ prsData }) => {
   // These would come from actual balance analysis
   const strengthScore = 75;
   const enduranceScore = 68;
+  const recoveryScore = 82;
   
   return (
-    <div className="flex gap-1">
-      <div className="bg-black/30 border border-white/20 rounded-full px-2 py-0.5 flex items-center gap-1">
-        <div className="w-1.5 h-1.5 rounded-full bg-[#FFA42D]" />
-        <span className="text-xs text-white">{strengthScore}</span>
+    <div className="flex gap-2 justify-center">
+      <div className="bg-black/30 border border-white/20 rounded-full px-3 py-1 flex items-center gap-1">
+        <div className="w-2 h-2 rounded-full bg-[#FFA42D]" />
+        <span className="text-xs text-white font-medium">{strengthScore}</span>
       </div>
-      <div className="bg-black/30 border border-white/20 rounded-full px-2 py-0.5 flex items-center gap-1">
-        <div className="w-1.5 h-1.5 rounded-full bg-[#00FF88]" />
-        <span className="text-xs text-white">{enduranceScore}</span>
+      <div className="bg-black/30 border border-white/20 rounded-full px-3 py-1 flex items-center gap-1">
+        <div className="w-2 h-2 rounded-full bg-[#00FF88]" />
+        <span className="text-xs text-white font-medium">{enduranceScore}</span>
+      </div>
+      <div className="bg-black/30 border border-white/20 rounded-full px-3 py-1 flex items-center gap-1">
+        <div className="w-2 h-2 rounded-full bg-[#08F0FF]" />
+        <span className="text-xs text-white font-medium">{recoveryScore}</span>
       </div>
     </div>
   );
