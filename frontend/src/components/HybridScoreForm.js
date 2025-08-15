@@ -346,6 +346,7 @@ const HybridScoreForm = () => {
         console.log('🔥 WEBHOOK RESPONSE HEADERS:', Object.fromEntries(webhookResponse.headers.entries()));
 
         if (webhookResponse.ok) {
+          console.log('🔥 STEP 10: Processing webhook response');
           const responseText = await webhookResponse.text();
           console.log('🔥 WEBHOOK RESPONSE TEXT LENGTH:', responseText.length);
           console.log('🔥 WEBHOOK RESPONSE TEXT:', responseText);
