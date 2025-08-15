@@ -1463,7 +1463,9 @@ async def update_athlete_profile_score(profile_id: str, score_data: dict):
     except HTTPException:
         raise
     except Exception as e:
-        print(f"Error updating athlete profile score: {e}")
+        print(f"❌ Error updating athlete profile score: {e}")
+        print(f"❌ Error type: {type(e)}")
+        print(f"❌ Error details: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error updating athlete profile score: {str(e)}"
