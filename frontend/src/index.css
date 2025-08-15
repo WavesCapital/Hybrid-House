@@ -30,8 +30,8 @@ code {
 .rnd-container.selected .react-resizable-handle {
     opacity: 1 !important;
     visibility: visible !important;
-    width: 12px !important;
-    height: 12px !important;
+    width: 14px !important;
+    height: 14px !important;
     background-color: #08F0FF !important;
     border: 3px solid #fff !important;
     border-radius: 50% !important;
@@ -39,6 +39,7 @@ code {
     transition: all 0.2s ease !important;
     z-index: 1001 !important;
     cursor: pointer !important;
+    position: absolute !important;
 }
 
 /* Individual handle positioning with maximum specificity */
