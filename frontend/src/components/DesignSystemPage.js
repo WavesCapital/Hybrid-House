@@ -1001,7 +1001,45 @@ const DesignSystemPage = () => {
           </div>
         </div>
 
-        {/* Loading States */}
+        {/* Neon Score Circles */}
+        <div className="design-section">
+          <div className="section-header">
+            <h2 className="section-title">Neon Score Circles</h2>
+            <p className="section-description">Futuristic circular progress indicators with pulsing glow effects for displaying hybrid scores</p>
+          </div>
+          
+          <div className="score-circles-grid">
+            <div className="score-circle" style={{ '--score-percentage': 91 }}>
+              <div className="score-circle-glow"></div>
+              <div className="score-circle-bg"></div>
+              <div className="score-circle-ring"></div>
+              <div className="score-content">
+                <div className="score-value-large">91</div>
+                <div className="score-label-large">Hybrid Score</div>
+              </div>
+            </div>
+            
+            <div className="score-circle" style={{ '--score-percentage': 76 }}>
+              <div className="score-circle-glow"></div>
+              <div className="score-circle-bg"></div>
+              <div className="score-circle-ring"></div>
+              <div className="score-content">
+                <div className="score-value-large">76</div>
+                <div className="score-label-large">Endurance</div>
+              </div>
+            </div>
+            
+            <div className="score-circle" style={{ '--score-percentage': 88 }}>
+              <div className="score-circle-glow"></div>
+              <div className="score-circle-bg"></div>
+              <div className="score-circle-ring"></div>
+              <div className="score-content">
+                <div className="score-value-large">88</div>
+                <div className="score-label-large">Strength</div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="design-section">
           <div className="section-header">
             <h2 className="section-title">Loading States</h2>
