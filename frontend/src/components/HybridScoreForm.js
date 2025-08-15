@@ -1735,7 +1735,7 @@ const HybridScoreForm = () => {
                     className="form-input"
                     value={formData.pb_marathon}
                     onChange={(e) => handleInputChange('pb_marathon', e.target.value)}
-                    placeholder="3:15:00"
+                    placeholder="4:00:00"
                   />
                 </div>
 
