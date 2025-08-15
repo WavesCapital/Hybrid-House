@@ -1557,13 +1557,31 @@ async def update_athlete_profile_score(profile_id: str, score_data: dict):
             "updated_at": datetime.utcnow().isoformat()
         }
         
-        # Add individual fields if any exist
+        # Add individual fields if any exist, but handle schema gracefully
         if individual_fields:
             update_data.update(individual_fields)
             
         print(f"✅ Complete update data: {update_data}")
         
-        update_result = supabase.table('athlete_profiles').update(update_data).eq('id', profile_id).execute()
+        # Try to update with individual fields first, fall back to JSON-only if schema issues
+        try:
+            update_result = supabase.table('athlete_profiles').update(update_data).eq('id', profile_id).execute()
+        except Exception as schema_error:
+            if "does not exist" in str(schema_error).lower() or "column" in str(schema_error).lower() or "PGRST204" in str(schema_error):
+                print(f"⚠️ Database schema missing some columns, falling back to JSON-only storage")
+                print(f"⚠️ Schema error: {schema_error}")
+                
+                # Fallback to storing only the score_data JSON
+                fallback_update_data = {
+                    "score_data": score_data,
+                    "updated_at": datetime.utcnow().isoformat()
+                }
+                
+                update_result = supabase.table('athlete_profiles').update(fallback_update_data).eq('id', profile_id).execute()
+                print(f"✅ Fallback update successful - stored score_data JSON only")
+            else:
+                # Re-raise if it's not a schema issue
+                raise schema_error
         
         print(f"✅ Update result: {update_result}")
         
