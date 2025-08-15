@@ -327,6 +327,7 @@ const HybridScoreForm = () => {
         
         console.log('🔥 WEBHOOK PAYLOAD:', JSON.stringify(webhookPayload, null, 2));
 
+        console.log('🔥 STEP 9: Making webhook request');
         const webhookResponse = await fetch(
           'https://wavewisdom.app.n8n.cloud/webhook/b820bc30-989d-4c9b-9b0d-78b89b19b42c',
           {
