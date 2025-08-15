@@ -1087,6 +1087,92 @@ const ComponentRenderer = ({ component, prsData, isSelected, onSelect, onUpdate,
         bottomLeft: true,
         topLeft: true,
       } : false}
+      resizeHandleStyles={isSelected ? {
+        topLeft: { 
+          width: '18px', 
+          height: '18px', 
+          backgroundColor: '#ffffff',
+          border: '2px solid #08F0FF',
+          borderRadius: '50%',
+          top: '-9px',
+          left: '-9px',
+          zIndex: 1001
+        },
+        top: { 
+          width: '18px', 
+          height: '18px', 
+          backgroundColor: '#ffffff',
+          border: '2px solid #08F0FF',
+          borderRadius: '50%',
+          top: '-9px',
+          left: '50%',
+          marginLeft: '-9px',
+          zIndex: 1001
+        },
+        topRight: { 
+          width: '18px', 
+          height: '18px', 
+          backgroundColor: '#ffffff',
+          border: '2px solid #08F0FF',
+          borderRadius: '50%',
+          top: '-9px',
+          right: '-9px',
+          zIndex: 1001
+        },
+        right: { 
+          width: '18px', 
+          height: '18px', 
+          backgroundColor: '#ffffff',
+          border: '2px solid #08F0FF',
+          borderRadius: '50%',
+          right: '-9px',
+          top: '50%',
+          marginTop: '-9px',
+          zIndex: 1001
+        },
+        bottomRight: { 
+          width: '18px', 
+          height: '18px', 
+          backgroundColor: '#ffffff',
+          border: '2px solid #08F0FF',
+          borderRadius: '50%',
+          bottom: '-9px',
+          right: '-9px',
+          zIndex: 1001
+        },
+        bottom: { 
+          width: '18px', 
+          height: '18px', 
+          backgroundColor: '#ffffff',
+          border: '2px solid #08F0FF',
+          borderRadius: '50%',
+          bottom: '-9px',
+          left: '50%',
+          marginLeft: '-9px',
+          zIndex: 1001
+        },
+        bottomLeft: { 
+          width: '18px', 
+          height: '18px', 
+          backgroundColor: '#ffffff',
+          border: '2px solid #08F0FF',
+          borderRadius: '50%',
+          bottom: '-9px',
+          left: '-9px',
+          zIndex: 1001
+        },
+        left: { 
+          width: '18px', 
+          height: '18px', 
+          backgroundColor: '#ffffff',
+          border: '2px solid #08F0FF',
+          borderRadius: '50%',
+          left: '-9px',
+          top: '50%',
+          marginTop: '-9px',
+          zIndex: 1001
+        }
+      } : {}}
       onClick={handleSelect}
       style={{
         zIndex: component.z + 10,
