@@ -382,6 +382,67 @@ const ShareCardStudio = () => {
     }
   };
 
+  // Background upload functionality
+  const handleBackgroundUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload an image file.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please upload an image smaller than 5MB.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const imageUrl = e.target.result;
+      const backgroundId = `uploaded_${Date.now()}`;
+      
+      // Add to uploaded backgrounds
+      setUploadedBackgrounds(prev => ({
+        ...prev,
+        [backgroundId]: {
+          name: file.name.split('.')[0],
+          css: `url(${imageUrl})`,
+          type: 'image',
+          size: 'cover'
+        }
+      }));
+
+      // Automatically select the new background
+      setBackgroundId(backgroundId);
+      saveToHistory();
+
+      toast({
+        title: "Background uploaded",
+        description: `${file.name} uploaded successfully.`
+      });
+    };
+
+    reader.readAsDataURL(file);
+    
+    // Clear the input
+    event.target.value = '';
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
+  };
+
   // Export functionality
   const exportCanvas = async () => {
     if (!canvasRef.current) return;
