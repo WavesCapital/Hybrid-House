@@ -372,6 +372,10 @@ const ProfilePage = () => {
         
         // Performance data from form
         pb_mile: inputForm.pb_mile,
+        pb_5k: inputForm.pb_5k,
+        pb_10k: inputForm.pb_10k,
+        pb_half_marathon: inputForm.pb_half_marathon,
+        pb_marathon: inputForm.pb_marathon,
         weekly_miles: inputForm.weekly_miles,
         long_run: inputForm.long_run,
         pb_bench_1rm: inputForm.pb_bench_1rm,
