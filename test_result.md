@@ -211,7 +211,7 @@ test_plan:
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Add a PRs section to /profile that has all the PRs that we use and updates the database when changed. Should show the current value we have for the athlete. UPDATED: Remove standalone PRs section and instead add missing running PRs (5K, 10K, Half Marathon, Marathon) to the Generate New Score form. When user updates PRs, auto-generate new hybrid score. PRs come from most recent athlete_profile record."
+user_problem_statement: "Modify the Share Studio running PRs component to use Mile, 5K, and Marathon instead of Mile, 5K, and 10K. Update both the PRRuns component and ShareCardStudio preview/mock data to reflect this change."
 
 frontend:
   - task: "Enhanced Generate New Score Form with All Running PRs"
