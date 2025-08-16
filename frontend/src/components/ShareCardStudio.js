@@ -436,6 +436,7 @@ const ShareCardStudio = () => {
       case 'prLifts':
       case 'prLiftsHorizontal':
       case 'prRuns':
+      case 'prRunsHorizontal':
         return { ...base, glassBlur: 8 };
       default:
         return base;
