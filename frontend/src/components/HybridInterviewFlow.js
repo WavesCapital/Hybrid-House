@@ -544,10 +544,9 @@ const HybridInterviewFlow = () => {
         .hero-dial .score-number {
           font-size: 4rem;
           font-weight: 800;
-          color: white; /* Changed from var(--neon-primary) to white to match HybridScoreDial2 */
+          color: white; /* White color without any glow */
           line-height: 1;
           margin-bottom: 8px;
-          text-shadow: 0 0 8px rgba(8, 240, 255, 0.4); /* Added refined glow to match Dial2 */
         }
 
         .hero-dial .score-label {
