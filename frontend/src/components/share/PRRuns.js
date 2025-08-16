@@ -38,7 +38,7 @@ const PRRuns = ({ prsData, style, baseStyle }) => {
         {/* Header - Left aligned */}
         <div className="mb-6">
           <h3 className="text-lg font-bold text-white/90 uppercase tracking-widest text-left">
-            TIMES
+            BEST TIMES
           </h3>
         </div>
         
