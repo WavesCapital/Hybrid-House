@@ -962,6 +962,31 @@ const PRLiftsPreview = ({ prsData }) => {
   );
 };
 
+const PRLiftsHorizontalPreview = ({ prsData }) => {
+  const strength = prsData?.strength || {};
+  // Use real data or defaults for preview
+  const squat = strength.squat_lb || 315;
+  const bench = strength.bench_lb || 225;
+  const deadlift = strength.deadlift_lb || 405;
+  
+  return (
+    <div className="w-40 p-2">
+      {/* Header row */}
+      <div className="flex justify-between mb-2">
+        <span className="text-xs text-white/70 uppercase">Squat</span>
+        <span className="text-xs text-white/70 uppercase">Bench</span>
+        <span className="text-xs text-white/70 uppercase">Dead</span>
+      </div>
+      {/* Values row */}
+      <div className="flex justify-between">
+        <span className="text-xs text-white font-bold">{Math.round(squat)}</span>
+        <span className="text-xs text-white font-bold">{Math.round(bench)}</span>
+        <span className="text-xs text-white font-bold">{Math.round(deadlift)}</span>
+      </div>
+    </div>
+  );
+};
+
 const PRRunsPreview = ({ prsData }) => {
   const running = prsData?.running || {};
   // Use real data or defaults for preview
