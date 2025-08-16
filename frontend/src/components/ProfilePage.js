@@ -2463,6 +2463,50 @@ const ProfilePage = () => {
                 </div>
                 
                 <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">5K PR (m:ss)</label>
+                  <Input
+                    type="text"
+                    value={inputForm.pb_5k}
+                    onChange={(e) => setInputForm({...inputForm, pb_5k: e.target.value})}
+                    placeholder="e.g., 20:45"
+                    className="neon-input"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">10K PR (m:ss)</label>
+                  <Input
+                    type="text"
+                    value={inputForm.pb_10k}
+                    onChange={(e) => setInputForm({...inputForm, pb_10k: e.target.value})}
+                    placeholder="e.g., 42:30"
+                    className="neon-input"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">Half Marathon PR (h:mm:ss)</label>
+                  <Input
+                    type="text"
+                    value={inputForm.pb_half_marathon}
+                    onChange={(e) => setInputForm({...inputForm, pb_half_marathon: e.target.value})}
+                    placeholder="e.g., 1:35:00"
+                    className="neon-input"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-secondary mb-2">Marathon PR (h:mm:ss)</label>
+                  <Input
+                    type="text"
+                    value={inputForm.pb_marathon}
+                    onChange={(e) => setInputForm({...inputForm, pb_marathon: e.target.value})}
+                    placeholder="e.g., 3:25:00"
+                    className="neon-input"
+                  />
+                </div>
+                
+                <div>
                   <label className="block text-sm font-medium text-secondary mb-2">Weekly Miles</label>
                   <Input
                     type="number"
