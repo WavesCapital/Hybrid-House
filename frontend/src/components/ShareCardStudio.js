@@ -1444,24 +1444,24 @@ const PRRunsHorizontalPreview = ({ prsData }) => {
   };
   
   return (
-    <div className="bg-black/20 border border-white/20 rounded-xl p-4 w-44 backdrop-blur-sm">
+    <div className="bg-black/20 border border-white/20 rounded-xl p-4 w-52 backdrop-blur-sm">
       {/* Header */}
       <div className="text-xs text-white/90 font-bold mb-3 text-left uppercase tracking-wider">
         BEST TIMES
       </div>
       
-      {/* Times Grid - Left aligned with wider spacing */}
+      {/* Times Grid - Optimized for Marathon text */}
       <div className="grid grid-cols-3 gap-2 text-left">
-        <div className="space-y-1 min-w-0">
-          <div className="text-xs text-white/70 uppercase font-medium truncate">Mile</div>
+        <div className="space-y-1 min-w-0 flex-1">
+          <div className="text-xs text-white/70 uppercase font-medium">Mile</div>
           <div className="text-xs text-white font-bold">{formatTime(mile)}</div>
         </div>
-        <div className="space-y-1 min-w-0">
-          <div className="text-xs text-white/70 uppercase font-medium truncate">5K</div>
+        <div className="space-y-1 min-w-0 flex-1">
+          <div className="text-xs text-white/70 uppercase font-medium">5K</div>
           <div className="text-xs text-white font-bold">{formatTime(fiveK)}</div>
         </div>
-        <div className="space-y-1 min-w-0">
-          <div className="text-xs text-white/70 uppercase font-medium truncate">Marathon</div>
+        <div className="space-y-1 min-w-0 flex-1">
+          <div className="text-xs text-white/70 uppercase font-medium">Marathon</div>
           <div className="text-xs text-white font-bold">{formatTime(marathon)}</div>
         </div>
       </div>
