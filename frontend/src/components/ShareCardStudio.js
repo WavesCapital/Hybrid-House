@@ -1756,6 +1756,8 @@ const ComponentContent = ({ component, prsData, isSelected }) => {
       return <PRLiftsHorizontal {...componentProps} />;
     case 'prRuns':
       return <PRRuns {...componentProps} />;
+    case 'prRunsHorizontal':
+      return <PRRunsHorizontal {...componentProps} />;
     case 'balanceChips':
       return <BalanceChips {...componentProps} />;
     case 'nameplate':
