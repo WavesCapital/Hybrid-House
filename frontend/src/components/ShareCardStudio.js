@@ -852,7 +852,7 @@ const GradientTile = ({ id, gradient, isSelected, onClick }) => {
   return (
     <div
       className={`relative group cursor-pointer transition-all duration-200 ${
-        isSelected ? 'ring-2 ring-[#08F0FF] ring-offset-2 ring-offset-[#0A0B0C]' : 'hover:ring-1 hover:ring-[#08F0FF]/50'
+        isSelected ? '' : 'hover:ring-1 hover:ring-[#08F0FF]/50'
       }`}
       onClick={onClick}
     >
