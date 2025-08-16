@@ -72,6 +72,7 @@ const GRADIENTS = {
 // Component types
 const COMPONENT_TYPES = {
   dial: 'dial',
+  dial2: 'dial2',
   scoreChip: 'scoreChip', 
   prLifts: 'prLifts',
   prLiftsHorizontal: 'prLiftsHorizontal',
