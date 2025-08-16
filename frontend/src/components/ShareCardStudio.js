@@ -1227,12 +1227,12 @@ const PRLiftsPreview = ({ prsData }) => {
       </div>
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <span className="text-xs text-white/80">Squat</span>
-          <span className="text-xs text-white font-bold">{Math.round(squat)}</span>
-        </div>
-        <div className="flex justify-between items-center">
           <span className="text-xs text-white/80">Bench</span>
           <span className="text-xs text-white font-bold">{Math.round(bench)}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-xs text-white/80">Squat</span>
+          <span className="text-xs text-white font-bold">{Math.round(squat)}</span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-xs text-white/80">Dead</span>
