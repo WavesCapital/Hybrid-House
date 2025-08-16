@@ -92,7 +92,7 @@ const DEFAULT_POSITIONS = {
   prLifts: { x: 20, y: 580, width: 160, height: 140 }, // Bottom-left
   prLiftsHorizontal: { x: 30, y: 480, width: 315, height: 80 }, // Horizontal layout
   prRuns: { x: 195, y: 580, width: 160, height: 140 }, // Bottom-right
-  prRunsHorizontal: { x: 30, y: 400, width: 315, height: 80 }, // Horizontal layout
+  prRunsHorizontal: { x: 30, y: 400, width: 335, height: 80 }, // Horizontal layout - wider for marathon
   balanceChips: { x: 60, y: 350, width: 255, height: 60 }, // Below dial
   nameplate: { x: 75, y: 730, width: 225, height: 50 } // Bottom-center
 };
