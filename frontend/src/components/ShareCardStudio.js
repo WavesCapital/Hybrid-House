@@ -84,6 +84,7 @@ const COMPONENT_TYPES = {
 // Default positions and sizes for smart anchoring (iPhone Pro Max real dimensions: 375x812)
 const DEFAULT_POSITIONS = {
   dial: { x: 80, y: 150, width: 220, height: 180 }, // Upper center third
+  dial2: { x: 80, y: 150, width: 220, height: 180 }, // Upper center third
   scoreChip: { x: 95, y: 100, width: 185, height: 40 }, // Above dial
   prLifts: { x: 20, y: 580, width: 160, height: 140 }, // Bottom-left
   prLiftsHorizontal: { x: 30, y: 480, width: 315, height: 80 }, // Horizontal layout
