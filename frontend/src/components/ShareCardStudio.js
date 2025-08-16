@@ -925,7 +925,7 @@ const PRLiftsPreview = ({ prsData }) => {
   const deadlift = strength.deadlift_lb || 405;
   
   return (
-    <div className="bg-black/20 border border-white/20 rounded-xl p-3 w-36">
+    <div className="w-36 p-3">
       <div className="text-sm text-white font-semibold mb-2 text-center">Strength PRs</div>
       <div className="space-y-1">
         <div className="flex justify-between items-center">
