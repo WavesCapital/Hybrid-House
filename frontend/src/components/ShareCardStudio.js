@@ -113,8 +113,10 @@ const ShareCardStudio = () => {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [uploadedBackgrounds, setUploadedBackgrounds] = useState({});
   
   const canvasRef = useRef(null);
+  const fileInputRef = useRef(null);
   const { toast } = useToast();
   
   // Canvas dimensions
