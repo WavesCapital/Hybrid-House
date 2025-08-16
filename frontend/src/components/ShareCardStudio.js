@@ -444,6 +444,25 @@ const ShareCardStudio = () => {
     fileInputRef.current?.click();
   };
 
+  const deleteUploadedBackground = (backgroundId) => {
+    setUploadedBackgrounds(prev => {
+      const updated = { ...prev };
+      delete updated[backgroundId];
+      return updated;
+    });
+
+    // If the deleted background was selected, switch to default
+    if (backgroundId === backgroundId) {
+      setBackgroundId('cyanDrift');
+      saveToHistory();
+    }
+
+    toast({
+      title: "Background deleted",
+      description: "Background removed successfully."
+    });
+  };
+
   // Get current background style (gradient or uploaded image)
   const getCurrentBackgroundStyle = () => {
     if (uploadedBackgrounds[backgroundId]) {
