@@ -181,7 +181,7 @@ const HybridScoreResults = () => {
     ctx.font = 'bold 110px Inter, Arial, sans-serif';
     ctx.fillText(hybridScoreValue.toString(), centerX, mainScoreY + 15);
     
-    // Score label without glow (clean white text)
+    // Score label without glow (clean white text, uppercase)
     ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
     ctx.font = 'bold 24px Inter, Arial, sans-serif';
     ctx.fillText('HYBRID SCORE', centerX, mainScoreY + 55);
