@@ -162,9 +162,9 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Profile ID Extraction Fix Verification - COMPLETED SUCCESSFULLY"
+    - "Enhanced Generate New Score Form with All Running PRs - TESTING COMPLETE"
     - "Backend APIs working correctly - all endpoints operational"
-    - "Webhook integration fully functional - returns score data and profile ID extraction working"
+    - "Webhook integration functional - minor timeout issue with external service"
   stuck_tasks: []
   test_all: false
   test_priority: "critical_first"
