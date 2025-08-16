@@ -1450,18 +1450,18 @@ const PRRunsHorizontalPreview = ({ prsData }) => {
         BEST TIMES
       </div>
       
-      {/* Times Grid - Left aligned */}
-      <div className="grid grid-cols-3 gap-3 text-left">
-        <div className="space-y-1">
-          <div className="text-xs text-white/70 uppercase font-medium">Mile</div>
+      {/* Times Grid - Left aligned with wider spacing */}
+      <div className="grid grid-cols-3 gap-2 text-left">
+        <div className="space-y-1 min-w-0">
+          <div className="text-xs text-white/70 uppercase font-medium truncate">Mile</div>
           <div className="text-xs text-white font-bold">{formatTime(mile)}</div>
         </div>
-        <div className="space-y-1">
-          <div className="text-xs text-white/70 uppercase font-medium">5K</div>
+        <div className="space-y-1 min-w-0">
+          <div className="text-xs text-white/70 uppercase font-medium truncate">5K</div>
           <div className="text-xs text-white font-bold">{formatTime(fiveK)}</div>
         </div>
-        <div className="space-y-1">
-          <div className="text-xs text-white/70 uppercase font-medium">Marathon</div>
+        <div className="space-y-1 min-w-0">
+          <div className="text-xs text-white/70 uppercase font-medium truncate">Marathon</div>
           <div className="text-xs text-white font-bold">{formatTime(marathon)}</div>
         </div>
       </div>
