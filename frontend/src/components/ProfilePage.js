@@ -192,6 +192,25 @@ const ProfilePage = () => {
             }
             return value.toString();
           };
+
+          // Helper function to convert seconds to time format
+          const formatSecondsToTime = (seconds) => {
+            if (!seconds || seconds <= 0) return '';
+            
+            const totalSeconds = parseInt(seconds);
+            if (totalSeconds >= 3600) {
+              // For marathon and half marathon (HH:MM:SS)
+              const hours = Math.floor(totalSeconds / 3600);
+              const minutes = Math.floor((totalSeconds % 3600) / 60);
+              const secs = totalSeconds % 60;
+              return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            } else {
+              // For mile, 5K, 10K (MM:SS)
+              const minutes = Math.floor(totalSeconds / 60);
+              const secs = totalSeconds % 60;
+              return `${minutes}:${secs.toString().padStart(2, '0')}`;
+            }
+          };
           
           // Build the form data - NO DEFAULT VALUES, only use actual data from profile
           const formData = {
@@ -203,8 +222,20 @@ const ProfilePage = () => {
             
             // Running Performance - only populate if data exists
             pb_mile: getFieldValue('pb_mile_seconds') ? 
-              `${Math.floor(getFieldValue('pb_mile_seconds') / 60)}:${String(getFieldValue('pb_mile_seconds') % 60).padStart(2, '0')}` : 
+              formatSecondsToTime(getFieldValue('pb_mile_seconds')) : 
               getFieldValue('pb_mile') || '',
+            pb_5k: getFieldValue('pb_5k_seconds') ? 
+              formatSecondsToTime(getFieldValue('pb_5k_seconds')) : 
+              getFieldValue('pb_5k') || '',
+            pb_10k: getFieldValue('pb_10k_seconds') ? 
+              formatSecondsToTime(getFieldValue('pb_10k_seconds')) : 
+              getFieldValue('pb_10k') || '',
+            pb_half_marathon: getFieldValue('pb_half_marathon_seconds') ? 
+              formatSecondsToTime(getFieldValue('pb_half_marathon_seconds')) : 
+              getFieldValue('pb_half_marathon') || '',
+            pb_marathon: getFieldValue('pb_marathon_seconds') ? 
+              formatSecondsToTime(getFieldValue('pb_marathon_seconds')) : 
+              getFieldValue('pb_marathon') || '',
             weekly_miles: getFieldValue('weekly_miles') || '',
             long_run: getFieldValue('long_run_miles') || getFieldValue('long_run') || '',
             
