@@ -979,6 +979,46 @@ const GradientTile = ({ id, gradient, isSelected, onClick }) => {
   );
 };
 
+// Uploaded Background Tile Component
+const UploadedBackgroundTile = ({ id, background, isSelected, onClick, onDelete }) => {
+  return (
+    <div
+      className={`relative group cursor-pointer transition-all duration-200 ${
+        isSelected ? '' : 'hover:ring-1 hover:ring-[#08F0FF]/50'
+      }`}
+    >
+      <div
+        className={`w-full h-24 rounded-lg border transition-all duration-200 ${
+          isSelected ? 'border-[#08F0FF]' : 'border-white/20 group-hover:border-[#08F0FF]/50'
+        }`}
+        style={{ 
+          background: background.type === 'image' 
+            ? `${background.css} center/cover no-repeat`
+            : background.css 
+        }}
+        onClick={onClick}
+      />
+      
+      {/* Delete button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
+        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+      >
+        <X size={12} className="text-white" />
+      </button>
+      
+      <p className={`text-xs mt-2 text-center transition-colors truncate ${
+        isSelected ? 'text-[#08F0FF] font-medium' : 'text-white/70 group-hover:text-white'
+      }`}>
+        {background.name}
+      </p>
+    </div>
+  );
+};
+
 // Component Preview Tile - Clean visual-only approach
 const ComponentPreviewTile = ({ type, title, prsData, onAdd, preview }) => {
   const handleClick = () => {
