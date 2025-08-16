@@ -1529,6 +1529,8 @@ const ComponentContent = ({ component, prsData, isSelected }) => {
   switch (type) {
     case 'dial':
       return <HybridScoreDial {...componentProps} />;
+    case 'dial2':
+      return <HybridScoreDial2 {...componentProps} />;
     case 'scoreChip':
       return <ScoreChip {...componentProps} />;
     case 'prLifts':
