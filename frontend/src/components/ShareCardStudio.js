@@ -695,23 +695,73 @@ const ShareCardStudio = () => {
                 <div className="text-sm text-white/60 mb-4">
                   Click a gradient to apply it to your canvas
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {Object.entries(GRADIENTS).map(([id, gradient]) => (
-                    <GradientTile
-                      key={id}
-                      id={id}
-                      gradient={gradient}
-                      isSelected={backgroundId === id}
-                      onClick={() => {
-                        setBackgroundId(id);
-                        saveToHistory();
-                        toast({
-                          title: "Background applied",
-                          description: `${gradient.name} gradient applied to canvas.`
-                        });
-                      }}
-                    />
-                  ))}
+
+                {/* Upload Button */}
+                <div className="mb-6">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleBackgroundUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    onClick={triggerFileUpload}
+                    className="w-full bg-[#08F0FF]/10 hover:bg-[#08F0FF]/20 border border-[#08F0FF] text-[#08F0FF] font-medium"
+                    variant="outline"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Upload Background
+                  </Button>
+                </div>
+
+                {/* Uploaded Backgrounds */}
+                {Object.keys(uploadedBackgrounds).length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="text-sm font-medium text-white/80 mb-3">Your Uploads</h4>
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      {Object.entries(uploadedBackgrounds).map(([id, background]) => (
+                        <UploadedBackgroundTile
+                          key={id}
+                          id={id}
+                          background={background}
+                          isSelected={backgroundId === id}
+                          onClick={() => {
+                            setBackgroundId(id);
+                            saveToHistory();
+                            toast({
+                              title: "Background applied",
+                              description: `${background.name} applied to canvas.`
+                            });
+                          }}
+                          onDelete={() => deleteUploadedBackground(id)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Gradient Backgrounds */}
+                <div>
+                  <h4 className="text-sm font-medium text-white/80 mb-3">Gradients</h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    {Object.entries(GRADIENTS).map(([id, gradient]) => (
+                      <GradientTile
+                        key={id}
+                        id={id}
+                        gradient={gradient}
+                        isSelected={backgroundId === id}
+                        onClick={() => {
+                          setBackgroundId(id);
+                          saveToHistory();
+                          toast({
+                            title: "Background applied",
+                            description: `${gradient.name} gradient applied to canvas.`
+                          });
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
                 
                 <div className="flex items-center justify-between">
