@@ -552,8 +552,10 @@ const HybridInterviewFlow = () => {
 
         .hero-dial .score-label {
           font-size: 1.2rem;
-          color: rgba(255, 255, 255, 0.8); /* Changed to match HybridScoreDial2 opacity */
-          font-weight: 600;
+          color: rgba(255, 255, 255, 0.8); /* text-white/80 */
+          font-weight: 500; /* font-medium */
+          text-transform: uppercase; /* uppercase class */
+          letter-spacing: 0.05em; /* tracking-wider class */
           text-shadow: 0 0 4px rgba(8, 240, 255, 0.3); /* Added subtle glow to match Dial2 */
         }
 
