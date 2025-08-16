@@ -835,7 +835,7 @@ const ShareCardStudio = () => {
                   ref={canvasRef}
                   className="relative w-full h-full"
                   style={{
-                    background: GRADIENTS[backgroundId].css,
+                    background: getCurrentBackgroundStyle(),
                   }}
                   onDrop={(e) => e.preventDefault()}
                   onDragOver={(e) => e.preventDefault()}
