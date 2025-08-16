@@ -959,20 +959,26 @@ const PRRunsPreview = ({ prsData }) => {
   };
   
   return (
-    <div className="bg-black/20 border border-white/20 rounded-xl p-3 w-36">
+    <div className="w-36 p-3">
       <div className="text-sm text-white font-semibold mb-2 text-center">Running PRs</div>
       <div className="space-y-1">
         <div className="flex justify-between items-center">
           <span className="text-xs text-white/80">Mile</span>
-          <span className="text-xs text-white font-medium">{formatTime(mile)}</span>
+          <div className="text-right">
+            <div className="text-xs text-white font-medium">{formatTime(mile)}</div>
+            <div className="text-[#00FF88] text-xs bg-[#00FF88]/10 px-1 py-0.5 rounded mt-0.5">
+              6:30/mi
+            </div>
+          </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-xs text-white/80">5K</span>
-          <span className="text-xs text-white font-medium">{formatTime(fiveK)}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-xs text-white/80">10K</span>
-          <span className="text-xs text-white font-medium">42:00</span>
+          <div className="text-right">
+            <div className="text-xs text-white font-medium">{formatTime(fiveK)}</div>
+            <div className="text-[#00FF88] text-xs bg-[#00FF88]/10 px-1 py-0.5 rounded mt-0.5">
+              6:37/mi
+            </div>
+          </div>
         </div>
       </div>
     </div>
