@@ -17,10 +17,9 @@ const HybridScoreDial2 = ({ prsData, style, baseStyle }) => {
 
   return (
     <div 
-      className="w-full h-full flex items-center justify-center"
+      className="w-full h-full flex items-center justify-center p-4"
       style={{
         ...baseStyle,
-        filter: 'drop-shadow(0 0 30px rgba(8,240,255,0.6)) drop-shadow(0 0 60px rgba(8,240,255,0.4)) drop-shadow(0 0 90px rgba(8,240,255,0.2))'
       }}
     >
       <div className="relative" style={{ width: size, height: size }}>
@@ -29,13 +28,16 @@ const HybridScoreDial2 = ({ prsData, style, baseStyle }) => {
           height={size}
           viewBox={`0 0 ${size} ${size}`}
           className="transform -rotate-90"
+          style={{
+            filter: 'drop-shadow(0 0 8px rgba(8,240,255,0.3))'
+          }}
         >
           {/* Outer glow ring */}
           <circle
             cx={size / 2}
             cy={size / 2}
-            r={radius + 8}
-            stroke="rgba(8,240,255,0.1)"
+            r={radius + 6}
+            stroke="rgba(8,240,255,0.08)"
             strokeWidth="2"
             fill="none"
             className="animate-pulse"
@@ -64,7 +66,7 @@ const HybridScoreDial2 = ({ prsData, style, baseStyle }) => {
             strokeDashoffset={strokeDashoffset}
             className="transition-all duration-1000 ease-out"
             style={{
-              filter: 'drop-shadow(0 0 8px rgba(8,240,255,0.8)) drop-shadow(0 0 16px rgba(8,240,255,0.6))'
+              filter: 'drop-shadow(0 0 4px rgba(8,240,255,0.6))'
             }}
           />
 
@@ -72,8 +74,8 @@ const HybridScoreDial2 = ({ prsData, style, baseStyle }) => {
           <circle
             cx={size / 2}
             cy={size / 2}
-            r={radius - 15}
-            stroke="rgba(8,240,255,0.2)"
+            r={radius - 12}
+            stroke="rgba(8,240,255,0.15)"
             strokeWidth="1"
             fill="none"
             className="animate-pulse"
@@ -90,11 +92,11 @@ const HybridScoreDial2 = ({ prsData, style, baseStyle }) => {
                 key={i}
                 cx={x}
                 cy={y}
-                r="1.5"
+                r="1"
                 fill="#08F0FF"
                 style={{
-                  filter: 'drop-shadow(0 0 4px rgba(8,240,255,0.8))',
-                  opacity: 0.6 + (0.4 * (i / (segments * progress)))
+                  filter: 'drop-shadow(0 0 2px rgba(8,240,255,0.8))',
+                  opacity: 0.4 + (0.4 * (i / (segments * progress)))
                 }}
               />
             );
@@ -104,32 +106,29 @@ const HybridScoreDial2 = ({ prsData, style, baseStyle }) => {
         {/* Center content */}
         <div 
           className="absolute inset-0 flex items-center justify-center"
-          style={{
-            filter: 'drop-shadow(0 0 20px rgba(8,240,255,0.3))'
-          }}
         >
           <div className="text-center">
             <div className="text-6xl font-bold text-white mb-2" 
                  style={{ 
-                   textShadow: '0 0 20px rgba(8,240,255,0.5), 0 0 40px rgba(8,240,255,0.3)' 
+                   textShadow: '0 0 8px rgba(8,240,255,0.4)' 
                  }}>
               {Math.round(hybridScore)}
             </div>
             <div className="text-lg text-white/80 uppercase tracking-wider font-medium"
                  style={{ 
-                   textShadow: '0 0 10px rgba(8,240,255,0.3)' 
+                   textShadow: '0 0 4px rgba(8,240,255,0.3)' 
                  }}>
               Hybrid Score
             </div>
           </div>
         </div>
 
-        {/* Rotating outer glow effect */}
+        {/* Subtle rotating outer glow effect */}
         <div 
-          className="absolute inset-0 rounded-full animate-spin"
+          className="absolute inset-2 rounded-full pointer-events-none"
           style={{
-            background: `conic-gradient(from 0deg, transparent 0deg, rgba(8,240,255,0.1) 90deg, transparent 180deg, rgba(8,240,255,0.05) 270deg, transparent 360deg)`,
-            animation: 'spin 8s linear infinite'
+            background: `conic-gradient(from 0deg, transparent 0deg, rgba(8,240,255,0.05) 90deg, transparent 180deg, rgba(8,240,255,0.02) 270deg, transparent 360deg)`,
+            animation: 'spin 12s linear infinite'
           }}
         />
       </div>
