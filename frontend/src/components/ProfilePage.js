@@ -17,6 +17,313 @@ import SharedHeader from './SharedHeader';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
+// Personal Records Section Component
+const PersonalRecordsSection = () => {
+  const { toast } = useToast();
+  const { user, session } = useAuth();
+  const [prs, setPrs] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [editingField, setEditingField] = useState(null);
+  const [tempValues, setTempValues] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Fetch PRs on component mount
+  useEffect(() => {
+    const fetchPRs = async () => {
+      if (!user || !session) return;
+      
+      try {
+        setIsLoading(true);
+        const response = await axios.get(`${BACKEND_URL}/api/me/prs`, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+        setPrs(response.data);
+      } catch (error) {
+        console.error('Error fetching PRs:', error);
+        toast({
+          title: "Error loading PRs",
+          description: "Failed to load your personal records.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPRs();
+  }, [user, session, toast]);
+
+  // Helper function to format seconds to time string
+  const formatTimeFromSeconds = (seconds) => {
+    if (!seconds || seconds <= 0) return '';
+    
+    if (seconds >= 3600) {
+      // For marathon (HH:MM:SS)
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    } else {
+      // For shorter distances (MM:SS)
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    }
+  };
+
+  // Helper function to convert time string to seconds
+  const timeStringToSeconds = (timeStr) => {
+    if (!timeStr || typeof timeStr !== 'string') return null;
+    
+    const parts = timeStr.split(':');
+    if (parts.length === 2) {
+      // MM:SS format
+      const minutes = parseInt(parts[0]) || 0;
+      const seconds = parseInt(parts[1]) || 0;
+      return minutes * 60 + seconds;
+    } else if (parts.length === 3) {
+      // HH:MM:SS format
+      const hours = parseInt(parts[0]) || 0;
+      const minutes = parseInt(parts[1]) || 0;
+      const seconds = parseInt(parts[2]) || 0;
+      return hours * 3600 + minutes * 60 + seconds;
+    }
+    return null;
+  };
+
+  // Start editing a field
+  const startEditing = (field) => {
+    setEditingField(field);
+    let currentValue = '';
+    
+    if (field.includes('_s')) {
+      // Running time field
+      const seconds = prs?.running?.[field];
+      currentValue = formatTimeFromSeconds(seconds);
+    } else if (field.includes('_lb')) {
+      // Strength field
+      currentValue = prs?.strength?.[field] || '';
+    } else if (field === 'vo2max') {
+      currentValue = prs?.meta?.vo2max || '';
+    }
+    
+    setTempValues({ ...tempValues, [field]: currentValue });
+  };
+
+  // Cancel editing
+  const cancelEditing = () => {
+    setEditingField(null);
+    setTempValues({});
+  };
+
+  // Save field
+  const saveField = async (field) => {
+    if (!user || !session) return;
+
+    try {
+      setIsSaving(true);
+      const value = tempValues[field];
+      
+      // Prepare the update data
+      let updateData = {
+        strength: { ...prs.strength },
+        running: { ...prs.running },
+        meta: { ...prs.meta }
+      };
+
+      if (field.includes('_s')) {
+        // Running time field - convert to seconds
+        const seconds = timeStringToSeconds(value);
+        if (seconds !== null) {
+          updateData.running[field] = seconds;
+        }
+      } else if (field.includes('_lb')) {
+        // Strength field
+        const numValue = parseFloat(value);
+        if (!isNaN(numValue) && numValue > 0) {
+          updateData.strength[field] = numValue;
+        }
+      } else if (field === 'vo2max') {
+        // VO2 max field
+        const numValue = parseFloat(value);
+        if (!isNaN(numValue) && numValue > 0) {
+          updateData.meta.vo2max = numValue;
+        }
+      }
+
+      // Send update to backend
+      const response = await axios.post(`${BACKEND_URL}/api/me/prs`, updateData, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      // Update local state
+      setPrs(response.data);
+      setEditingField(null);
+      setTempValues({});
+
+      toast({
+        title: "Saved",
+        description: "Personal record updated successfully",
+        variant: "default",
+      });
+
+    } catch (error) {
+      console.error('Error saving PR:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save personal record",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Handle field value change
+  const handleFieldChange = (field, value) => {
+    setTempValues({ ...tempValues, [field]: value });
+  };
+
+  // Handle field key press
+  const handleKeyPress = (e, field) => {
+    if (e.key === 'Enter') {
+      saveField(field);
+    } else if (e.key === 'Escape') {
+      cancelEditing();
+    }
+  };
+
+  // Render editable field
+  const renderEditableField = (field, label, value, placeholder, isTime = false) => {
+    const isEditing = editingField === field;
+    const tempValue = tempValues[field] || '';
+
+    if (isEditing) {
+      return (
+        <div className="flex items-center space-x-2">
+          <label className="text-sm text-secondary w-20">{label}:</label>
+          <input
+            type="text"
+            value={tempValue}
+            onChange={(e) => handleFieldChange(field, e.target.value)}
+            onKeyPress={(e) => handleKeyPress(e, field)}
+            onBlur={() => saveField(field)}
+            placeholder={placeholder}
+            className="flex-1 px-3 py-2 text-sm neon-input"
+            autoFocus
+            disabled={isSaving}
+          />
+          {isSaving && (
+            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          )}
+        </div>
+      );
+    } else {
+      return (
+        <div 
+          onClick={() => startEditing(field)}
+          className="flex items-center space-x-2 cursor-pointer hover:bg-white/5 rounded px-2 py-1 transition-colors"
+        >
+          <label className="text-sm text-secondary w-20">{label}:</label>
+          <span className="flex-1 text-sm text-primary">
+            {value || <span className="text-gray-400 italic">Click to add</span>}
+          </span>
+        </div>
+      );
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="glass-card p-6">
+        <div className="flex items-center space-x-3 mb-4">
+          <Trophy className="w-6 h-6 text-[#08F0FF]" />
+          <h3 className="text-xl font-bold text-primary">Personal Records</h3>
+        </div>
+        <div className="flex items-center justify-center py-8">
+          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <span className="ml-3 text-secondary">Loading your PRs...</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="glass-card p-6">
+      <div className="flex items-center space-x-3 mb-6">
+        <Trophy className="w-6 h-6 text-[#08F0FF]" />
+        <h3 className="text-xl font-bold text-primary">Personal Records</h3>
+        <div className="text-sm text-secondary">Click any field to edit</div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Strength PRs */}
+        <div>
+          <h4 className="text-lg font-semibold text-primary mb-4 flex items-center">
+            <span className="w-3 h-3 bg-[#4BFF7A] rounded-full mr-2"></span>
+            Strength PRs (lbs)
+          </h4>
+          <div className="space-y-3">
+            {renderEditableField('squat_lb', 'Squat', prs?.strength?.squat_lb, 'e.g. 315')}
+            {renderEditableField('bench_lb', 'Bench', prs?.strength?.bench_lb, 'e.g. 225')}
+            {renderEditableField('deadlift_lb', 'Deadlift', prs?.strength?.deadlift_lb, 'e.g. 405')}
+            {renderEditableField('bodyweight_lb', 'Bodyweight', prs?.strength?.bodyweight_lb, 'e.g. 175')}
+          </div>
+        </div>
+
+        {/* Running PRs */}
+        <div>
+          <h4 className="text-lg font-semibold text-primary mb-4 flex items-center">
+            <span className="w-3 h-3 bg-[#08F0FF] rounded-full mr-2"></span>
+            Running PRs
+          </h4>
+          <div className="space-y-3">
+            {renderEditableField('mile_s', 'Mile', formatTimeFromSeconds(prs?.running?.mile_s), 'e.g. 6:30', true)}
+            {renderEditableField('5k_s', '5K', formatTimeFromSeconds(prs?.running?.['5k_s']), 'e.g. 20:45', true)}
+            {renderEditableField('10k_s', '10K', formatTimeFromSeconds(prs?.running?.['10k_s']), 'e.g. 42:30', true)}
+            {renderEditableField('half_s', 'Half Marathon', formatTimeFromSeconds(prs?.running?.half_s), 'e.g. 1:35:00', true)}
+            {renderEditableField('marathon_s', 'Marathon', formatTimeFromSeconds(prs?.running?.marathon_s), 'e.g. 3:25:00', true)}
+          </div>
+        </div>
+      </div>
+
+      {/* Additional Metrics */}
+      <div className="mt-8 pt-6 border-t border-white/10">
+        <h4 className="text-lg font-semibold text-primary mb-4 flex items-center">
+          <span className="w-3 h-3 bg-[#FFD700] rounded-full mr-2"></span>
+          Additional Metrics
+        </h4>
+        <div className="max-w-md">
+          {renderEditableField('vo2max', 'VO₂ Max', prs?.meta?.vo2max, 'e.g. 52')}
+        </div>
+      </div>
+
+      {/* Instructions */}
+      <div className="mt-6 p-4 rounded-lg border border-[#08F0FF]/20 bg-gradient-to-r from-[#08F0FF]/5 to-[#4BFF7A]/5">
+        <div className="flex items-start space-x-3">
+          <div className="flex-shrink-0 mt-1">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#08F0FF] to-[#4BFF7A] flex items-center justify-center">
+              <Activity className="w-3 h-3 text-white" />
+            </div>
+          </div>
+          <div className="flex-1">
+            <div className="text-sm font-medium text-primary mb-1">Keep Your PRs Updated</div>
+            <div className="text-xs text-secondary leading-relaxed">
+              Your personal records are used to calculate your hybrid score and create shareable cards. 
+              Update them as you hit new PRs to get the most accurate scoring!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ProfilePage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
