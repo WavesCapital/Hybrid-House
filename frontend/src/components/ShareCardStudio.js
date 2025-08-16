@@ -107,6 +107,9 @@ const OPTIMAL_SIZES = {
 };
 
 const ShareCardStudio = () => {
+  // Auth context for user data
+  const { user } = useAuth();
+  
   // State management
   const [prsData, setPrsData] = useState(null);
   const [loading, setLoading] = useState(true);
