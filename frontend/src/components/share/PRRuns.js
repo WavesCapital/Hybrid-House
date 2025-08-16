@@ -6,8 +6,16 @@ const PRRuns = ({ prsData, style, baseStyle }) => {
   
   const formatTime = (seconds) => {
     if (!seconds) return '—';
-    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = Math.round(seconds % 60);
+    
+    // For times over an hour, show h:mm:ss format
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+    
+    // For times under an hour, show mm:ss format
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
