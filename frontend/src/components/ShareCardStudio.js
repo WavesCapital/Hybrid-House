@@ -96,6 +96,7 @@ const DEFAULT_POSITIONS = {
 // Optimal fixed sizes for each component type (these are the "native" dimensions)
 const OPTIMAL_SIZES = {
   dial: { width: 280, height: 280 },
+  dial2: { width: 280, height: 280 },
   scoreChip: { width: 300, height: 60 },
   prLifts: { width: 240, height: 200 },
   prLiftsHorizontal: { width: 350, height: 100 },
