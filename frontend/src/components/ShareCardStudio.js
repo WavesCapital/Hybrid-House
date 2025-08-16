@@ -992,7 +992,7 @@ const NameplatePreview = ({ prsData }) => {
   
   return (
     <div className="text-center">
-      <div className="text-lg font-bold text-white truncate max-w-[140px]" style={{ textShadow: '0 0 10px rgba(8,240,255,0.3)' }}>
+      <div className="text-lg font-bold text-white truncate max-w-[140px]" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
         {displayName}
       </div>
     </div>
