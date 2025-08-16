@@ -299,12 +299,12 @@ const ShareCardStudio = () => {
   const getDefaultStyle = (type) => {
     const base = {
       opacity: 0.9,
-      glow: 'standard'
+      glow: 'off'
     };
 
     switch (type) {
       case 'dial':
-        return { ...base, ringThickness: 'M', ticks: true };
+        return { ...base, ringThickness: 'M', ticks: true, glow: 'standard' };
       case 'scoreChip':
       case 'nameplate':
         return { ...base, textSize: 'M', align: 'center' };
