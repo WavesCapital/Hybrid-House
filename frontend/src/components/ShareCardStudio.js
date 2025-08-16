@@ -309,6 +309,7 @@ const ShareCardStudio = () => {
       case 'nameplate':
         return { ...base, textSize: 'M', align: 'center' };
       case 'prLifts':
+      case 'prLiftsHorizontal':
       case 'prRuns':
         return { ...base, glassBlur: 8 };
       default:
