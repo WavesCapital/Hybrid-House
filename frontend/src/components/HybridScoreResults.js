@@ -1142,11 +1142,17 @@ Think you can beat this? Get scored at HybridLab.io 🚀`;
                   </svg>
                   <div className="dial-value">
                     <div className="score-number" style={{
-                      textShadow: '0 0 10px rgba(8, 240, 255, 0.4), 0 0 20px rgba(8, 240, 255, 0.2)'
+                      textShadow: '0 0 8px rgba(8, 240, 255, 0.4)', // Refined glow matching Dial2
+                      color: 'white' // Ensure white color
                     }}>
                       {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : hybridScoreValue}
                     </div>
-                    <div className="score-label" style={{ color: '#FFFFFF' }}>Hybrid Score</div>
+                    <div className="score-label" style={{ 
+                      color: 'rgba(255, 255, 255, 0.8)', // Match Dial2 opacity
+                      textShadow: '0 0 4px rgba(8, 240, 255, 0.3)' // Subtle label glow
+                    }}>
+                      Hybrid Score
+                    </div>
                   </div>
                 </div>
               </div>
