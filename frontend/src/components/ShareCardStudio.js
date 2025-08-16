@@ -1151,6 +1151,51 @@ const HybridScoreDialPreview = ({ prsData }) => {
   );
 };
 
+const HybridScoreDial2Preview = ({ prsData }) => {
+  const hybridScore = prsData?.meta?.hybrid_score || 85; // Default for preview
+  return (
+    <div className="w-24 h-24 relative" style={{ 
+      filter: 'drop-shadow(0 0 12px rgba(8,240,255,0.5)) drop-shadow(0 0 20px rgba(8,240,255,0.3))' 
+    }}>
+      <svg width="96" height="96" viewBox="0 0 96 96" className="transform -rotate-90">
+        {/* Background ring */}
+        <circle cx="48" cy="48" r="40" stroke="rgba(8,240,255,0.1)" strokeWidth="6" fill="none" />
+        {/* Segmented progress ring */}
+        <circle
+          cx="48" cy="48" r="40"
+          stroke="#08F0FF"
+          strokeWidth="6"
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray="5 1.5"
+          strokeDashoffset={`${251 - (hybridScore * 2.51)}`}
+          style={{
+            filter: 'drop-shadow(0 0 6px rgba(8,240,255,0.8))'
+          }}
+        />
+        {/* Outer glow ring */}
+        <circle
+          cx="48" cy="48" r="44"
+          stroke="rgba(8,240,255,0.1)"
+          strokeWidth="1"
+          fill="none"
+          className="animate-pulse"
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-xl font-bold text-white" style={{ 
+            textShadow: '0 0 10px rgba(8,240,255,0.5)' 
+          }}>
+            {Math.round(hybridScore)}
+          </div>
+          <div className="text-xs text-white/60 uppercase">SCORE</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ScoreChipPreview = ({ prsData }) => {
   const hybridScore = prsData?.meta?.hybrid_score || 85; // Default for preview
   return (
