@@ -1421,6 +1421,54 @@ const PRRunsPreview = ({ prsData }) => {
   );
 };
 
+const PRRunsHorizontalPreview = ({ prsData }) => {
+  const running = prsData?.running || {};
+  // Use real data or defaults for preview
+  const mile = running.mile_s || 390; // 6:30 mile
+  const fiveK = running['5k_s'] || 1230; // 20:30 5k
+  const marathon = running.marathon_s || 10800; // 3:00:00 marathon
+  
+  const formatTime = (seconds) => {
+    if (!seconds) return '—';
+    const hours = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    // For times over an hour, show h:mm format (no seconds)
+    if (hours > 0) {
+      return `${hours}:${mins.toString().padStart(2, '0')}`;
+    }
+    
+    // For times under an hour, show mm:ss format
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+  
+  return (
+    <div className="bg-black/20 border border-white/20 rounded-xl p-4 w-44 backdrop-blur-sm">
+      {/* Header */}
+      <div className="text-xs text-white/90 font-bold mb-3 text-left uppercase tracking-wider">
+        BEST TIMES
+      </div>
+      
+      {/* Times Grid - Left aligned */}
+      <div className="grid grid-cols-3 gap-3 text-left">
+        <div className="space-y-1">
+          <div className="text-xs text-white/70 uppercase font-medium">Mile</div>
+          <div className="text-xs text-white font-bold">{formatTime(mile)}</div>
+        </div>
+        <div className="space-y-1">
+          <div className="text-xs text-white/70 uppercase font-medium">5K</div>
+          <div className="text-xs text-white font-bold">{formatTime(fiveK)}</div>
+        </div>
+        <div className="space-y-1">
+          <div className="text-xs text-white/70 uppercase font-medium">Marathon</div>
+          <div className="text-xs text-white font-bold">{formatTime(marathon)}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const NameplatePreview = ({ prsData }) => {
   // Use actual data from prsData first, with intelligent fallbacks
   const firstName = prsData?.meta?.first_name || '';
