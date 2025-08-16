@@ -9,8 +9,8 @@ const PRLifts = ({ prsData, style, baseStyle }) => {
   };
 
   const lifts = [
-    { name: 'Squat', weight: strength.squat_lb },
     { name: 'Bench', weight: strength.bench_lb },
+    { name: 'Squat', weight: strength.squat_lb },
     { name: 'Deadlift', weight: strength.deadlift_lb }
   ];
 
