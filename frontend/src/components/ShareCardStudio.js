@@ -42,6 +42,7 @@ import ScoreChip from './share/ScoreChip';
 import PRLifts from './share/PRLifts';
 import PRLiftsHorizontal from './share/PRLiftsHorizontal';
 import PRRuns from './share/PRRuns';
+import PRRunsHorizontal from './share/PRRunsHorizontal';
 import BalanceChips from './share/BalanceChips';
 import Nameplate from './share/Nameplate';
 import EditPRsModal from './share/EditPRsModal';
