@@ -175,18 +175,22 @@ const HybridScoreResults = () => {
     ctx.stroke();
     ctx.shadowBlur = 0;
     
-    // Main score number - now glowing blue
-    ctx.fillStyle = '#00E0FF'; // Changed from green to blue
+    // Main score text with refined glow (matching HybridScoreDial2)
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
     ctx.font = 'bold 110px Inter, Arial, sans-serif';
-    ctx.shadowColor = 'rgba(0, 224, 255, 0.8)'; // Blue glow
-    ctx.shadowBlur = 25;
+    ctx.shadowColor = 'rgba(8, 240, 255, 0.4)'; // Refined cyan glow to match Dial2
+    ctx.shadowBlur = 8; // Reduced blur to match Dial2
     ctx.fillText(hybridScoreValue.toString(), centerX, mainScoreY + 15);
     ctx.shadowBlur = 0;
     
-    // Score label
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    // Score label with subtle glow (matching HybridScoreDial2)
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
     ctx.font = 'bold 24px Inter, Arial, sans-serif';
+    ctx.shadowColor = 'rgba(8, 240, 255, 0.3)'; // Subtle glow for label
+    ctx.shadowBlur = 4; // Matching Dial2 label glow
     ctx.fillText('HYBRID SCORE', centerX, mainScoreY + 55);
+    ctx.shadowBlur = 0;
     
     // Breakdown scores - perfectly spaced in a clean row
     const breakdownSpacing = 180; // Increased spacing for better layout
