@@ -16,24 +16,34 @@ const PRLifts = ({ prsData, style, baseStyle }) => {
 
   return (
     <div 
-      className="w-full h-full p-6"
+      className="w-full h-full p-6 flex items-center justify-center"
       style={{
         ...baseStyle,
         backdropFilter: `blur(${glassBlur}px)`,
         WebkitBackdropFilter: `blur(${glassBlur}px)`
       }}
     >
-      <h3 className="text-xl font-bold text-white mb-4 text-center">Strength PRs</h3>
-      
-      <div className="space-y-4">
-        {lifts.map((lift, index) => (
-          <div key={index} className="flex items-center justify-between">
-            <span className="text-white/80 font-medium">{lift.name}</span>
-            <span className="text-white font-bold text-lg">
-              {formatWeight(lift.weight)} lb
-            </span>
-          </div>
-        ))}
+      <div className="bg-black/20 border border-white/20 rounded-2xl p-6 w-full h-full backdrop-blur-md">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h3 className="text-lg font-bold text-white/90 uppercase tracking-widest">
+            MAXES
+          </h3>
+        </div>
+        
+        {/* Lifts */}
+        <div className="space-y-5">
+          {lifts.map((lift, index) => (
+            <div key={index} className="flex items-center justify-between">
+              <span className="text-white/80 text-xl font-medium">
+                {lift.name}
+              </span>
+              <span className="text-white text-2xl font-bold">
+                {formatWeight(lift.weight)}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
