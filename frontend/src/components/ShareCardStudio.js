@@ -1324,7 +1324,7 @@ const ComponentContent = ({ component, prsData, isSelected }) => {
   };
 
   const baseStyle = {
-    filter: getGlowStyle(style.glow),
+    filter: getGlowStyle(style?.glow || 'off'),  // Ensure we always pass a valid glow level
     width: '100%',
     height: '100%'
   };
