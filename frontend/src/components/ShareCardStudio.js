@@ -444,15 +444,15 @@ const ShareCardStudio = () => {
     fileInputRef.current?.click();
   };
 
-  const deleteUploadedBackground = (backgroundId) => {
+  const deleteUploadedBackground = (uploadId) => {
     setUploadedBackgrounds(prev => {
       const updated = { ...prev };
-      delete updated[backgroundId];
+      delete updated[uploadId];
       return updated;
     });
 
     // If the deleted background was selected, switch to default
-    if (backgroundId === backgroundId) {
+    if (uploadId === backgroundId) {
       setBackgroundId('cyanDrift');
       saveToHistory();
     }
