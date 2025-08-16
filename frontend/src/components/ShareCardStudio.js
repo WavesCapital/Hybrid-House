@@ -36,6 +36,7 @@ import axios from 'axios';
 
 // Import individual component renderers
 import HybridScoreDial from './share/HybridScoreDial';
+import HybridScoreDial2 from './share/HybridScoreDial2';
 import ScoreChip from './share/ScoreChip';
 import PRLifts from './share/PRLifts';
 import PRLiftsHorizontal from './share/PRLiftsHorizontal';
