@@ -1221,7 +1221,7 @@ const PRLiftsPreview = ({ prsData }) => {
   
   return (
     <div className="bg-black/20 border border-white/20 rounded-xl p-3 w-36 backdrop-blur-sm">
-      <div className="text-xs text-white/90 font-bold mb-2 text-center uppercase tracking-wider">
+      <div className="text-xs text-white/90 font-bold mb-2 text-left uppercase tracking-wider">
         MAXES
       </div>
       <div className="space-y-2">
