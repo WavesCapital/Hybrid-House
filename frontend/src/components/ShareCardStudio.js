@@ -172,7 +172,19 @@ const ShareCardStudio = () => {
   const loadPrsData = async () => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-      const token = localStorage.getItem('access_token');
+      
+      // Get Supabase session token instead of generic access_token
+      let token = null;
+      try {
+        const { data: { session } } = await import('../lib/supabaseClient').then(({ supabase }) => 
+          supabase.auth.getSession()
+        );
+        token = session?.access_token;
+      } catch (authError) {
+        console.warn('Could not get Supabase session:', authError);
+        // Fallback to localStorage token if available
+        token = localStorage.getItem('access_token');
+      }
       
       console.log('Loading PRs data...', { backendUrl, hasToken: !!token });
       
