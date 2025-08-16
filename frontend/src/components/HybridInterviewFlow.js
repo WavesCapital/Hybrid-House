@@ -551,7 +551,7 @@ const HybridInterviewFlow = () => {
         }
 
         .hero-dial .score-label {
-          font-size: 1.2rem;
+          font-size: 0.9rem; /* Reduced from 1.2rem to fit on one line */
           color: rgba(255, 255, 255, 0.8); /* text-white/80 */
           font-weight: 500; /* font-medium */
           text-transform: uppercase; /* uppercase class */
