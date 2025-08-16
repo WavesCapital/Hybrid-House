@@ -83,6 +83,7 @@ const DEFAULT_POSITIONS = {
   dial: { x: 80, y: 150, width: 220, height: 180 }, // Upper center third
   scoreChip: { x: 95, y: 100, width: 185, height: 40 }, // Above dial
   prLifts: { x: 20, y: 580, width: 160, height: 140 }, // Bottom-left
+  prLiftsHorizontal: { x: 30, y: 480, width: 315, height: 80 }, // Horizontal layout
   prRuns: { x: 195, y: 580, width: 160, height: 140 }, // Bottom-right
   balanceChips: { x: 60, y: 350, width: 255, height: 60 }, // Below dial
   nameplate: { x: 75, y: 730, width: 225, height: 50 } // Bottom-center
