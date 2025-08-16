@@ -29,7 +29,8 @@ import {
   Unlock,
   Copy,
   Trash2,
-  Layers
+  Layers,
+  X
 } from 'lucide-react';
 import axios from 'axios';
 
