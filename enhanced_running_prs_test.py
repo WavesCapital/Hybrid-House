@@ -24,6 +24,7 @@ print(f"🏃‍♂️ Testing Enhanced Running PRs at: {API_BASE_URL}")
 class EnhancedRunningPRsTester:
     def __init__(self):
         self.session = requests.Session()
+        self.session.headers.update({'Content-Type': 'application/json'})
         self.test_results = []
         self.created_profiles = []
         
