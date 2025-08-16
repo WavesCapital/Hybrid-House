@@ -1246,23 +1246,40 @@ const PRLiftsPreview = ({ prsData }) => {
 const PRLiftsHorizontalPreview = ({ prsData }) => {
   const strength = prsData?.strength || {};
   // Use real data or defaults for preview
-  const squat = strength.squat_lb || 315;
   const bench = strength.bench_lb || 225;
+  const squat = strength.squat_lb || 315;
   const deadlift = strength.deadlift_lb || 405;
   
   return (
-    <div className="w-40 p-2">
-      {/* Header row */}
-      <div className="flex justify-between mb-2">
-        <span className="text-xs text-white/70 uppercase">Bench</span>
-        <span className="text-xs text-white/70 uppercase">Squat</span>
-        <span className="text-xs text-white/70 uppercase">Dead</span>
+    <div className="bg-black/20 border border-white/20 rounded-xl p-4 w-44 backdrop-blur-sm">
+      {/* Header */}
+      <div className="text-xs text-white/90 font-bold mb-3 text-left uppercase tracking-wider">
+        MAXES
       </div>
-      {/* Values row */}
-      <div className="flex justify-between">
-        <span className="text-xs text-white font-bold">{Math.round(bench)}</span>
-        <span className="text-xs text-white font-bold">{Math.round(squat)}</span>
-        <span className="text-xs text-white font-bold">{Math.round(deadlift)}</span>
+      
+      {/* Lifts Grid - Left aligned */}
+      <div className="grid grid-cols-3 gap-3 text-left">
+        <div className="space-y-1">
+          <div className="text-xs text-white/70 uppercase font-medium">Bench</div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-xs text-white font-bold">{Math.round(bench)}</span>
+            <span className="text-xs text-white/50 text-[10px]">lbs</span>
+          </div>
+        </div>
+        <div className="space-y-1">
+          <div className="text-xs text-white/70 uppercase font-medium">Squat</div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-xs text-white font-bold">{Math.round(squat)}</span>
+            <span className="text-xs text-white/50 text-[10px]">lbs</span>
+          </div>
+        </div>
+        <div className="space-y-1">
+          <div className="text-xs text-white/70 uppercase font-medium">Dead</div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-xs text-white font-bold">{Math.round(deadlift)}</span>
+            <span className="text-xs text-white/50 text-[10px]">lbs</span>
+          </div>
+        </div>
       </div>
     </div>
   );
