@@ -9,8 +9,8 @@ const PRLiftsHorizontal = ({ prsData, style, baseStyle }) => {
   };
 
   const lifts = [
-    { name: 'Squat', weight: strength.squat_lb, unit: 'lb' },
     { name: 'Bench', weight: strength.bench_lb, unit: 'lb' },
+    { name: 'Squat', weight: strength.squat_lb, unit: 'lb' },
     { name: 'Deadlift', weight: strength.deadlift_lb, unit: 'lb' }
   ];
 
