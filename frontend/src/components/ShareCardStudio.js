@@ -1379,9 +1379,10 @@ const PRRunsPreview = ({ prsData }) => {
 };
 
 const NameplatePreview = ({ prsData }) => {
-  const firstName = prsData?.meta?.first_name || 'John';
-  const lastName = prsData?.meta?.last_name || 'Doe';
-  const displayName = prsData?.meta?.display_name || `${firstName} ${lastName}`.trim();
+  // Use actual data from prsData first, with intelligent fallbacks
+  const firstName = prsData?.meta?.first_name || '';
+  const lastName = prsData?.meta?.last_name || '';
+  const displayName = prsData?.meta?.display_name || `${firstName} ${lastName}`.trim() || 'Your Name';
   
   return (
     <div className="text-center">
