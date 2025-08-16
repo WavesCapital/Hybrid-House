@@ -891,19 +891,12 @@ const HybridScoreDialPreview = ({ prsData }) => {
         <circle cx="48" cy="48" r="40" stroke="rgba(255,255,255,0.1)" strokeWidth="6" fill="none" />
         <circle
           cx="48" cy="48" r="40"
-          stroke="url(#previewGradient)"
+          stroke="#08F0FF"
           strokeWidth="6"
           fill="none"
           strokeLinecap="round"
           strokeDasharray={`${hybridScore * 2.51} 251`}
         />
-        <defs>
-          <linearGradient id="previewGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#08F0FF" />
-            <stop offset="50%" stopColor="#00FF88" />
-            <stop offset="100%" stopColor="#FFA42D" />
-          </linearGradient>
-        </defs>
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center">
