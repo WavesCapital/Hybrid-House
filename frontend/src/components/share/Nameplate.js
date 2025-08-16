@@ -5,7 +5,7 @@ const Nameplate = ({ prsData, style, baseStyle }) => {
   
   const firstName = prsData?.meta?.first_name || '';
   const lastName = prsData?.meta?.last_name || '';
-  const displayName = prsData?.meta?.display_name || `${firstName} ${lastName}`.trim() || 'Athlete';
+  const displayName = prsData?.meta?.display_name || `${firstName} ${lastName}`.trim() || 'Your Name';
   
   // Text size mapping
   const sizeMap = {
