@@ -37,6 +37,7 @@ import axios from 'axios';
 import HybridScoreDial from './share/HybridScoreDial';
 import ScoreChip from './share/ScoreChip';
 import PRLifts from './share/PRLifts';
+import PRLiftsHorizontal from './share/PRLiftsHorizontal';
 import PRRuns from './share/PRRuns';
 import BalanceChips from './share/BalanceChips';
 import Nameplate from './share/Nameplate';
