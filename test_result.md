@@ -170,9 +170,7 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Share Studio Running PRs Component Update - Mile, 5K, Marathon"
-    - "Test that mock data loads correctly in Share Studio"
-    - "Verify running PRs component displays Mile, 5K, Marathon correctly"
+    - "Share Studio Nameplate Authentication Issue Investigation"
   stuck_tasks: []
   test_all: false
   test_priority: "critical_first"
