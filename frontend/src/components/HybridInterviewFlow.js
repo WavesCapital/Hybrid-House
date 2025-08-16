@@ -555,7 +555,6 @@ const HybridInterviewFlow = () => {
           font-weight: 500; /* font-medium */
           text-transform: uppercase; /* uppercase class */
           letter-spacing: 0.05em; /* tracking-wider class */
-          text-shadow: 0 0 4px rgba(8, 240, 255, 0.3); /* Added subtle glow to match Dial2 */
         }
 
         .pillar-ring {
