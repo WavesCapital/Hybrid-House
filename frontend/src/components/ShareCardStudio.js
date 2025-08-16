@@ -202,7 +202,8 @@ const ShareCardStudio = () => {
           mile_s: 390, // 6:30
           '5k_s': 1230, // 20:30
           '10k_s': 2520, // 42:00
-          half_s: 5400 // 1:30:00
+          half_s: 5400, // 1:30:00
+          marathon_s: 10800 // 3:00:00
         },
         meta: {
           hybrid_score: 85,
