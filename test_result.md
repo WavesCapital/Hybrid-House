@@ -162,9 +162,9 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Enhanced Generate New Score Form with All Running PRs - TESTING COMPLETE"
-    - "Backend APIs working correctly - all endpoints operational"
-    - "Webhook integration functional - minor timeout issue with external service"
+    - "Share Studio Running PRs Component Update - Mile, 5K, Marathon"
+    - "Test that mock data loads correctly in Share Studio"
+    - "Verify running PRs component displays Mile, 5K, Marathon correctly"
   stuck_tasks: []
   test_all: false
   test_priority: "critical_first"
