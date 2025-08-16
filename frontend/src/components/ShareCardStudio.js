@@ -105,7 +105,7 @@ const OPTIMAL_SIZES = {
   prLifts: { width: 240, height: 200 },
   prLiftsHorizontal: { width: 350, height: 100 },
   prRuns: { width: 240, height: 200 },
-  prRunsHorizontal: { width: 350, height: 100 },
+  prRunsHorizontal: { width: 370, height: 100 },
   balanceChips: { width: 400, height: 80 },
   nameplate: { width: 300, height: 80 }
 };
