@@ -1287,7 +1287,7 @@ const ComponentContent = ({ component, prsData, isSelected }) => {
       standard: 'drop-shadow(0 0 16px rgba(8,240,255,0.5))',
       max: 'drop-shadow(0 0 24px rgba(8,240,255,0.8))'
     };
-    return glowMap[glowLevel] || glowMap.standard;
+    return glowMap[glowLevel] || glowMap.off;  // Default to 'off' instead of 'standard'
   };
 
   const baseStyle = {
