@@ -194,7 +194,51 @@ const ShareCardStudio = () => {
     } catch (error) {
       console.error('Error loading PRs:', error);
       
-      // For testing, let's use mock data if the API fails
+      // Try to get real user name from auth context or other sources
+      let userFirstName = 'John';
+      let userLastName = 'Doe';
+      let userDisplayName = 'John Doe';
+      
+      // Check if we have user data from auth context
+      if (user?.user_metadata) {
+        userFirstName = user.user_metadata.full_name?.split(' ')[0] || user.user_metadata.first_name || 'John';
+        userLastName = user.user_metadata.full_name?.split(' ').slice(1).join(' ') || user.user_metadata.last_name || 'Doe';
+        userDisplayName = user.user_metadata.full_name || user.user_metadata.display_name || `${userFirstName} ${userLastName}`;
+      } else if (user?.email) {
+        // Extract name from email if available
+        const emailName = user.email.split('@')[0];
+        if (emailName && emailName !== user.email) {
+          userFirstName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+          userLastName = '';
+          userDisplayName = userFirstName;
+        }
+      }
+      
+      // Try to fetch basic user profile data as fallback
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const token = localStorage.getItem('access_token');
+        
+        if (token) {
+          const profileResponse = await axios.get(`${backendUrl}/api/user-profile/me`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (profileResponse.data) {
+            const profile = profileResponse.data;
+            userFirstName = profile.first_name || profile.name?.split(' ')[0] || userFirstName;
+            userLastName = profile.last_name || profile.name?.split(' ').slice(1).join(' ') || userLastName;
+            userDisplayName = profile.display_name || profile.name || `${userFirstName} ${userLastName}`.trim();
+          }
+        }
+      } catch (profileError) {
+        console.log('Could not fetch user profile, using auth data or defaults');
+      }
+      
+      // Use mock data with real user name when available
       const mockData = {
         strength: {
           squat_lb: 315,
@@ -211,19 +255,19 @@ const ShareCardStudio = () => {
         },
         meta: {
           hybrid_score: 85,
-          first_name: 'John',
-          last_name: 'Doe',
-          display_name: 'John Doe'
+          first_name: userFirstName,
+          last_name: userLastName,
+          display_name: userDisplayName
         }
       };
       
-      console.log('Using mock data for testing:', mockData);
+      console.log('Using mock data with real user name:', mockData);
       setPrsData(mockData);
       
       toast({
-        title: "Using mock data",
-        description: "Real data will load after authentication.",
-        duration: 3000
+        title: "Using demo data",
+        description: `Showing demo PRs for ${userDisplayName}. Complete your profile to see real data.`,
+        duration: 4000
       });
     } finally {
       setLoading(false);
