@@ -24,9 +24,9 @@ const PRLifts = ({ prsData, style, baseStyle }) => {
       }}
     >
       <div className="bg-black/20 border border-white/20 rounded-2xl p-6 w-full h-full backdrop-blur-md">
-        {/* Header */}
-        <div className="text-center mb-6">
-          <h3 className="text-lg font-bold text-white/90 uppercase tracking-widest">
+        {/* Header - Left aligned */}
+        <div className="mb-6">
+          <h3 className="text-lg font-bold text-white/90 uppercase tracking-widest text-left">
             MAXES
           </h3>
         </div>
