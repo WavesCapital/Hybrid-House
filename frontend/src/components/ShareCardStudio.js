@@ -467,7 +467,7 @@ const ShareCardStudio = () => {
       tempCanvas.style.left = '-9999px';
       tempCanvas.style.width = `${CANVAS_WIDTH}px`;
       tempCanvas.style.height = `${CANVAS_HEIGHT}px`;
-      tempCanvas.style.background = GRADIENTS[backgroundId].css;
+      tempCanvas.style.background = getCurrentBackgroundStyle();
       
       // Add grid glow if enabled
       if (gridGlow) {
