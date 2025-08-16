@@ -233,6 +233,39 @@ const ShareCardStudio = () => {
     setHistory(newHistory);
   }, [backgroundId, gridGlow, components, history, historyIndex]);
 
+  // Function to remove glow from all existing components except HybridScoreDial
+  const removeGlowFromExistingComponents = () => {
+    setComponents(prev => {
+      const updated = prev.map(component => ({
+        ...component,
+        style: {
+          ...component.style,
+          glow: component.type === 'dial' ? 'standard' : 'off'
+        }
+      }));
+      return updated;
+    });
+    
+    toast({
+      title: "Components updated",
+      description: "Removed blue glow from all components except Hybrid Score Dial."
+    });
+  };
+
+  // Auto-fix existing components on load
+  useEffect(() => {
+    if (components.length > 0) {
+      const hasGlowIssues = components.some(comp => 
+        comp.type !== 'dial' && (!comp.style.glow || comp.style.glow !== 'off')
+      );
+      
+      if (hasGlowIssues) {
+        console.log('Auto-fixing glow issues in existing components');
+        removeGlowFromExistingComponents();
+      }
+    }
+  }, []); // Run once on component mount
+
   const undo = () => {
     if (historyIndex > 0) {
       const prevState = history[historyIndex - 1];
