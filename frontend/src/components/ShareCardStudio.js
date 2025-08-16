@@ -634,6 +634,13 @@ const ShareCardStudio = () => {
                       onAdd={() => addComponent('prLifts')}
                       preview={<PRLiftsPreview prsData={prsData} />}
                     />
+                    <ComponentPreviewTile
+                      type="prLiftsHorizontal"
+                      title="Strength PRs 2"
+                      prsData={prsData}
+                      onAdd={() => addComponent('prLiftsHorizontal')}
+                      preview={<PRLiftsHorizontalPreview prsData={prsData} />}
+                    />
                   </div>
                 </div>
 
