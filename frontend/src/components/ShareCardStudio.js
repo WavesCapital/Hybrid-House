@@ -1281,26 +1281,22 @@ const PRRunsPreview = ({ prsData }) => {
   };
   
   return (
-    <div className="w-36 p-3">
-      <div className="text-sm text-white font-semibold mb-2 text-center">Running PRs</div>
-      <div className="space-y-1">
+    <div className="bg-black/20 border border-white/20 rounded-xl p-3 w-36 backdrop-blur-sm">
+      <div className="text-xs text-white/90 font-bold mb-2 text-left uppercase tracking-wider">
+        TIMES
+      </div>
+      <div className="space-y-2">
         <div className="flex justify-between items-center">
           <span className="text-xs text-white/80">Mile</span>
-          <div className="text-right">
-            <div className="text-xs text-white font-medium">{formatTime(mile)}</div>
-            <div className="text-[#00FF88] text-xs bg-[#00FF88]/10 px-1 py-0.5 rounded mt-0.5">
-              6:30/mi
-            </div>
-          </div>
+          <span className="text-xs text-white font-bold">{formatTime(mile)}</span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-xs text-white/80">5K</span>
-          <div className="text-right">
-            <div className="text-xs text-white font-medium">{formatTime(fiveK)}</div>
-            <div className="text-[#00FF88] text-xs bg-[#00FF88]/10 px-1 py-0.5 rounded mt-0.5">
-              6:37/mi
-            </div>
-          </div>
+          <span className="text-xs text-white font-bold">{formatTime(fiveK)}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-xs text-white/80">10K</span>
+          <span className="text-xs text-white font-bold">42:00</span>
         </div>
       </div>
     </div>
