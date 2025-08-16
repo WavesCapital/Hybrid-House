@@ -344,6 +344,7 @@ const ShareCardStudio = () => {
 
     switch (type) {
       case 'dial':
+      case 'dial2':
         return { ...base, ringThickness: 'M', ticks: true, glow: 'standard' };
       case 'scoreChip':
       case 'nameplate':
