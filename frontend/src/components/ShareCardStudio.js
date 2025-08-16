@@ -1254,14 +1254,14 @@ const PRLiftsHorizontalPreview = ({ prsData }) => {
     <div className="w-40 p-2">
       {/* Header row */}
       <div className="flex justify-between mb-2">
-        <span className="text-xs text-white/70 uppercase">Squat</span>
         <span className="text-xs text-white/70 uppercase">Bench</span>
+        <span className="text-xs text-white/70 uppercase">Squat</span>
         <span className="text-xs text-white/70 uppercase">Dead</span>
       </div>
       {/* Values row */}
       <div className="flex justify-between">
-        <span className="text-xs text-white font-bold">{Math.round(squat)}</span>
         <span className="text-xs text-white font-bold">{Math.round(bench)}</span>
+        <span className="text-xs text-white font-bold">{Math.round(squat)}</span>
         <span className="text-xs text-white font-bold">{Math.round(deadlift)}</span>
       </div>
     </div>
