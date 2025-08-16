@@ -1220,20 +1220,22 @@ const PRLiftsPreview = ({ prsData }) => {
   const deadlift = strength.deadlift_lb || 405;
   
   return (
-    <div className="w-36 p-3">
-      <div className="text-sm text-white font-semibold mb-2 text-center">Strength PRs</div>
-      <div className="space-y-1">
+    <div className="bg-black/20 border border-white/20 rounded-xl p-3 w-36 backdrop-blur-sm">
+      <div className="text-xs text-white/90 font-bold mb-2 text-center uppercase tracking-wider">
+        MAXES
+      </div>
+      <div className="space-y-2">
         <div className="flex justify-between items-center">
           <span className="text-xs text-white/80">Squat</span>
-          <span className="text-xs text-white font-medium">{Math.round(squat)} lb</span>
+          <span className="text-xs text-white font-bold">{Math.round(squat)}</span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-xs text-white/80">Bench</span>
-          <span className="text-xs text-white font-medium">{Math.round(bench)} lb</span>
+          <span className="text-xs text-white font-bold">{Math.round(bench)}</span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-xs text-white/80">Dead</span>
-          <span className="text-xs text-white font-medium">{Math.round(deadlift)} lb</span>
+          <span className="text-xs text-white font-bold">{Math.round(deadlift)}</span>
         </div>
       </div>
     </div>
