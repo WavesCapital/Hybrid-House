@@ -798,6 +798,13 @@ const ShareCardStudio = () => {
                       preview={<HybridScoreDialPreview prsData={prsData} />}
                     />
                     <ComponentPreviewTile
+                      type="dial2"
+                      title="Hybrid Score Dial 2"
+                      prsData={prsData}
+                      onAdd={() => addComponent('dial2')}
+                      preview={<HybridScoreDial2Preview prsData={prsData} />}
+                    />
+                    <ComponentPreviewTile
                       type="scoreChip"
                       title="Score Chip"
                       prsData={prsData}
