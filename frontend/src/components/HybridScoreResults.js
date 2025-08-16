@@ -1141,7 +1141,11 @@ Think you can beat this? Get scored at HybridLab.io 🚀`;
                       {animatedScores.hybrid ? Math.round(animatedScores.hybrid) : hybridScoreValue}
                     </div>
                     <div className="score-label" style={{ 
-                      color: 'rgba(255, 255, 255, 0.8)' // Clean white without glow
+                      color: 'rgba(255, 255, 255, 0.8)', // Clean white without glow
+                      textTransform: 'uppercase', // Make it all caps like home page
+                      fontSize: '0.9rem', // Match home page size
+                      fontWeight: '500', // Match home page font weight
+                      letterSpacing: '0.05em' // Match home page letter spacing
                     }}>
                       Hybrid Score
                     </div>
