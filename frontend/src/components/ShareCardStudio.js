@@ -443,6 +443,17 @@ const ShareCardStudio = () => {
     fileInputRef.current?.click();
   };
 
+  // Get current background style (gradient or uploaded image)
+  const getCurrentBackgroundStyle = () => {
+    if (uploadedBackgrounds[backgroundId]) {
+      const bg = uploadedBackgrounds[backgroundId];
+      return bg.type === 'image' 
+        ? `${bg.css} center/cover no-repeat`
+        : bg.css;
+    }
+    return GRADIENTS[backgroundId]?.css || GRADIENTS.cyanDrift.css;
+  };
+
   // Export functionality
   const exportCanvas = async () => {
     if (!canvasRef.current) return;
