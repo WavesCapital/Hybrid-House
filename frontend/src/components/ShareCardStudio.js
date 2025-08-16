@@ -620,10 +620,10 @@ const ShareCardStudio = () => {
                   </div>
                 </div>
 
-                {/* Personal Records */}
+                {/* Strength PRs */}
                 <div className="space-y-3">
                   <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
-                    Personal Records
+                    Strength PRs
                   </h3>
                   <div className="space-y-3">
                     <ComponentPreviewTile
@@ -633,6 +633,15 @@ const ShareCardStudio = () => {
                       onAdd={() => addComponent('prLifts')}
                       preview={<PRLiftsPreview prsData={prsData} />}
                     />
+                  </div>
+                </div>
+
+                {/* Running PRs */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider border-b border-white/20 pb-2">
+                    Running PRs
+                  </h3>
+                  <div className="space-y-3">
                     <ComponentPreviewTile
                       type="prRuns"
                       title="Running PRs"
