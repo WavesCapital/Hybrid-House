@@ -79,6 +79,7 @@ const COMPONENT_TYPES = {
   prLifts: 'prLifts',
   prLiftsHorizontal: 'prLiftsHorizontal',
   prRuns: 'prRuns',
+  prRunsHorizontal: 'prRunsHorizontal',
   balanceChips: 'balanceChips',
   nameplate: 'nameplate'
 };
