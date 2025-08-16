@@ -42,12 +42,12 @@ const PRRunsHorizontal = ({ prsData, style, baseStyle }) => {
           </h3>
         </div>
         
-        {/* Times Grid - Left aligned with wider spacing */}
-        <div className="grid grid-cols-3 gap-6 text-left">
+        {/* Times Grid - Optimized spacing for Marathon text */}
+        <div className="grid grid-cols-3 gap-4 text-left">
           {runs.map((run, index) => (
-            <div key={index} className="space-y-2 min-w-0">
+            <div key={index} className="space-y-2 min-w-0 flex-1">
               {/* Distance name */}
-              <div className="text-white/70 text-sm font-medium uppercase tracking-wide truncate">
+              <div className="text-white/70 text-sm font-medium uppercase tracking-wide">
                 {run.name}
               </div>
               {/* Time */}
