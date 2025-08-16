@@ -1161,29 +1161,29 @@ const HybridScoreDialPreview = ({ prsData }) => {
 const HybridScoreDial2Preview = ({ prsData }) => {
   const hybridScore = prsData?.meta?.hybrid_score || 85; // Default for preview
   return (
-    <div className="w-24 h-24 relative" style={{ 
-      filter: 'drop-shadow(0 0 12px rgba(8,240,255,0.5)) drop-shadow(0 0 20px rgba(8,240,255,0.3))' 
+    <div className="w-24 h-24 relative p-1" style={{ 
+      filter: 'drop-shadow(0 0 6px rgba(8,240,255,0.4))' 
     }}>
-      <svg width="96" height="96" viewBox="0 0 96 96" className="transform -rotate-90">
+      <svg width="88" height="88" viewBox="0 0 88 88" className="transform -rotate-90">
         {/* Background ring */}
-        <circle cx="48" cy="48" r="40" stroke="rgba(8,240,255,0.1)" strokeWidth="6" fill="none" />
+        <circle cx="44" cy="44" r="36" stroke="rgba(8,240,255,0.1)" strokeWidth="5" fill="none" />
         {/* Segmented progress ring */}
         <circle
-          cx="48" cy="48" r="40"
+          cx="44" cy="44" r="36"
           stroke="#08F0FF"
-          strokeWidth="6"
+          strokeWidth="5"
           fill="none"
           strokeLinecap="round"
-          strokeDasharray="5 1.5"
-          strokeDashoffset={`${251 - (hybridScore * 2.51)}`}
+          strokeDasharray="4 1"
+          strokeDashoffset={`${226 - (hybridScore * 2.26)}`}
           style={{
-            filter: 'drop-shadow(0 0 6px rgba(8,240,255,0.8))'
+            filter: 'drop-shadow(0 0 3px rgba(8,240,255,0.6))'
           }}
         />
         {/* Outer glow ring */}
         <circle
-          cx="48" cy="48" r="44"
-          stroke="rgba(8,240,255,0.1)"
+          cx="44" cy="44" r="40"
+          stroke="rgba(8,240,255,0.08)"
           strokeWidth="1"
           fill="none"
           className="animate-pulse"
@@ -1191,8 +1191,8 @@ const HybridScoreDial2Preview = ({ prsData }) => {
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-xl font-bold text-white" style={{ 
-            textShadow: '0 0 10px rgba(8,240,255,0.5)' 
+          <div className="text-lg font-bold text-white" style={{ 
+            textShadow: '0 0 6px rgba(8,240,255,0.4)' 
           }}>
             {Math.round(hybridScore)}
           </div>
