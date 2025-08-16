@@ -47,7 +47,7 @@ const Nameplate = ({ prsData, style, baseStyle }) => {
             key={index}
             className={`${sizeMap[textSize]} font-bold text-white leading-tight`}
             style={{
-              textShadow: '0 0 20px rgba(8,240,255,0.3)',
+              textShadow: '0 2px 4px rgba(0,0,0,0.5)',
               // Ensure text fits within bounds with ellipsis if needed
               maxWidth: '100%',
               overflow: 'hidden',
