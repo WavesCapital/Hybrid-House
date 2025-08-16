@@ -72,6 +72,7 @@ const COMPONENT_TYPES = {
   dial: 'dial',
   scoreChip: 'scoreChip', 
   prLifts: 'prLifts',
+  prLiftsHorizontal: 'prLiftsHorizontal',
   prRuns: 'prRuns',
   balanceChips: 'balanceChips',
   nameplate: 'nameplate'
