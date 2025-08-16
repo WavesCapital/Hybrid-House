@@ -94,6 +94,7 @@ const OPTIMAL_SIZES = {
   dial: { width: 280, height: 280 },
   scoreChip: { width: 300, height: 60 },
   prLifts: { width: 240, height: 200 },
+  prLiftsHorizontal: { width: 350, height: 100 },
   prRuns: { width: 240, height: 200 },
   balanceChips: { width: 400, height: 80 },
   nameplate: { width: 300, height: 80 }
