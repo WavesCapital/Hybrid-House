@@ -9,38 +9,44 @@ const PRLiftsHorizontal = ({ prsData, style, baseStyle }) => {
   };
 
   const lifts = [
-    { name: 'Bench', weight: strength.bench_lb, unit: 'lb' },
-    { name: 'Squat', weight: strength.squat_lb, unit: 'lb' },
-    { name: 'Deadlift', weight: strength.deadlift_lb, unit: 'lb' }
+    { name: 'Bench', weight: strength.bench_lb },
+    { name: 'Squat', weight: strength.squat_lb },
+    { name: 'Deadlift', weight: strength.deadlift_lb }
   ];
 
   return (
     <div 
-      className="w-full h-full p-6 flex items-center justify-center"
+      className="w-full h-full p-6 flex items-center justify-start"
       style={{
         ...baseStyle,
         backdropFilter: `blur(${glassBlur}px)`,
         WebkitBackdropFilter: `blur(${glassBlur}px)`
       }}
     >
-      <div className="text-center w-full">
-        {/* Header row */}
-        <div className="flex justify-between items-center mb-6">
-          {lifts.map((lift, index) => (
-            <div key={index} className="flex-1">
-              <div className="text-white/70 text-lg font-medium uppercase tracking-wider">
-                {lift.name}
-              </div>
-            </div>
-          ))}
+      <div className="bg-black/20 border border-white/20 rounded-2xl p-6 backdrop-blur-md w-full">
+        {/* Header - Left aligned */}
+        <div className="mb-6">
+          <h3 className="text-lg font-bold text-white/90 uppercase tracking-widest text-left">
+            MAXES
+          </h3>
         </div>
         
-        {/* Values row */}
-        <div className="flex justify-between items-center">
+        {/* Lifts Grid - Left aligned with clean spacing */}
+        <div className="grid grid-cols-3 gap-8 text-left">
           {lifts.map((lift, index) => (
-            <div key={index} className="flex-1">
-              <div className="text-white text-3xl font-bold">
-                {formatWeight(lift.weight)} {lift.unit}
+            <div key={index} className="space-y-2">
+              {/* Exercise name */}
+              <div className="text-white/70 text-sm font-medium uppercase tracking-wide">
+                {lift.name}
+              </div>
+              {/* Weight with smaller lbs */}
+              <div className="flex items-baseline gap-1">
+                <span className="text-white text-2xl font-bold">
+                  {formatWeight(lift.weight)}
+                </span>
+                <span className="text-white/60 text-sm font-medium">
+                  lbs
+                </span>
               </div>
             </div>
           ))}
