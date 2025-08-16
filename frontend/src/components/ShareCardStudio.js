@@ -206,51 +206,69 @@ const ShareCardStudio = () => {
     } catch (error) {
       console.error('Error loading PRs:', error);
       
-      // Try to get real user name from auth context or other sources
-      let userFirstName = 'John';
-      let userLastName = 'Doe';
-      let userDisplayName = 'John Doe';
+      // Try to get real user name from multiple sources
+      let userFirstName = '';
+      let userLastName = '';
+      let userDisplayName = '';
       
-      // Check if we have user data from auth context
+      // Priority 1: Supabase auth context
       if (user?.user_metadata) {
-        userFirstName = user.user_metadata.full_name?.split(' ')[0] || user.user_metadata.first_name || 'John';
-        userLastName = user.user_metadata.full_name?.split(' ').slice(1).join(' ') || user.user_metadata.last_name || 'Doe';
-        userDisplayName = user.user_metadata.full_name || user.user_metadata.display_name || `${userFirstName} ${userLastName}`;
-      } else if (user?.email) {
-        // Extract name from email if available
+        const fullName = user.user_metadata.full_name || user.user_metadata.name || '';
+        const firstName = user.user_metadata.first_name || '';
+        const lastName = user.user_metadata.last_name || '';
+        
+        if (fullName) {
+          const nameParts = fullName.split(' ');
+          userFirstName = nameParts[0] || firstName;
+          userLastName = nameParts.slice(1).join(' ') || lastName;
+        } else {
+          userFirstName = firstName;
+          userLastName = lastName;
+        }
+        
+        userDisplayName = user.user_metadata.display_name || fullName || 
+                         (firstName || lastName ? `${firstName} ${lastName}`.trim() : '');
+      }
+      
+      // Priority 2: Extract from email if no metadata
+      if (!userDisplayName && user?.email) {
         const emailName = user.email.split('@')[0];
-        if (emailName && emailName !== user.email) {
+        if (emailName && !emailName.includes('.')) {
           userFirstName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
-          userLastName = '';
           userDisplayName = userFirstName;
         }
       }
       
-      // Try to fetch basic user profile data as fallback
-      try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-        const token = localStorage.getItem('access_token');
-        
-        if (token) {
-          const profileResponse = await axios.get(`${backendUrl}/api/user-profile/me`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          });
+      // Priority 3: Try to get Supabase session user data
+      if (!userDisplayName) {
+        try {
+          const { supabase } = await import('../lib/supabaseClient');
+          const { data: { user: sessionUser } } = await supabase.auth.getUser();
           
-          if (profileResponse.data) {
-            const profile = profileResponse.data;
-            userFirstName = profile.first_name || profile.name?.split(' ')[0] || userFirstName;
-            userLastName = profile.last_name || profile.name?.split(' ').slice(1).join(' ') || userLastName;
-            userDisplayName = profile.display_name || profile.name || `${userFirstName} ${userLastName}`.trim();
+          if (sessionUser?.user_metadata?.full_name) {
+            const fullName = sessionUser.user_metadata.full_name;
+            const nameParts = fullName.split(' ');
+            userFirstName = nameParts[0] || '';
+            userLastName = nameParts.slice(1).join(' ') || '';
+            userDisplayName = fullName;
+          } else if (sessionUser?.email) {
+            const emailName = sessionUser.email.split('@')[0];
+            userFirstName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+            userDisplayName = userFirstName;
           }
+        } catch (supabaseError) {
+          console.log('Could not fetch Supabase user data:', supabaseError);
         }
-      } catch (profileError) {
-        console.log('Could not fetch user profile, using auth data or defaults');
       }
       
-      // Use mock data with real user name when available
+      // Final fallback
+      if (!userDisplayName) {
+        userFirstName = 'Your Name';
+        userLastName = '';
+        userDisplayName = 'Your Name';
+      }
+      
+      // Use demo data with real user name when available
       const mockData = {
         strength: {
           squat_lb: 315,
@@ -273,12 +291,13 @@ const ShareCardStudio = () => {
         }
       };
       
-      console.log('Using mock data with real user name:', mockData);
+      console.log('Using demo data with real user name:', mockData);
       setPrsData(mockData);
       
+      const displayNameText = userDisplayName || 'athlete';
       toast({
         title: "Using demo data",
-        description: `Showing demo PRs for ${userDisplayName}. Complete your profile to see real data.`,
+        description: `Showing demo PRs for ${displayNameText}. Complete your profile to see real data.`,
         duration: 4000
       });
     } finally {
