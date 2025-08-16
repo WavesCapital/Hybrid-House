@@ -1273,6 +1273,7 @@ const PRRunsPreview = ({ prsData }) => {
   // Use real data or defaults for preview
   const mile = running.mile_s || 390; // 6:30 mile
   const fiveK = running['5k_s'] || 1230; // 20:30 5k
+  const marathon = running.marathon_s || 10800; // 3:00:00 marathon
   
   const formatTime = (seconds) => {
     if (!seconds) return '—';
@@ -1296,8 +1297,8 @@ const PRRunsPreview = ({ prsData }) => {
           <span className="text-xs text-white font-bold">{formatTime(fiveK)}</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-xs text-white/80">10K</span>
-          <span className="text-xs text-white font-bold">42:00</span>
+          <span className="text-xs text-white/80">Marathon</span>
+          <span className="text-xs text-white font-bold">{formatTime(marathon)}</span>
         </div>
       </div>
     </div>
