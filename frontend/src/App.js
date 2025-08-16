@@ -113,11 +113,7 @@ function AppContent() {
           />
           <Route 
             path="/share" 
-            element={
-              <ProtectedRoute>
-                <ShareCardStudio />
-              </ProtectedRoute>
-            } 
+            element={<ShareCardStudio />}
           />
           <Route 
             path="/interview" 
