@@ -10,9 +10,9 @@ const PRRuns = ({ prsData, style, baseStyle }) => {
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = Math.round(seconds % 60);
     
-    // For times over an hour, show h:mm:ss format
+    // For times over an hour, show h:mm format (no seconds)
     if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+      return `${hours}:${minutes.toString().padStart(2, '0')}`;
     }
     
     // For times under an hour, show mm:ss format
