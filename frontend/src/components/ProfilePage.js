@@ -2809,11 +2809,6 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        {/* Personal Records Section */}
-        {user && session && (
-          <PersonalRecordsSection />
-        )}
-
         {/* Main Section - Stack with reduced spacing */}
         <div className="space-y-12">{/* Reduced spacing: 48px desktop, 24px mobile */}
           
