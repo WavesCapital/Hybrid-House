@@ -12,9 +12,9 @@ const PRRuns = ({ prsData, style, baseStyle }) => {
   };
 
   const runs = [
-    { name: 'Mile', time: running.mile_time_seconds },
-    { name: '5K', time: running.five_k_time_seconds },
-    { name: '10K', time: running.ten_k_time_seconds }
+    { name: 'Mile', time: running.mile_s || running.mile_time_seconds },
+    { name: '5K', time: running['5k_s'] || running.five_k_time_seconds },
+    { name: 'Marathon', time: running.marathon_s || running.marathon_time_seconds }
   ];
 
   return (
