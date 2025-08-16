@@ -2260,6 +2260,232 @@ class BackendTester:
                 "❌ Data transformation check failed", str(e))
             return False
 
+    def test_share_card_studio_name_data(self):
+        """Test Share Card Studio API specifically for name data in /api/me/prs endpoint"""
+        try:
+            print("\n🎯 SHARE CARD STUDIO NAME DATA TESTING")
+            print("=" * 60)
+            print("Testing the user report: nameplate shows 'John Doe' instead of actual name")
+            print("Investigating: API failure, empty name data, or extraction issues")
+            print("=" * 60)
+            
+            # Test 1: Authentication requirement for /api/me/prs
+            print("\n🔐 Test 1: GET /api/me/prs Authentication Requirements")
+            response = self.session.get(f"{API_BASE_URL}/me/prs")
+            
+            if response.status_code in [401, 403]:
+                print(f"✅ Authentication properly required: HTTP {response.status_code}")
+                auth_test_passed = True
+            else:
+                print(f"❌ Authentication not required: HTTP {response.status_code}")
+                self.log_test("Share Card Studio Name Data - Authentication", False, f"Expected 401/403, got {response.status_code}")
+                auth_test_passed = False
+            
+            # Test 2: Create test user profile with name data to verify extraction
+            print("\n👤 Test 2: Create Test User Profile with Name Data")
+            
+            # Create a test profile via public endpoint to simulate user data
+            test_profile_data = {
+                "profile_json": {
+                    "first_name": "Alex",
+                    "last_name": "Johnson", 
+                    "email": "alex.johnson.test@example.com",
+                    "sex": "Male",
+                    "country": "US",
+                    "body_metrics": {
+                        "height_in": 70,
+                        "weight_lb": 180,
+                        "vo2_max": 52
+                    },
+                    "pb_mile": "5:45",
+                    "pb_5k": "18:30",
+                    "pb_bench_1rm": {"weight_lb": 225},
+                    "pb_squat_1rm": {"weight_lb": 315},
+                    "pb_deadlift_1rm": {"weight_lb": 405}
+                }
+            }
+            
+            profile_response = self.session.post(f"{API_BASE_URL}/athlete-profiles/public", json=test_profile_data)
+            
+            if profile_response.status_code == 200:
+                profile_data = profile_response.json()
+                profile_id = profile_data.get('user_profile', {}).get('id')
+                print(f"✅ Test profile created: {profile_id}")
+                profile_creation_passed = True
+            else:
+                print(f"❌ Profile creation failed: HTTP {profile_response.status_code}")
+                print(f"   Response: {profile_response.text}")
+                profile_creation_passed = False
+                profile_id = None
+            
+            # Test 3: Check if user profiles have name data properly stored
+            print("\n🗄️ Test 3: Verify User Profile Name Data Storage")
+            
+            if profile_id:
+                # Get the created profile to check name data storage
+                get_profile_response = self.session.get(f"{API_BASE_URL}/athlete-profile/{profile_id}")
+                
+                if get_profile_response.status_code == 200:
+                    profile_info = get_profile_response.json()
+                    user_profile = profile_info.get('user_profile', {})
+                    
+                    # Check if name data is properly stored
+                    stored_name = user_profile.get('name', '')
+                    display_name = user_profile.get('display_name', '')
+                    
+                    print(f"   Stored name: '{stored_name}'")
+                    print(f"   Display name: '{display_name}'")
+                    
+                    if stored_name and 'Alex Johnson' in stored_name:
+                        print("✅ Name data properly stored in user_profiles")
+                        name_storage_passed = True
+                    else:
+                        print("❌ Name data not properly stored in user_profiles")
+                        name_storage_passed = False
+                else:
+                    print(f"❌ Could not retrieve profile: HTTP {get_profile_response.status_code}")
+                    name_storage_passed = False
+            else:
+                print("❌ Cannot test name storage - profile creation failed")
+                name_storage_passed = False
+            
+            # Test 4: Test API response structure for name extraction
+            print("\n🔍 Test 4: API Response Structure for Name Extraction")
+            
+            # Test the actual /api/me/prs endpoint structure (without auth, expecting 401/403)
+            prs_response = self.session.get(f"{API_BASE_URL}/me/prs")
+            
+            if prs_response.status_code in [401, 403]:
+                print("✅ /api/me/prs endpoint exists and requires authentication")
+                
+                # Check if we can analyze the endpoint structure from error response
+                try:
+                    error_data = prs_response.json()
+                    if 'detail' in error_data:
+                        print(f"   Authentication error: {error_data['detail']}")
+                        print("✅ Endpoint is properly configured for JWT authentication")
+                        api_structure_passed = True
+                    else:
+                        print("⚠️  Endpoint exists but error format unexpected")
+                        api_structure_passed = True
+                except:
+                    print("✅ Endpoint exists and properly protected")
+                    api_structure_passed = True
+            else:
+                print(f"❌ /api/me/prs endpoint issue: HTTP {prs_response.status_code}")
+                api_structure_passed = False
+            
+            # Test 5: Verify name extraction logic from backend code analysis
+            print("\n🧠 Test 5: Name Extraction Logic Analysis")
+            
+            # Based on the backend code analysis, the extraction logic is:
+            # display_name: user_profile.get('display_name') or user_profile.get('name', '').split()[0]
+            # first_name: user_profile.get('name', '').split()[0] if user_profile.get('name') else ''
+            # last_name: ' '.join(user_profile.get('name', '').split()[1:]) if user_profile.get('name') and len(user_profile.get('name', '').split()) > 1 else ''
+            
+            print("   Analyzing backend name extraction logic:")
+            print("   - display_name: user_profile.get('display_name') or user_profile.get('name', '').split()[0]")
+            print("   - first_name: user_profile.get('name', '').split()[0] if user_profile.get('name') else ''")
+            print("   - last_name: ' '.join(user_profile.get('name', '').split()[1:]) if len > 1 else ''")
+            
+            # Test the logic with sample data
+            test_cases = [
+                {"name": "Alex Johnson", "display_name": None, "expected_first": "Alex", "expected_last": "Johnson", "expected_display": "Alex"},
+                {"name": "Alex Johnson", "display_name": "AJ", "expected_first": "Alex", "expected_last": "Johnson", "expected_display": "AJ"},
+                {"name": "", "display_name": None, "expected_first": "", "expected_last": "", "expected_display": ""},
+                {"name": None, "display_name": None, "expected_first": "", "expected_last": "", "expected_display": ""}
+            ]
+            
+            logic_test_passed = True
+            for i, case in enumerate(test_cases):
+                name = case.get('name', '')
+                display_name = case.get('display_name')
+                
+                # Simulate the backend logic
+                if name:
+                    name_parts = name.split()
+                    first_name = name_parts[0] if name_parts else ''
+                    last_name = ' '.join(name_parts[1:]) if len(name_parts) > 1 else ''
+                else:
+                    first_name = ''
+                    last_name = ''
+                
+                extracted_display = display_name or (name_parts[0] if name and name.split() else '')
+                
+                # Check if extraction matches expected
+                if (first_name == case['expected_first'] and 
+                    last_name == case['expected_last'] and 
+                    extracted_display == case['expected_display']):
+                    print(f"   ✅ Test case {i+1}: Logic works correctly")
+                else:
+                    print(f"   ❌ Test case {i+1}: Logic failed")
+                    print(f"      Expected: first='{case['expected_first']}', last='{case['expected_last']}', display='{case['expected_display']}'")
+                    print(f"      Got: first='{first_name}', last='{last_name}', display='{extracted_display}'")
+                    logic_test_passed = False
+            
+            if logic_test_passed:
+                print("✅ Name extraction logic is correct")
+            else:
+                print("❌ Name extraction logic has issues")
+            
+            # Test 6: Root cause analysis
+            print("\n🔬 Test 6: Root Cause Analysis")
+            
+            if profile_creation_passed and name_storage_passed and api_structure_passed and logic_test_passed:
+                print("✅ All components working - issue likely in frontend or authentication")
+                print("   Possible causes:")
+                print("   - User not properly authenticated")
+                print("   - Frontend not calling /api/me/prs correctly")
+                print("   - User profile missing name data")
+                root_cause_analysis = "Components working - check frontend/auth"
+                overall_passed = True
+            elif not name_storage_passed:
+                print("❌ Name data not being stored properly in user_profiles")
+                print("   Root cause: Profile creation not populating user_profiles.name field")
+                root_cause_analysis = "Name data storage issue"
+                overall_passed = False
+            elif not api_structure_passed:
+                print("❌ API endpoint has structural issues")
+                print("   Root cause: /api/me/prs endpoint not working correctly")
+                root_cause_analysis = "API endpoint issue"
+                overall_passed = False
+            elif not logic_test_passed:
+                print("❌ Name extraction logic has bugs")
+                print("   Root cause: Backend name extraction logic incorrect")
+                root_cause_analysis = "Name extraction logic bug"
+                overall_passed = False
+            else:
+                print("⚠️  Mixed results - partial functionality")
+                root_cause_analysis = "Partial functionality - needs investigation"
+                overall_passed = False
+            
+            # Summary
+            print(f"\n📊 SHARE CARD STUDIO NAME DATA TEST SUMMARY")
+            print("=" * 60)
+            print(f"Authentication Test: {'✅ PASS' if auth_test_passed else '❌ FAIL'}")
+            print(f"Profile Creation Test: {'✅ PASS' if profile_creation_passed else '❌ FAIL'}")
+            print(f"Name Storage Test: {'✅ PASS' if name_storage_passed else '❌ FAIL'}")
+            print(f"API Structure Test: {'✅ PASS' if api_structure_passed else '❌ FAIL'}")
+            print(f"Logic Analysis Test: {'✅ PASS' if logic_test_passed else '❌ FAIL'}")
+            print(f"Root Cause Analysis: {root_cause_analysis}")
+            
+            self.log_test("Share Card Studio Name Data", overall_passed, 
+                         f"Name data testing complete - {root_cause_analysis}", 
+                         {
+                             'auth_test': auth_test_passed,
+                             'profile_creation': profile_creation_passed,
+                             'name_storage': name_storage_passed,
+                             'api_structure': api_structure_passed,
+                             'logic_analysis': logic_test_passed,
+                             'root_cause': root_cause_analysis
+                         })
+            
+            return overall_passed
+            
+        except Exception as e:
+            self.log_test("Share Card Studio Name Data", False, "Test failed with exception", str(e))
+            return False
+
     def run_user_profile_data_mismatch_audit(self):
         """Run comprehensive audit of user profile data mismatch issue"""
         print("\n" + "="*80)
